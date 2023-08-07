@@ -92,6 +92,12 @@ jobs:
         shell: micromamba-shell {0}
         run: poetry install --no-interaction --without dev --with test
       
+      - name: Install lap (Hack)
+        shell: micromamba-shell {0}
+        run: |
+          pip install --upgrade pip
+          pip install lap
+      
       - name: Check Installed Packages
         shell: micromamba-shell {0}
         run: pip list
