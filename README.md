@@ -21,7 +21,7 @@ nature of such workflows, the temporal-spatial metadata stored
 with videos, and physical behavior of real-world objects to optimize
 the execution of workflows. Our results using real-world videos
 and workflows show that Spatialyze can reduce execution time by
-up to 5.3x, while maintaining up to 97.1% accuracy compared to
+up to 5.3$`\times`$, while maintaining up to 97.1% accuracy compared to
 unoptimized execution.
 
 ## Requirement
@@ -43,8 +43,8 @@ cd spatialyze
 ```
 
 ### We use Conda/Mamba to manage our python environment
-Install Mamba: https://mamba.readthedocs.io/en/latest/installation.html
-or install Conda: https://docs.conda.io/en/latest/miniconda.html
+Install [Mamba](https://mamba.readthedocs.io/en/latest/installation.html)
+or install [Conda](https://docs.conda.io/en/latest/miniconda.html)
 
 ### Setup Environment and Dependencies
 ```sh
@@ -83,6 +83,8 @@ docker update --restart unless-stopped spatialyze-gs-store
 
 ### Try the demo.
 In spatialyze repo:
-`jupyter notebook` or `python3 -m notebook`
+```sh
+jupyter-lab
+```
 
 The demo notebook first constructs the world. Then it queries for the trajectory of the cars that appeared once in an area of interests within some time interval.
