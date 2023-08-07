@@ -46,12 +46,12 @@ python >= 3.10
 ## How to Setup Spatialyze Repo
 ### Install dependencies:
 #### Debian based Linux
-```sh
+```bash
 apt-get update && apt-get install -y python3-opencv
 ```
 ### Clone the Spatialyze repo
 For ssh:
-```sh
+```bash
 git clone --recurse-submodules git@github.com:apperception-db/spatialyze.git
 cd spatialyze
 ```
@@ -61,7 +61,7 @@ Install [Mamba](https://mamba.readthedocs.io/en/latest/installation.html)
 or install [Conda](https://docs.conda.io/en/latest/miniconda.html)
 
 ### Setup Environment and Dependencies
-```sh
+```bash
 # clone submodules
 git submodule update --init --recursive
 
@@ -80,18 +80,22 @@ pip install lap  # a bug in lap/poetry/conda that lap needs to be installed usin
 
 ## Spatialyze Demo
 ### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
-```sh
+```bash
 docker volume create spatialyze-gs-store-data
-docker run --name "spatialyze-gs-store" -d -p 25432:5432 -v spatialyze-gs-store-data:/var/lib/postgresql mobilitydb/mobilitydb
+docker run --name "spatialyze-gs-store" \
+               -d \
+               -p 25432:5432 \
+               -v spatialyze-gs-store-data:/var/lib/postgresql \
+                  mobilitydb/mobilitydb
 ```
-We need to setup the mobilitydb with customized functions
-```sh
+Setup the MobilityDB with customized functions
+```bash
 docker exec -it spatialyze-gs-store rm -rf /pg_extender
 docker cp scripts/pg-extender spatialyze-gs-store:/pg_extender
 docker exec -it -w /pg_extender spatialyze-gs-store python3 install.py
 ```
 To run MobilityDB every system restart
-```sh
+```bash
 docker update --restart unless-stopped spatialyze-gs-store
 ```
 
