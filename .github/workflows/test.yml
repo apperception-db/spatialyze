@@ -84,8 +84,8 @@ jobs:
           name: video-processor-coverage
           path: ./coverage.xml
 
-  test-engine-and-interface:
-    name: Test Engine and Interface
+  test-engine:
+    name: Test Engine
     runs-on: ubuntu-latest
     services:
       mobilitydb:
@@ -204,7 +204,7 @@ jobs:
       
       - name: Unit Test
         shell: micromamba-shell {0}
-        run: pytest --cov=spatialyze --cov-report=xml tests/engine tests/interface
+        run: pytest --cov=spatialyze --cov-report=xml tests/engine
         env:
           AP_PORT: 25440
           AP_PORT_ROAD_1: 25441
@@ -215,12 +215,58 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: engine-and-interface-coverage
+          name: engine-coverage
+          path: ./coverage.xml
+
+  test-interface:
+    name: Test Interface
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Setup Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: environment.yml
+          init-shell: none
+          cache-downloads: false
+
+      - name: Check Python Versions
+        shell: micromamba-shell {0}
+        run: |
+          python --version
+          python3 --version
+          which python
+          which python3
+          which pip
+          which pip3
+          which poetry
+
+      - name: Install Dependencies
+        shell: micromamba-shell {0}
+        run: poetry install --no-interaction --without dev,cv --with test
+      
+      - name: Check Installed Packages
+        shell: micromamba-shell {0}
+        run: pip list
+      
+      - name: Unit Test
+        shell: micromamba-shell {0}
+        run: pytest --cov=spatialyze --cov-report=xml tests/engine
+        env:
+          AP_PORT: 25440
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: interface-coverage
           path: ./coverage.xml
 
   upload-coverage:
     name: Upload Coverage
-    needs: [test-video-processor, test-engine-and-interface]
+    needs: [test-video-processor, test-engine, test-interface]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -235,37 +281,4 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           verbose: true
-
-      # - name: Download Coverage
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: video-processor-coverage
-      #     path: ./video-processor-coverage
-
-      # - name: Download Coverage
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: engine-and-interface-coverage
-      #     path: ./engine-and-interface-coverage
-
-      # - name: Combine Coverage
-      #   shell: micromamba-shell {0}
-      #   run: |
-      #     pip install coverage
-      #     coverage combine ./video-processor-coverage ./engine-and-interface-coverage
-      #     coverage xml
-      #     coverage report
-      #     coverage html
-      #     coverage-badge -o coverage.svg -f
-
-      # - name: Upload Coverage
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: coverage
-      #     path: ./coverage.xml
-
-      # - name: Upload Coverage
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: coverage-badge
-      #     path: ./coverage.svg
+          fail_ci_if_error: true
