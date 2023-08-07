@@ -1,6 +1,6 @@
 from multiprocessing import Pool
 from os import environ
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
