@@ -1,6 +1,6 @@
 # Spatialyze: A Geospatial Video Analytic System with Spatial-Aware Optimizations
 
-![Tests and Type Checks](https://github.com/apperception-db/spatialyze/actions/workflows/test-and-check.yml/badge.svg?branch=dev)
+![Tests and Type Checks](https://github.com/apperception-db/spatialyze/actions/workflows/test-and-check.yml/badge.svg?branch=main)
 
 ## Absract
 Videos that are shot using commodity hardware such as phones
