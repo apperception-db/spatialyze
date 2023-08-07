@@ -3,8 +3,89 @@ on:
   push:
 
 jobs:
-  test:
-    name: Test
+  test-video-processor:
+    name: Test Video Processor
+    runs-on: ubuntu-latest
+    services:
+      mobilitydb:
+        image: mobilitydb/mobilitydb:14-3.2-1
+        ports:
+          - 25440:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+          submodules: recursive
+
+      - name: Setup Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: environment.yml
+          init-shell: none
+          cache-downloads: false
+
+      - name: Check Python Versions
+        shell: micromamba-shell {0}
+        run: |
+          python --version
+          python3 --version
+          which python
+          which python3
+          which pip
+          which pip3
+          which poetry
+
+      - name: Install Dependencies
+        shell: micromamba-shell {0}
+        run: poetry install --no-interaction --without dev --with test
+      
+      - name: Install lap (Hack)
+        shell: micromamba-shell {0}
+        run: |
+          pip install --upgrade pip
+          pip install lap
+      
+      - name: Check Installed Packages
+        shell: micromamba-shell {0}
+        run: pip list
+
+      - name: Extend MobilityDB with User-Defined functions
+        shell: micromamba-shell {0}
+        run: |
+          pushd scripts/pg-extender
+          python ../generate_pg_extender.py
+          cat install.sql
+          psql -h localhost -p 25440 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          popd
+        env:
+          PGPASSWORD: docker
+      
+      - name: Ingest data
+        shell: micromamba-shell {0}
+        run: |
+          python ./scripts/ingest_road.py
+        env:
+          AP_PORT: 25440
+      
+      - name: Unit Test
+        shell: micromamba-shell {0}
+        run: pytest --cov=spatialyze --cov-report=xml tests/video_processor
+        env:
+          AP_PORT: 25440
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: video-processor-coverage
+          path: ./coverage.xml
+
+  test-engine-and-interface:
+    name: Test Engine and Interface
     runs-on: ubuntu-latest
     services:
       mobilitydb:
@@ -131,9 +212,60 @@ jobs:
           AP_PORT_RESET: 25443
           AP_PORT_IMPORT: 25444
           AP_PORT_SQL: 25445
-      
-      - name: Upload coverage reports to Codecov
-        run: |
-          curl -Os https://uploader.codecov.io/latest/linux/codecov
-          chmod +x codecov
-          ./codecov -t ${{ secrets.CODECOV_TOKEN }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: engine-and-interface-coverage
+          path: ./coverage.xml
+
+  upload-coverage:
+    name: Upload Coverage
+    needs: [test-video-processor, test-engine-and-interface]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Download Coverage
+        uses: actions/download-artifact@v3
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          verbose: true
+
+      # - name: Download Coverage
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: video-processor-coverage
+      #     path: ./video-processor-coverage
+
+      # - name: Download Coverage
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: engine-and-interface-coverage
+      #     path: ./engine-and-interface-coverage
+
+      # - name: Combine Coverage
+      #   shell: micromamba-shell {0}
+      #   run: |
+      #     pip install coverage
+      #     coverage combine ./video-processor-coverage ./engine-and-interface-coverage
+      #     coverage xml
+      #     coverage report
+      #     coverage html
+      #     coverage-badge -o coverage.svg -f
+
+      # - name: Upload Coverage
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: coverage
+      #     path: ./coverage.xml
+
+      # - name: Upload Coverage
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: coverage-badge
+      #     path: ./coverage.svg

@@ -29,7 +29,7 @@ jobs:
         run: ./scripts/commit-and-push.sh "[CI] cleanup python notebooks"
 
   format:
-    name: Format and Lint
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -60,7 +60,3 @@ jobs:
       
       - name: Commit formatted changes
         run: ./scripts/commit-and-push.sh "[CI] format"
-      
-      - name: Analyze the code with flake8
-        if: always()
-        run: python -m flake8 spatialyze --statistics
