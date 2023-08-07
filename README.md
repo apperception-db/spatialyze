@@ -1,23 +1,21 @@
 <h1 align="center">Spatialyze: A Geospatial Video Analytic System<br/>with Spatial-Aware Optimizations</h1>
 <p align="center">
-  <a href="https://github.com/apperception-db/spatialyze/actions/workflows/test.yml">
-    <img
-      alt="Github Actions Test Status"
-      src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/test.yml?label=Test&style=flat-square"
-    >
-  </a>
-  <a href="https://github.com/apperception-db/spatialyze/actions/workflows/test-video-processor.yml">
-    <img
-      alt="Github Actions Test Video Processor Status"
-      src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/test-video-processor.yml?label=Test%20Video%20Processor&style=flat-square"
-    >
-  </a>
-  <a href="https://github.com/apperception-db/spatialyze/actions/workflows/check.yml">
-    <img
-      alt="Github Actions Type Check Status"
-      src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/check.yml?label=Type%20Check&style=flat-square"
-    >
-  </a>
+  <a href="https://github.com/apperception-db/spatialyze/actions/workflows/test.yml"><img
+    alt="Github Actions Test Status"
+    src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/test.yml?label=Test&style=flat-square"
+  ></a>
+  <a href="https://github.com/apperception-db/spatialyze/actions/workflows/test-video-processor.yml"><img
+    alt="Github Actions Test Video Processor Status"
+    src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/test-video-processor.yml?label=Test%20Video%20Processor&style=flat-square"
+  ></a>
+  <a href="https://github.com/apperception-db/spatialyze/actions/workflows/check.yml"><img
+    alt="Github Actions Type Check Status"
+    src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/check.yml?label=Type%20Check&style=flat-square"
+  ></a>
+  <a href="https://github.com/psf/black"><img
+    alt="Github Actions Type Check Status"
+    src="https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square"
+  ></a>
 </p>
 
 ## Absract
