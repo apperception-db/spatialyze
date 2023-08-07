@@ -104,9 +104,6 @@ exclude = 'spatialyze/video_processor/modules'
 [tool.pyright]
 pythonVersion = '3.10'
 ignore = [
-  'spatialyze/legacy/*',
-  'spatialyze/trackers/object_tracker_yolov4_deepsort.py',
-  'spatialyze/trackers/object_tracker_yolov5_deepsort.py',
   'spatialyze/video_processor/modules',
   'spatialyze/video_processor/stages/detection_estimation',
   'spatialyze/video_processor/stages/segment_trajectory',
