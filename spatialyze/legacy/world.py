@@ -51,22 +51,6 @@ class World:
         self._timestamp = timestamp
         self._materialized = materialized
 
-    def get_trajectory_images(
-        self,
-        scene_name: str,
-        trajectory: Trajectory,
-    ):
-        frame_nums = database.timestamp_to_framenum(
-            scene_name, ["'" + x + "'" for x in trajectory.datetimes]
-        )
-        # c amera_info is a list of list of cameras, where the list of cameras at each index represents the cameras at the respective timestamp
-        image_names: List[List[str]] = []
-        for frame_num in frame_nums:
-            current_cameras = database.fetch_camera_framenum(scene_name, [frame_num[0]])
-            currant_images = [x[7] for x in current_cameras]
-            image_names.append(currant_images)
-        return image_names
-
     def add_camera(self, camera: "Camera"):
         node1 = self._insert_camera(camera=camera)
         node2 = node1._retrieve_camera(camera_id=camera.id)
@@ -116,64 +100,16 @@ class World:
     def __xor__(self, other: World) -> World:
         return self.sym_diff(other)
 
-    def select_all(self):
-        return derive_world(self, database.select_all)._execute_from_root()
-
-    def get_video(self, cam_ids: List[str] = [], boxed: bool = False):
-        return derive_world(
-            self,
-            database.get_video,
-            cams=[camera_nodes[cam_id] for cam_id in cam_ids],
-            boxed=boxed,
-        )._execute_from_root()
-
     def road_direction(self, x: float, y: float, default_dir: float):
         return database.road_direction(x, y, default_dir)
 
     def road_coords(self, x: float, y: float):
         return database.road_coords(x, y)
 
-    def get_traj(self) -> List[List["Trajectory"]]:
-        return derive_world(
-            self,
-            database.get_traj,
-        )._execute_from_root()
-
     def get_traj_key(self):
         return derive_world(
             self,
             database.get_traj_key,
-        )._execute_from_root()
-
-    def get_headings(self) -> List[List[List[float]]]:
-        # TODO: Optimize operations with NumPy if possible
-        trajectories = self.get_traj()
-        headings: List[List[List[float]]] = []
-        for trajectory in trajectories:
-            _headings: List[List[float]] = []
-            for traj in trajectory:
-                __headings: List[float] = []
-                for j in range(1, len(traj.coordinates)):
-                    prev_pos = traj.coordinates[j - 1]
-                    current_pos = traj.coordinates[j]
-                    heading = 0.0
-                    if current_pos[1] != prev_pos[1]:
-                        heading = np.arctan2(
-                            current_pos[1] - prev_pos[1], current_pos[0] - prev_pos[0]
-                        )
-                    # convert to degrees from radian
-                    heading *= 180 / np.pi
-                    # converting such that all headings are positive
-                    heading = (heading + 360) % 360
-                    __headings.append(heading)
-                _headings.append(__headings)
-            headings.append(_headings)
-        return headings
-
-    def get_camera(self):
-        return derive_world(
-            self,
-            database.get_cam,
         )._execute_from_root()
 
     def get_id_time_camId_filename(self, num_joined_tables: int):
@@ -297,37 +233,6 @@ class World:
     @property
     def materialized(self):
         return self._materialized
-
-    # def get_traj_attr(self, attr: str):
-    #     return derive_world(self, database.get_traj_attr, attr=attr)._execute_from_root()
-
-    # def get_distance(self, start: datetime.datetime, end: datetime.datetime):
-    #     return derive_world(
-    #         self,
-    #         database.get_distance,
-    #         start=str(start),
-    #         end=str(end),
-    #     )._execute_from_root()
-
-    # def get_speed(self, start: datetime.datetime, end: datetime.datetime):
-    #     return derive_world(
-    #         self,
-    #         database.get_speed,
-    #         start=str(start),
-    #         end=str(end),
-    #     )._execute_from_root()
-
-    # def get_bbox_geo(self):
-    #     return derive_world(
-    #         self,
-    #         database.get_bbox_geo,
-    #     )._execute_from_root()
-
-    # def get_time(self):
-    #     return derive_world(
-    #         self,
-    #         database.get_time,
-    #     )._execute_from_root()
 
 
 def empty_world(name: str = "world") -> World:

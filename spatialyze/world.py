@@ -1,7 +1,7 @@
 from .database import Database
 from .database import database as default_database
 from .geospatial_video import GeospatialVideo
-from .predicate import BoolOpNode, PredicateNode
+from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode
 from .road_network import RoadNetwork
 
 
@@ -18,22 +18,27 @@ class World:
         self.videos = videos or []
         self.geogConstructs = geogConstructs or []
         self._objectCounts = 0
-        self._cameraCounts = 0
+        # self._cameraCounts = 0
 
     def filter(self, predicate: "PredicateNode") -> "World":
-        return World(self.database, self.predicates + [predicate])
+        return World(self.database, self.predicates + [predicate], self.videos, self.geogConstructs)
 
     def addVideo(self, video: "GeospatialVideo") -> "World":
-        return World(self.database, videos=self.videos + [video])
+        return World(self.database, self.predicates, self.videos + [video], self.geogConstructs)
 
     def addGeogConstructs(self, geogConstructs: "RoadNetwork"):
-        return World(self.database, geogConstructs=self.geogConstructs + [geogConstructs])
+        return World(self.database, self.predicates, self.videos, self.geogConstructs + [geogConstructs])
 
-    def object(self):
-        pass
+    def object(self, index: "int | None" = None):
+        if index is not None:
+            node = ObjectTableNode(self._objectCounts)
+            self._objectCounts += 1
+        else:
+            node = ObjectTableNode(index)
+        return node
 
     def camera(self):
-        pass
+        return CameraTableNode()
 
     def geogConstruct(self, type: "str"):
         pass

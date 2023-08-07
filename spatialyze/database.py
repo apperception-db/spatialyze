@@ -18,12 +18,7 @@ from spatialyze.predicate import (
 )
 from spatialyze.utils.add_recognized_objects import add_recognized_objects
 from spatialyze.utils.create_sql import create_sql
-from spatialyze.utils.fetch_camera import fetch_camera
-from spatialyze.utils.fetch_camera_framenum import fetch_camera_framenum
-from spatialyze.utils.overlay_bboxes import overlay_bboxes
 from spatialyze.utils.recognize import recognize
-from spatialyze.utils.reformat_bbox_trajectories import reformat_bbox_trajectories
-from spatialyze.utils.timestamp_to_framenum import timestamp_to_framenum
 
 if TYPE_CHECKING:
     from psycopg2 import connection as Connection
@@ -305,29 +300,6 @@ class Database:
         FROM ({world._execute_from_root()}) as __intersect__
         """
 
-    def get_cam(self, query: "psql.Composable | str"):
-        """
-        Execute sql command rapidly
-        """
-
-        # hack
-        q = psql.SQL(
-            "SELECT cameraID, frameId, frameNum, fileName, "
-            "cameraTranslation, cameraRotation, cameraIntrinsic, "
-            "egoTranslation, egoRotation, timestamp, cameraHeading, egoHeading "
-            "FROM ({query}) AS final"
-        ).format(query=create_sql(query))
-        return self.execute(q)
-
-    def fetch_camera(self, scene_name: str, frame_timestamp: List[str]):
-        return fetch_camera(self.connection, scene_name, frame_timestamp)
-
-    def fetch_camera_framenum(self, scene_name: str, frame_num: List[int]):
-        return fetch_camera_framenum(self.connection, scene_name, frame_num)
-
-    def timestamp_to_framenum(self, scene_name: str, timestamps: List[str]):
-        return timestamp_to_framenum(self.connection, scene_name, timestamps)
-
     def insert_bbox_traj(self, camera: "Camera", annotation):
         tracking_results = recognize(camera.configs, annotation)
         add_recognized_objects(self.connection, tracking_results, camera.id)
@@ -354,31 +326,6 @@ class Database:
     def road_coords(self, x: float, y: float):
         return self.execute(f"SELECT roadCoords({x}, {y});")
 
-    def select_all(self, query: "psql.Composable | str") -> List[tuple]:
-        print("select_all:", query if isinstance(query, str) else query.as_string(self.cursor))
-        return self.execute(query)
-
-    def get_traj(self, query: "psql.Composable | str") -> List[List[Trajectory]]:
-        # hack
-        _query = psql.SQL(
-            "SELECT asMFJSON(trajCentroids)::json->'sequences'" "FROM ({query}) as final"
-        ).format(query=query)
-
-        print("get_traj", _query.as_string(self.cursor))
-        trajectories = self.execute(_query)
-        return [
-            [
-                Trajectory(
-                    coordinates=t["coordinates"],
-                    datetimes=t["datetimes"],
-                    lower_inc=t["lower_inc"],
-                    upper_inc=t["upper_inc"],
-                )
-                for t in trajectory
-            ]
-            for (trajectory,) in trajectories
-        ]
-
     def get_traj_key(self, query: "psql.Composable | str"):
         _query = psql.SQL("SELECT itemId FROM ({query}) as final").format(query=create_sql(query))
         print("get_traj_key", _query.as_string(self.cursor))
@@ -397,18 +344,6 @@ class Database:
 
         # print("get_id_time_camId_filename", _query)
         return self.execute(_query)
-
-    def get_video(self, query, cams, boxed):
-        query = psql.SQL(
-            "SELECT XMin(trajBbox), YMin(trajBbox), ZMin(trajBbox), "
-            "XMax(trajBbox), YMax(trajBbox), ZMax(trajBbox), TMin(trajBbox) "
-            f"FROM ({query}) "
-            "JOIN General_Bbox using (itemId)"
-        )
-
-        fetched_meta = self.execute(query)
-        _fetched_meta = reformat_bbox_trajectories(fetched_meta)
-        overlay_bboxes(_fetched_meta, cams, boxed)
 
     def predicate(self, predicate: "PredicateNode"):
         tables, camera = FindAllTablesVisitor()(predicate)
@@ -439,53 +374,6 @@ class Database:
 
     def sql(self, query: str) -> pd.DataFrame:
         return pd.DataFrame(self.execute(query), columns=[d.name for d in self.cursor.description])
-
-    # def get_len(self, query: "psql.Composable | str"):
-    #     """
-    #     Execute sql command rapidly
-    #     """
-
-    #     # hack
-    #     q = psql.SQL(
-    #         "SELECT ratio, ST_X(origin), ST_Y(origin), "
-    #         "ST_Z(origin), fov, skev_factor "
-    #         "FROM ({query}) AS final"
-    #     ).format(query=query)
-    #     return self.execute(q)
-
-    # def get_traj_attr(self, query: "psql.Composable | str", attr: str):
-    #     _query = psql.SQL("SELECT {attr} FROM ({query}) as final").format(attr=attr, query=query)
-    #     print("get_traj_attr:", attr, _query.as_string(self.cursor))
-    #     return self.execute(_query)
-
-    # def get_bbox_geo(self, query: "psql.Composable | str"):
-    #     return self.execute(
-    #         psql.SQL(
-    #             "SELECT XMin(trajBbox), YMin(trajBbox), ZMin(trajBbox), "
-    #             "XMax(trajBbox), YMax(trajBbox), ZMax(trajBbox) "
-    #             "FROM ({query})"
-    #         ).format(query=create_sql(query))
-    #     )
-
-    # def get_time(self, query: "psql.Composable | str"):
-    #     return self.execute(
-    #         psql.SQL("SELECT Tmin(trajBbox) FROM ({query})").format(query=create_sql(query))
-    #     )
-
-    # def get_distance(self, query: "psql.Composable | str", start: str, end: str):
-    #     return self.execute(
-    #         psql.SQL(
-    #             "SELECT cumulativeLength(atPeriodSet(trajCentroids, {[{start}, {end})})) "
-    #             "FROM ({query})"
-    #         ).format(query=create_sql(query), start=psql.Literal(start), end=psql.Literal(end))
-    #     )
-
-    # def get_speed(self, query, start, end):
-    #     return self.execute(
-    #         psql.SQL(
-    #             "SELECT speed(atPeriodSet(trajCentroids, {[{start}, {end})})) " "FROM ({query})"
-    #         ).format(query=create_sql(query), start=psql.Literal(start), end=psql.Literal(end))
-    #     )
 
 
 database = Database(
