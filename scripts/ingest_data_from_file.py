@@ -1,8 +1,8 @@
 
 
 # %%
-from apperception.database import Database, database
-from apperception.utils import import_tables, ingest_road, import_pickle
+from spatialyze.database import Database, database
+from spatialyze.utils import import_tables, ingest_road, import_pickle
 
 # %%
 CSV_DATA_PATH = 'data/scenic/database'

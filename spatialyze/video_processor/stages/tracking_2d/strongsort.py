@@ -11,8 +11,8 @@ from ..tracking.tracking import TrackingResult
 from .tracking_2d import Metadatum, Tracking2D, Tracking2DResult
 
 FILE = Path(__file__).resolve()
-APPERCEPTION = FILE.parent.parent.parent.parent
-WEIGHTS = APPERCEPTION / "weights"
+SPATIALYZE = FILE.parent.parent.parent.parent.parent
+WEIGHTS = SPATIALYZE / "weights"
 reid_weights = WEIGHTS / "osnet_x0_25_msmt17.pt"
 
 

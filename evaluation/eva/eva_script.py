@@ -10,7 +10,7 @@ import torch
 torch.cuda.empty_cache()
 import evadb
 import shutil
-from apperception.database import database
+from spatialyze.database import database
 import pandas as pd
 
 def delete_db():

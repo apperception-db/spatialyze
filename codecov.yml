@@ -1,4 +1,4 @@
 ignore:
   - "spatialyze/legacy"
-  - "spatialyze.video_processor"
+  - "spatialyze/video_processor"
   - "**/__init__.py"

@@ -71,7 +71,7 @@ docker run --name "spatialyze-gs-store" -d -p 25432:5432 -v spatialyze-gs-store-
 We need to setup the mobilitydb with customized functions
 ```sh
 docker exec -it spatialyze-gs-store rm -rf /pg_extender
-docker cp pg_extender spatialyze-gs-store:/pg_extender
+docker cp scripts/pg-extender spatialyze-gs-store:/pg_extender
 docker exec -it -w /pg_extender spatialyze-gs-store python3 install.py
 ```
 To run MobilityDB every system restart

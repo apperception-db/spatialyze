@@ -1,10 +1,10 @@
-name: Test Pipeline
+name: Test Video Processor
 on:
   push:
 
 jobs:
-  test-pipeline:
-    name: Test Pipeline
+  test-video-processor:
+    name: Test Video Processor
     runs-on: ubuntu-latest
     services:
       mobilitydb:
@@ -58,8 +58,8 @@ jobs:
       - name: Extend MobilityDB with User-Defined functions
         shell: micromamba-shell {0}
         run: |
-          pushd pg_extender
-          python ../scripts/generate_pg_extender.py
+          pushd scripts/pg-extender
+          python ../generate_pg_extender.py
           cat install.sql
           psql -h localhost -p 25440 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
@@ -73,12 +73,8 @@ jobs:
         env:
           AP_PORT: 25440
       
-      - name: Generate Image data
-        shell: micromamba-shell {0}
-        run: python scripts/fake-images.py
-      
       - name: Unit Test
         shell: micromamba-shell {0}
-        run: pytest tests-pipeline
+        run: pytest tests/video_processor
         env:
           AP_PORT: 25440

@@ -14,8 +14,8 @@ from ..detection_2d.detection_2d import Detection2D
 from .tracking import Tracking, TrackingResult
 
 FILE = Path(__file__).resolve()
-APPERCEPTION = FILE.parent.parent.parent.parent
-WEIGHTS = APPERCEPTION / "weights"
+SPATIALYZE = FILE.parent.parent.parent.parent.parent
+WEIGHTS = SPATIALYZE / "weights"
 reid_weights = WEIGHTS / "osnet_x0_25_msmt17.pt"
 
 

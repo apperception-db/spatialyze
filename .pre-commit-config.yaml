@@ -11,12 +11,12 @@ repos:
     rev: v2.1.1
     hooks:
       - id: autoflake
-        files: (?:spatialyze|optimized_ingestion)\/.*\.py$
+        files: spatialyze\/.*\.py$
   - repo: https://github.com/pre-commit/mirrors-autopep8
     rev: 'v2.0.2'  # Use the sha / tag you want to point at
     hooks:
       - id: autopep8
-        files: (?:spatialyze|optimized_ingestion)\/.*\.py$
+        files: spatialyze\/.*\.py$
   # - repo: https://github.com/psf/black
   #   rev: 23.3.0
   #   hooks:
@@ -26,12 +26,12 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
-        files: (?:spatialyze|optimized_ingestion)\/.*$
+        files: spatialyze\/.*$
       - id: isort
         name: isort (cython)
         types: [cython]
-        files: (?:spatialyze|optimized_ingestion)\/.*$
+        files: spatialyze\/.*$
       - id: isort
         name: isort (pyi)
         types: [pyi]
-        files: (?:spatialyze|optimized_ingestion)\/.*$
+        files: spatialyze\/.*$

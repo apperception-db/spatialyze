@@ -4,7 +4,7 @@
 
 Usage example:
     from optimization_playground.segment_mapping import map_imgsegment_roadsegment
-    from apperception.utils import fetch_camera_config
+    from spatialyze.utils import fetch_camera_config
 
     test_config = fetch_camera_config(test_img, database)
     mapping = map_imgsegment_roadsegment(test_config)
@@ -33,9 +33,10 @@ from ...camera_config_copy import CameraConfig, camera_config
 # from pyquaternion import Quaternion
 pd.get_option("display.max_columns")
 
-from apperception.database import database
-from apperception.utils import fetch_camera_config
 from utils import line_to_polygon_intersection
+
+from spatialyze.database import database
+from spatialyze.utils import fetch_camera_config
 
 logger = logging.getLogger(__name__)
 

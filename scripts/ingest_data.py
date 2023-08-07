@@ -1,7 +1,7 @@
 # %%
 import os
-from apperception.database import Database, database
-from apperception.utils import import_tables, ingest_road
+from spatialyze.database import Database, database
+from spatialyze.utils import import_tables, ingest_road
 
 # %%
 EXPERIMENT = False
@@ -22,7 +22,7 @@ road_data
 ingest_road(database, road_data)
 
 # %%
-from apperception.world import empty_world
+from spatialyze.legacy.world import empty_world
 import os
 import pickle
 import time
@@ -57,8 +57,8 @@ df_sample_data = df_sample_data[df_sample_data["location"] == "boston-seaport"]
 scenes = df_sample_data['scene_name'].drop_duplicates().values.tolist()
 
 # %%
-from apperception.utils import df_to_camera_config
-from apperception.data_types import Camera
+from spatialyze.utils import df_to_camera_config
+from spatialyze.data_types import Camera
 
 with open("/home/youse/apperception/data/evaluation/video-samples/boston-seaport.txt", 'r') as f:
     sceneNumbers = f.readlines()
@@ -84,7 +84,7 @@ end = time.time()
 print("Ingest Data Time: ", format(end-start))
 
 # %%
-from apperception.utils import export_tables
+from spatialyze.utils import export_tables
 
 # %%
 export_tables(database.connection, "../data/scenic/database/")

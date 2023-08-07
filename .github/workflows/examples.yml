@@ -61,25 +61,23 @@ jobs:
       - name: Extend MobilityDB with User-Defined functions
         shell: micromamba-shell {0}
         run: |
-          pushd pg_extender
-          mv install.sql install.sql.bak
-          python ../scripts/generate_pg_extender.py
+          pushd scripts/pg-extender
+          python ../generate_pg_extender.py
           cat install.sql
           psql -h localhost -p 25432 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          mv install.sql.bak install.sql
           popd
         env:
           PGPASSWORD: docker
       
-      - name: Ingest data
+      - name: Ingest Road
         shell: micromamba-shell {0}
         run: python ./scripts/ingest_road.py
         env:
           AP_PORT: 25432
       
-      - name: Generate Image data
+      - name: Generate Video Examples
         shell: micromamba-shell {0}
-        run: python examples/inference_pipeline.py
+        run: python evaluation/examples/inference_pipeline.py
 
       - name: Commit generated examples
         run: ./scripts/commit-and-push-if-latest.sh "[CI] generate video examples"

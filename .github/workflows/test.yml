@@ -96,8 +96,8 @@ jobs:
       - name: Extend MobilityDB with User-Defined functions
         shell: micromamba-shell {0}
         run: |
-          pushd pg_extender
-          python ../scripts/generate_pg_extender.py
+          pushd scripts/pg-extender
+          python ../generate_pg_extender.py
           cat install.sql
           psql -h localhost -p 25440 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           psql -h localhost -p 25441 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
@@ -123,7 +123,7 @@ jobs:
       
       - name: Unit Test
         shell: micromamba-shell {0}
-        run: pytest --cov=spatialyze --cov-report=xml tests
+        run: pytest --cov=spatialyze --cov-report=xml tests/engine tests/interface
         env:
           AP_PORT: 25440
           AP_PORT_ROAD_1: 25441

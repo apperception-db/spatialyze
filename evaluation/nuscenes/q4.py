@@ -1,10 +1,10 @@
 import time
 from os import environ
 
-from apperception.database import database
-from apperception.world import empty_world
-from apperception.utils import F
-from apperception.predicate import camera, objects, lit
+from spatialyze.database import database
+from spatialyze.legacy.world import empty_world
+from spatialyze.utils import F
+from spatialyze.predicate import camera, objects, lit
 database.connection
 
 name = 'ScenicWorld' # world name
