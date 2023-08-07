@@ -255,7 +255,7 @@ jobs:
       
       - name: Unit Test
         shell: micromamba-shell {0}
-        run: pytest --cov=spatialyze --cov-report=xml tests/engine
+        run: pytest --cov=spatialyze --cov-report=xml tests/interface
         env:
           AP_PORT: 25440
 

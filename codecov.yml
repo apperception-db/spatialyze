@@ -1,6 +1,6 @@
 ignore:
-  - "spatialyze/video_processor/stages/detection_estimation"
-  - "spatialyze/video_processor/stages/segment_trajectory"
+  - "spatialyze/video_processor/stages/detection_estimation/*"
+  - "spatialyze/video_processor/stages/segment_trajectory/*"
   - "spatialyze/video_processor/stages/depth_estimation.py"
   - "spatialyze/video_processor/stages/strongsort_with_skip.py"
   - "spatialyze/video_processor/utils/preprocess.py"
