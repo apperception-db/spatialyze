@@ -16,6 +16,10 @@
     alt="Github Actions Type Check Status"
     src="https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square"
   ></a>
+  <a href="https://codecov.io/gh/apperception-db/spatialyze"><img
+    alt="Codecov Coverage Status"
+    src="https://img.shields.io/codecov/c/github/apperception-db/spatialyze.svg?style=flat-square"
+  ></a>
 </p>
 
 ## Absract
