@@ -1,0 +1,25 @@
+name: Lint
+on:
+  push:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install flake8
+      
+      - name: Analyze the code with flake8
+        run: python -m flake8 spatialyze --statistics
