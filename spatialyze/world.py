@@ -31,10 +31,10 @@ class World:
 
     def object(self, index: "int | None" = None):
         if index is not None:
-            node = ObjectTableNode(self._objectCounts)
-            self._objectCounts += 1
-        else:
-            node = ObjectTableNode(index)
+            return ObjectTableNode(index)
+
+        node = ObjectTableNode(self._objectCounts)
+        self._objectCounts += 1
         return node
 
     def camera(self):

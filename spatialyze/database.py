@@ -1,5 +1,5 @@
 from os import environ
-from typing import TYPE_CHECKING, Callable, List, Tuple
+from typing import TYPE_CHECKING, Callable
 
 import pandas as pd
 import psycopg2
@@ -9,7 +9,6 @@ import psycopg2.sql as psql
 # from mobilitydb.psycopg import register as mobilitydb_register
 from postgis.psycopg import register as postgis_register
 
-from spatialyze.data_types import Trajectory
 from spatialyze.predicate import (
     FindAllTablesVisitor,
     GenSqlVisitor,
@@ -69,15 +68,15 @@ BBOX_COLUMNS: "list[tuple[str, str]]" = [
 ]
 
 
-def columns(fn: Callable[[Tuple[str, str]], str], columns: List[Tuple[str, str]]) -> str:
+def columns(fn: "Callable[[tuple[str, str]], str]", columns: "list[tuple[str, str]]") -> str:
     return ",".join(map(fn, columns))
 
 
-def _schema(column: Tuple[str, str]) -> str:
+def _schema(column: "tuple[str, str]") -> str:
     return " ".join(column)
 
 
-def _name(column: Tuple[str, str]) -> str:
+def _name(column: "tuple[str, str]") -> str:
     return column[0]
 
 
