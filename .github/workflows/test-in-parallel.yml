@@ -75,9 +75,14 @@ jobs:
       
       - name: Unit Test
         shell: micromamba-shell {0}
-        run: pytest tests/video_processor
+        run: pytest --cov=spatialyze --cov-report=xml tests/video_processor
         env:
           AP_PORT: 25440
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: video-processor-coverage
+          path: ./coverage.xml
 
   test-engine-and-interface:
     name: Test Engine and Interface
@@ -207,3 +212,60 @@ jobs:
           AP_PORT_RESET: 25443
           AP_PORT_IMPORT: 25444
           AP_PORT_SQL: 25445
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: engine-and-interface-coverage
+          path: ./coverage.xml
+
+  upload-coverage:
+    name: Upload Coverage
+    needs: [test-video-processor, test-engine-and-interface]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Download Coverage
+        uses: actions/download-artifact@v3
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          verbose: true
+
+      # - name: Download Coverage
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: video-processor-coverage
+      #     path: ./video-processor-coverage
+
+      # - name: Download Coverage
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: engine-and-interface-coverage
+      #     path: ./engine-and-interface-coverage
+
+      # - name: Combine Coverage
+      #   shell: micromamba-shell {0}
+      #   run: |
+      #     pip install coverage
+      #     coverage combine ./video-processor-coverage ./engine-and-interface-coverage
+      #     coverage xml
+      #     coverage report
+      #     coverage html
+      #     coverage-badge -o coverage.svg -f
+
+      # - name: Upload Coverage
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: coverage
+      #     path: ./coverage.xml
+
+      # - name: Upload Coverage
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: coverage-badge
+      #     path: ./coverage.svg
