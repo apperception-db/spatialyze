@@ -1,4 +1,5 @@
 ignore:
+  - "spatialyze/legacy"
   - "spatialyze/video_processor/modules"
   - "spatialyze/video_processor/stages/detection_estimation/*"
   - "spatialyze/video_processor/stages/segment_trajectory/*"
