@@ -1,8 +1,8 @@
 # Spatialyze: A Geospatial Video Analytic System with Spatial-Aware Optimizations
 
-![Tests](https://github.com/apperception-db/spatialyze/actions/workflows/test.yml/badge.svg?branch=main)
-![Tests Video Processor](https://github.com/apperception-db/spatialyze/actions/workflows/test-video-processor.yml/badge.svg?branch=main)
-![Type Check](https://github.com/apperception-db/spatialyze/actions/workflows/check.yml/badge.svg?branch=main)
+[![Tests](https://github.com/apperception-db/spatialyze/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/apperception-db/spatialyze/actions?query=workflow%3Atest)
+[![Tests Video Processor](https://github.com/apperception-db/spatialyze/actions/workflows/test-video-processor.yml/badge.svg?branch=main)](https://github.com/apperception-db/spatialyze/actions?query=workflow%3Atest-video-processor)
+[![Type Check](https://github.com/apperception-db/spatialyze/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/apperception-db/spatialyze/actions?query=workflow%3Acheck)
 
 ## Absract
 Videos that are shot using commodity hardware such as phones
