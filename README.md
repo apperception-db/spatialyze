@@ -106,10 +106,12 @@ The demo notebook first constructs the world. Then it queries for the trajectory
 
 ## Citing Spatialyze
 ```bib
-@unpublished{2023-spatialyze,
-  author = {Chanwut Kittivorawong* and Yongming Ge* and Yousef Helal and Alvin Cheung},
-  title  = {Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations},
-  note   = {\url{https://github.com/apperception-db/spatialyze}},
-  year   = {2023},
+@misc{kittivorawong2023spatialyze,
+      title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
+      author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
+      year={2023},
+      eprint={2308.03276},
+      archivePrefix={arXiv},
+      primaryClass={cs.DB}
 }
 ```
