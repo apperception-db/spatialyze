@@ -39,7 +39,7 @@ nature of such workflows, the temporal-spatial metadata stored
 with videos, and physical behavior of real-world objects to optimize
 the execution of workflows. Our results using real-world videos
 and workflows show that Spatialyze can reduce execution time by
-up to 5.3$`\times`$, while maintaining up to 97.1% accuracy compared to
+up to 5.3x, while maintaining up to 97.1% accuracy compared to
 unoptimized execution.
 
 ## Requirement
