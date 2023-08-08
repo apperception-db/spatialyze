@@ -12,6 +12,7 @@
     alt="Github Actions Type Check Status"
     src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/lint.yml?label=Lint&style=for-the-badge"
   ></a>
+  <br/>
   <a href="https://codecov.io/gh/apperception-db/spatialyze"><img
     alt="Codecov Coverage Status"
     src="https://img.shields.io/codecov/c/github/apperception-db/spatialyze.svg?label=Coverage&style=for-the-badge"
@@ -19,6 +20,10 @@
   <a href="https://github.com/psf/black"><img
     alt="Github Actions Type Check Status"
     src="https://img.shields.io/badge/black-000000.svg?label=Code%20style&style=for-the-badge"
+  ></a>
+  <a href="https://arxiv.org/abs/2308.03276"><img
+    alt="Github Actions Type Check Status"
+    src="https://img.shields.io/badge/2308.03276-b31b1b.svg?label=arXiv&style=for-the-badge"
   ></a>
 </p>
 
