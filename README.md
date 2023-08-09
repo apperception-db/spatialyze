@@ -12,6 +12,7 @@
     alt="Github Actions Type Check Status"
     src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/lint.yml?label=Lint&style=for-the-badge"
   ></a>
+  <br/>
   <a href="https://codecov.io/gh/apperception-db/spatialyze"><img
     alt="Codecov Coverage Status"
     src="https://img.shields.io/codecov/c/github/apperception-db/spatialyze.svg?label=Coverage&style=for-the-badge"
@@ -20,27 +21,24 @@
     alt="Github Actions Type Check Status"
     src="https://img.shields.io/badge/black-000000.svg?label=Code%20style&style=for-the-badge"
   ></a>
+  <a href="https://arxiv.org/abs/2308.03276"><img
+    alt="Github Actions Type Check Status"
+    src="https://img.shields.io/badge/2308.03276-b31b1b.svg?label=arXiv&style=for-the-badge"
+  ></a>
 </p>
 
 ## Absract
-Videos that are shot using commodity hardware such as phones
-and surveillance cameras record various metadata such as time and
-location. We encounter such geospatial videos on a daily basis and
-such videos have been growing in volume significantly. Yet, we
-do not have data management systems that allow users to interact
-with such data effectively.
+Videos that are shot using commodity hardware such as phones and surveillance cameras record various metadata such as time and location.
+We encounter such geospatial videos on a daily basis and such videos have been growing in volume significantly.
+Yet, we do not have data management systems that allow users to interact with such data effectively.
 
-In this paper, we describe Spatialyze, a new framework for end-
-to-end querying of geospatial videos. Spatialyze comes with a
-domain-specific language where users can construct geospatial
-video analytic workflows using a 3-step, declarative, build-filter-
-observe paradigm. Internally, Spatialyze leverages the declarative
-nature of such workflows, the temporal-spatial metadata stored
-with videos, and physical behavior of real-world objects to optimize
-the execution of workflows. Our results using real-world videos
-and workflows show that Spatialyze can reduce execution time by
-up to 5.3$`\times`$, while maintaining up to 97.1% accuracy compared to
-unoptimized execution.
+In this paper, we describe Spatialyze, a new framework for end-to-end querying of geospatial videos.
+Spatialyze comes with a domain-specific language where users can construct geospatial video analytic workflows using a 3-step,
+declarative, build-filter-observe paradigm.
+Internally, Spatialyze leverages the declarative nature of such workflows,
+the temporal-spatial metadata stored with videos, and physical behavior of real-world objects to optimize the execution of workflows.
+Our results using real-world videos and workflows show that Spatialyze can reduce execution time by up to 5.3x,
+while maintaining up to 97.1% accuracy compared to unoptimized execution.
 
 ## Requirement
 ```
@@ -110,3 +108,15 @@ jupyter-lab
 ```
 
 The demo notebook first constructs the world. Then it queries for the trajectory of the cars that appeared once in an area of interests within some time interval.
+
+## Citing Spatialyze
+```bib
+@misc{kittivorawong2023spatialyze,
+      title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
+      author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
+      year={2023},
+      eprint={2308.03276},
+      archivePrefix={arXiv},
+      primaryClass={cs.DB}
+}
+```
