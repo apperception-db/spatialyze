@@ -11,18 +11,26 @@ from .utils.F.road_segment import road_segment
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
+from .video_processor.stages.depth_estimation import DepthEstimation
 from .video_processor.stages.detection_2d.object_type_filter import ObjectTypeFilter
 from .video_processor.stages.detection_2d.yolo_detection import YoloDetection
+from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
+    FromDetection2DAndDepth,
+)
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
     FromDetection2DAndRoad,
 )
 from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
+from .video_processor.stages.tracking_3d.from_tracking_2d_and_depth import (
+    FromTracking2DAndDepth,
+)
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
     FromTracking2DAndRoad,
 )
 from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
+from .video_processor.stages.tracking_3d.tracking_3d import Tracking3D
 from .video_processor.utils.format_trajectory import format_trajectory
 from .video_processor.utils.get_tracks import get_tracks
 from .video_processor.utils.insert_trajectory import insert_trajectory
@@ -122,9 +130,10 @@ def _execute(world: "World", optimization=True):
             [
                 DecodeFrame(),
                 YoloDetection(),
-                FromDetection2DAndRoad(),
+                DepthEstimation(),
+                FromDetection2DAndDepth(),
                 StrongSORT(),
-                FromTracking2DAndRoad(),
+                FromTracking2DAndDepth(),
             ]
         )
 
@@ -139,7 +148,7 @@ def _execute(world: "World", optimization=True):
         output = pipeline.run(Payload(video))
         track_result = StrongSORT.get(output)
         assert track_result is not None
-        tracking3d = FromTracking2DAndRoad.get(output)
+        tracking3d = Tracking3D.get(output)
         assert tracking3d is not None
         vresults[v.video] = tracking3d
         tracks = get_tracks(tracking3d, v.camera)

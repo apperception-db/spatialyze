@@ -21,7 +21,7 @@ ROAD_DIR = './data/scenic/road-network/boston-seaport'
 disable_cache()
 
 
-def test_simple_workflow():
+def test_optimized_workflow():
     database = Database(
     psycopg2.connect(
         dbname=environ.get("AP_DB", "mobilitydb"),
@@ -51,14 +51,14 @@ def test_simple_workflow():
     o = world.object()
     world.filter(o.type == 'car')
     
-    objects, trackings = _execute(world, optimization=False)
+    objects, trackings = _execute(world)
 
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
     #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
     #     pickle.dump(trackings, f)
     
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'rb') as f:
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
     
     for filename, tgs in trackings_groundtruth.items():
@@ -83,12 +83,12 @@ def test_simple_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
     #     json.dump(objects, f, indent=1)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'wb') as f:
     #     pickle.dump(objects, f)
     
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'rb') as f:
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)
     
     assert len(objects) == len(objects_groundtruth), (len(objects), len(objects_groundtruth))
