@@ -201,7 +201,7 @@ class Database:
 
     def execute_and_cursor(
         self, query: "str | psql.Composable", vars: "tuple | list | None" = None
-    ) -> "list[tuple]":
+    ) -> "tuple[list[tuple], Cursor]":
         cursor = self.connection.cursor()
         try:
             cursor.execute(query, vars)
