@@ -139,7 +139,7 @@ def _execute(world: "World"):
             _CameraConfig(
                 frame_id=cc.frame_id or str(idx),
                 frame_num=idx,
-                filename=cc.filename or '',
+                filename=cc.filename or "",
                 camera_translation=np.array(cc.camera_translation),
                 camera_rotation=np.array(cc.camera_rotation.q),
                 camera_intrinsic=cc.camera_intrinsic,
