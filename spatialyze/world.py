@@ -90,7 +90,7 @@ class World:
         return objects
 
 
-def _execute(world: "World", optimization = True):
+def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
