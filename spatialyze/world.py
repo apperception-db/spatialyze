@@ -110,15 +110,14 @@ def _execute(world: "World", optimization=True):
                 InView(distance=50, predicate=world.predicates),
                 YoloDetection(),
                 objtypes_filter,
-                DepthEstimation(),
-                FromDetection2DAndDepth(),
+                FromDetection2DAndRoad(),
                 *(
                     [DetectionEstimation()]
                     if all(t in ["car", "truck"] for t in objtypes_filter.types)
                     else []
                 ),
                 StrongSORT(),
-                FromTracking2DAndDepth(),
+                FromTracking2DAndRoad(),
             ]
         )
     else:
@@ -126,9 +125,10 @@ def _execute(world: "World", optimization=True):
             [
                 DecodeFrame(),
                 YoloDetection(),
-                FromDetection2DAndRoad(),
+                DepthEstimation(),
+                FromDetection2DAndDepth(),
                 StrongSORT(),
-                FromTracking2DAndRoad(),
+                FromTracking2DAndDepth(),
             ]
         )
 
