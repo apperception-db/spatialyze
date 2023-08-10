@@ -49,8 +49,8 @@ def test_simple_workflow():
     
     objects = _execute(world)
     
-    with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'w') as f:
-        json.dump(objects, f, indent=1)
+    # with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'w') as f:
+    #     json.dump(objects, f, indent=1)
     
     with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'r') as f:
         objects_groundtruth = json.load(f)
