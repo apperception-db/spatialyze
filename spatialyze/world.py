@@ -29,7 +29,8 @@ from .video_processor.stages.tracking_3d.from_tracking_2d_and_depth import (
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
     FromTracking2DAndRoad,
 )
-from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum, Tracking3D
+from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
+from .video_processor.stages.tracking_3d.tracking_3d import Tracking3D
 from .video_processor.utils.format_trajectory import format_trajectory
 from .video_processor.utils.get_tracks import get_tracks
 from .video_processor.utils.insert_trajectory import insert_trajectory
