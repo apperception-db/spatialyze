@@ -23,6 +23,9 @@ from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
     FromTracking2DAndRoad,
 )
 from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
+from .video_processor.stages.depth_estimation import DepthEstimation
+from .video_processor.stages.detection_3d.from_detection_2d_and_depth import FromDetection2DAndDepth
+from .video_processor.stages.tracking_3d.from_tracking_2d_and_depth import FromTracking2DAndDepth
 from .video_processor.utils.format_trajectory import format_trajectory
 from .video_processor.utils.get_tracks import get_tracks
 from .video_processor.utils.insert_trajectory import insert_trajectory
@@ -107,14 +110,15 @@ def _execute(world: "World", optimization=True):
                 InView(distance=50, predicate=world.predicates),
                 YoloDetection(),
                 objtypes_filter,
-                FromDetection2DAndRoad(),
+                DepthEstimation(),
+                FromDetection2DAndDepth(),
                 *(
                     [DetectionEstimation()]
                     if all(t in ["car", "truck"] for t in objtypes_filter.types)
                     else []
                 ),
                 StrongSORT(),
-                FromTracking2DAndRoad(),
+                FromTracking2DAndDepth(),
             ]
         )
     else:
