@@ -21,10 +21,10 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
 from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
-from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
     FromTracking2DAndRoad,
 )
+from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
 from .video_processor.utils.format_trajectory import format_trajectory
 from .video_processor.utils.get_tracks import get_tracks
 from .video_processor.utils.insert_trajectory import insert_trajectory
