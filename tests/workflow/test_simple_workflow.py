@@ -44,15 +44,15 @@ def test_simple_workflow():
         camera = [camera_config(*c) for c in video['frames']]
 
         world.addVideo(GeospatialVideo(videofile, camera))
-        break
+        # break
     
     o = world.object()
     world.filter(o.type == 'car')
     
     objects, trackings = _execute(world)
 
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
-        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'r') as f:
         trackings_groundtruth = json.load(f)
@@ -61,11 +61,11 @@ def test_simple_workflow():
         assert filename in trackings, (filename, trackings.keys())
         tps = trackings[filename]
         assert len(tps) == len(tgs), (len(tps), len(tgs))
-        for tp, tg in zip(tps, tgs):
-            assert len(tp) == len(tg), (len(tp), len(tg))
+        for idx, (tp, tg) in enumerate(zip(tps, tgs)):
+            assert len(tp) == len(tg), (idx, len(tp), len(tg))
             for oid, g in tg.items():
-                assert oid in tp, (oid, tp.keys())
-                p = tp[oid]
+                assert int(oid) in tp, (oid, tp.keys())
+                p = tp[int(oid)]
                 assert p.frame_idx == g['frame_idx'], (p.frame_idx, g['frame_idx'])
                 assert tuple(p.detection_id) == tuple(g['detection_id']), (p.detection_id, g['detection_id'])
                 assert p.object_id == g['object_id'], (p.object_id, g['object_id'])

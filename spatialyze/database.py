@@ -96,6 +96,7 @@ class Database:
 
     def reset(self, commit=False):
         self.reset_cursor()
+        self._drop_table(commit)
         self._create_camera_table(commit)
         self._create_item_general_trajectory_table(commit)
         self._create_general_bbox_table(commit)
@@ -106,16 +107,22 @@ class Database:
         assert self.cursor.closed
         self.cursor = self.connection.cursor()
 
-    def _create_camera_table(self, commit=True):
+    def _drop_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
+        cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
+        cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
+        self._commit(commit)
+        cursor.close()
+
+    def _create_camera_table(self, commit=True):
+        cursor = self.connection.cursor()
         cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
         self._commit(commit)
         cursor.close()
 
     def _create_general_bbox_table(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
         cursor.execute(
             f"""
             CREATE TABLE General_Bbox (
@@ -130,7 +137,6 @@ class Database:
 
     def _create_item_general_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
         cursor.execute(
             f"""
             CREATE TABLE Item_General_Trajectory (

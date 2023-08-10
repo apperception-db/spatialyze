@@ -66,6 +66,7 @@ class InView(Stage):
         indices, view_areas = get_views(payload, self.distance)
 
         keep = bitarray(len(payload.keep))
+        keep.setall(1)
         if self.predicate is None:
             results = database.execute(
                 sql.SQL(
@@ -583,4 +584,4 @@ def create_inview_predicate(
     param_name = "roadtypes"
     predicate_str = InViewPredicate(param_name)(node)
     roadtypes = FindRoadTypes()(node)
-    return list(roadtypes), f"lambda {param_name}: {predicate_str}"
+    return sorted(list(roadtypes)), f"lambda {param_name}: {predicate_str}"
