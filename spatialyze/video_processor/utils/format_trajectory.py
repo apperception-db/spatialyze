@@ -1,6 +1,7 @@
 import datetime
-import numpy.typing as npt
+
 import numpy as np
+import numpy.typing as npt
 
 from ..camera_config import CameraConfig
 from ..stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
@@ -29,8 +30,8 @@ def format_trajectory(
     for tracking_result_3d, ego_info, segment_mapping in track:
         if ego_info:
             if (
-                ego_info.filename is not None and
-                "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
+                ego_info.filename is not None
+                and "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
                 in ego_info.filename
             ):
                 info_found.append(
