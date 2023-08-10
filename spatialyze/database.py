@@ -404,7 +404,7 @@ class Database:
         return self.execute(sql_str)
 
     def sql(self, query: str) -> pd.DataFrame:
-        results, cursor = self.execute_and_cursor(query, vars)
+        results, cursor = self.execute_and_cursor(query)
         description = cursor.description
         cursor.close()
         return pd.DataFrame(results, columns=[d.name for d in description])
