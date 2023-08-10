@@ -9,7 +9,7 @@
     src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/check.yml?label=Type%20Check&style=for-the-badge"
   ></a>
   <a href="https://github.com/apperception-db/spatialyze/actions/workflows/lint.yml"><img
-    alt="Github Actions Type Check Status"
+    alt="Github Actions Lint Status"
     src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/lint.yml?label=Lint&style=for-the-badge"
   ></a>
   <br/>
@@ -18,11 +18,11 @@
     src="https://img.shields.io/codecov/c/github/apperception-db/spatialyze.svg?label=Coverage&style=for-the-badge"
   ></a>
   <a href="https://github.com/psf/black"><img
-    alt="Github Actions Type Check Status"
+    alt="Black Badge"
     src="https://img.shields.io/badge/black-000000.svg?label=Code%20style&style=for-the-badge"
   ></a>
   <a href="https://arxiv.org/abs/2308.03276"><img
-    alt="Github Actions Type Check Status"
+    alt="ArXiv Paper"
     src="https://img.shields.io/badge/2308.03276-b31b1b.svg?label=arXiv&style=for-the-badge"
   ></a>
 </p>
