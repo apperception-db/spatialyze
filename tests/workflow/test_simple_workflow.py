@@ -52,8 +52,8 @@ def test_simple_workflow():
     
     objects, trackings = _execute(world, optimization=False)
 
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
-    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'r') as f:
         trackings_groundtruth = json.load(f)
@@ -79,8 +79,8 @@ def test_simple_workflow():
                 assert p.object_type == g['object_type'], (p.object_type, g['object_type'])
                 assert str(p.timestamp) == g['timestamp'], (p.timestamp, g['timestamp'])
     
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
-    #     json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
+        json.dump(objects, f, indent=1)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'r') as f:
         objects_groundtruth = json.load(f)
