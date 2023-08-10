@@ -1,6 +1,6 @@
 import datetime
 import numpy as np
-import numpy.typing as np
+import numpy.typing as npt
 
 from ...database import Database
 from ...utils import join
