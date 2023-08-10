@@ -27,7 +27,12 @@ class Video(Iterable["CameraConfig"]):
         self._dimension: "tuple[int, int] | None" = None
 
     @property
+    def camera_configs(self):
+        return self._camera_configs
+
+    @property
     def interpolated_frames(self):
+        # TODO: remove
         return self._camera_configs
 
     @property

@@ -65,6 +65,8 @@ class InView(Stage):
     def _run(self, payload: "Payload") -> "tuple[bitarray, None]":
         indices, view_areas = get_views(payload, self.distance)
 
+        keep = bitarray(len(payload.keep))
+        keep.setall(1)
         if self.predicate is None:
             results = database.execute(
                 sql.SQL(
@@ -84,12 +86,10 @@ class InView(Stage):
                 )
             )
 
-            keep = bitarray(len(payload.keep))
             keep.setall(0)
             for (index,) in results:
                 keep[index] = 1
         elif self.predicate is False:
-            keep = bitarray(len(payload.keep))
             keep.setall(0)
         elif self.predicate is not True:
             exists = sql.SQL(
@@ -120,7 +120,6 @@ class InView(Stage):
                 )
             )
 
-            keep = bitarray(len(payload.keep))
             keep.setall(0)
             for index, *encoded_segment_types in results:
                 segment_types = {
@@ -249,7 +248,7 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
             # print('annihilated', visited)
             return lit(annihilator)
         if all(isinstance(e, LiteralNode) for e in visited.exprs):
-            assert len({e.value for e in visited.exprs}) == 1
+            assert len({e.value for e in visited.exprs}) == 1, visited.exprs
             # print('all', visited)
             return lit(visited.exprs[0].value)
         exprs = [e for e in visited.exprs if not isinstance(e, LiteralNode)]
@@ -585,4 +584,4 @@ def create_inview_predicate(
     param_name = "roadtypes"
     predicate_str = InViewPredicate(param_name)(node)
     roadtypes = FindRoadTypes()(node)
-    return list(roadtypes), f"lambda {param_name}: {predicate_str}"
+    return sorted(list(roadtypes)), f"lambda {param_name}: {predicate_str}"
