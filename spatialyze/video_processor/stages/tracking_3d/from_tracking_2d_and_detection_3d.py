@@ -17,7 +17,9 @@ class FromTracking2DAndDetection2D(Tracking3D):
         detections = Detection3D.get(payload.metadata)
         assert detections is not None
 
-        for k, detection, tracking, frame in zip(payload.keep, detections, trackings, payload.video):
+        for k, detection, tracking, frame in zip(
+            payload.keep, detections, trackings, payload.video
+        ):
             dets, _, dids = detection
             if not k or tracking is None or detection is None:
                 metadata.append(dict())
@@ -33,8 +35,7 @@ class FromTracking2DAndDetection2D(Tracking3D):
 
             detection_map = {
                 did: (det, p, pfc)
-                for det, p, pfc, did
-                in zip(dets, points, points_from_camera, dids)
+                for det, p, pfc, did in zip(dets, points, points_from_camera, dids)
             }
             trackings3d: "dict[int, Tracking3DResult]" = {}
             for object_id, t in tracking.items():
