@@ -11,7 +11,7 @@ from ..types import Float3
 
 def format_trajectory(
     video_name: "str",
-    obj_id: "str",
+    obj_id: "int",
     track: "list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]",
     base=None,
 ):
