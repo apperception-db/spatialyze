@@ -199,7 +199,7 @@ class Database:
         if commit:
             self.connection.commit()
 
-    def execute(
+    def execute_and_cursor(
         self, query: "str | psql.Composable", vars: "tuple | list | None" = None
     ) -> "list[tuple]":
         cursor = self.connection.cursor()
@@ -208,14 +208,20 @@ class Database:
             for notice in cursor.connection.notices:
                 print(notice)
             if cursor.pgresult_ptr is not None:
-                return cursor.fetchall()
+                return cursor.fetchall(), cursor
             else:
-                return []
+                return [], cursor
         except psycopg2.errors.DatabaseError as error:
             self.connection.rollback()
-            raise error
-        finally:
             cursor.close()
+            raise error
+
+    def execute(
+        self, query: "str | psql.Composable", vars: "tuple | list | None" = None
+    ) -> "list[tuple]":
+        results, cursor = self.execute_and_cursor(query, vars)
+        cursor.close()
+        return results
 
     def update(self, query: "str | psql.Composable", commit: bool = True) -> None:
         cursor = self.connection.cursor()
@@ -398,7 +404,10 @@ class Database:
         return self.execute(sql_str)
 
     def sql(self, query: str) -> pd.DataFrame:
-        return pd.DataFrame(self.execute(query), columns=[d.name for d in self.cursor.description])
+        results, cursor = self.execute_and_cursor(query, vars)
+        description = cursor.description
+        cursor.close()
+        return pd.DataFrame(results, columns=[d.name for d in description])
 
 
 database = Database(
