@@ -10,9 +10,7 @@ from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
-from .video_processor.stages.decode_frame.decode_frame import (
-    DecodeFrame,
-)
+from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
 from .video_processor.stages.detection_2d.object_type_filter import ObjectTypeFilter
 from .video_processor.stages.detection_2d.yolo_detection import YoloDetection
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
