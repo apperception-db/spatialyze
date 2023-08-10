@@ -56,4 +56,4 @@ def test_simple_workflow():
     for filename, ogs in objects_groundtruth.items():
         assert filename in objects, (filename, objects.keys())
         for op, og in zip(sorted(objects[filename]), sorted(ogs)):
-            assert op == og, (op, og)
+            assert tuple(op) == tuple(og), (op, og)
