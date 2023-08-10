@@ -90,7 +90,7 @@ class World:
         return objects
 
 
-def _execute(world: "World"):
+def _execute(world: "World", optimization = True):
     database = world._database
 
     # add geographic constructs
@@ -100,22 +100,33 @@ def _execute(world: "World"):
     #     gc.ingest(database)
     # analyze predicates to generate pipeline
     objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
-    pipeline = Pipeline(
-        [
-            DecodeFrame(),
-            InView(distance=50, predicate=world.predicates),
-            YoloDetection(),
-            objtypes_filter,
-            FromDetection2DAndRoad(),
-            *(
-                [DetectionEstimation()]
-                if all(t in ["car", "truck"] for t in objtypes_filter.types)
-                else []
-            ),
-            StrongSORT(),
-            FromTracking2DAndRoad(),
-        ]
-    )
+    if optimization:
+        pipeline = Pipeline(
+            [
+                DecodeFrame(),
+                InView(distance=50, predicate=world.predicates),
+                YoloDetection(),
+                objtypes_filter,
+                FromDetection2DAndRoad(),
+                *(
+                    [DetectionEstimation()]
+                    if all(t in ["car", "truck"] for t in objtypes_filter.types)
+                    else []
+                ),
+                StrongSORT(),
+                FromTracking2DAndRoad(),
+            ]
+        )
+    else:
+        pipeline = Pipeline(
+            [
+                DecodeFrame(),
+                YoloDetection(),
+                FromDetection2DAndRoad(),
+                StrongSORT(),
+                FromTracking2DAndRoad(),
+            ]
+        )
 
     qresults: "dict[str, list[tuple]]" = {}
     vresults: "dict[str, list[T3DMetadatum]]" = {}

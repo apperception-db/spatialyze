@@ -49,7 +49,7 @@ def test_simple_workflow():
     o = world.object()
     world.filter(o.type == 'car')
     
-    objects, trackings = _execute(world)
+    objects, trackings = _execute(world, optimization=False)
 
     # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
     #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
