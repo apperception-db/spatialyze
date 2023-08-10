@@ -1490,12 +1490,6 @@
   ],
   [
    16,
-   "_obj_34",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093412409.jpg"
-  ],
-  [
-   16,
    "_obj_35",
    "scene-0655-CAM_FRONT",
    "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093412409.jpg"
@@ -1568,6 +1562,12 @@
   ],
   [
    16,
+   "_obj_34",
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093412409.jpg"
+  ],
+  [
+   16,
    "_obj_13",
    "scene-0655-CAM_FRONT",
    "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093412409.jpg"
@@ -1599,12 +1599,6 @@
   [
    17,
    "_obj_36",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093512404.jpg"
-  ],
-  [
-   17,
-   "_obj_34",
    "scene-0655-CAM_FRONT",
    "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093512404.jpg"
   ],
@@ -1671,6 +1665,12 @@
   [
    17,
    "_obj_3",
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093512404.jpg"
+  ],
+  [
+   17,
+   "_obj_34",
    "scene-0655-CAM_FRONT",
    "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385093512404.jpg"
   ],
@@ -19204,6 +19204,12 @@
   ],
   [
    147,
+   "_obj_128",
+   "scene-0757-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657120662404.jpg"
+  ],
+  [
+   147,
    "_obj_127",
    "scene-0757-CAM_FRONT",
    "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657120662404.jpg"
@@ -19211,12 +19217,6 @@
   [
    147,
    "_obj_120",
-   "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657120662404.jpg"
-  ],
-  [
-   147,
-   "_obj_128",
    "scene-0757-CAM_FRONT",
    "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657120662404.jpg"
   ],
