@@ -25,7 +25,7 @@ def camera_config(
     camera_heading: float,
     ego_heading: float,
     location: str,
-    road_direction: float,
+    road_direction: float = 0,
 ):
     _frame = CameraConfig()
     _frame.camera_id = camera_id

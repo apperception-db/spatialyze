@@ -5,6 +5,9 @@ on:
       - 'main'
       - 'dev'
 
+permissions:
+  contents: write
+
 jobs:
   clean-up:
     name: Clean Up Python Notebooks
