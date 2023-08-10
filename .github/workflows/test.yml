@@ -82,6 +82,9 @@ jobs:
         with:
           name: workflow-coverage
           path: ./coverage.xml
+      
+      - name: Commit formatted changes
+        run: ./scripts/commit-and-push.sh "[CI] update test"
 
   test-video-processor:
     name: Test Video Processor
