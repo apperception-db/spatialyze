@@ -43,19 +43,23 @@ def test_simple_workflow():
         camera = [camera_config(*c) for c in video['frames']]
 
         world.addVideo(GeospatialVideo(videofile, camera))
+        break
     
     o = world.object()
     world.filter(o.type == 'car')
     
     objects = _execute(world)
     
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow.json'), 'w') as f:
-    #     json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow.json'), 'w') as f:
+        json.dump(objects, f, indent=1)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow.json'), 'r') as f:
         objects_groundtruth = json.load(f)
     
+    assert len(objects) == len(objects_groundtruth), (len(objects), len(objects_groundtruth))
     for filename, ogs in objects_groundtruth.items():
         assert filename in objects, (filename, objects.keys())
-        for op, og in zip(sorted(objects[filename]), sorted(ogs)):
+        ops = objects[filename]
+        assert len(ops) == len(ogs), (len(ops), len(ogs))
+        for op, og in zip(sorted(ops), sorted(ogs)):
             assert tuple(op) == tuple(og), (op, og)

@@ -107,13 +107,16 @@ class Database:
         self.cursor = self.connection.cursor()
 
     def _create_camera_table(self, commit=True):
-        self.cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
-        self.cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
+        cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
         self._commit(commit)
+        cursor.close()
 
     def _create_general_bbox_table(self, commit=True):
-        self.cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
+        cursor.execute(
             f"""
             CREATE TABLE General_Bbox (
                 {columns(_schema, BBOX_COLUMNS)},
@@ -123,10 +126,12 @@ class Database:
             """
         )
         self._commit(commit)
+        cursor.close()
 
     def _create_item_general_trajectory_table(self, commit=True):
-        self.cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
+        cursor.execute(
             f"""
             CREATE TABLE Item_General_Trajectory (
                 {columns(_schema, TRAJECTORY_COLUMNS)},
@@ -135,40 +140,47 @@ class Database:
             """
         )
         self._commit(commit)
+        cursor.close()
 
     def _create_index(self, commit=True):
-        self.cursor.execute("CREATE INDEX ON Cameras (cameraId);")
-        self.cursor.execute("CREATE INDEX ON Cameras (timestamp);")
-        self.cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
-        self.cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute("CREATE INDEX ON Cameras (cameraId);")
+        cursor.execute("CREATE INDEX ON Cameras (timestamp);")
+        cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
+        cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
+        cursor.execute(
             "CREATE INDEX IF NOT EXISTS traj_idx ON Item_General_Trajectory USING GiST(trajCentroids);"
         )
-        self.cursor.execute(
+        cursor.execute(
             "CREATE INDEX IF NOT EXISTS trans_idx ON Item_General_Trajectory USING GiST(translations);"
         )
-        # self.cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
-        # self.cursor.execute(
+        # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
+        # cursor.execute(
         #     "CREATE INDEX IF NOT EXISTS traj_bbox_idx ON General_Bbox USING GiST(trajBbox);"
         # )
-        # self.cursor.execute(
+        # cursor.execute(
         #     "CREATE INDEX IF NOT EXISTS item_id_timestampx ON General_Bbox(itemId, timestamp);"
         # )
         self._commit(commit)
+        cursor.close()
 
     def _insert_into_camera(self, value: tuple, commit=True):
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             f"INSERT INTO Cameras ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
             tuple(value),
         )
         self._commit(commit)
+        cursor.close()
 
     def _insert_into_item_general_trajectory(self, value: tuple, commit=True):
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             f"INSERT INTO Item_General_Trajectory ({columns(_name, TRAJECTORY_COLUMNS)}) VALUES ({place_holder(len(TRAJECTORY_COLUMNS))})",
             tuple(value),
         )
         self._commit(commit)
+        cursor.close()
 
     # def _insert_into_general_bbox(self, value: tuple, commit=True):
     #     self.cursor.execute(
@@ -184,25 +196,31 @@ class Database:
     def execute(
         self, query: "str | psql.Composable", vars: "tuple | list | None" = None
     ) -> "list[tuple]":
+        cursor = self.connection.cursor()
         try:
-            self.cursor.execute(query, vars)
-            for notice in self.cursor.connection.notices:
+            cursor.execute(query, vars)
+            for notice in cursor.connection.notices:
                 print(notice)
-            if self.cursor.pgresult_ptr is not None:
-                return self.cursor.fetchall()
+            if cursor.pgresult_ptr is not None:
+                return cursor.fetchall()
             else:
                 return []
         except psycopg2.errors.DatabaseError as error:
             self.connection.rollback()
             raise error
+        finally:
+            cursor.close()
 
     def update(self, query: "str | psql.Composable", commit: bool = True) -> None:
+        cursor = self.connection.cursor()
         try:
-            self.cursor.execute(query)
+            cursor.execute(query)
             self._commit(commit)
         except psycopg2.errors.DatabaseError as error:
             self.connection.rollback()
             raise error
+        finally:
+            cursor.close()
 
     def insert_cam(self, camera: "Camera"):
         values = [
@@ -224,7 +242,8 @@ class Database:
             for config in camera.configs
         ]
 
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             f"""
             INSERT INTO Cameras ({",".join(col for col, _ in CAMERA_COLUMNS)})
             VALUES {','.join(values)};
@@ -233,6 +252,7 @@ class Database:
 
         # print("New camera inserted successfully.........")
         self.connection.commit()
+        cursor.close()
 
     def retrieve_cam(self, query: "psql.Composed | str | None" = None, camera_id: str = ""):
         """
