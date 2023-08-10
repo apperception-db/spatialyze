@@ -81,7 +81,7 @@ def test_optimized_workflow():
                 assert p.bbox_w == g.bbox_w, (p.bbox_width, g.bbox_w)
                 assert p.bbox_h == g.bbox_h, (p.bbox_height, g.bbox_h)
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
-                assert str(p.timestamp) == g.timestamp, (p.timestamp, g.timestamp)
+                assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
         json.dump(objects, f, indent=1)
