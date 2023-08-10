@@ -52,11 +52,13 @@ def test_optimized_workflow():
     
     objects, trackings = _execute(world)
 
-    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
-    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
+        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
+        pickle.dump(trackings, f)
     
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'r') as f:
-        trackings_groundtruth = json.load(f)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'rb') as f:
+        trackings_groundtruth = pickle.load(f)
     
     for filename, tgs in trackings_groundtruth.items():
         assert filename in trackings, (filename, trackings.keys())
@@ -65,25 +67,28 @@ def test_optimized_workflow():
         for idx, (tp, tg) in enumerate(zip(tps, tgs)):
             assert len(tp) == len(tg), (idx, len(tp), len(tg))
             for oid, g in tg.items():
-                assert int(oid) in tp, (oid, tp.keys())
-                p = tp[int(oid)]
-                assert p.frame_idx == g['frame_idx'], (p.frame_idx, g['frame_idx'])
-                assert tuple(p.detection_id) == tuple(g['detection_id']), (p.detection_id, g['detection_id'])
-                assert p.object_id == g['object_id'], (p.object_id, g['object_id'])
-                assert np.allclose(np.array(p.point_from_camera), np.array(g['point_from_camera'])), (p.point_from_camera, g['point_from_camera'])
-                assert np.allclose(np.array(p.point.tolist()), np.array(g['point'])), (p.point, g['point'])
-                assert p.bbox_left == g['bbox_left'], (p.bbox_left, g['bbox_left'])
-                assert p.bbox_top == g['bbox_top'], (p.bbox_top, g['bbox_top'])
-                assert p.bbox_w == g['bbox_w'], (p.bbox_width, g['bbox_w'])
-                assert p.bbox_h == g['bbox_h'], (p.bbox_height, g['bbox_h'])
-                assert p.object_type == g['object_type'], (p.object_type, g['object_type'])
-                assert str(p.timestamp) == g['timestamp'], (p.timestamp, g['timestamp'])
+                assert oid in tp, (oid, tp.keys())
+                p = tp[oid]
+                assert isinstance(g, Tracking3DResult), (g, type(g))
+                assert p.frame_idx == g.frame_idx, (p.frame_idx, g.frame_idx)
+                assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
+                assert p.object_id == g.object_id, (p.object_id, g.object_id)
+                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera)), (p.point_from_camera, g.point_from_camera)
+                assert np.allclose(np.array(p.point.tolist()), np.array(g.point)), (p.point, g.point)
+                assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
+                assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
+                assert p.bbox_w == g.bbox_w, (p.bbox_width, g.bbox_w)
+                assert p.bbox_h == g.bbox_h, (p.bbox_height, g.bbox_h)
+                assert p.object_type == g.object_type, (p.object_type, g.object_type)
+                assert str(p.timestamp) == g.timestamp, (p.timestamp, g.timestamp)
     
-    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
-    #     json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
+        json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'wb') as f:
+        pickle.dump(objects, f)
     
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'r') as f:
-        objects_groundtruth = json.load(f)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'rb') as f:
+        objects_groundtruth = pickle.load(f)
     
     assert len(objects) == len(objects_groundtruth), (len(objects), len(objects_groundtruth))
     for filename, ogs in objects_groundtruth.items():
