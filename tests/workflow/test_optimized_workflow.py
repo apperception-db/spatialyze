@@ -78,8 +78,8 @@ def test_optimized_workflow():
                 assert np.allclose(np.array(p.point.tolist()), np.array(g.point)), (p.point, g.point)
                 assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
                 assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
-                assert p.bbox_w == g.bbox_w, (p.bbox_width, g.bbox_w)
-                assert p.bbox_h == g.bbox_h, (p.bbox_height, g.bbox_h)
+                assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
+                assert p.bbox_h == g.bbox_h, (p.bbox_h, g.bbox_h)
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
