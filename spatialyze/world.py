@@ -11,6 +11,7 @@ from .utils.F.road_segment import road_segment
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
+from .video_processor.stages.decode_frame.parallel_decode_frame import ParallelDecodeFrame
 from .video_processor.stages.detection_2d.object_type_filter import ObjectTypeFilter
 from .video_processor.stages.detection_2d.yolo_detection import YoloDetection
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
@@ -101,10 +102,10 @@ def _execute(world: "World"):
     objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
     pipeline = Pipeline(
         [
-            DecodeFrame(),
+            ParallelDecodeFrame(),
             InView(distance=50, predicate=world.predicates),
             YoloDetection(),
-            objtypes_filter,
+            # objtypes_filter,
             FromDetection2DAndRoad(),
             *(
                 [DetectionEstimation()]

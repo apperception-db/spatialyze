@@ -1,4 +1,5 @@
 import pickle
+import json
 import os
 from os import environ
 import psycopg2
@@ -47,7 +48,7 @@ def test_simple_workflow():
     objects = _execute(world)
     
     with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'w') as f:
-        f.write(objects, indent=1)
+        json.dump(objects, f, indent=1)
     
     with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'r') as f:
         objects_groundtruth = f.read()
