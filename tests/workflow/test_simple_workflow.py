@@ -9,11 +9,13 @@ from spatialyze.geospatial_video import GeospatialVideo
 from spatialyze.road_network import RoadNetwork
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.world import World, _execute
+from spatialyze.video_processor.cache import disable_cache
 
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 ROAD_DIR = './data/scenic/road-network/boston-seaport'
+disable_cache()
 
 
 def test_simple_workflow():
@@ -47,8 +49,8 @@ def test_simple_workflow():
     
     objects = _execute(world)
     
-    # with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'w') as f:
-    #     json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'w') as f:
+        json.dump(objects, f, indent=1)
     
     with open(os.path.join(OUTPUT_DIR, f'simple-workflow.json'), 'r') as f:
         objects_groundtruth = json.load(f)

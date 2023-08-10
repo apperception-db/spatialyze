@@ -106,7 +106,7 @@ def _execute(world: "World"):
             ParallelDecodeFrame(),
             InView(distance=50, predicate=world.predicates),
             YoloDetection(),
-            # objtypes_filter,
+            objtypes_filter,
             FromDetection2DAndRoad(),
             *(
                 [DetectionEstimation()]
