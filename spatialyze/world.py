@@ -11,21 +11,25 @@ from .utils.F.road_segment import road_segment
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
+from .video_processor.stages.depth_estimation import DepthEstimation
 from .video_processor.stages.detection_2d.object_type_filter import ObjectTypeFilter
 from .video_processor.stages.detection_2d.yolo_detection import YoloDetection
+from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
+    FromDetection2DAndDepth,
+)
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
     FromDetection2DAndRoad,
 )
 from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
+from .video_processor.stages.tracking_3d.from_tracking_2d_and_depth import (
+    FromTracking2DAndDepth,
+)
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
     FromTracking2DAndRoad,
 )
 from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
-from .video_processor.stages.depth_estimation import DepthEstimation
-from .video_processor.stages.detection_3d.from_detection_2d_and_depth import FromDetection2DAndDepth
-from .video_processor.stages.tracking_3d.from_tracking_2d_and_depth import FromTracking2DAndDepth
 from .video_processor.utils.format_trajectory import format_trajectory
 from .video_processor.utils.get_tracks import get_tracks
 from .video_processor.utils.insert_trajectory import insert_trajectory
