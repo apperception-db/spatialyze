@@ -114,7 +114,7 @@ class SegmentPoint:
     timestamp: "datetime.datetime"
     segment_type: "str"
     segment_line: "postgis.LineString"
-    segment_heading: "postgis.Polygon"
+    segment_heading: "float"
     road_polygon_info: "RoadPolygonInfo"
     obj_id: "int | None" = None
     type: "str | None" = None

@@ -8,4 +8,4 @@ def associate_segment_mapping(
 ):
     if segment_mapping_meta is None:
         return None
-    return segment_mapping_meta[tracking_result.frame_idx].get(tracking_result.object_id)
+    return segment_mapping_meta[tracking_result.frame_idx].get(int(tracking_result.object_id))

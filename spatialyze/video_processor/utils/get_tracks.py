@@ -11,8 +11,8 @@ def get_tracks(
     ego_meta: "list[CameraConfig]",
     segment_mapping_meta: "list[SegmentTrajectoryMetadatum] | None" = None,
     base=None,
-) -> "dict[str, list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]]":
-    trajectories: "dict[str, list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]]" = {}
+) -> "dict[int, list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]]":
+    trajectories: "dict[int, list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]]" = {}
     for i in range(len(sortmeta)):
         frame = sortmeta[i]
         for obj_id, tracking_result in frame.items():

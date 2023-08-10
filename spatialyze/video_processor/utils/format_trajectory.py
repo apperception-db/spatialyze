@@ -1,3 +1,7 @@
+import datetime
+import numpy.typing as npt
+import numpy as np
+
 from ..camera_config import CameraConfig
 from ..stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
 from ..stages.tracking_3d.tracking_3d import Tracking3DResult
@@ -10,9 +14,9 @@ def format_trajectory(
     track: "list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]",
     base=None,
 ):
-    timestamps: "list[str]" = []
-    pairs: "list[Float3]" = []
-    itemHeadings: "list[int]" = []
+    timestamps: "list[datetime.datetime]" = []
+    pairs: "list[npt.NDArray[np.floating]]" = []
+    itemHeadings: "list[float | None]" = []
     translations: "list[Float3]" = []
     camera_id = None
     object_type = None
@@ -25,6 +29,7 @@ def format_trajectory(
     for tracking_result_3d, ego_info, segment_mapping in track:
         if ego_info:
             if (
+                ego_info.filename is not None and
                 "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
                 in ego_info.filename
             ):
