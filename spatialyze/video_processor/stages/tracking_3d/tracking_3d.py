@@ -1,11 +1,11 @@
 import datetime
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 import numpy as np
 import numpy.typing as npt
 
-from ...types import DetectionId
+from ...types import DetectionId, Float3
 from ..stage import Stage
 
 
@@ -14,7 +14,7 @@ class Tracking3DResult:
     frame_idx: int
     detection_id: DetectionId
     object_id: float
-    point_from_camera: Tuple[float, float, float]
+    point_from_camera: "Float3"
     point: "npt.NDArray[np.floating]"
     bbox_left: float
     bbox_top: float
