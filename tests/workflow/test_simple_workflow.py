@@ -10,6 +10,7 @@ from spatialyze.road_network import RoadNetwork
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.world import World, _execute
 from spatialyze.video_processor.cache import disable_cache
+from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 
 
 OUTPUT_DIR = './data/pipeline/test-results'
@@ -48,12 +49,39 @@ def test_simple_workflow():
     o = world.object()
     world.filter(o.type == 'car')
     
-    objects = _execute(world)
+    objects, trackings = _execute(world)
+
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
     
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow.json'), 'w') as f:
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'r') as f:
+        trackings_groundtruth = json.load(f)
+    
+    for filename, tgs in trackings_groundtruth.items():
+        assert filename in trackings, (filename, trackings.keys())
+        tps = trackings[filename]
+        assert len(tps) == len(tgs), (len(tps), len(tgs))
+        for tp, tg in zip(tps, tgs):
+            assert len(tp) == len(tg), (len(tp), len(tg))
+            for oid, g in tg.items():
+                assert oid in tp, (oid, tp.keys())
+                p = tp[oid]
+                assert p.frame_idx == g['frame_idx'], (p.frame_idx, g['frame_idx'])
+                assert tuple(p.detection_id) == tuple(g['detection_id']), (p.detection_id, g['detection_id'])
+                assert p.object_id == g['object_id'], (p.object_id, g['object_id'])
+                assert tuple(p.point_from_camera) == tuple(g['point_from_camera']), (p.point_from_camera, g['point_from_camera'])
+                assert tuple(p.point.tolist()) == tuple(g['point']), (p.point, g['point'])
+                assert p.bbox_left == g['bbox_left'], (p.bbox_left, g['bbox_left'])
+                assert p.bbox_top == g['bbox_top'], (p.bbox_top, g['bbox_top'])
+                assert p.bbox_w == g['bbox_w'], (p.bbox_width, g['bbox_w'])
+                assert p.bbox_h == g['bbox_h'], (p.bbox_height, g['bbox_h'])
+                assert p.object_type == g['object_type'], (p.object_type, g['object_type'])
+                assert str(p.timestamp) == g['timestamp'], (p.timestamp, g['timestamp'])
+    
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
     #     json.dump(objects, f, indent=1)
     
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow.json'), 'r') as f:
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'r') as f:
         objects_groundtruth = json.load(f)
     
     assert len(objects) == len(objects_groundtruth), (len(objects), len(objects_groundtruth))
@@ -61,5 +89,5 @@ def test_simple_workflow():
         assert filename in objects, (filename, objects.keys())
         ops = objects[filename]
         assert len(ops) == len(ogs), (len(ops), len(ogs))
-        for op, og in zip(sorted(ops), sorted(ogs)):
-            assert tuple(op) == tuple(og), (op, og)
+        for p, og in zip(sorted(ops), sorted(ogs)):
+            assert tuple(p) == tuple(og), (p, og)

@@ -21,6 +21,7 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
 from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
+from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
     FromTracking2DAndRoad,
 )
@@ -118,7 +119,8 @@ def _execute(world: "World"):
         ]
     )
 
-    results: "dict[str, list[tuple]]" = {}
+    qresults: "dict[str, list[tuple]]" = {}
+    vresults: "dict[str, list[T3DMetadatum]]" = {}
     for v in world._videos:
         # reset database
         database.reset()
@@ -130,6 +132,7 @@ def _execute(world: "World"):
         assert track_result is not None
         tracking3d = FromTracking2DAndRoad.get(output)
         assert tracking3d is not None
+        vresults[v.video] = tracking3d
         tracks = get_tracks(tracking3d, v.camera)
 
         for oid, track in tracks.items():
@@ -157,5 +160,5 @@ def _execute(world: "World"):
         camera = Camera(_camera_configs, v.camera[0].camera_id)
         database.insert_cam(camera)
 
-        results[v.video] = database.predicate(world.predicates)
-    return results
+        qresults[v.video] = database.predicate(world.predicates)
+    return qresults, vresults
