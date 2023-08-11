@@ -1,5 +1,5 @@
 <br/>
-<p align="center"><img width=60% src="https://github.com/apperception-db/spatialyze/assets/30903997/236e320c-58a0-4d95-a268-20088c7c2d14"></p>
+<p align="center"><img width=60% src="./data/assets/spatialyze.svg"></p>
 
 <h2 align="center">A Geospatial Video Analytic System with Spatial-Aware Optimizations</h2>
 <p align="center">
@@ -87,10 +87,10 @@ pip install lap  # a bug in lap/poetry/conda that lap needs to be installed usin
 ### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
 ```bash
 docker volume create spatialyze-gs-store-data
-docker run --name "spatialyze-gs-store" \
-               -d \
-               -p 25432:5432 \
-               -v spatialyze-gs-store-data:/var/lib/postgresql \
+docker run --name "spatialyze-gs-store"                        \
+            -d                                                 \
+            -p    25432:5432                                   \
+            -v    spatialyze-gs-store-data:/var/lib/postgresql \
                   mobilitydb/mobilitydb
 ```
 Setup the MobilityDB with customized functions
