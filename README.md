@@ -1,4 +1,4 @@
-<br/><br/>
+<br/><br/><br/>
 <p align="center"><img width=60% src="https://github.com/apperception-db/spatialyze/assets/30903997/236e320c-58a0-4d95-a268-20088c7c2d14"></p>
 <br/>
 <h2 align="center">A Geospatial Video Analytic System with Spatial-Aware Optimizations</h2>
