@@ -16,10 +16,11 @@ from nuscenes.utils.geometry_utils import BoxVisibility
 
 import os, psutil
 
-nusc_map = NuScenesMap(dataroot='/data/raw/map-expansion', map_name='boston-seaport')
+# nusc_map = NuScenesMap(dataroot='/data/raw/map-expansion', map_name='boston-seaport')
+nusc_map = NuScenesMap(dataroot='/work/apperception/data/raw/nuScenes/Map-expansion', map_name='boston-seaport')
 
-nusc = NuScenes(version='v1.0-trainval', dataroot='/data/raw/full-dataset/trainval', verbose=True)
-
+# nusc = NuScenes(version='v1.0-trainval', dataroot='/data/raw/full-dataset/trainval', verbose=True)
+nusc = NuScenes(version='v1.0-mini', dataroot='/work/apperception/data/raw/nuScenes/full-dataset-v1.0/Mini', verbose=True)
 
 class Instance():
   def __init__(self, timestamp, cam_direction, sample_record, annotation_token, ego_pose_token, annotation_token2=None, annotation_token3=None):
@@ -110,10 +111,10 @@ def print_mem_usage():
 
 CAM_DIRECTIONS = ["CAM_FRONT", "CAM_FRONT_LEFT", "CAM_FRONT_RIGHT"]
 
-with open("/home/youse/apperception/data/evaluation/video-samples/boston-seaport.txt", 'r') as f:
+with open("../../../data/evaluation/video-samples/boston-seaport.txt", 'r') as f:
     sceneNumbers = f.readlines()
     sceneNumbers = [x.strip() for x in sceneNumbers]
-    sceneNumbers = sceneNumbers[0:80]
+    # sceneNumbers = sceneNumbers[0:80]
 
 ####################### Figure 12 #######################
 # world = world.filter(

@@ -19,7 +19,7 @@ from nuscenes.map_expansion.bitmap import BitMap
 class QE4(AbstractUDF):
     @setup(cacheable=True, udf_type="Query", batchable=True)
     def setup(self):
-        self.nusc_map = NuScenesMap(dataroot='/data/raw/map-expansion', map_name='boston-seaport')
+        self.nusc_map = NuScenesMap(dataroot='/work/apperception/data/raw/nuScenes/Map-expansion', map_name='boston-seaport')
     
     @forward(
         input_signatures=[

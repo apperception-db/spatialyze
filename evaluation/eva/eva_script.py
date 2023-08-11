@@ -1,7 +1,5 @@
-import shutup;
-shutup.please()
 import sys
-sys.path.append("/home/youse/apperception")
+sys.path.append("../../")
 import os
 import time
 import warnings
@@ -13,9 +11,14 @@ import shutil
 from spatialyze.database import database
 import pandas as pd
 
+
+CAM_DIRECTION = "CAM_FRONT"
+VIDEO_PATH = "/data/apperception-data/processed/nuscenes/full-dataset-v1.0/Mini/videos/"
+SCENE_NAMES = "scene-names-mini.txt"
+
 def delete_db():
     try:
-        shutil.rmtree("/home/youse/apperception/eva/evadb_data", ignore_errors=True)
+        shutil.rmtree("/evadb_data", ignore_errors=True)
     except Exception:
         print("Dir does not exist")
     print("deleting db")
@@ -33,43 +36,43 @@ def setup_udfs():
     ### Set up Monodepth UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS MonodepthDetection
-            IMPL'/home/youse/apperception/eva/udfs/monodepth_detection.py';
+            IMPL'udfs/monodepth_detection.py';
     """).df()
 
     ### Set up Location UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS LocationDetection
-            IMPL'/home/youse/apperception/eva/udfs/location_detection.py';
+            IMPL'udfs/location_detection.py';
     """).df()
 
     ### Set up Q1 Query UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS QE1
-            IMPL'/home/youse/apperception/eva/udfs/QE1.py';
+            IMPL'udfs/QE1.py';
     """).df()
 
     ### Set up Q2 Query UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS QE2
-            IMPL'/home/youse/apperception/eva/udfs/QE2.py';
+            IMPL'udfs/QE2.py';
     """).df()
 
     ### Set up Q3 Query UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS QE3
-            IMPL'/home/youse/apperception/eva/udfs/QE3.py';
+            IMPL'udfs/QE3.py';
     """).df()
 
     ### Set up Q4 Query UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS QE4
-            IMPL'/home/youse/apperception/eva/udfs/QE4.py';
+            IMPL'udfs/QE4.py';
     """).df()
 
     ### Set up SameVideo UDF
     cursor.query(""" 
             CREATE UDF IF NOT EXISTS SameVideo
-            IMPL'/home/youse/apperception/eva/udfs/same_video.py';
+            IMPL'udfs/same_video.py';
     """).df()
 
 def load_data(sceneNumbers):
@@ -92,10 +95,9 @@ def load_data(sceneNumbers):
     for sceneNumber in sceneNumbers:
         sceneNumber = sceneNumber.strip()
         # Load videos
-        video_name = f"boston-seaport-scene-{sceneNumber}-CAM_FRONT_LEFT.mp4"
-        scene = f"scene-{sceneNumber}-CAM_FRONT_LEFT"
-        video_path = "/data/processed/full-dataset/trainval/videos/"
-        cursor.load(file_regex=video_path + video_name, format="VIDEO", table_name='ObjectDetectionVideos').df()
+        video_name = f"boston-seaport-scene-{sceneNumber}-{CAM_DIRECTION}.mp4"
+        scene = f"scene-{sceneNumber}-{CAM_DIRECTION}"
+        cursor.load(file_regex=VIDEO_PATH + video_name, format="VIDEO", table_name='ObjectDetectionVideos').df()
 
         # Add camera configs
         result = database.execute(f"SELECT cameraId, ROW_NUMBER() OVER (Order by frameNum) AS RowNumber, cameraTranslation, cameraRotation, cameraIntrinsic, egoHeading, filename FROM Cameras WHERE cameraId = '{scene}'")
@@ -112,6 +114,7 @@ def write_times(sceneNumbers, query, time):
     with open("eva-times.txt", 'a') as f:
         f.write(str(sceneNumbers) + " - " + query + " - " + time + "\n")
         print(str(sceneNumbers) + " - " + query + " - " + time + "\n")
+
 
 def q1():
     cursor = evadb.connect().cursor()
@@ -165,7 +168,7 @@ def q4():
 with open("eva-times.txt", 'w') as f:
         f.write("\n")
 
-with open("scene-names.txt", 'r') as f:
+with open(SCENE_NAMES, 'r') as f:
     sceneNumbers = f.readlines()
     sceneNumbers = [x.strip() for x in sceneNumbers]
 

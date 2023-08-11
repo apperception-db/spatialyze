@@ -1,5 +1,6 @@
 import sys
-sys.path.append("/home/youse/apperception")
+sys.path.append("/work/apperception/shared/spatialyze-yousef")
+sys.path.append("/work/apperception")
 
 import os
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
