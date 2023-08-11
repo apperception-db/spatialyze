@@ -89,12 +89,20 @@ class World:
     def saveVideos(self, addBoundingBoxes: "bool" = False):
         # TODO: execute and save videos
         objects = _execute(self)
+        # TODO: return a list[tuple[videofile, frame_number]]
         return objects
 
     def getObjects(self):
         # TODO: execute and return movable objects
         # TODO: should always execute object tracker
         objects = _execute(self)
+        # TODO: output a list of movable objects
+        #   - Each will have:
+        #       - id
+        #       - type
+        #       - trajectory
+        #       - bounding boxes
+        #       - camera id
         return objects
 
 
