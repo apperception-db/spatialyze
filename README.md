@@ -45,17 +45,13 @@ while maintaining up to 97.1% accuracy compared to unoptimized execution.
 
 ## Requirement
 ```
-python >= 3.10
+- python >= 3.10 (Prefer Conda/Mamba)
+- docker
+- cuda >= 11.7 (If you want to use GPU)
 ```
 
 ## How to Setup Spatialyze Repo
-### Install dependencies:
-#### Debian based Linux
-```bash
-apt-get update && apt-get install -y python3-opencv
-```
 ### Clone the Spatialyze repo
-For ssh:
 ```bash
 git clone --recurse-submodules git@github.com:apperception-db/spatialyze.git
 cd spatialyze
