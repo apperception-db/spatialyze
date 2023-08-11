@@ -21,7 +21,7 @@ jobs:
         rm -rf ./build
         mkdir ./build
         cp ./README.md ./build/
-        mkdir ./build/data/assets
+        mkdir -p ./build/data/assets
         cp ./data/assets/* ./build/data/assets/
 
     - name: Publish Website

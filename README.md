@@ -1,5 +1,5 @@
 <br/>
-<p align="center"><img width=60% src="./data/assets/spatialyze.svg"></p>
+<p align="center"><img width=60% src="./data/assets/spatialyze.png"></p>
 
 <h2 align="center">A Geospatial Video Analytic System with Spatial-Aware Optimizations</h2>
 <p align="center">
