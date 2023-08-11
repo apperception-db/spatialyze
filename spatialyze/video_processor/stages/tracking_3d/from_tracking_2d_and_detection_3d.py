@@ -6,7 +6,7 @@ from ..tracking_2d.tracking_2d import Tracking2D
 from .tracking_3d import Metadatum, Tracking3D, Tracking3DResult
 
 
-class FromTracking2DAndDetection2D(Tracking3D):
+class FromTracking2DAndDetection3D(Tracking3D):
     def _run(self, payload: "Payload") -> "tuple[bitarray | None, dict[str, list] | None]":
         metadata: "list[Metadatum]" = []
         trajectories: "dict[int, list[Tracking3DResult]]" = {}
@@ -34,19 +34,18 @@ class FromTracking2DAndDetection2D(Tracking3D):
             detection_map = {
                 did: (det, p, pfc)
                 for det, p, pfc, did
-                in zip(dets, points, points_from_camera, dids)
+                in zip(dets, points.tolist(), points_from_camera.tolist(), dids)
             }
             trackings3d: "dict[int, Tracking3DResult]" = {}
             for object_id, t in tracking.items():
                 did = t.detection_id
                 det, p, pfc = detection_map[did]
 
-                xfc, yxc, zxc = pfc.tolist()
                 trackings3d[object_id] = Tracking3DResult(
                     t.frame_idx,
                     t.detection_id,
                     t.object_id,
-                    (xfc, yxc, zxc),
+                    pfc,
                     p,
                     t.bbox_left,
                     t.bbox_top,

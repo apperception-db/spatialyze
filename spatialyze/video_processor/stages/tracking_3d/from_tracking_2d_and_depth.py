@@ -43,7 +43,7 @@ class FromTracking2DAndDepth(Tracking3D):
                     t.detection_id,
                     t.object_id,
                     point_from_camera,
-                    point,
+                    tuple(point.tolist()),
                     t.bbox_left,
                     t.bbox_top,
                     t.bbox_w,

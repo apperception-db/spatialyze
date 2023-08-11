@@ -12,7 +12,6 @@ from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
 from spatialyze.world import World, _execute
 from spatialyze.video_processor.cache import disable_cache
-from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 
 
 OUTPUT_DIR = './data/pipeline/test-results'
@@ -75,7 +74,7 @@ def test_optimized_workflow():
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
                 assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera)), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point.tolist()), np.array(g.point)), (p.point, g.point)
+                assert np.allclose(np.array(p.point), np.array(g.point)), (p.point, g.point)
                 assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
                 assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
                 assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+tmux new-session -d -s run-test -n run-test-local || echo 'hi'
+tmux send-keys -t run-test-local 'docker container start mobilitydb' Enter
+tmux send-keys -t run-test-local 'cd ~/Documents/spatialyze' Enter
+tmux send-keys -t run-test-local 'rm -rf ./outputs/run/*' Enter
+tmux send-keys -t run-test-local 'rm -rf ./run-ablation.py' Enter
+tmux send-keys -t run-test-local 'python ./spatialyze/utils/ingest_road.py "./data/scenic/road-network/boston-seaport"' Enter
+tmux send-keys -t run-test-local 'jupyter nbconvert --to python ./playground/run-ablation.ipynb && mv playground/run-ablation.py .' Enter
+tmux send-keys -t run-test-local 'python run-ablation.py' Enter
