@@ -1,4 +1,6 @@
-<h1 align="center">Spatialyze: A Geospatial Video Analytic System<br/>with Spatial-Aware Optimizations</h1>
+<p align="center"><img width=60% src="https://github.com/apperception-db/spatialyze/assets/30903997/236e320c-58a0-4d95-a268-20088c7c2d14"></p>
+
+<h2 align="center">A Geospatial Video Analytic System with Spatial-Aware Optimizations</h2>
 <p align="center">
   <a href="https://github.com/apperception-db/spatialyze/actions/workflows/test.yml"><img
     alt="Github Actions Test Status"
