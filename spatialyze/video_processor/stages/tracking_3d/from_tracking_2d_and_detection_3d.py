@@ -35,8 +35,9 @@ class FromTracking2DAndDetection3D(Tracking3D):
 
             detection_map = {
                 did: (det, p, pfc)
-                for det, p, pfc, did
-                in zip(dets, points.tolist(), points_from_camera.tolist(), dids)
+                for det, p, pfc, did in zip(
+                    dets, points.tolist(), points_from_camera.tolist(), dids
+                )
             }
             trackings3d: "dict[int, Tracking3DResult]" = {}
             for object_id, t in tracking.items():

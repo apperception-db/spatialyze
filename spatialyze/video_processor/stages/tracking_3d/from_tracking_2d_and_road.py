@@ -63,7 +63,9 @@ class FromTracking2DAndRoad(Tracking3D):
             points = rotated_directions * ts + translation[:, np.newaxis]
             points_from_camera = rotate(points - translation[:, np.newaxis], rotation.inverse)
 
-            for t, oid, point, point_from_camera in zip(_ts, oids, points.T.tolist(), points_from_camera.T.tolist()):
+            for t, oid, point, point_from_camera in zip(
+                _ts, oids, points.T.tolist(), points_from_camera.T.tolist()
+            ):
                 assert point_from_camera.shape == (3,)
                 assert isinstance(oid, int) or oid.is_integer()
                 oid = int(oid)
