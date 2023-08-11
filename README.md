@@ -87,11 +87,11 @@ pip install lap  # a bug in lap/poetry/conda that lap needs to be installed usin
 ### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
 ```bash
 docker volume create spatialyze-gs-store-data
-docker run --name "spatialyze-gs-store"                        \
-            -d                                                 \
-            -p    25432:5432                                   \
-            -v    spatialyze-gs-store-data:/var/lib/postgresql \
-                  mobilitydb/mobilitydb
+docker run --name     "spatialyze-gs-store"                        \
+           --detach                                                \
+           --publish  25432:5432                                   \
+           --volume   spatialyze-gs-store-data:/var/lib/postgresql \
+                      mobilitydb/mobilitydb
 ```
 Setup the MobilityDB with customized functions
 ```bash
@@ -104,7 +104,7 @@ To run MobilityDB every system restart
 docker update --restart unless-stopped spatialyze-gs-store
 ```
 
-### Try the demo.
+### Try the demo (WIP 🚧)
 In spatialyze repo:
 ```sh
 jupyter-lab
@@ -116,11 +116,11 @@ The demo notebook first constructs the world. Then it queries for the trajectory
 This paper is currently under review for [VLDB](https://vldb.org/2024/).
 ```bib
 @misc{kittivorawong2023spatialyze,
-      title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
-      author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
-      year={2023},
-      eprint={2308.03276},
-      archivePrefix={arXiv},
-      primaryClass={cs.DB}
+    title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
+    author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
+    year={2023},
+    eprint={2308.03276},
+    archivePrefix={arXiv},
+    primaryClass={cs.DB}
 }
 ```
