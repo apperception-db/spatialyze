@@ -90,13 +90,15 @@ class World:
 
     def saveVideos(self, VIDEO_PATH, OUTPUT_PATH, addBoundingBoxes: "bool" = False):
         # TODO: execute and save videos
-        objects, trackings  = _execute(self)
+        objects, trackings = _execute(self)
         # TODO: return a list[tuple[videofile, frame_number]]
-        return save_video_util(ojects=objects, trackings=trackings, 
-                               VIDEO_PATH=VIDEO_PATH, 
-                               OUTPUT_PATH=OUTPUT_PATH, 
-                               addBoundingBoxes=addBoundingBoxes)
-
+        return save_video_util(
+            ojects=objects,
+            trackings=trackings,
+            VIDEO_PATH=VIDEO_PATH,
+            OUTPUT_PATH=OUTPUT_PATH,
+            addBoundingBoxes=addBoundingBoxes,
+        )
 
     """
     Returns a list of moveble objects, with each object tuple containing:
@@ -107,9 +109,10 @@ class World:
        - frame IDs
        - camera id
     """
+
     def getObjects(self):
-        videoObjects, trackings  = _execute(self)
-        
+        videoObjects, trackings = _execute(self)
+
         return get_object_list(videoObjects=videoObjects, trackings=trackings)
 
 
