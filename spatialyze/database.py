@@ -410,6 +410,8 @@ class Database:
         return pd.DataFrame(results, columns=[d.name for d in description])
 
 
+### Do we still want to keep this??? Causes problems since if user uses a different port
+# will need to come in here to change
 database = Database(
     psycopg2.connect(
         dbname=environ.get("AP_DB", "mobilitydb"),

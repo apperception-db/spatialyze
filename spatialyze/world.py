@@ -8,6 +8,8 @@ from .geospatial_video import GeospatialVideo
 from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode, lit
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
+from .utils.get_object_list import get_object_list
+from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
@@ -86,24 +88,29 @@ class World:
     def geogConstruct(self, type: "str"):
         return road_segment(type)
 
-    def saveVideos(self, addBoundingBoxes: "bool" = False):
+    def saveVideos(self, VIDEO_PATH, OUTPUT_PATH, addBoundingBoxes: "bool" = False):
         # TODO: execute and save videos
-        objects = _execute(self)
+        objects, trackings  = _execute(self)
         # TODO: return a list[tuple[videofile, frame_number]]
-        return objects
+        return save_video_util(ojects=objects, trackings=trackings, 
+                               VIDEO_PATH=VIDEO_PATH, 
+                               OUTPUT_PATH=OUTPUT_PATH, 
+                               addBoundingBoxes=addBoundingBoxes)
 
+
+    """
+    Returns a list of moveble objects, with each object tuple containing:
+       - object id
+       - object type
+       - trajectory
+       - bounding boxes
+       - frame IDs
+       - camera id
+    """
     def getObjects(self):
-        # TODO: execute and return movable objects
-        # TODO: should always execute object tracker
-        objects = _execute(self)
-        # TODO: output a list of movable objects
-        #   - Each will have:
-        #       - id
-        #       - type
-        #       - trajectory
-        #       - bounding boxes
-        #       - camera id
-        return objects
+        videoObjects, trackings  = _execute(self)
+        
+        return get_object_list(videoObjects=videoObjects, trackings=trackings)
 
 
 def _execute(world: "World", optimization=True):
