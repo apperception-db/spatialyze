@@ -3,6 +3,7 @@ import pickle
 from bitarray import bitarray
 import numpy as np
 import json
+import pickle
 
 from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
@@ -48,9 +49,11 @@ def test_detection_3d():
 
         # with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.json'), 'w') as f:
         #     json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
+        # with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.pkl'), 'wb') as f:
+        #     pickle.dump([(d[0].cpu(), d[1], d[2]) for d in det_result], f)
 
-        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.json'), 'r') as f:
-            det_groundtruth = json.load(f)
+        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.pkl'), 'rb') as f:
+            det_groundtruth = pickle.load(f)
         
         for (det0, _, did0), (det1, _, did1) in zip(det_result, det_groundtruth):
             assert len(det0) == len(det1)
