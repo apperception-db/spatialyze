@@ -47,10 +47,10 @@ def test_detection_3d():
         det_result = FromDetection2DAndRoad.get(output)
         assert det_result is not None
 
-        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.json'), 'w') as f:
-            json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
-        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.pkl'), 'wb') as f:
-            pickle.dump([(d[0].cpu(), d[1], d[2]) for d in det_result], f)
+        # with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.json'), 'w') as f:
+        #     json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
+        # with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.pkl'), 'wb') as f:
+        #     pickle.dump([(d[0].cpu(), d[1], d[2]) for d in det_result], f)
 
         with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.pkl'), 'rb') as f:
             det_groundtruth = pickle.load(f)
@@ -59,7 +59,7 @@ def test_detection_3d():
             assert len(det0) == len(det1)
             if len(det1) == 0:
                 continue
-            det0 = det0.cpu().numpy()
+            det0 = det0.cpu()
             det1 = np.array(det1)
             assert np.allclose(det0[:,:4], det1[:,:4], atol=2)
             assert np.allclose(det0[:,4], det1[:,4], atol=0.05)
