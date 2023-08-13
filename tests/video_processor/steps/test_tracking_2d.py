@@ -44,7 +44,8 @@ def test_detection_3d():
         keep[(len(frames) * 3) // 4:] = 1
 
         output = pipeline.run(Payload(frames, keep))
-        track_result = StrongSORT.get(output)
+        # track_result = StrongSORT.get(output)
+        track_result = output['Tracking2D.StrongSORT']
         assert track_result is not None
 
         # with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
