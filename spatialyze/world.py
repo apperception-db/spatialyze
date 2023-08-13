@@ -132,7 +132,8 @@ def _execute(world: "World", optimization=True):
 
         # execute pipeline
         video = Video(v.video, v.camera)
-        output = pipeline.run(Payload(video))
+        keep = v.keep
+        output = pipeline.run(Payload(video, keep))
         track_result = StrongSORT.get(output)
         assert track_result is not None
         tracking3d = Tracking3D.get(output)

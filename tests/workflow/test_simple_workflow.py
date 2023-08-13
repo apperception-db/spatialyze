@@ -1,62 +1,28 @@
 import pickle
 import json
 import os
-from os import environ
-import psycopg2
 import numpy as np
 
-from spatialyze.database import Database
-from spatialyze.geospatial_video import GeospatialVideo
-from spatialyze.road_network import RoadNetwork
-from spatialyze.video_processor.camera_config import camera_config
-from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
-from spatialyze.world import World, _execute
 from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
+from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
+from spatialyze.world import _execute
+
+from common import build_filter_world
 
 
 OUTPUT_DIR = './data/pipeline/test-results'
-VIDEO_DIR =  './data/pipeline/videos'
-ROAD_DIR = './data/scenic/road-network/boston-seaport'
 disable_cache()
 
 
 def test_simple_workflow():
-    database = Database(
-    psycopg2.connect(
-        dbname=environ.get("AP_DB", "mobilitydb"),
-        user=environ.get("AP_USER", "docker"),
-        host=environ.get("AP_HOST", "localhost"),
-        port=environ.get("AP_PORT", "25432"),
-        password=environ.get("AP_PASSWORD", "docker"),
-    )
-)
-    files = os.listdir(VIDEO_DIR)
-    with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
-        videos = pickle.load(f)
-    
-    world = World(database)
-    world.addGeogConstructs(RoadNetwork('Boston-Seaport', ROAD_DIR))
-    
-    for video in videos.values():
-        if video['filename'] not in files:
-            continue
-        
-        videofile = os.path.join(VIDEO_DIR, video['filename'])
-        camera = [camera_config(*c) for c in video['frames']]
-
-        world.addVideo(GeospatialVideo(videofile, camera))
-        # break
-    
-    o = world.object()
-    world.filter(o.type == 'car')
-    
+    world = build_filter_world()
     objects, trackings = _execute(world, optimization=False)
 
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
-    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
-    #     pickle.dump(trackings, f)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
+        pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -83,10 +49,10 @@ def test_simple_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
-    #     json.dump(objects, f, indent=1)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
-    #     pickle.dump(objects, f)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
+        json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
+        pickle.dump(objects, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)

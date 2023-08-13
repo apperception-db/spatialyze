@@ -1,11 +1,18 @@
 import json
 from typing import Any
 
+from bitarray import bitarray
+
 from .video_processor.camera_config import CameraConfig, camera_config
 
 
 class GeospatialVideo:
-    def __init__(self, video: "str", camera: "list[CameraConfig] | str") -> None:
+    def __init__(
+        self,
+        video: "str",
+        camera: "list[CameraConfig] | str",
+        keep: "bitarray | None" = None,
+    ) -> None:
         self.video = video
         if isinstance(camera, str):
             with open(camera, "r") as f:
@@ -14,6 +21,7 @@ class GeospatialVideo:
                 self.camera = [_camera_config(c) for c in camera_configs]
         else:
             self.camera = camera
+        self.keep = keep
 
 
 def _camera_config(c: "Any"):
