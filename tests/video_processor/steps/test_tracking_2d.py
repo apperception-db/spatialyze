@@ -47,8 +47,8 @@ def test_detection_3d():
         track_result = StrongSORT.get(output)
         assert track_result is not None
 
-        with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
-            json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
+        # with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
+        #     json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
 
         with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'r') as f:
             track_groundtruth = json.load(f)
