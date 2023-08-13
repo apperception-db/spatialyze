@@ -1,5 +1,6 @@
 import os
 import pickle
+from bitarray import bitarray
 import numpy as np
 import json
 
@@ -7,6 +8,8 @@ from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.video_processor.cache import disable_cache
+from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 
 from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
 from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
@@ -14,6 +17,7 @@ from spatialyze.video_processor.stages.tracking_2d.strongsort import StrongSORT
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
+disable_cache()
 
 def test_detection_3d():
     files = os.listdir(VIDEO_DIR)
@@ -35,13 +39,16 @@ def test_detection_3d():
             os.path.join(VIDEO_DIR, video["filename"]),
             [camera_config(*f, 0) for f in video["frames"]],
         )
+        keep = bitarray(len(frames))
+        keep.setall(0)
+        keep[(len(frames) * 3) // 4:] = 1
 
-        output = pipeline.run(Payload(frames))
+        output = pipeline.run(Payload(frames, keep))
         track_result = StrongSORT.get(output)
         assert track_result is not None
 
-        # with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
-        #     json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
+        with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
+            json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
 
         with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'r') as f:
             track_groundtruth = json.load(f)
