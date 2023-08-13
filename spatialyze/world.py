@@ -93,27 +93,26 @@ class World:
         objects, trackings = _execute(self)
         # TODO: return a list[tuple[videofile, frame_number]]
         return save_video_util(
-            ojects=objects,
-            trackings=trackings,
-            VIDEO_PATH=VIDEO_PATH,
-            OUTPUT_PATH=OUTPUT_PATH,
-            addBoundingBoxes=addBoundingBoxes,
+            objects,
+            trackings,
+            VIDEO_PATH,
+            OUTPUT_PATH,
+            addBoundingBoxes,
         )
 
-    """
-    Returns a list of moveble objects, with each object tuple containing:
-       - object id
-       - object type
-       - trajectory
-       - bounding boxes
-       - frame IDs
-       - camera id
-    """
-
     def getObjects(self):
-        videoObjects, trackings = _execute(self)
+        """
+        Returns a list of moveble objects, with each object tuple containing:
+        - object id
+        - object type
+        - trajectory
+        - bounding boxes
+        - frame IDs
+        - camera id
+        """
+        objects, trackings = _execute(self)
 
-        return get_object_list(videoObjects=videoObjects, trackings=trackings)
+        return get_object_list(objects, trackings)
 
 
 def _execute(world: "World", optimization=True):
