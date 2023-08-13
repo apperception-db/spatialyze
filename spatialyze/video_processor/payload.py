@@ -70,8 +70,7 @@ def metadata_len(metadata: "dict[str, list[Any]]") -> "int | None":
     for v in metadata.values():
         if length is None:
             length = len(v)
-        elif length != len(v):
-            raise Exception()
+        assert length == len(v), (length, len(v))
     return length
 
 
@@ -79,6 +78,5 @@ def _default_keep(video: "Video", keep: "bitarray | None" = None):
     if keep is None:
         keep = bitarray(len(video))
         keep.setall(1)
-    elif len(keep) != len(video):
-        raise Exception()
+    assert len(keep) == len(video), (len(keep), len(video))
     return keep

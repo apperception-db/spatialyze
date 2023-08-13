@@ -44,7 +44,8 @@ def test_detection_3d():
         keep[(len(frames) * 3) // 4:] = 1
 
         output = pipeline.run(Payload(frames, keep))
-        det_result = FromDetection2DAndRoad.get(output)
+        # det_result = FromDetection2DAndRoad.get(output)
+        det_result = output[FromDetection2DAndRoad]
         assert det_result is not None
 
         # with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.json'), 'w') as f:

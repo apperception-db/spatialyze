@@ -14,10 +14,12 @@ from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
 from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
 from spatialyze.video_processor.stages.tracking_2d.strongsort import StrongSORT
+from spatialyze.video_processor.stages.stage import Stage
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 disable_cache()
+Stage.enable_progress()
 
 def test_detection_3d():
     files = os.listdir(VIDEO_DIR)
@@ -44,7 +46,8 @@ def test_detection_3d():
         keep[(len(frames) * 3) // 4:] = 1
 
         output = pipeline.run(Payload(frames, keep))
-        track_result = StrongSORT.get(output)
+        # track_result = StrongSORT.get(output)
+        track_result = output['Tracking2D.StrongSORT']
         assert track_result is not None
 
         # with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:

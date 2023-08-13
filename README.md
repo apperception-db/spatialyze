@@ -15,11 +15,11 @@
     alt="Github Actions Lint Status"
     src="https://img.shields.io/github/actions/workflow/status/apperception-db/spatialyze/lint.yml?label=Lint&style=for-the-badge"
   ></a>
-  <br/>
   <a href="https://codecov.io/gh/apperception-db/spatialyze"><img
     alt="Codecov Coverage Status"
     src="https://img.shields.io/codecov/c/github/apperception-db/spatialyze.svg?label=Coverage&style=for-the-badge"
   ></a>
+  <br/>
   <a href="https://github.com/psf/black"><img
     alt="Black Badge"
     src="https://img.shields.io/badge/black-000000.svg?label=Code%20style&style=for-the-badge"

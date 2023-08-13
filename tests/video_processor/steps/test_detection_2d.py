@@ -23,7 +23,9 @@ def test_detection_2d():
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)
     
-    pipeline = Pipeline([DecodeFrame(), YoloDetection()])
+    pipeline = Pipeline()
+    pipeline.add_filter(DecodeFrame())
+    pipeline.add_filter(YoloDetection())
 
     for name, video in videos.items():
         if video['filename'] not in files:
@@ -38,7 +40,8 @@ def test_detection_2d():
         keep[(len(frames) * 3) // 4:] = 1
 
         output = pipeline.run(Payload(frames, keep))
-        det_result = YoloDetection.get(output)
+        # det_result = YoloDetection.get(output)
+        det_result = output['Detection2D']
         assert det_result is not None
 
         # with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'w') as f:
