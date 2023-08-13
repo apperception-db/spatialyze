@@ -1,4 +1,7 @@
-<h1 align="center">Spatialyze: A Geospatial Video Analytic System<br/>with Spatial-Aware Optimizations</h1>
+<br/>
+<p align="center"><img width=60% src="./data/assets/spatialyze.png"></p>
+
+<h2 align="center">A Geospatial Video Analytic System with Spatial-Aware Optimizations</h2>
 <p align="center">
   <a href="https://github.com/apperception-db/spatialyze/actions/workflows/test.yml"><img
     alt="Github Actions Test Status"
@@ -42,17 +45,13 @@ while maintaining up to 97.1% accuracy compared to unoptimized execution.
 
 ## Requirement
 ```
-python >= 3.10
+- python >= 3.10 (Prefer Conda/Mamba)
+- docker
+- cuda >= 11.7 (If you want to use GPU)
 ```
 
 ## How to Setup Spatialyze Repo
-### Install dependencies:
-#### Debian based Linux
-```bash
-apt-get update && apt-get install -y python3-opencv
-```
 ### Clone the Spatialyze repo
-For ssh:
 ```bash
 git clone --recurse-submodules git@github.com:apperception-db/spatialyze.git
 cd spatialyze
@@ -84,11 +83,11 @@ pip install lap  # a bug in lap/poetry/conda that lap needs to be installed usin
 ### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
 ```bash
 docker volume create spatialyze-gs-store-data
-docker run --name "spatialyze-gs-store" \
-               -d \
-               -p 25432:5432 \
-               -v spatialyze-gs-store-data:/var/lib/postgresql \
-                  mobilitydb/mobilitydb
+docker run --name     "spatialyze-gs-store"                        \
+           --detach                                                \
+           --publish  25432:5432                                   \
+           --volume   spatialyze-gs-store-data:/var/lib/postgresql \
+                      mobilitydb/mobilitydb
 ```
 Setup the MobilityDB with customized functions
 ```bash
@@ -101,7 +100,7 @@ To run MobilityDB every system restart
 docker update --restart unless-stopped spatialyze-gs-store
 ```
 
-### Try the demo.
+### Try the demo (WIP 🚧)
 In spatialyze repo:
 ```sh
 jupyter-lab
@@ -113,11 +112,11 @@ The demo notebook first constructs the world. Then it queries for the trajectory
 This paper is currently under review for [VLDB](https://vldb.org/2024/).
 ```bib
 @misc{kittivorawong2023spatialyze,
-      title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
-      author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
-      year={2023},
-      eprint={2308.03276},
-      archivePrefix={arXiv},
-      primaryClass={cs.DB}
+    title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
+    author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
+    year={2023},
+    eprint={2308.03276},
+    archivePrefix={arXiv},
+    primaryClass={cs.DB}
 }
 ```

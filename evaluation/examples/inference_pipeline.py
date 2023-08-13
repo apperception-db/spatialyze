@@ -44,5 +44,8 @@ for name, video in videos.items():
         [camera_config(*f, 0) for f in video["frames"]],
     )
 
-    output = pipeline.run(Payload(frames))
+    payload = Payload(frames)
+    payload.keep.setall(0)
+    payload.keep[(len(payload.video) * 3) // 4:] = 1
+    output = pipeline.run(payload)
     tracking2d_overlay(output, './examples/videos')

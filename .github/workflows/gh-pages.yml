@@ -21,6 +21,8 @@ jobs:
         rm -rf ./build
         mkdir ./build
         cp ./README.md ./build/
+        mkdir -p ./build/data/assets
+        cp ./data/assets/* ./build/data/assets/
 
     - name: Publish Website
       uses: JamesIves/github-pages-deploy-action@v4
