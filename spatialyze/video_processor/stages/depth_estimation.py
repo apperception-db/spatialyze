@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING
 
 import numpy.typing as npt
 import PIL.Image as pil
@@ -21,10 +21,10 @@ if TYPE_CHECKING:
 
 
 class DepthEstimation(Stage["npt.NDArray | None"]):
-    def _run(self, payload: "Payload") -> "Tuple[Optional[bitarray], Optional[Dict[str, list]]]":
+    def _run(self, payload: "Payload") -> "tuple[bitarray | None, dict[str, list] | None]":
         md = monodepth()
         assert payload.metadata is not None
-        images: "List[npt.NDArray | None]" = []
+        images: "list[npt.NDArray | None]" = []
 
         decoded_frames = DecodeFrame.get(payload)
         assert decoded_frames is not None
@@ -102,29 +102,8 @@ class monodepth:
         self.depth_decoder.to(self.device)
         self.depth_decoder.eval()
 
-    def eval(self, input_image_numpy):
-        with torch.no_grad():
-            # Load image and preprocess
-            input_image = pil.fromarray(input_image_numpy[:, :, [2, 1, 0]])
-            original_width, original_height = input_image.size
-            input_image = input_image.resize((self.feed_width, self.feed_height), pil.LANCZOS)
-            input_image = transforms.ToTensor()(input_image).unsqueeze(0)
-
-            # PREDICTION
-            input_image = input_image.to(self.device)
-            features = self.encoder(input_image)
-            outputs = self.depth_decoder(features)
-
-            disp = outputs[("disp", 0)]
-            disp_resized = torch.nn.functional.interpolate(
-                disp, (original_height, original_width), mode="bilinear", align_corners=False
-            )
-
-            disp_resized_np = disp_resized.squeeze().cpu().detach().numpy() * 5.4
-        return disp_resized_np
-
-    def eval_all(self, input_images: "List[npt.NDArray | None]"):
-        output: "List[npt.NDArray | None]" = []
+    def eval_all(self, input_images: "list[npt.NDArray | None]"):
+        output: "list[npt.NDArray | None]" = []
         with torch.no_grad():
             # for im in tqdm(input_images):
             for im in input_images:
