@@ -1,3 +1,5 @@
+from typing import NamedTuple
+
 import numpy as np
 import numpy.typing as npt
 
@@ -5,10 +7,19 @@ from ..data_types.camera_config import Float4
 from ..video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
 
 
+class MovableObject(NamedTuple):
+    id: "int"
+    type: "str"
+    track: "list[npt.NDArray[np.floating]]"
+    bboxes: "list[Float4]"
+    frame_ids: "list[int]"
+    camera_id: "str"
+
+
 def get_object_list(
     objects: "dict[str, list[tuple]]",
     trackings: "dict[str, list[T3DMetadatum]]",
-) -> "list[tuple[int, str, list[npt.NDArray[np.floating]], list[Float4], list[int], str]]":
+) -> "list[MovableObject]":
     tracks: "dict[str, dict[int, list[npt.NDArray[np.floating]]]]" = {}
     bboxes: "dict[str, dict[int, list[Float4]]]" = {}
     frameIds: "dict[str, dict[int, list[int]]]" = {}
@@ -44,11 +55,11 @@ def get_object_list(
 
                 objectTypes[cameraId][objectId] = track.object_type
 
-    result: "list[tuple[int, str, list[npt.NDArray[np.floating]], list[Float4], list[int], str]]" = []
+    result: "list[MovableObject]" = []
     for cameraId in tracks:
         for objectId in tracks[cameraId]:
             result.append(
-                (
+                MovableObject(
                     objectId,
                     objectTypes[cameraId][objectId],
                     tracks[cameraId][objectId],
