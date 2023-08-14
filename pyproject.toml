@@ -110,5 +110,7 @@ ignore = [
   'spatialyze/video_processor/utils/process_pipeline.py',
   'spatialyze/video_processor/utils/query_analyzer.py',
   'spatialyze/video_processor/utils/preprocess.py',
-  'spatialyze/video_processor'
+  'spatialyze/video_processor/stages/detection_2d/ground_truth.py',
+  'spatialyze/video_processor/utils/insert_trajectory.py',
+  # 'spatialyze/video_processor'
 ]
