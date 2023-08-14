@@ -1,8 +1,5 @@
 import datetime
 
-import numpy as np
-import numpy.typing as npt
-
 from ..camera_config import CameraConfig
 from ..stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
 from ..stages.tracking_3d.tracking_3d import Tracking3DResult
@@ -16,7 +13,7 @@ def format_trajectory(
     base=None,
 ):
     timestamps: "list[datetime.datetime]" = []
-    pairs: "list[npt.NDArray[np.floating]]" = []
+    pairs: "list[Float3]" = []
     itemHeadings: "list[float | None]" = []
     translations: "list[Float3]" = []
     camera_id = None
