@@ -1,13 +1,14 @@
 import datetime
 import math
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, NamedTuple, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
 import postgis
 import psycopg2
 import psycopg2.sql
+import shapely.geometry
 from plpygis import Geometry
 from shapely.geometry import Point
 from shapely.ops import nearest_points
@@ -107,19 +108,38 @@ AND cos(radians(
 SegmentQueryResult = Tuple[str, postgis.Polygon, postgis.LineString, List[str], float]
 
 
+class PolygonAndId(NamedTuple):
+    id: "str"
+    polygon: "shapely.geometry.Polygon"
+
+
 @dataclass
-class SegmentPoint:
+class ValidSegmentPoint:
     detection_id: "DetectionId"
     car_loc3d: "Float3"
     timestamp: "datetime.datetime"
     segment_type: "str"
     segment_line: "postgis.LineString"
     segment_heading: "float"
-    road_polygon_info: "RoadPolygonInfo"
+    road_polygon_info: "RoadPolygonInfo | PolygonAndId"
     obj_id: "int | None" = None
     type: "str | None" = None
     next: "SegmentPoint | None" = None
     prev: "SegmentPoint | None" = None
+
+
+@dataclass
+class InvalidSegmentPoint:
+    detection_id: "DetectionId"
+    car_loc3d: "Float3"
+    timestamp: "datetime.datetime"
+    obj_id: "int | None" = None
+    type: "str | None" = None
+    next: "SegmentPoint | None" = None
+    prev: "SegmentPoint | None" = None
+
+
+SegmentPoint = Union[ValidSegmentPoint, InvalidSegmentPoint]
 
 
 def construct_new_road_segment_info(result: "list[SegmentQueryResult]"):
@@ -163,7 +183,7 @@ def construct_new_road_segment_info(result: "list[SegmentQueryResult]"):
 
 
 def find_middle_segment(
-    current_segment: "SegmentPoint", next_segment: "SegmentPoint", payload: "Payload"
+    current_segment: "ValidSegmentPoint", next_segment: "ValidSegmentPoint", payload: "Payload"
 ):
     current_time = current_segment.timestamp
     next_time = next_segment.timestamp
@@ -227,7 +247,7 @@ def find_middle_segment(
 
     new_segment_line, new_heading = get_segment_line(new_road_segment_info, intersection_center)
     timestamp = current_time + (next_time - current_time) / 2
-    middle_segment = SegmentPoint(
+    middle_segment = ValidSegmentPoint(
         DetectionId(middle_idx, None),
         (*intersection_center, 0.0),
         timestamp,
@@ -239,10 +259,10 @@ def find_middle_segment(
 
 
 def binary_search_segment(
-    current_segment: "SegmentPoint",
-    next_segment: "SegmentPoint",
+    current_segment: "ValidSegmentPoint",
+    next_segment: "ValidSegmentPoint",
     payload: "Payload",
-) -> "list[SegmentPoint]":
+) -> "list[ValidSegmentPoint]":
     if 0 <= next_segment.detection_id.frame_idx - current_segment.detection_id.frame_idx <= 1:
         # same detection or detections on consecutive frame
         return []
@@ -270,7 +290,7 @@ def binary_search_segment(
                 assert location.shape == (3,)
                 assert location.dtype == np.dtype(np.float64)
 
-                return SegmentPoint(
+                return ValidSegmentPoint(
                     DetectionId(index, None),
                     tuple(location),
                     frame.timestamp,
@@ -308,8 +328,10 @@ def binary_search_segment(
         return before + [middle_segment] + after
 
 
-def complete_segment_trajectory(road_segment_trajectory: "list[SegmentPoint]", payload: "Payload"):
-    completed_segment_trajectory: "list[SegmentPoint]" = [road_segment_trajectory[0]]
+def complete_segment_trajectory(
+    road_segment_trajectory: "list[ValidSegmentPoint]", payload: "Payload"
+):
+    completed_segment_trajectory: "list[ValidSegmentPoint]" = [road_segment_trajectory[0]]
 
     for current_segment, next_segment in zip(
         road_segment_trajectory[:-1], road_segment_trajectory[1:]
@@ -327,14 +349,14 @@ def calibrate(
     detection_infos: "list[DetectionInfo]",
     frame_indices: "list[int]",
     payload: "Payload",
-) -> "list[SegmentPoint]":
+) -> "list[ValidSegmentPoint]":
     """Calibrate the trajectory to the road segments.
 
     Given a trajectory and the corresponding detection infos, map the trajectory
     to the correct road segments.
     The returned value is a list of SegmentTrajectoryPoint.
     """
-    road_segment_trajectory: "list[SegmentPoint]" = []
+    road_segment_trajectory: "list[ValidSegmentPoint]" = []
     for i in range(len(trajectory_3d)):
         current_point3d, timestamp = trajectory_3d[i]
         current_point = current_point3d[:2]
@@ -357,7 +379,7 @@ def calibrate(
 
             if current_road_segment_heading is None or math.cos(math.radians(relative_heading)) > 0:
                 road_segment_trajectory.append(
-                    SegmentPoint(
+                    ValidSegmentPoint(
                         detection_info.detection_id,
                         current_point3d,
                         timestamp,
@@ -411,7 +433,7 @@ def calibrate(
         new_road_segment_info = construct_new_road_segment_info(result)
         new_segment_line, new_heading = get_segment_line(current_road_segment_info, current_point3d)
         road_segment_trajectory.append(
-            SegmentPoint(
+            ValidSegmentPoint(
                 detection_info.detection_id,
                 current_point3d,
                 timestamp,

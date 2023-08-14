@@ -12,7 +12,8 @@ from spatialyze.database import database
 if TYPE_CHECKING:
     from ...camera_config import CameraConfig
     from .detection_estimation import DetectionInfo
-    from .segment_mapping import CameraPolygonMapping, RoadPolygonInfo
+    from .optimized_segment_mapping import RoadPolygonInfo
+    from .segment_mapping import CameraPolygonMapping
 
 
 logger = logging.getLogger(__name__)

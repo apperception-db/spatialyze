@@ -15,11 +15,15 @@ from ...payload import Payload
 from ...types import DetectionId
 from ..detection_3d import Detection3D
 from ..detection_3d import Metadatum as Detection3DMetadatum
-from ..detection_estimation.segment_mapping import RoadPolygonInfo
 from ..tracking.tracking import Metadatum as TrackingMetadatum
 from ..tracking.tracking import Tracking
 from . import SegmentTrajectory, SegmentTrajectoryMetadatum
-from .construct_segment_trajectory import SegmentPoint
+from .construct_segment_trajectory import (
+    InvalidSegmentPoint,
+    PolygonAndId,
+    SegmentPoint,
+    ValidSegmentPoint,
+)
 
 USEFUL_TYPES = ["lane", "lanegroup", "intersection"]
 
@@ -50,7 +54,7 @@ class FromTracking3D(SegmentTrajectory):
 
         object_map: "dict[int, dict[DetectionId, torch.Tensor]]" = dict()
         for fidx, frame in enumerate(tracking):
-            for tracking_result in frame.values():
+            for tracking_result in frame:
                 did = tracking_result.detection_id
                 oid = tracking_result.object_id
                 if oid not in object_map:
@@ -159,18 +163,12 @@ def invalid_segment_point(
     oid: "int",
     class_map: "list[str]",
 ):
-    return SegmentPoint(
+    return InvalidSegmentPoint(
         did,
         tuple(((det[6:9] + det[9:12]) / 2).tolist()),
         timestamp,
-        None,
-        None,
-        None,
-        None,
         oid,
         class_map[int(det[5])],
-        None,
-        None,
     )
 
 
@@ -186,7 +184,7 @@ def valid_segment_point(
     polygonid: "str",
     shapely_polygon: "shapely.geometry.Polygon",
 ):
-    return SegmentPoint(
+    return ValidSegmentPoint(
         did,
         tuple(((det[6:9] + det[9:12]) / 2).tolist()),
         timestamp,
@@ -194,11 +192,9 @@ def valid_segment_point(
         segmentline,
         segmentheading,
         # A place-holder for Polygon that only contain polygon id and polygon
-        RoadPolygonInfo(polygonid, shapely_polygon, [], None, [], None, None, None),
+        PolygonAndId(polygonid, shapely_polygon),
         oid,
         class_map[int(det[5])],
-        None,
-        None,
     )
 
 

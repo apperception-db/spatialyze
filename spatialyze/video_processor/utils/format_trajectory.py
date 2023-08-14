@@ -1,22 +1,13 @@
 import datetime
 
-import numpy as np
-import numpy.typing as npt
-
-from ..camera_config import CameraConfig
-from ..stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
-from ..stages.tracking_3d.tracking_3d import Tracking3DResult
+from ..stages.segment_trajectory.construct_segment_trajectory import InvalidSegmentPoint
 from ..types import Float3
+from .get_tracks import TrackPoint
 
 
-def format_trajectory(
-    video_name: "str",
-    obj_id: "int",
-    track: "list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]",
-    base=None,
-):
+def format_trajectory(video_name: "str", obj_id: "int", track: "list[TrackPoint]"):
     timestamps: "list[datetime.datetime]" = []
-    pairs: "list[npt.NDArray[np.floating]]" = []
+    pairs: "list[Float3]" = []
     itemHeadings: "list[float | None]" = []
     translations: "list[Float3]" = []
     camera_id = None
@@ -47,10 +38,13 @@ def format_trajectory(
             object_type = tracking_result_3d.object_type
             timestamps.append(ego_info.timestamp)
             pairs.append(tracking_result_3d.point)
-            if not segment_mapping or (segment_mapping.segment_type == "intersection"):
-                itemHeadings.append(None)
-            else:
-                itemHeadings.append(segment_mapping.segment_heading)
+            itemHeadings.append(
+                None
+                if segment_mapping is None
+                or isinstance(segment_mapping, InvalidSegmentPoint)
+                or segment_mapping.segment_type == "intersection"
+                else segment_mapping.segment_heading
+            )
             translations.append(ego_info.ego_translation)
             # road_types.append(segment_mapping.road_polygon_info.road_type if base else detection_info.road_type)
             # roadpolygons.append(None if base else detection_info.road_polygon_info.polygon)
