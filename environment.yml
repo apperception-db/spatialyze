@@ -1,4 +1,4 @@
-name: spatialyze-ablation
+name: spatialyze
 
 channels:
   - conda-forge
