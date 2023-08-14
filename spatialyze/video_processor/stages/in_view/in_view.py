@@ -48,7 +48,9 @@ class InView(Stage):
     ):
         super().__init__()
         self.distance = distance
-        assert roadtypes is not None or predicate is not None, "At least one of roadtypes or predicate must be specified"
+        assert (
+            roadtypes is not None or predicate is not None
+        ), "At least one of roadtypes or predicate must be specified"
         if roadtypes is not None:
             assert predicate is None, "Can only except either segment_type or predicate"
             self.roadtypes = roadtypes if isinstance(roadtypes, list) else [roadtypes]
@@ -408,12 +410,10 @@ class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
                 return F.ignore_roadtype()
 
         # Boolean Absorption
-        e_params = [
-            e.params[0]
-            for e in _exprs
-            if isinstance(e, CallNode) and e.fn == IS_ROADTYPE
-        ]
-        assert all(isinstance(e, LiteralNode) and isinstance(e.value, str) for e in e_params), e_params
+        e_params = [e.params[0] for e in _exprs if isinstance(e, CallNode) and e.fn == IS_ROADTYPE]
+        assert all(
+            isinstance(e, LiteralNode) and isinstance(e.value, str) for e in e_params
+        ), e_params
         _is_roadtypes = [
             v.lower()
             for v in (e.value for e in e_params if isinstance(e, LiteralNode))
@@ -444,7 +444,9 @@ class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
                 if not all_roadtype:
                     return False
                 exprs = [ee.params[0] for ee in e.exprs if isinstance(ee, CallNode)]
-                assert all(isinstance(e, LiteralNode) and isinstance(e.value, str) for e in exprs), exprs
+                assert all(
+                    isinstance(e, LiteralNode) and isinstance(e.value, str) for e in exprs
+                ), exprs
                 return {
                     v.lower()
                     for v in (ee.value for ee in exprs if isinstance(ee, LiteralNode))
