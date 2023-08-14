@@ -21,7 +21,7 @@ def insert_trajectory(
     traj_centroids: "list[str]" = []
     translations: "list[str]" = []
     itemHeadings: "list[str]" = []
-    prevTimestamp: "str | None" = None
+    prevTimestamp: "datetime.datetime | None" = None
     prevPoint: "Float3 | None" = None
     for timestamp, current_point, curItemHeading, current_trans in zip(
         postgres_timestamps, pairs, itemHeading_list, translation_list

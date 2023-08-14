@@ -1,7 +1,7 @@
 import datetime
 
 from ..camera_config import CameraConfig
-from ..stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
+from ..stages.segment_trajectory.construct_segment_trajectory import ValidSegmentPoint
 from ..stages.tracking_3d.tracking_3d import Tracking3DResult
 from ..types import Float3
 
@@ -9,7 +9,7 @@ from ..types import Float3
 def format_trajectory(
     video_name: "str",
     obj_id: "int",
-    track: "list[tuple[Tracking3DResult, CameraConfig, SegmentPoint | None]]",
+    track: "list[tuple[Tracking3DResult, CameraConfig, ValidSegmentPoint | None]]",
     base=None,
 ):
     timestamps: "list[datetime.datetime]" = []

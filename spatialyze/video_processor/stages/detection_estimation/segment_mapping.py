@@ -137,13 +137,13 @@ class RoadPolygonInfo:
     segment_headings: "list[float]"
     contains_ego: bool
     ego_config: "CameraConfig"
-    fov_lines: "Tuple[Float22, Float22]"
+    fov_lines: "tuple[Float22, Float22]"
 
     def __post_init__(self):
         if len(self.segment_lines) == 0:
             return
 
-        start_segment_map: "dict[Float2, Tuple[shapely.geometry.LineString, float]]" = {}
+        start_segment_map: "dict[Float2, tuple[shapely.geometry.LineString, float]]" = {}
         ends: "set[Float2]" = set()
         for line, heading in zip(self.segment_lines, self.segment_headings):
             start = line.coords[0]
