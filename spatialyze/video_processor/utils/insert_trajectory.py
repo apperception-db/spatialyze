@@ -1,8 +1,5 @@
 import datetime
 
-import numpy as np
-import numpy.typing as npt
-
 from ...database import Database
 from ...utils import join
 from ..types import Float3
@@ -15,7 +12,7 @@ def insert_trajectory(
     camera_id: str,
     object_type: str,
     postgres_timestamps: "list[datetime.datetime]",
-    pairs: "list[npt.NDArray[np.floating]]",
+    pairs: "list[Float3]",
     itemHeading_list: "list[float | None]",
     translation_list: "list[Float3]",
     # road_types: "list[str]",
@@ -24,7 +21,7 @@ def insert_trajectory(
     traj_centroids: "list[str]" = []
     translations: "list[str]" = []
     itemHeadings: "list[str]" = []
-    prevTimestamp: "str | None" = None
+    prevTimestamp: "datetime.datetime | None" = None
     prevPoint: "Float3 | None" = None
     for timestamp, current_point, curItemHeading, current_trans in zip(
         postgres_timestamps, pairs, itemHeading_list, translation_list

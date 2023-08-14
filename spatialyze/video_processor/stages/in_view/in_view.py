@@ -48,16 +48,17 @@ class InView(Stage):
     ):
         super().__init__()
         self.distance = distance
-        assert (roadtypes is None) != (
-            predicate is None
-        ), "Can only except either segment_type or predicate"
-        self.roadtypes: "list[str] | None" = None
-        self.predicate: "PredicateNode | None" = None
+        assert (
+            roadtypes is not None or predicate is not None
+        ), "At least one of roadtypes or predicate must be specified"
         if roadtypes is not None:
+            assert predicate is None, "Can only except either segment_type or predicate"
             self.roadtypes = roadtypes if isinstance(roadtypes, list) else [roadtypes]
-        if predicate is not None:
+            self.predicate = None
+        elif predicate is not None:
+            assert roadtypes is None, "Can only except either segment_type or predicate"
             self.roadtypes, self.predicate_str = create_inview_predicate(predicate)
-            self.predicate = eval(self.predicate_str)
+            self.predicate = eval(str(self.predicate_str))
 
     def __repr__(self) -> str:
         return f"InView(distance={self.distance}, roadtype={self.roadtypes}, predicate={self.predicate_str})"
@@ -190,7 +191,7 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
         )
     )
 
-    _extrinsics = np.stack(extrinsics)
+    _extrinsics = np.stack(extrinsics, dtype=np.floating)
     assert _extrinsics.shape == (N, 3, 4), _extrinsics.shape
 
     # convert 4 corner points from pixel-coordinate to world-coordinate
@@ -248,9 +249,13 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
             # print('annihilated', visited)
             return lit(annihilator)
         if all(isinstance(e, LiteralNode) for e in visited.exprs):
-            assert len({e.value for e in visited.exprs}) == 1, visited.exprs
+            exprs = visited.exprs
+            assert all(isinstance(e, LiteralNode) for e in exprs), exprs
+            assert len({e.value for e in exprs if isinstance(e, LiteralNode)}) == 1, visited.exprs
             # print('all', visited)
-            return lit(visited.exprs[0].value)
+            e = exprs[0]
+            assert isinstance(e, LiteralNode), e
+            return lit(e.value)
         exprs = [e for e in visited.exprs if not isinstance(e, LiteralNode)]
         return BoolOpNode(visited.op, exprs) if len(exprs) > 1 else exprs[0]
 
@@ -294,7 +299,7 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
             else:
                 assert isinstance(segment, CallNode), segment
                 assert segment == F.same_region().fn, segment
-                assert len(segment.params) == 1, segment.param
+                assert len(segment.params) == 1, segment.params
                 assert isinstance(segment.params[0], LiteralNode), segment.params[0]
                 assert isinstance(segment.params[0].value, str), segment.params[0]
                 return F.is_roadtype(segment.params[0])
@@ -405,20 +410,24 @@ class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
                 return F.ignore_roadtype()
 
         # Boolean Absorption
-        is_roadtypes = [
-            e.params[0].value.lower()
-            for e in _exprs
-            if isinstance(e, CallNode) and e.fn == IS_ROADTYPE
+        e_params = [e.params[0] for e in _exprs if isinstance(e, CallNode) and e.fn == IS_ROADTYPE]
+        assert all(
+            isinstance(e, LiteralNode) and isinstance(e.value, str) for e in e_params
+        ), e_params
+        _is_roadtypes = [
+            v.lower()
+            for v in (e.value for e in e_params if isinstance(e, LiteralNode))
+            if isinstance(v, str)
         ]
         nested_exprs = [e for e in _exprs if isinstance(e, BoolOpNode) and e.op != node.op]
-        assert len(is_roadtypes) + len(nested_exprs) == len(_exprs), (
-            len(is_roadtypes),
+        assert len(_is_roadtypes) + len(nested_exprs) == len(_exprs), (
+            len(_is_roadtypes),
             len(nested_exprs),
             len(_exprs),
             _exprs,
         )
 
-        is_roadtypes: "set[str]" = set(is_roadtypes)
+        is_roadtypes: "set[str]" = set(_is_roadtypes)
 
         def is_absorbed(e: "CallNode | BoolOpNode"):
             if isinstance(e, CallNode):
@@ -432,11 +441,25 @@ class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
             else:
                 assert e.op == node.op, (node.op, e.op)
                 all_roadtype = all(isinstance(e, CallNode) and e.fn == IS_ROADTYPE for e in e.exprs)
-                return all_roadtype and {ee.params[0].value.lower() for ee in e.exprs}.issubset(
-                    is_roadtypes
-                )
+                if not all_roadtype:
+                    return False
+                exprs = [ee.params[0] for ee in e.exprs if isinstance(ee, CallNode)]
+                assert all(
+                    isinstance(e, LiteralNode) and isinstance(e.value, str) for e in exprs
+                ), exprs
+                return {
+                    v.lower()
+                    for v in (ee.value for ee in exprs if isinstance(ee, LiteralNode))
+                    if isinstance(v, str)
+                }.issubset(is_roadtypes)
 
-        nested_exprs = [e for e in nested_exprs if not any(map(is_absorbed, e.exprs))]
+        def all_not_absorbed(e: "BoolOpNode"):
+            exprs = e.exprs
+            assert all(isinstance(e, (CallNode, BoolOpNode)) for e in exprs), exprs
+            exprs = (e for e in exprs if isinstance(e, (CallNode, BoolOpNode)))
+            return not any(map(is_absorbed, exprs))
+
+        nested_exprs = filter(all_not_absorbed, nested_exprs)
 
         _exprs = [*map(F.is_roadtype, sorted(is_roadtypes)), *nested_exprs]
         if len(_exprs) == 1:

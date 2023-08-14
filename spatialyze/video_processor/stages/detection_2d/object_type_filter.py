@@ -23,10 +23,11 @@ from .detection_2d import Detection2D, Metadatum
 
 class ObjectTypeFilter(Detection2D):
     def __init__(self, types: "list[str] | None" = None, predicate: "PredicateNode | None" = None):
-        assert (types is None) != (predicate is None), "Can only except either types or predicate"
         if types is None:
+            assert predicate is not None, "Can only except either types or predicate"
             self.types = list(FindType()(predicate))
         else:
+            assert types is not None, "Can only except either types or predicate"
             self.types = types
         print("types", self.types)
 
