@@ -1,13 +1,14 @@
 import datetime
 import math
 from dataclasses import dataclass
-from typing import List, Tuple, Union
+from typing import List, NamedTuple, Tuple, Union
 
 import numpy as np
 import numpy.typing as npt
 import postgis
 import psycopg2
 import psycopg2.sql
+import shapely.geometry
 from plpygis import Geometry
 from shapely.geometry import Point
 from shapely.ops import nearest_points

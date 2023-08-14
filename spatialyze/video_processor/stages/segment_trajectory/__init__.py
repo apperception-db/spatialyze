@@ -1,4 +1,4 @@
-from typing import Any, Dict, NamedTuple, Tuple
+from typing import Any, Dict, Tuple
 
 from ...payload import Payload
 from ...types import DetectionId
