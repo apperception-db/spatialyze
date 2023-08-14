@@ -38,14 +38,12 @@ def format_trajectory(video_name: "str", obj_id: "int", track: "list[TrackPoint]
             object_type = tracking_result_3d.object_type
             timestamps.append(ego_info.timestamp)
             pairs.append(tracking_result_3d.point)
-            if (
-                segment_mapping is None
-                or isinstance(segment_mapping, InvalidSegmentPoint)
-                or segment_mapping.segment_type == "intersection"
-            ):
-                itemHeadings.append(None)
-            else:
-                itemHeadings.append(segment_mapping.segment_heading)
+            itemHeadings.append(
+                None
+                if (segment_mapping is None
+                    or isinstance(segment_mapping, InvalidSegmentPoint)
+                    or segment_mapping.segment_type == "intersection")
+                else segment_mapping.segment_heading)
             translations.append(ego_info.ego_translation)
             # road_types.append(segment_mapping.road_polygon_info.road_type if base else detection_info.road_type)
             # roadpolygons.append(None if base else detection_info.road_polygon_info.polygon)
