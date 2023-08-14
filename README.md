@@ -47,7 +47,7 @@ while maintaining up to 97.1% accuracy compared to unoptimized execution.
 ```
 - python >= 3.10 (Prefer Conda/Mamba)
 - docker
-- cuda >= 11.7 (If you want to use GPU)
+- cuda >= 11.7 (If using GPU)
 ```
 
 ## How to Setup Spatialyze Repo
