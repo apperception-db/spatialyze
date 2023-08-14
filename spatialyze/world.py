@@ -22,12 +22,10 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
 )
 from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
+from .video_processor.stages.stage import Stage
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
-from .video_processor.stages.tracking_3d.from_tracking_2d_and_depth import (
-    FromTracking2DAndDepth,
-)
-from .video_processor.stages.tracking_3d.from_tracking_2d_and_road import (
-    FromTracking2DAndRoad,
+from .video_processor.stages.tracking_3d.from_tracking_2d_and_detection_3d import (
+    FromTracking2DAndDetection3D,
 )
 from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
 from .video_processor.stages.tracking_3d.tracking_3d import Tracking3D
@@ -107,35 +105,24 @@ def _execute(world: "World", optimization=True):
     # for gc in world._geogConstructs:
     #     gc.ingest(database)
     # analyze predicates to generate pipeline
-    objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
+    steps: "list[Stage]" = []
     if optimization:
-        pipeline = Pipeline(
-            [
-                DecodeFrame(),
-                InView(distance=50, predicate=world.predicates),
-                YoloDetection(),
-                objtypes_filter,
-                FromDetection2DAndRoad(),
-                *(
-                    [DetectionEstimation()]
-                    if all(t in ["car", "truck"] for t in objtypes_filter.types)
-                    else []
-                ),
-                StrongSORT(),
-                FromTracking2DAndRoad(),
-            ]
-        )
+        steps.append(InView(distance=50, predicate=world.predicates))
+    steps.append(DecodeFrame())
+    steps.append(YoloDetection())
+    if optimization:
+        objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
+        steps.append(objtypes_filter)
+        steps.append(FromDetection2DAndRoad())
+        if all(t in ["car", "truck"] for t in objtypes_filter.types):
+            steps.append(DetectionEstimation())
     else:
-        pipeline = Pipeline(
-            [
-                DecodeFrame(),
-                YoloDetection(),
-                DepthEstimation(),
-                FromDetection2DAndDepth(),
-                StrongSORT(),
-                FromTracking2DAndDepth(),
-            ]
-        )
+        steps.append(DepthEstimation())
+        steps.append(FromDetection2DAndDepth())
+    steps.append(StrongSORT())
+    steps.append(FromTracking2DAndDetection3D())
+
+    pipeline = Pipeline(steps)
 
     qresults: "dict[str, list[tuple]]" = {}
     vresults: "dict[str, list[T3DMetadatum]]" = {}
