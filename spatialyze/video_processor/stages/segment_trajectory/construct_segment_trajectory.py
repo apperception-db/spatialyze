@@ -327,7 +327,9 @@ def binary_search_segment(
         return before + [middle_segment] + after
 
 
-def complete_segment_trajectory(road_segment_trajectory: "list[ValidSegmentPoint]", payload: "Payload"):
+def complete_segment_trajectory(
+    road_segment_trajectory: "list[ValidSegmentPoint]", payload: "Payload"
+):
     completed_segment_trajectory: "list[ValidSegmentPoint]" = [road_segment_trajectory[0]]
 
     for current_segment, next_segment in zip(
