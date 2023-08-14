@@ -54,7 +54,7 @@ class InView(Stage):
         if roadtypes is not None:
             assert predicate is None, "Can only except either segment_type or predicate"
             self.roadtypes = roadtypes if isinstance(roadtypes, list) else [roadtypes]
-            self.preciate = None
+            self.predicate = None
         elif predicate is not None:
             assert roadtypes is None, "Can only except either segment_type or predicate"
             self.roadtypes, self.predicate_str = create_inview_predicate(predicate)
