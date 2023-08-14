@@ -35,7 +35,7 @@ class Tracking3D(Stage[Metadatum]):
                 "detection_id": tuple(o.detection_id),
                 "object_id": o.object_id,
                 "point_from_camera": o.point_from_camera,
-                "point": o.point.tolist(),
+                "point": o.point,
                 "bbox_left": o.bbox_left,
                 "bbox_top": o.bbox_top,
                 "bbox_w": o.bbox_w,
