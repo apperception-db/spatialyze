@@ -109,7 +109,7 @@ SegmentQueryResult = Tuple[str, postgis.Polygon, postgis.LineString, List[str], 
 
 
 class PolygonAndId(NamedTuple):
-    id: "int"
+    id: "str"
     polygon: "shapely.geometry.Polygon"
 
 

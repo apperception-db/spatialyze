@@ -1,17 +1,11 @@
 import datetime
 
-from ..camera_config import CameraConfig
-from ..stages.segment_trajectory.construct_segment_trajectory import ValidSegmentPoint
-from ..stages.tracking_3d.tracking_3d import Tracking3DResult
+from ..stages.segment_trajectory.construct_segment_trajectory import InvalidSegmentPoint
 from ..types import Float3
+from .get_tracks import TrackPoint
 
 
-def format_trajectory(
-    video_name: "str",
-    obj_id: "int",
-    track: "list[tuple[Tracking3DResult, CameraConfig, ValidSegmentPoint | None]]",
-    base=None,
-):
+def format_trajectory(video_name: "str", obj_id: "int", track: "list[TrackPoint]"):
     timestamps: "list[datetime.datetime]" = []
     pairs: "list[Float3]" = []
     itemHeadings: "list[float | None]" = []
@@ -44,7 +38,7 @@ def format_trajectory(
             object_type = tracking_result_3d.object_type
             timestamps.append(ego_info.timestamp)
             pairs.append(tracking_result_3d.point)
-            if not segment_mapping or (segment_mapping.segment_type == "intersection"):
+            if segment_mapping is None or isinstance(segment_mapping, InvalidSegmentPoint) or segment_mapping.segment_type == "intersection":
                 itemHeadings.append(None)
             else:
                 itemHeadings.append(segment_mapping.segment_heading)
