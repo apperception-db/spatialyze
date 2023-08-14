@@ -10,7 +10,13 @@ from ..detection_estimation.segment_mapping import RoadPolygonInfo as RoadPolygo
 from ..detection_estimation.utils import trajectory_3d
 from ..stage import Stage
 from ..tracking_2d.strongsort import StrongSORT
-from .construct_segment_trajectory import SegmentPoint, calibrate
+from .construct_segment_trajectory import (
+    InvalidSegmentPoint,
+    PolygonAndId,
+    SegmentPoint,
+    ValidSegmentPoint,
+    calibrate,
+)
 
 SegmentTrajectoryMetadatum = Dict[int, SegmentPoint]
 
@@ -51,7 +57,7 @@ class SegmentTrajectory(Stage[SegmentTrajectoryMetadatum]):
 
     @classmethod
     def encode_json(cls, o: "Any"):
-        if isinstance(o, SegmentPoint):
+        if isinstance(o, ValidSegmentPoint):
             return {
                 "detection_id": tuple(o.detection_id),
                 "car_loc3d": o.car_loc3d,
@@ -60,6 +66,16 @@ class SegmentTrajectory(Stage[SegmentTrajectoryMetadatum]):
                 # "segment_line_wkb": o.segment_line.wkb_hex,
                 "segment_heading": o.segment_heading,
                 "road_polygon_info": o.road_polygon_info,
+                "obj_id": o.obj_id,
+                "type": o.type,
+                "next": None if o.next is None else tuple(o.next.detection_id),
+                "prev": None if o.prev is None else tuple(o.prev.detection_id),
+            }
+        if isinstance(o, InvalidSegmentPoint):
+            return {
+                "detection_id": tuple(o.detection_id),
+                "car_loc3d": o.car_loc3d,
+                "timestamp": str(o.timestamp),
                 "obj_id": o.obj_id,
                 "type": o.type,
                 "next": None if o.next is None else tuple(o.next.detection_id),
@@ -76,6 +92,12 @@ class SegmentTrajectory(Stage[SegmentTrajectoryMetadatum]):
                 "contains_ego": o.contains_ego,
                 "ego_config": o.ego_config,
                 "fov_lines": o.fov_lines,
+            }
+
+        if isinstance(o, PolygonAndId):
+            return {
+                "id": o.id,
+                "polygon": str(o.polygon),
             }
 
 

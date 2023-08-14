@@ -41,7 +41,7 @@ def test_optimized_workflow():
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
                 assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera)), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point.tolist()), np.array(g.point)), (p.point, g.point)
+                assert np.allclose(np.array(p.point), np.array(g.point)), (p.point, g.point)
                 assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
                 assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
                 assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
