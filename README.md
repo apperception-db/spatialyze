@@ -84,8 +84,8 @@ pip install lap  # a bug in lap/poetry/conda that lap needs to be installed usin
 ```bash
 docker volume create spatialyze-gsstore-data
 docker run --name     "spatialyze-gsstore"                        \
-           --detach                                                \
-           --publish  25432:5432                                   \
+           --detach                                               \
+           --publish  25432:5432                                  \
            --volume   spatialyze-gsstore-data:/var/lib/postgresql \
                       mobilitydb/mobilitydb
 ```
