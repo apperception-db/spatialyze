@@ -15,98 +15,6 @@ from ..data_types.nuscenes_camera import NuscenesCamera
 
 
 def process_raw_nuscenes(dir: "str"):
-    """Ingest NuScenes dataset into database."""
-    df_sample_data, df_sample_annotation = _process_raw_nuscenes(dir)
-    sample_data = df_sample_data.to_dict("records")
-    sample_annotations = df_sample_annotation.to_dict("records")
-
-    sample_annotations_partitioned = _partition_camera(sample_annotations, sample_data)
-
-    camera_map: "dict[CameraKey, list[NuscenesCamera]]" = {}
-    print("Indexing Cameras by Camera Id")
-    for cc in tqdm(sample_data, total=len(sample_data)):
-        key = CameraKey(scene=cc["scene_name"], channel=cc["channel"])
-        if key not in camera_map:
-            camera_map[key] = []
-        camera_map[key].append(NuscenesCamera(**{str(k): v for k, v in cc.items()}))
-
-    for v in camera_map.values():
-        v.sort(key=lambda x: x.timestamp)
-
-    annotations_map: "dict[CameraKey, list[NuscenesAnnotation]]" = {
-        k: [] for k in camera_map.keys()
-    }
-    print("Indexing Annotations by Camera Id")
-    for a in tqdm(sample_annotations_partitioned, total=len(sample_annotations_partitioned)):
-        sd_tokens = a["sample_data_tokens"]
-        channels = a["channels"]
-        assert len(sd_tokens) == len(channels), (sd_tokens, channels)
-        for sdt, c in zip(sd_tokens, channels):
-            key = CameraKey(scene=a["scene_name"], channel=c)
-            annotations_map[key].append(
-                NuscenesAnnotation(
-                    sample_data_token=sdt,
-                    channel=c,
-                    **a,
-                )
-            )
-
-    return annotations_map, camera_map
-
-
-def unique(data: "list[dict]", key: str = "token"):
-    return {d[key] for d in data}
-
-
-def normalize_angle(angle: "float | int") -> float:
-    while angle > math.pi:
-        angle -= math.tau
-    while angle < -math.pi:
-        angle += math.tau
-    assert -math.pi <= angle <= math.pi
-    return angle
-
-
-def index(data: "list[dict]", key: str = "token") -> "dict[Any, dict]":
-    return {d[key]: d for d in data}
-
-
-def get_heading_from_north(rotation: "Quaternion"):
-    yaw = rotation.yaw_pitch_roll[0]
-    return normalize_angle(yaw - (math.pi / 2))
-
-
-def get_camera_rotation(
-    camera_rotation: "list[float]", ego_rotation: "list[float]"
-) -> "npt.NDArray":
-    return (Quaternion(ego_rotation) * Quaternion(camera_rotation)).q
-
-
-def get_camera_position(
-    camera_translation: "list[float]",
-    ego_translation: "list[float]",
-    ego_rotation: "list[float]",
-) -> "npt.NDArray":
-    rotated_offset = Quaternion(ego_rotation).rotate(np.array(camera_translation))
-    return np.array(ego_translation) + rotated_offset
-
-
-def get_heading(rotation: "Quaternion"):
-    yaw = rotation.yaw_pitch_roll[0]
-    return normalize_angle(yaw)
-
-
-ROT = Quaternion(axis=[1, 0, 0], angle=np.pi / 2)
-
-
-def get_camera_heading(rotation: "Quaternion"):
-    rot = ROT.rotate(rotation)
-    assert isinstance(rot, Quaternion)
-    return -get_heading(rot) + math.pi / 2
-
-
-def _process_raw_nuscenes(dir: "str"):
-    """Process raw NuScenes dataset."""
     with open(os.path.join(dir, "calibrated_sensor.json")) as f:
         calibrated_sensor_json = json.load(f)
     with open(os.path.join(dir, "category.json")) as f:
@@ -334,37 +242,15 @@ def _process_raw_nuscenes(dir: "str"):
         df_sample_data.groupby("scene_name")["timestamp"].rank(method="first").astype(int)
     )
 
-    return df_sample_data, df_sample_annotation
+    sample_data = df_sample_data.to_dict("records")
+    sample_annotations = df_sample_annotation.to_dict("records")
 
-
-def world2pixel(annotation, sample_data):
-    ct = np.array(sample_data["camera_translation"])
-    cr = Quaternion(sample_data["camera_rotation"])
-    ci = np.array(sample_data["camera_intrinsic"])
-    at = np.array(annotation["translation"])
-
-    offset = at - ct  # .reshape((3, 1))
-    # point_from_camera = np.dot(cr.unit.inverse.rotation_matrix, offset)
-    _point_from_camera = cr.inverse.rotate(offset)
-    assert isinstance(_point_from_camera, np.ndarray)
-    point_from_camera = _point_from_camera.reshape((3, 1))
-    if point_from_camera[2] < 0:
-        return np.array([-1, -1, 0])
-    assert point_from_camera.shape == (3, 1)
-    point2d = np.dot(ci, point_from_camera)
-    assert point2d.shape == (3, 1)
-
-    return (point2d / point2d[2:3]).reshape((3,))
-
-
-def _partition_camera(raw_annotations: "list[dict]", raw_sample_data: "list[dict]"):
-    # Map from annotation token -> annotation
-    annotation_map = {a["token"]: a for a in raw_annotations}
-    assert len(annotation_map) == len(raw_annotations), (len(annotation_map), len(raw_annotations))
+    annotation_map = {a["token"]: a for a in sample_annotations}
+    assert len(annotation_map) == len(sample_annotations), (len(annotation_map), len(sample_annotations))
 
     # Map from sample data token (camera config token) -> sample data
-    sample_data_map = {sd["token"]: sd for sd in raw_sample_data}
-    assert len(sample_data_map) == len(raw_sample_data)
+    sample_data_map = {sd["token"]: sd for sd in sample_data}
+    assert len(sample_data_map) == len(sample_data)
 
     for a in annotation_map.values():
         for sdt in a["sample_data_tokens"]:
@@ -402,6 +288,107 @@ def _partition_camera(raw_annotations: "list[dict]", raw_sample_data: "list[dict
         }
 
     print("Assigning annotations to camera")
-    output_annotations = [split(a) for a in tqdm(raw_annotations)]
+    sample_annotations_partitioned = [split(a) for a in tqdm(sample_annotations)]
 
-    return output_annotations
+    camera_map: "dict[CameraKey, list[NuscenesCamera]]" = {}
+    print("Indexing Cameras by Camera Id")
+    for cc in tqdm(sample_data, total=len(sample_data)):
+        key = CameraKey(scene=cc["scene_name"], channel=cc["channel"])
+        if key not in camera_map:
+            camera_map[key] = []
+        camera_map[key].append(NuscenesCamera(**{str(k): v for k, v in cc.items()}))
+
+    for v in camera_map.values():
+        v.sort(key=lambda x: x.timestamp)
+
+    annotations_map: "dict[CameraKey, list[NuscenesAnnotation]]" = {
+        k: [] for k in camera_map.keys()
+    }
+    print("Indexing Annotations by Camera Id")
+    for a in tqdm(sample_annotations_partitioned, total=len(sample_annotations_partitioned)):
+        sd_tokens = a["sample_data_tokens"]
+        channels = a["channels"]
+        assert len(sd_tokens) == len(channels), (sd_tokens, channels)
+        a = {str(k): v for k, v in a.items()}
+        for sdt, c in zip(sd_tokens, channels):
+            key = CameraKey(scene=a["scene_name"], channel=c)
+            annotations_map[key].append(
+                NuscenesAnnotation(
+                    sample_data_token=sdt,
+                    channel=c,
+                    **a,
+                )
+            )
+
+    return annotations_map, camera_map
+
+
+def unique(data: "list[dict]", key: str = "token"):
+    return {d[key] for d in data}
+
+
+def normalize_angle(angle: "float | int") -> float:
+    while angle > math.pi:
+        angle -= math.tau
+    while angle < -math.pi:
+        angle += math.tau
+    assert -math.pi <= angle <= math.pi
+    return angle
+
+
+def index(data: "list[dict]", key: str = "token") -> "dict[Any, dict]":
+    return {d[key]: d for d in data}
+
+
+def get_heading_from_north(rotation: "Quaternion"):
+    yaw = rotation.yaw_pitch_roll[0]
+    return normalize_angle(yaw - (math.pi / 2))
+
+
+def get_camera_rotation(
+    camera_rotation: "list[float]", ego_rotation: "list[float]"
+) -> "npt.NDArray":
+    return (Quaternion(ego_rotation) * Quaternion(camera_rotation)).q
+
+
+def get_camera_position(
+    camera_translation: "list[float]",
+    ego_translation: "list[float]",
+    ego_rotation: "list[float]",
+) -> "npt.NDArray":
+    rotated_offset = Quaternion(ego_rotation).rotate(np.array(camera_translation))
+    return np.array(ego_translation) + rotated_offset
+
+
+def get_heading(rotation: "Quaternion"):
+    yaw = rotation.yaw_pitch_roll[0]
+    return normalize_angle(yaw)
+
+
+ROT = Quaternion(axis=[1, 0, 0], angle=np.pi / 2)
+
+
+def get_camera_heading(rotation: "Quaternion"):
+    rot = ROT.rotate(rotation)
+    assert isinstance(rot, Quaternion)
+    return -get_heading(rot) + math.pi / 2
+
+
+def world2pixel(annotation, sample_data):
+    ct = np.array(sample_data["camera_translation"])
+    cr = Quaternion(sample_data["camera_rotation"])
+    ci = np.array(sample_data["camera_intrinsic"])
+    at = np.array(annotation["translation"])
+
+    offset = at - ct  # .reshape((3, 1))
+    # point_from_camera = np.dot(cr.unit.inverse.rotation_matrix, offset)
+    _point_from_camera = cr.inverse.rotate(offset)
+    assert isinstance(_point_from_camera, np.ndarray)
+    point_from_camera = _point_from_camera.reshape((3, 1))
+    if point_from_camera[2] < 0:
+        return np.array([-1, -1, 0])
+    assert point_from_camera.shape == (3, 1)
+    point2d = np.dot(ci, point_from_camera)
+    assert point2d.shape == (3, 1)
+
+    return (point2d / point2d[2:3]).reshape((3,))
