@@ -2,6 +2,7 @@ import numpy as np
 
 from .data_types.camera import Camera
 from .data_types.camera_config import CameraConfig as _CameraConfig
+from .data_types.query_result import QueryResult
 from .database import Database
 from .database import database as default_database
 from .geospatial_video import GeospatialVideo
@@ -124,7 +125,7 @@ def _execute(world: "World", optimization=True):
 
     pipeline = Pipeline(steps)
 
-    qresults: "dict[str, list[tuple]]" = {}
+    qresults: "dict[str, list[QueryResult]]" = {}
     vresults: "dict[str, list[T3DMetadatum]]" = {}
     for v in world._videos:
         # reset database

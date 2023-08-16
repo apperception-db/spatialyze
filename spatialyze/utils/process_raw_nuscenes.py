@@ -191,11 +191,11 @@ def _process_raw_nuscenes(dir: "str"):
     log_tokens = unique(scene_filter, "log_token")
     log_filter = [
         {
-            "log_token": l["token"],
-            "location": l["location"],
+            "log_token": lg["token"],
+            "location": lg["location"],
         }
-        for l in log_json
-        if l["token"] in log_tokens
+        for lg in log_json
+        if lg["token"] in log_tokens
     ]
     # len(log_filter)
 
