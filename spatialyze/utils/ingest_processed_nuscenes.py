@@ -1,11 +1,12 @@
-from tqdm import tqdm
 from datetime import datetime
+from typing import TYPE_CHECKING, NamedTuple
+
 import numpy as np
 import numpy.typing as npt
-from typing import TYPE_CHECKING, NamedTuple
 import psycopg2.sql as psql
+from mobilitydb import TFloatInst, TFloatSeq, TGeomPointInst, TGeomPointSeq
 from postgis import Point
-from mobilitydb import TGeomPointInst, TGeomPointSeq, TFloatSeq, TFloatInst
+from tqdm import tqdm
 
 from ..data_types.camera_key import CameraKey
 from ..data_types.nuscenes_annotation import NuscenesAnnotation
@@ -40,10 +41,10 @@ def ingest_processed_nuscenes(
     ks = keys
     camera_sqls: "list[psql.Composable]" = []
     item_sqls: "list[psql.Composable]" = []
-    print('Ingesting Cameras and Annotations')
+    print("Ingesting Cameras and Annotations")
     for k in tqdm(ks, total=len(ks)):
         camera = camera_map[k]
-        if camera[0].location != 'boston-seaport':
+        if camera[0].location != "boston-seaport":
             continue
         annotations = annotations_map[k]
 
@@ -66,7 +67,7 @@ def ingest_processed_nuscenes(
                 ("cameraHeading", L(cc.camera_heading)),
                 ("egoHeading", L(cc.ego_heading)),
             ]
-            brackets = ','.join(['{}'] * len(fields))
+            brackets = ",".join(["{}"] * len(fields))
             camera_sqls.append(psql.SQL(f"({brackets})").format(*(v for _, v in fields)))
 
         for a in annotations:
@@ -113,18 +114,22 @@ def ingest_processed_nuscenes(
             #     deltas.append(meta_box[1:])
             trajectory = [TGeomPointInst(Point(*p), t) for p, t in zip(translations, timestamps)]
             headings = [TFloatInst(f, t) for f, t in zip(itemHeadings, timestamps)]
-            item_sqls.append(psql.SQL("""(
+            item_sqls.append(
+                psql.SQL(
+                    """(
                 {item_id},      {camera_id},
                 {object_type},  {traj_centroids},
                 {translations}, {item_headings}
-            )""").format(
-                item_id=L(item_id),
-                camera_id=L(str(k)),
-                object_type=L(obj.object_type),
-                traj_centroids=L(TGeomPointSeq(trajectory, upper_inc=True)),
-                translations=L(TGeomPointSeq(trajectory, upper_inc=True)),
-                item_headings=L(TFloatSeq(headings, upper_inc=True)),
-            ))
+            )"""
+                ).format(
+                    item_id=L(item_id),
+                    camera_id=L(str(k)),
+                    object_type=L(obj.object_type),
+                    traj_centroids=L(TGeomPointSeq(trajectory, upper_inc=True)),
+                    translations=L(TGeomPointSeq(trajectory, upper_inc=True)),
+                    item_headings=L(TFloatSeq(headings, upper_inc=True)),
+                )
+            )
         camera_sqls, item_sqls = _flush(camera_sqls, item_sqls, database, 1000)
     _flush(camera_sqls, item_sqls, database)
 
@@ -136,19 +141,22 @@ def _flush(
     threshold: "int | None" = None,
 ) -> "tuple[list[psql.Composable], list[psql.Composable]]":
     if threshold is None or len(camera_sqls) + len(item_sqls) >= threshold:
-        query = psql.SQL("""
+        query = psql.SQL(
+            """
         INSERT INTO Cameras (cameraId, frameId, frameNum, fileName,
             cameraTranslation, cameraRotation, cameraIntrinsic,
             egoTranslation, egoRotation, timestamp, cameraHeading, egoHeading)
-        VALUES {}""").format(psql.SQL(",").join(camera_sqls))
+        VALUES {}"""
+        ).format(psql.SQL(",").join(camera_sqls))
         database.update(query)
 
         if len(item_sqls) != 0:
-            query = psql.SQL("""
+            query = psql.SQL(
+                """
             INSERT INTO Item_General_Trajectory (ItemId, CameraId,
                 ObjectType, TrajCentroids, Translations, ItemHeadings)
-            VALUES {}""").format(psql.SQL(",").join(item_sqls))
+            VALUES {}"""
+            ).format(psql.SQL(",").join(item_sqls))
             database.update(query)
         return [], []
     return camera_sqls, item_sqls
-

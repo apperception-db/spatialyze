@@ -5,23 +5,28 @@ import pandas as pd
 import psycopg2
 import psycopg2.errors
 import psycopg2.sql as psql
-
 from mobilitydb.psycopg import register as mobilitydb_register
 from postgis.psycopg import register as postgis_register
 
-from .data_types.query_result import QueryResult
 from .data_types.camera_key import CameraKey
-from .utils.ingest_road import ROAD_TYPES, add_segment_type, create_tables, drop_tables, ingest_location
 from .data_types.nuscenes_annotation import NuscenesAnnotation
 from .data_types.nuscenes_camera import NuscenesCamera
+from .data_types.query_result import QueryResult
 from .predicate import (
     FindAllTablesVisitor,
     GenSqlVisitor,
     MapTablesTransformer,
     normalize,
 )
-from .utils.ingest_processed_nuscenes import ingest_processed_nuscenes
 from .utils.add_recognized_objects import add_recognized_objects
+from .utils.ingest_processed_nuscenes import ingest_processed_nuscenes
+from .utils.ingest_road import (
+    ROAD_TYPES,
+    add_segment_type,
+    create_tables,
+    drop_tables,
+    ingest_location,
+)
 from .utils.recognize import recognize
 
 if TYPE_CHECKING:
@@ -278,11 +283,11 @@ class Database:
         ingest_location(self, dir, location)
         add_segment_type(self, ROAD_TYPES)
         self._commit()
-    
+
     def load_nuscenes(
         self,
         annotations: "dict[CameraKey, list[NuscenesAnnotation]]",
-        cameras: "dict[CameraKey, list[NuscenesCamera]]"
+        cameras: "dict[CameraKey, list[NuscenesCamera]]",
     ):
         ingest_processed_nuscenes(annotations, cameras, self)
 
@@ -311,7 +316,10 @@ class Database:
             WHERE
             {GenSqlVisitor()(predicate)}
         """
-        return [QueryResult(frame_number, camera_id, filename, item_ids) for frame_number, camera_id, filename, *item_ids in self.execute(sql_str)]
+        return [
+            QueryResult(frame_number, camera_id, filename, item_ids)
+            for frame_number, camera_id, filename, *item_ids in self.execute(sql_str)
+        ]
 
     def sql(self, query: str) -> pd.DataFrame:
         results, cursor = self.execute_and_cursor(query)
