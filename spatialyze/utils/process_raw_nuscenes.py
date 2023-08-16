@@ -246,7 +246,10 @@ def process_raw_nuscenes(dir: "str"):
     sample_annotations = df_sample_annotation.to_dict("records")
 
     annotation_map = {a["token"]: a for a in sample_annotations}
-    assert len(annotation_map) == len(sample_annotations), (len(annotation_map), len(sample_annotations))
+    assert len(annotation_map) == len(sample_annotations), (
+        len(annotation_map),
+        len(sample_annotations),
+    )
 
     # Map from sample data token (camera config token) -> sample data
     sample_data_map = {sd["token"]: sd for sd in sample_data}
