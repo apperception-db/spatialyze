@@ -18,7 +18,6 @@ from .predicate import (
     MapTablesTransformer,
     normalize,
 )
-from .utils.add_recognized_objects import add_recognized_objects
 from .utils.ingest_processed_nuscenes import ingest_processed_nuscenes
 from .utils.ingest_road import (
     ROAD_TYPES,
@@ -27,7 +26,6 @@ from .utils.ingest_road import (
     drop_tables,
     ingest_location,
 )
-from .utils.recognize import recognize
 
 if TYPE_CHECKING:
     from psycopg2 import connection as Connection
@@ -83,10 +81,6 @@ def columns(fn: "Callable[[tuple[str, str]], str]", columns: "list[tuple[str, st
 
 def _schema(column: "tuple[str, str]") -> str:
     return " ".join(column)
-
-
-def _name(column: "tuple[str, str]") -> str:
-    return column[0]
 
 
 def place_holder(num: int):
@@ -179,31 +173,6 @@ class Database:
         self._commit(commit)
         cursor.close()
 
-    def _insert_into_camera(self, value: tuple, commit=True):
-        cursor = self.connection.cursor()
-        cursor.execute(
-            f"INSERT INTO Cameras ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
-            tuple(value),
-        )
-        self._commit(commit)
-        cursor.close()
-
-    def _insert_into_item_general_trajectory(self, value: tuple, commit=True):
-        cursor = self.connection.cursor()
-        cursor.execute(
-            f"INSERT INTO Item_General_Trajectory ({columns(_name, TRAJECTORY_COLUMNS)}) VALUES ({place_holder(len(TRAJECTORY_COLUMNS))})",
-            tuple(value),
-        )
-        self._commit(commit)
-        cursor.close()
-
-    def _insert_into_general_bbox(self, value: tuple, commit=True):
-        self.cursor.execute(
-            f"INSERT INTO General_Bbox ({columns(_name, BBOX_COLUMNS)}) VALUES ({place_holder(len(BBOX_COLUMNS))})",
-            tuple(value),
-        )
-        self._commit(commit)
-
     def _commit(self, commit=True):
         if commit:
             self.connection.commit()
@@ -241,7 +210,7 @@ class Database:
         finally:
             cursor.close()
 
-    def insert_cam(self, camera: "Camera"):
+    def insert_camera(self, camera: "Camera"):
         values = [
             f"""(
                 '{camera.id}',
@@ -272,10 +241,6 @@ class Database:
         # print("New camera inserted successfully.........")
         self.connection.commit()
         cursor.close()
-
-    def insert_bbox_traj(self, camera: "Camera", annotation):
-        tracking_results = recognize(camera.configs, annotation)
-        add_recognized_objects(self.connection, tracking_results, camera.id)
 
     def load_roadnetworks(self, dir: "str", location: "str"):
         drop_tables(database)

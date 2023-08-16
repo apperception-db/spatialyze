@@ -165,7 +165,7 @@ def _execute(world: "World", optimization=True):
         ]
 
         camera = Camera(_camera_configs, v.camera[0].camera_id)
-        database.insert_cam(camera)
+        database.insert_camera(camera)
 
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults
