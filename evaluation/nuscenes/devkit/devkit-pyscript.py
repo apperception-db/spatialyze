@@ -379,23 +379,23 @@ len(instances)
 
 
 ## Filter for egos whos heading is aligned with the road direction
-new_instances = []
-for instance in instances:
-  ego_pose = nusc.get('ego_pose', instance.ego_pose_token)
-  ego_trans = np.array(ego_pose['translation'])
+# new_instances = []
+# for instance in instances:
+#   ego_pose = nusc.get('ego_pose', instance.ego_pose_token)
+#   ego_trans = np.array(ego_pose['translation'])
   
-  camera_token = instance.sample_record['data'][instance.cam_direction]
-  camera_data = nusc.get('sample_data', camera_token)
-  cal_sensor = nusc.get('calibrated_sensor', camera_data['calibrated_sensor_token'])
-  cam_heading = get_camera_heading(ego_rotation=ego_pose['rotation'], cam_rotation=cal_sensor['rotation'])  
+#   camera_token = instance.sample_record['data'][instance.cam_direction]
+#   camera_data = nusc.get('sample_data', camera_token)
+#   cal_sensor = nusc.get('calibrated_sensor', camera_data['calibrated_sensor_token'])
+#   cam_heading = get_camera_heading(ego_rotation=ego_pose['rotation'], cam_rotation=cal_sensor['rotation'])  
   
-  road_direction = get_road_direction(ego_trans)
-  if road_direction == None:
-    new_instances.append(instance)
-  elif math.radians(-15) < normalizeAngle(cam_heading - road_direction) and normalizeAngle(cam_heading - road_direction) < math.radians(15):
-    new_instances.append(instance)
-instances = new_instances
-len(instances)
+#   road_direction = get_road_direction(ego_trans)
+#   if road_direction == None:
+#     new_instances.append(instance)
+#   elif math.radians(-15) < normalizeAngle(cam_heading - road_direction) and normalizeAngle(cam_heading - road_direction) < math.radians(15):
+#     new_instances.append(instance)
+# instances = new_instances
+# len(instances)
 
 
 ## Filter so that cars are visible from ego
@@ -622,6 +622,10 @@ with open('fig14_results.txt', 'w') as f:
 #     F.ahead(car2.traj@cam.time, opposite_car.traj@cam.time)
 # )
 
+
+"""
+Note: we tried implementing Figure 15 in b
+"""
  
 ## Get all possible car + car + car + ego instances
 print("Figure 15")
@@ -666,10 +670,10 @@ for instance in instances:
   car_2_trans = np.array(annotation2['translation'])
   car_1_trans = np.array(annotation1['translation'])
   ego_trans = np.array(ego_pose['translation'])
-  distance1 = np.linalg.norm(oppposite_car_trans - car_2_trans)
-  distance2 = np.linalg.norm(car_1_trans - ego_trans)
+  distance1 = np.linalg.norm(car_1_trans - ego_trans)
+  distance2 = np.linalg.norm(oppposite_car_trans - car_2_trans)
 
-  if distance1 < 40 and distance2 < 50:
+  if distance1 < 40:
     new_instances.append(instance)
 instances = new_instances
 len(instances)

@@ -1,3 +1,7 @@
+# get rid of pytorch depreciation warnings
+import shutup;
+shutup.please()
+
 import sys
 sys.path.append("../../")
 import os
@@ -116,11 +120,14 @@ def write_times(sceneNumbers, query, time):
         print(str(sceneNumbers) + " - " + query + " - " + time + "\n")
 
 
+"""
+For each query, we query for the frameNum, cameraId, filename, and trajectory/location, similar to what getObjects() of Spatialyze returns
+"""
 def q1():
     cursor = evadb.connect().cursor()
     start = time.time()
     res1 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE1(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, cameraid, filename, QE1(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res1 = res1[res1["qe1.queryresult"]]    
@@ -132,7 +139,7 @@ def q2():
     cursor = evadb.connect().cursor()
     start = time.time()
     res2 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE2(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, cameraid, filename, QE2(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res2 = res2[res2["qe2.queryresult"]]
@@ -144,7 +151,7 @@ def q3():
     cursor = evadb.connect().cursor()
     start = time.time()
     res3 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE3(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, cameraid, filename, QE3(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res3 = res3[res3["qe3.queryresult"]]
@@ -156,7 +163,7 @@ def q4():
     cursor = evadb.connect().cursor()
     start = time.time()
     res4 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE4(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, cameraid, filename, QE4(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res4= res4[res4["qe4.queryresult"]]
@@ -172,6 +179,10 @@ with open(SCENE_NAMES, 'r') as f:
     sceneNumbers = f.readlines()
     sceneNumbers = [x.strip() for x in sceneNumbers]
 
+"""
+To measure the query time for each query, we start with a clean DB, and run two queries in parralel, in order to make use of Eva's
+cacheing mechanisms. For example, to measure the q4 runtime, we would run q3 first and then q4.
+"""
 while len(sceneNumbers) > 0:
     currentScenes = [sceneNumbers.pop()]
     # if len(sceneNumbers) > 0:
