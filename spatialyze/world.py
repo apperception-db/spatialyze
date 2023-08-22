@@ -86,14 +86,11 @@ class World:
     def geogConstruct(self, type: "str"):
         return road_segment(type)
 
-    def saveVideos(self, VIDEO_PATH, OUTPUT_PATH, addBoundingBoxes: "bool" = False):
-        # TODO: execute and save videos
+    def saveVideos(self, OUTPUT_PATH: "str", addBoundingBoxes: "bool" = False):
         objects, trackings = _execute(self)
-        # TODO: return a list[tuple[videofile, frame_number]]
         return save_video_util(
             objects,
             trackings,
-            VIDEO_PATH,
             OUTPUT_PATH,
             addBoundingBoxes,
         )

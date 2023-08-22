@@ -3,9 +3,48 @@ from typing import NamedTuple
 import numpy as np
 import numpy.typing as npt
 
-from ..data_types.camera_config import Float4
-from ..video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
+from spatialyze.data_types.camera_config import Float4
+from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum, Tracking3DResult
 
+def interpolate_track(
+    trackings: "dict[str, list[T3DMetadatum]]", 
+    video: "str", 
+    objectNum: "int",
+    frameNum: "int"
+) -> "Tracking3DResult":
+    left, right = None, None
+    leftNum, rightNum = frameNum, frameNum
+
+    while left is None or right is None:
+        if left is None:
+            leftNum -= 1
+            if objectNum in trackings[video][leftNum]:
+                left = trackings[video][leftNum][objectNum]
+
+        if right is None:
+            rightNum += 1
+            if objectNum in trackings[video][rightNum]:
+                right = trackings[video][rightNum][objectNum]
+    
+    leftWeight = 1 - (frameNum - leftNum)/(rightNum - leftNum)
+    rightWeight = (frameNum - leftNum)/(rightNum - leftNum)
+    newPoint = (left.point*leftWeight + right.point*rightWeight)
+    newBboxLeft = (left.bbox_left*leftWeight + right.bbox_left*rightWeight) 
+    newBboxTop = (left.bbox_top*leftWeight + right.bbox_top*rightWeight)
+    newBboxHeight = (left.bbox_h*leftWeight + right.bbox_h*rightWeight)
+    newBboxWidth = (left.bbox_w*leftWeight + right.bbox_w*rightWeight)
+
+    return Tracking3DResult(frame_idx=frameNum, 
+                            point=newPoint, 
+                            bbox_left=newBboxLeft,
+                            bbox_top=newBboxTop, 
+                            bbox_h=newBboxHeight,
+                            bbox_w=newBboxWidth, 
+                            detection_id=None, 
+                            object_id=None, 
+                            point_from_camera=None, 
+                            object_type=None, 
+                            timestamp=None)
 
 class MovableObject(NamedTuple):
     id: "int"
@@ -37,23 +76,30 @@ def get_object_list(
         frameIds[cameraId] = {}
         objectTypes[cameraId] = {}
 
-        for frame in trackings[video]:
-            for objectId, track in frame.items():
-                if objectId not in tracks[cameraId]:
-                    tracks[cameraId][objectId] = []
-                tracks[cameraId][objectId].append(track.point)
+        for obj in videoObjects:
+            frameId, objectId, cameraId, filename = obj
+            objectNum = int(objectId.split('_')[-1])
 
-                if objectId not in bboxes[cameraId]:
-                    bboxes[cameraId][objectId] = []
-                bboxes[cameraId][objectId].append(
-                    (track.bbox_left, track.bbox_top, track.bbox_w, track.bbox_h)
-                )
+            if objectNum in trackings[video][frameId]:
+                track = trackings[video][frameId][objectNum]
+            else:
+                track = interpolate_track(trackings, video, objectNum, frameId)
 
-                if objectId not in frameIds[cameraId]:
-                    frameIds[cameraId][objectId] = []
-                frameIds[cameraId][objectId].append(track.frame_idx)
+            if objectId not in tracks[cameraId]:
+                tracks[cameraId][objectId] = []
+            tracks[cameraId][objectId].append(track.point)
 
-                objectTypes[cameraId][objectId] = track.object_type
+            if objectId not in bboxes[cameraId]:
+                bboxes[cameraId][objectId] = []
+            bboxes[cameraId][objectId].append(
+                (track.bbox_left, track.bbox_top, track.bbox_w, track.bbox_h)
+            )
+
+            if objectId not in frameIds[cameraId]:
+                frameIds[cameraId][objectId] = []
+            frameIds[cameraId][objectId].append(track.frame_idx)
+            
+            objectTypes[cameraId][objectId] = track.object_type
 
     result: "list[MovableObject]" = []
     for cameraId in tracks:
@@ -69,3 +115,4 @@ def get_object_list(
                 )
             )
     return result
+
