@@ -10,6 +10,7 @@ from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
 from .utils.save_video_util import save_video_util
+from .utils.ingest_road import drop_tables, create_tables
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
@@ -35,7 +36,6 @@ from .video_processor.utils.format_trajectory import format_trajectory
 from .video_processor.utils.get_tracks import get_tracks
 from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.video import Video
-
 
 class World:
     def __init__(
@@ -114,10 +114,10 @@ def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    # drop_tables(database)
-    # create_tables(database)
-    # for gc in world._geogConstructs:
-    #     gc.ingest(database)
+    drop_tables(database)
+    create_tables(database)
+    for gc in world._geogConstructs:
+        gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
     if optimization:
