@@ -1,9 +1,12 @@
-import cv2
 import os
 
-from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
-from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
-from spatialyze.utils.get_object_list import get_object_list, MovableObject
+import cv2
+
+from spatialyze.utils.get_object_list import MovableObject, get_object_list
+from spatialyze.video_processor.stages.tracking_3d.tracking_3d import (
+    Metadatum as T3DMetadatum,
+)
+
 
 def save_video_util(
     objects: "dict[str, list[tuple]]",
@@ -20,7 +23,7 @@ def save_video_util(
     for videoname, frame_tracking in bboxes.items():
         cameraId = video_to_camera[videoname]
         output_file = os.path.join(OUTPUT_PATH, cameraId + "-result.mp4")
-        
+
         cap = cv2.VideoCapture(videoname)
         if not cap.isOpened():
             print(f"WARNING: Cannot read video file: {videoname}")
@@ -29,7 +32,7 @@ def save_video_util(
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         vid_writer = cv2.VideoWriter(
-            output_file, cv2.VideoWriter_fourcc(*'mp4v'), 30, (width, height)
+            output_file, cv2.VideoWriter_fourcc(*"mp4v"), 30, (width, height)
         )
 
         frame_cnt = 0
@@ -48,7 +51,16 @@ def save_video_util(
                             frame, (int(x1), int(y1)), (int(x2), int(y2)), (255, 255, 0), 2
                         )
 
-                        frame = cv2.putText(frame, str(object_id), (int(bbox_left), int(bbox_top)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+                        frame = cv2.putText(
+                            frame,
+                            str(object_id),
+                            (int(bbox_left), int(bbox_top)),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            1,
+                            (255, 0, 0),
+                            2,
+                            cv2.LINE_AA,
+                        )
                 vid_writer.write(frame)
                 result.append((videoname, frame_cnt))
 
@@ -57,6 +69,7 @@ def save_video_util(
         vid_writer.release()
 
     return result
+
 
 def _get_bboxes(objList: "list[MovableObject]", cameraVideoNames: "dict[str, str]"):
     """
@@ -68,13 +81,14 @@ def _get_bboxes(objList: "list[MovableObject]", cameraVideoNames: "dict[str, str
             videoName = cameraVideoNames[obj.camera_id]
             if videoName not in result:
                 result[videoName] = {}
-            
+
             if frameId not in result[videoName]:
                 result[videoName][frameId] = []
 
             result[videoName][frameId].append((obj.id, *obj.bboxes[i]))
 
     return result
+
 
 def _get_video_names(objects: "dict[str, list[tuple]]"):
     """

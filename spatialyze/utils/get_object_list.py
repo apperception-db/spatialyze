@@ -4,13 +4,14 @@ import numpy as np
 import numpy.typing as npt
 
 from spatialyze.data_types.camera_config import Float4
-from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum, Tracking3DResult
+from spatialyze.video_processor.stages.tracking_3d.tracking_3d import (
+    Metadatum as T3DMetadatum,
+)
+from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
+
 
 def interpolate_track(
-    trackings: "dict[str, list[T3DMetadatum]]", 
-    video: "str", 
-    objectNum: "int",
-    frameNum: "int"
+    trackings: "dict[str, list[T3DMetadatum]]", video: "str", objectNum: "int", frameNum: "int"
 ) -> "Tracking3DResult":
     left, right = None, None
     leftNum, rightNum = frameNum, frameNum
@@ -25,26 +26,29 @@ def interpolate_track(
             rightNum += 1
             if objectNum in trackings[video][rightNum]:
                 right = trackings[video][rightNum][objectNum]
-    
-    leftWeight = 1 - (frameNum - leftNum)/(rightNum - leftNum)
-    rightWeight = (frameNum - leftNum)/(rightNum - leftNum)
-    newPoint = (left.point*leftWeight + right.point*rightWeight)
-    newBboxLeft = (left.bbox_left*leftWeight + right.bbox_left*rightWeight) 
-    newBboxTop = (left.bbox_top*leftWeight + right.bbox_top*rightWeight)
-    newBboxHeight = (left.bbox_h*leftWeight + right.bbox_h*rightWeight)
-    newBboxWidth = (left.bbox_w*leftWeight + right.bbox_w*rightWeight)
 
-    return Tracking3DResult(frame_idx=frameNum, 
-                            point=newPoint, 
-                            bbox_left=newBboxLeft,
-                            bbox_top=newBboxTop, 
-                            bbox_h=newBboxHeight,
-                            bbox_w=newBboxWidth, 
-                            detection_id=None, 
-                            object_id=None, 
-                            point_from_camera=None, 
-                            object_type=None, 
-                            timestamp=None)
+    leftWeight = 1 - (frameNum - leftNum) / (rightNum - leftNum)
+    rightWeight = (frameNum - leftNum) / (rightNum - leftNum)
+    newPoint = left.point * leftWeight + right.point * rightWeight
+    newBboxLeft = left.bbox_left * leftWeight + right.bbox_left * rightWeight
+    newBboxTop = left.bbox_top * leftWeight + right.bbox_top * rightWeight
+    newBboxHeight = left.bbox_h * leftWeight + right.bbox_h * rightWeight
+    newBboxWidth = left.bbox_w * leftWeight + right.bbox_w * rightWeight
+
+    return Tracking3DResult(
+        frame_idx=frameNum,
+        point=newPoint,
+        bbox_left=newBboxLeft,
+        bbox_top=newBboxTop,
+        bbox_h=newBboxHeight,
+        bbox_w=newBboxWidth,
+        detection_id=None,
+        object_id=None,
+        point_from_camera=None,
+        object_type=None,
+        timestamp=None,
+    )
+
 
 class MovableObject(NamedTuple):
     id: "int"
@@ -78,7 +82,7 @@ def get_object_list(
 
         for obj in videoObjects:
             frameId, objectId, cameraId, filename = obj
-            objectNum = int(objectId.split('_')[-1])
+            objectNum = int(objectId.split("_")[-1])
 
             if objectNum in trackings[video][frameId]:
                 track = trackings[video][frameId][objectNum]
@@ -98,7 +102,7 @@ def get_object_list(
             if objectId not in frameIds[cameraId]:
                 frameIds[cameraId][objectId] = []
             frameIds[cameraId][objectId].append(track.frame_idx)
-            
+
             objectTypes[cameraId][objectId] = track.object_type
 
     result: "list[MovableObject]" = []
@@ -115,4 +119,3 @@ def get_object_list(
                 )
             )
     return result
-
