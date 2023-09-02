@@ -82,22 +82,22 @@ pip install lap  # a bug in lap/poetry/conda that lap needs to be installed usin
 ## Spatialyze Demo
 ### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
 ```bash
-docker volume create spatialyze-gs-store-data
-docker run --name     "spatialyze-gs-store"                        \
-           --detach                                                \
-           --publish  25432:5432                                   \
-           --volume   spatialyze-gs-store-data:/var/lib/postgresql \
+docker volume create spatialyze-gsstore-data
+docker run --name     "spatialyze-gsstore"                        \
+           --detach                                               \
+           --publish  25432:5432                                  \
+           --volume   spatialyze-gsstore-data:/var/lib/postgresql \
                       mobilitydb/mobilitydb
 ```
 Setup the MobilityDB with customized functions
 ```bash
-docker exec -it spatialyze-gs-store rm -rf /pg_extender
-docker cp scripts/pg-extender spatialyze-gs-store:/pg_extender
-docker exec -it -w /pg_extender spatialyze-gs-store python3 install.py
+docker exec -it spatialyze-gsstore rm -rf /pg_extender
+docker cp scripts/pg-extender spatialyze-gsstore:/pg_extender
+docker exec -it -w /pg_extender spatialyze-gsstore python3 install.py
 ```
 To run MobilityDB every system restart
 ```bash
-docker update --restart unless-stopped spatialyze-gs-store
+docker update --restart unless-stopped spatialyze-gsstore
 ```
 
 ### Try the demo (WIP 🚧)
