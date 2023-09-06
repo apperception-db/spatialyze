@@ -26,7 +26,7 @@ class GeospatialVideo:
                 with open(camera, "rb") as f:
                     camera_configs = pickle.load(f)
                     if isinstance(camera_configs, dict):
-                        camera_configs = camera_configs['frames']
+                        camera_configs = camera_configs["frames"]
                     assert isinstance(camera_configs, list), camera_configs
                     self.camera = [_camera_config(c) for c in camera_configs]
         else:
