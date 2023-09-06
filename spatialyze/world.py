@@ -2,6 +2,7 @@ import numpy as np
 
 from .data_types.camera import Camera
 from .data_types.camera_config import CameraConfig as _CameraConfig
+from .data_types.query_result import QueryResult
 from .database import Database
 from .database import database as default_database
 from .geospatial_video import GeospatialVideo
@@ -23,7 +24,6 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
     FromDetection2DAndRoad,
 )
-from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.stage import Stage
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
@@ -87,12 +87,12 @@ class World:
     def geogConstruct(self, type: "str"):
         return road_segment(type)
 
-    def saveVideos(self, OUTPUT_PATH: "str", addBoundingBoxes: "bool" = False):
+    def saveVideos(self, outputDir: "str", addBoundingBoxes: "bool" = False):
         objects, trackings = _execute(self)
         return save_video_util(
             objects,
             trackings,
-            OUTPUT_PATH,
+            outputDir,
             addBoundingBoxes,
         )
 
@@ -129,8 +129,8 @@ def _execute(world: "World", optimization=True):
         objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
         steps.append(objtypes_filter)
         steps.append(FromDetection2DAndRoad())
-        if all(t in ["car", "truck"] for t in objtypes_filter.types):
-            steps.append(DetectionEstimation())
+        # if all(t in ["car", "truck"] for t in objtypes_filter.types):
+        #     steps.append(DetectionEstimation())
     else:
         steps.append(DepthEstimation())
         steps.append(FromDetection2DAndDepth())
@@ -139,7 +139,7 @@ def _execute(world: "World", optimization=True):
 
     pipeline = Pipeline(steps)
 
-    qresults: "dict[str, list[tuple]]" = {}
+    qresults: "dict[str, list[QueryResult]]" = {}
     vresults: "dict[str, list[T3DMetadatum]]" = {}
     for v in world._videos:
         # reset database
@@ -179,7 +179,7 @@ def _execute(world: "World", optimization=True):
         ]
 
         camera = Camera(_camera_configs, v.camera[0].camera_id)
-        database.insert_cam(camera)
+        database.insert_camera(camera)
 
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults

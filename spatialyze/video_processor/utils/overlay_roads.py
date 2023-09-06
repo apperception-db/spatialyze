@@ -32,26 +32,23 @@ def overlay_to_frame(args: "tuple[CameraConfig, npt.NDArray]") -> "npt.NDArray":
     )
     frame, img = args
     intrinsic = np.array(frame.camera_intrinsic)
-    polygons: "list[tuple[postgis.Polygon]]" = database.execute(
+    polygons = database.execute(
         sql.SQL(
             """
-        SELECT elementPolygon
-        FROM SegmentPolygon
-        WHERE
-            ST_Distance({camera}, elementPolygon) < 10
-            AND location = {location}
-    """
+            SELECT elementPolygon
+            FROM SegmentPolygon
+            WHERE
+                ST_Distance({camera}, elementPolygon) < 10
+                AND location = {location}"""
         ).format(
             camera=sql.Literal(postgis.Point(*frame.camera_translation)),
             location=sql.Literal(frame.location),
         )
     )
-    polygons = [p[0] for p in polygons]
     width = 1600
     height = 900
     for (p,) in polygons:
-        if isinstance(p, postgis.polygon.Polygon):
-            raise Exception()
+        assert isinstance(p, postgis.polygon.Polygon), type(p)
         coords = np.vstack([np.array(p.coords).T, np.zeros((1, len(p.coords)))])
         coords = coords - np.array(frame.camera_translation)[:, np.newaxis]
         coords = rotate(coords, frame.camera_rotation.inverse.unit)

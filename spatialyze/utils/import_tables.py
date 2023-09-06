@@ -2,7 +2,14 @@ import os
 
 import pandas as pd
 
-from spatialyze.database import Database
+from ..database import (
+    BBOX_COLUMNS,
+    CAMERA_COLUMNS,
+    TRAJECTORY_COLUMNS,
+    Database,
+    columns,
+    place_holder,
+)
 
 
 def import_tables(database: "Database", data_path: str):
@@ -23,13 +30,45 @@ def import_tables(database: "Database", data_path: str):
 
     for _, row in df_Cameras.iterrows():
         values = tuple(row.values)
-        database._insert_into_camera(values, False)
+        _insert_into_camera(database, values, False)
 
     for _, row in df_Item_General_Trajectory.iterrows():
         values = tuple(row.values)
-        database._insert_into_item_general_trajectory(values, False)
+        _insert_into_item_general_trajectory(database, values, False)
 
     # for _, row in df_General_Bbox.iterrows():
     #     database._insert_into_general_bbox(row, False)
 
     database._commit()
+
+
+def _name(column: "tuple[str, str]") -> str:
+    return column[0]
+
+
+def _insert_into_camera(database: "Database", value: tuple, commit=True):
+    cursor = database.connection.cursor()
+    cursor.execute(
+        f"INSERT INTO Cameras ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
+        tuple(value),
+    )
+    database._commit(commit)
+    cursor.close()
+
+
+def _insert_into_item_general_trajectory(database: "Database", value: tuple, commit=True):
+    cursor = database.connection.cursor()
+    cursor.execute(
+        f"INSERT INTO Item_General_Trajectory ({columns(_name, TRAJECTORY_COLUMNS)}) VALUES ({place_holder(len(TRAJECTORY_COLUMNS))})",
+        tuple(value),
+    )
+    database._commit(commit)
+    cursor.close()
+
+
+def _insert_into_general_bbox(database: "Database", value: tuple, commit=True):
+    database.cursor.execute(
+        f"INSERT INTO General_Bbox ({columns(_name, BBOX_COLUMNS)}) VALUES ({place_holder(len(BBOX_COLUMNS))})",
+        tuple(value),
+    )
+    database._commit(commit)

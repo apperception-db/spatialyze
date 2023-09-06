@@ -55,7 +55,7 @@ def format_trajectory(video_name: "str", obj_id: "int", track: "list[TrackPoint]
     #     print(f"itemHeadings for obj {obj_id}:", itemHeadings)
 
     return (
-        video_name + "_obj_" + str(obj_id),
+        obj_id,
         camera_id,
         object_type,
         timestamps,

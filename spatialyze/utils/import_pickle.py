@@ -37,6 +37,6 @@ def import_pickle(database: "Database", data_path: str):
                 for frame in val["frames"]
             ]
             camera = Camera(config=configs, id=scene)
-            database.insert_cam(camera)
+            database.insert_camera(camera)
 
     database._commit()
