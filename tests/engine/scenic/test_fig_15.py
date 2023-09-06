@@ -1,6 +1,6 @@
-from spatialyze.legacy.world import empty_world
-from spatialyze.utils import F
+from spatialyze.database import database
 from spatialyze.predicate import objects, camera
+from spatialyze.utils import F
 from datetime import datetime, timezone
 
 
@@ -10,7 +10,7 @@ def test_fig_15():
     opposite_car = objects[1]
     car2 = objects[2]
 
-    world = empty_world().filter(
+    results = database.predicate(
         F.like(car1.type, 'vehicle%') &
         F.like(car2.type, 'vehicle%') &
         F.like(opposite_car.type, 'vehicle%') &
@@ -33,7 +33,7 @@ def test_fig_15():
         F.ahead(car2.traj@cam.time, opposite_car.traj@cam.time)
     )
 
-    assert set(world.get_id_time_camId_filename(1)) == set([
+    assert set(results) == set([
         (
             '6a81ab78eee3477e8509569a5d0a2217',
             datetime(2018, 7, 26, 9, 18, 40, 162404, tzinfo=timezone.utc),

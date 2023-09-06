@@ -1,6 +1,6 @@
-from spatialyze.legacy.world import empty_world
-from spatialyze.utils import F
+from spatialyze.database import database
 from spatialyze.predicate import camera, objects
+from spatialyze.utils import F
 from datetime import datetime, timezone
 
 
@@ -9,7 +9,7 @@ def test_fig_13():
     obj2 = objects[1]
     cam = camera
 
-    world = empty_world().filter(
+    results = database.predicate(
         (obj1.id != obj2.id) &
         F.like(obj1.type, 'vehicle%') &
         F.like(obj2.type, 'vehicle%') &
@@ -24,8 +24,7 @@ def test_fig_13():
         (F.min_distance(cam.ego, F.road_segment('intersection')) < 10) &
         F.angle_between(F.facing_relative(obj1.traj@cam.time, obj2.traj@cam.time), 100, -100)
     )
-
-    assert set(world.get_id_time_camId_filename(2)) == set([
+    assert set(results) == set([
         (
             '9d03c6edb6eb4d49acccb245bdd0c652',
             '65d120d480794b9fbb433dc58512559b',

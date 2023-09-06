@@ -1,13 +1,13 @@
-from spatialyze.legacy.world import empty_world
-from spatialyze.utils import F
+from spatialyze.database import database
 from spatialyze.predicate import objects, camera
+from spatialyze.utils import F
 from datetime import datetime, timezone
 
 
 def test_fig_14():
     obj1 = objects[0]
     cam = camera
-    world = empty_world().filter(
+    results = database.predicate(
         F.like(obj1.type, 'vehicle%') &
         (F.distance(cam.ego, obj1.trans@cam.timestamp) < 50) &
         (F.view_angle(obj1.trans@cam.time, cam.ego) < 70 / 2) &
@@ -18,7 +18,7 @@ def test_fig_14():
         (F.distance(cam.ego, obj1.trans@cam.time) < 10)
     )
 
-    assert set(world.get_id_time_camId_filename(1)) == set([
+    assert set(results) == set([
         (
             '9e02e0dcb5f04d01a4b8f0559d0e7d95',
             datetime(2018, 8, 30, 12, 31, 31, 612404, tzinfo=timezone.utc),
