@@ -118,5 +118,6 @@ def get_object_list(
             bboxes[key],
             frameIds[key],
             key.cameraId,
-        ) for key in tracks
+        )
+        for key in tracks
     ]

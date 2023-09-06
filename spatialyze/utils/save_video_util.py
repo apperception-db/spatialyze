@@ -68,7 +68,11 @@ def save_video_util(
                         labelW, labelH = labelSize
 
                         frame = cv2.rectangle(
-                            frame, (x1, y1 - labelH - 2 * TEXT_PADDING), (x1 + labelW + 2 * TEXT_PADDING, y1), bboxColor, cv2.FILLED
+                            frame,
+                            (x1, y1 - labelH - 2 * TEXT_PADDING),
+                            (x1 + labelW + 2 * TEXT_PADDING, y1),
+                            bboxColor,
+                            cv2.FILLED,
                         )
 
                         # Place Label
