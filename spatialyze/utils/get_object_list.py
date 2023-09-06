@@ -10,9 +10,7 @@ from ..video_processor.types import DetectionId
 
 
 def interpolate_track(
-    trackings: "list[T3DMetadatum]",
-    objectId: "int",
-    frameNum: "int"
+    trackings: "list[T3DMetadatum]", objectId: "int", frameNum: "int"
 ) -> "Tracking3DResult":
     left, right = None, None
     leftNum, rightNum = frameNum, frameNum
@@ -30,13 +28,20 @@ def interpolate_track(
     leftWeight = 1 - (frameNum - leftNum) / (rightNum - leftNum)
     rightWeight = (frameNum - leftNum) / (rightNum - leftNum)
     newPoint = np.array(left.point) * leftWeight + np.array(right.point) * rightWeight
-    newPointFromCamera = np.array(left.point_from_camera) * leftWeight + np.array(right.point_from_camera) * rightWeight
-    newBboxCenterX = (left.bbox_left + left.bbox_w / 2.) * leftWeight + (right.bbox_left + right.bbox_w / 2.) * rightWeight
-    newBboxCenterY = (left.bbox_top + left.bbox_h / 2.) * leftWeight + (right.bbox_top + right.bbox_h / 2.) * rightWeight
+    newPointFromCamera = (
+        np.array(left.point_from_camera) * leftWeight
+        + np.array(right.point_from_camera) * rightWeight
+    )
+    newBboxCenterX = (left.bbox_left + left.bbox_w / 2.0) * leftWeight + (
+        right.bbox_left + right.bbox_w / 2.0
+    ) * rightWeight
+    newBboxCenterY = (left.bbox_top + left.bbox_h / 2.0) * leftWeight + (
+        right.bbox_top + right.bbox_h / 2.0
+    ) * rightWeight
     newBboxHeight = left.bbox_h * leftWeight + right.bbox_h * rightWeight
     newBboxWidth = left.bbox_w * leftWeight + right.bbox_w * rightWeight
-    newBboxLeft = newBboxCenterX - newBboxWidth / 2.
-    newBboxTop = newBboxCenterY - newBboxHeight / 2.
+    newBboxLeft = newBboxCenterX - newBboxWidth / 2.0
+    newBboxTop = newBboxCenterY - newBboxHeight / 2.0
 
     timedelta = right.timestamp - left.timestamp
     newTimestamp = left.timestamp + timedelta * rightWeight
