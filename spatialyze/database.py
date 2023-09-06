@@ -286,7 +286,7 @@ class Database:
             {GenSqlVisitor()(predicate)}
         """
         return [
-            QueryResult(frame_number, camera_id, filename, item_ids)
+            QueryResult(frame_number, camera_id, filename, tuple(item_ids))
             for frame_number, camera_id, filename, *item_ids in self.execute(sql_str)
         ]
 
