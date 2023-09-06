@@ -188,6 +188,8 @@ class Database:
             else:
                 return [], cursor
         except psycopg2.errors.DatabaseError as error:
+            for notice in cursor.connection.notices:
+                print(notice)
             self.connection.rollback()
             cursor.close()
             raise error
@@ -205,6 +207,8 @@ class Database:
             cursor.execute(query)
             self._commit(commit)
         except psycopg2.errors.DatabaseError as error:
+            for notice in cursor.connection.notices:
+                print(notice)
             self.connection.rollback()
             raise error
         finally:
