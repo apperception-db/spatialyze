@@ -46,10 +46,12 @@ def interpolate_track(
     timedelta = right.timestamp - left.timestamp
     newTimestamp = left.timestamp + timedelta * rightWeight
 
+    x, y, z = newPoint.tolist()
+    _x, _y, _z = newPointFromCamera.tolist()
     return Tracking3DResult(
         frame_idx=frameNum,
-        point=tuple(newPoint.tolist()),
-        point_from_camera=tuple(newPointFromCamera.tolist()),
+        point=(x, y, z),
+        point_from_camera=(_x, _y, _z),
         bbox_left=newBboxLeft,
         bbox_top=newBboxTop,
         bbox_h=newBboxHeight,
