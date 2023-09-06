@@ -1,7 +1,7 @@
+from spatialyze.data_types.query_result import QueryResult
 from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
-from datetime import datetime, timezone
 
 
 def test_fig_15():
@@ -34,16 +34,6 @@ def test_fig_15():
     )
 
     assert set(results) == set([
-        (
-            '6a81ab78eee3477e8509569a5d0a2217',
-            datetime(2018, 7, 26, 9, 18, 40, 162404, tzinfo=timezone.utc),
-            'scene-0207',
-            'samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621920162404.jpg'
-        ),
-        (
-            '6a81ab78eee3477e8509569a5d0a2217',
-            datetime(2018, 7, 26, 9, 18, 40, 662404, tzinfo=timezone.utc),
-            'scene-0207',
-            'samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621920662404.jpg'
-        ),
+        QueryResult(frame_number=2, camera_id='scene-0207', filename='samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621920162404.jpg', item_ids=('6a81ab78eee3477e8509569a5d0a2217', '679391fb87db41cc97b4b6233c8795f5', 'fd2437defb374b4a96cbd6cf3d79be26')),
+        QueryResult(frame_number=3, camera_id='scene-0207', filename='samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621920662404.jpg', item_ids=('6a81ab78eee3477e8509569a5d0a2217', '679391fb87db41cc97b4b6233c8795f5', 'fd2437defb374b4a96cbd6cf3d79be26')),
     ])
