@@ -10,7 +10,7 @@ from .get_object_list import MovableObject, get_object_list
 def save_video_util(
     objects: "dict[str, list[QueryResult]]",
     trackings: "dict[str, list[T3DMetadatum]]",
-    OUTPUT_PATH: "str",
+    outputDir: "str",
     addBoundingBoxes: "bool" = False,
 ) -> "list[tuple[str, int]]":
     objList = get_object_list(objects=objects, trackings=trackings)
@@ -21,7 +21,7 @@ def save_video_util(
 
     for videoname, frame_tracking in bboxes.items():
         cameraId = video_to_camera[videoname]
-        output_file = os.path.join(OUTPUT_PATH, cameraId + "-result.mp4")
+        output_file = os.path.join(outputDir, cameraId + "-result.mp4")
 
         cap = cv2.VideoCapture(videoname)
         if not cap.isOpened():
