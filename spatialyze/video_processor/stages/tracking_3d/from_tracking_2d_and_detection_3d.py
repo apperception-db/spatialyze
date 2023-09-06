@@ -21,7 +21,7 @@ class FromTracking2DAndDetection3D(Tracking3D):
             payload.keep, detections, trackings, payload.video
         ):
             dets, _, dids = detection
-            if not k or tracking is None or detection is None:
+            if not k or tracking is None or detection is None or len(dets) == 0 or len(tracking) == 0:
                 metadata.append(dict())
                 continue
 

@@ -9,6 +9,7 @@ from .geospatial_video import GeospatialVideo
 from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode, lit
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
+from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
@@ -21,7 +22,6 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
     FromDetection2DAndRoad,
 )
-from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.stage import Stage
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
@@ -85,10 +85,11 @@ class World:
     def geogConstruct(self, type: "str"):
         return road_segment(type)
 
-    def saveVideos(self, addBoundingBoxes: "bool" = False):
+    def saveVideos(self, outputDir, addBoundingBoxes: "bool" = False):
         # TODO: execute and save videos
-        objects = _execute(self)
-        return objects
+        objects, trackings = _execute(self)
+        # TODO: return a list[tuple[videofile, frame_number]]
+        return save_video_util(objects, trackings, outputDir, addBoundingBoxes)
 
     def getObjects(self):
         # TODO: execute and return movable objects
@@ -115,8 +116,8 @@ def _execute(world: "World", optimization=True):
         objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
         steps.append(objtypes_filter)
         steps.append(FromDetection2DAndRoad())
-        if all(t in ["car", "truck"] for t in objtypes_filter.types):
-            steps.append(DetectionEstimation())
+        # if all(t in ["car", "truck"] for t in objtypes_filter.types):
+        #     steps.append(DetectionEstimation())
     else:
         steps.append(DepthEstimation())
         steps.append(FromDetection2DAndDepth())
