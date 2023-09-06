@@ -9,6 +9,8 @@ from .geospatial_video import GeospatialVideo
 from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode, lit
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
+from .utils.get_object_list import get_object_list
+from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
@@ -85,27 +87,38 @@ class World:
     def geogConstruct(self, type: "str"):
         return road_segment(type)
 
-    def saveVideos(self, outputDir, addBoundingBoxes: "bool" = False):
-        # TODO: execute and save videos
+    def saveVideos(self, outputDir: "str", addBoundingBoxes: "bool" = False):
         objects, trackings = _execute(self)
-        # TODO: return a list[tuple[videofile, frame_number]]
-        return save_video_util(objects, trackings, outputDir, addBoundingBoxes)
+        return save_video_util(
+            objects,
+            trackings,
+            outputDir,
+            addBoundingBoxes,
+        )
 
     def getObjects(self):
-        # TODO: execute and return movable objects
-        # TODO: should always execute object tracker
-        objects = _execute(self)
-        return objects
+        """
+        Returns a list of moveble objects, with each object tuple containing:
+        - object id
+        - object type
+        - trajectory
+        - bounding boxes
+        - frame IDs
+        - camera id
+        """
+        objects, trackings = _execute(self)
+
+        return get_object_list(objects, trackings)
 
 
 def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    # drop_tables(database)
-    # create_tables(database)
-    # for gc in world._geogConstructs:
-    #     gc.ingest(database)
+    drop_tables(database)
+    create_tables(database)
+    for gc in world._geogConstructs:
+        gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
     if optimization:
