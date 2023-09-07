@@ -30,9 +30,7 @@ def save_video_util(
         output_file = os.path.join(outputDir, cameraId + "-result.mp4")
 
         cap = cv2.VideoCapture(videoname)
-        if not cap.isOpened():
-            print(f"WARNING: Cannot read video file: {videoname}")
-            continue
+        assert cap.isOpened(), f"Cannot read video file: {videoname}"
 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -128,10 +126,7 @@ def _get_video_names(objects: "dict[str, list[QueryResult]]"):
     """
     camera_to_video: "dict[str, str]" = {}
     video_to_camera: "dict[str, str]" = {}
-    for video, obj in objects.items():
-        if len(obj) == 0:
-            continue
-
+    for video, obj in filter(lambda x: len(x[1]) > 0, objects.items()):
         _, cameraId, _, _ = obj[0]
         camera_to_video[cameraId] = video
         video_to_camera[video] = cameraId
