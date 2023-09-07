@@ -7,9 +7,9 @@ import os
 import pytest
 
 TABLES = [
-    (CAMERA_TABLE, 1),
+    (CAMERA_TABLE, 229),
     # "General_Bbox",
-    (TRAJ_TABLE, 1),
+    (TRAJ_TABLE, 67),
 ]
 
 
@@ -25,11 +25,11 @@ def test_reset():
     with open('./data/nuscenes/processed/cameras.pkl', 'rb') as f:
         cameras = pickle.load(f)
     with open('./data/nuscenes/processed/annotations.pkl', 'rb') as f:
-        annotaions = pickle.load(f)
-    key = [*cameras.keys()][0]
+        annotations = pickle.load(f)
+    key = [k for k in cameras if k.scene == "scene-0103" and k.channel == 'CAM_FRONT'][0]
     d.reset(commit=True)
     d.load_nuscenes(
-        {key: annotaions[key]},
+        {key: annotations[key]},
         {key: cameras[key]},
     )
 
