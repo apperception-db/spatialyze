@@ -26,7 +26,7 @@ def test_reset():
         cameras = pickle.load(f)
     with open('./data/nuscenes/processed/annotations.pkl', 'rb') as f:
         annotaions = pickle.load(f)
-    key = [cameras.keys()][0]
+    key = [*cameras.keys()][0]
     d.load_nuscenes(
         {key: annotaions[key]},
         {key: cameras[key]},
