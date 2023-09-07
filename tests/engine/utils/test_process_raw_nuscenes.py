@@ -31,9 +31,11 @@ def test_process_raw_nuscenes():
         assert len(camera) == len(camera_groundtruth), (len(camera), len(camera_groundtruth))
         for c, c_groundtruth in zip(camera, camera_groundtruth):
             assert c[:6] == c_groundtruth[:6], (c[:6], c_groundtruth[:6])
-            assert c[11:] == c_groundtruth[11:], (c[11:], c_groundtruth[11:])
+            assert c[11:14] == c_groundtruth[11:14], (c[11:14], c_groundtruth[11:14])
             assert np.allclose(c.camera_translation, c_groundtruth.camera_translation), (c.camera_translation, c_groundtruth.camera_translation)
             assert np.allclose(c.camera_rotation, c_groundtruth.camera_rotation), (c.camera_rotation, c_groundtruth.camera_rotation)
             assert np.allclose(c.camera_intrinsic, c_groundtruth.camera_intrinsic), (c.camera_intrinsic, c_groundtruth.camera_intrinsic)
             assert np.allclose(c.ego_translation, c_groundtruth.ego_translation), (c.ego_translation, c_groundtruth.ego_translation)
             assert np.allclose(c.ego_rotation, c_groundtruth.ego_rotation), (c.ego_rotation, c_groundtruth.ego_rotation)
+            assert np.allclose((c.ego_heading, c.camera_heading), (c_groundtruth.ego_heading, c_groundtruth.camera_heading)), ((c.ego_heading, c.camera_heading), (c_groundtruth.ego_heading, c_groundtruth.camera_heading))
+            assert c.frame_order == c_groundtruth.frame_order, (c.frame_order, c_groundtruth.frame_order)
