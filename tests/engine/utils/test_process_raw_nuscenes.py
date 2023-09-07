@@ -29,8 +29,11 @@ def test_process_raw_nuscenes():
         camera = cameras[key]
         camera_groundtruth = cameras_groundtruth[key]
         assert len(camera) == len(camera_groundtruth), (len(camera), len(camera_groundtruth))
-        for a, a_groundtruth in zip(camera, camera_groundtruth):
-            assert a[:6] == a_groundtruth[:6], (a[:6], a_groundtruth[:6])
-            assert a[8:] == a_groundtruth[8:], (a[8:], a_groundtruth[8:])
-            assert np.allclose(a.camera_translation, a_groundtruth.camera_translation), (a.camera_translation, a_groundtruth.camera_translation)
-            assert np.allclose(a.camera_rotation, a_groundtruth.camera_rotation), (a.camera_rotation, a_groundtruth.camera_rotation)
+        for c, c_groundtruth in zip(camera, camera_groundtruth):
+            assert c[:6] == c_groundtruth[:6], (c[:6], c_groundtruth[:6])
+            assert c[11:] == c_groundtruth[11:], (c[11:], c_groundtruth[11:])
+            assert np.allclose(c.camera_translation, c_groundtruth.camera_translation), (c.camera_translation, c_groundtruth.camera_translation)
+            assert np.allclose(c.camera_rotation, c_groundtruth.camera_rotation), (c.camera_rotation, c_groundtruth.camera_rotation)
+            assert np.allclose(c.camera_intrinsic, c_groundtruth.camera_intrinsic), (c.camera_intrinsic, c_groundtruth.camera_intrinsic)
+            assert np.allclose(c.ego_translation, c_groundtruth.ego_translation), (c.ego_translation, c_groundtruth.ego_translation)
+            assert np.allclose(c.ego_rotation, c_groundtruth.ego_rotation), (c.ego_rotation, c_groundtruth.ego_rotation)
