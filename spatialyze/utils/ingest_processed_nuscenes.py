@@ -149,7 +149,7 @@ def _flush(
             "cameraIntrinsic, egoTranslation, "
             "egoRotation, timestamp, "
             "cameraHeading, egoHeading"
-            ") VALUES {}"
+            ") VALUES ({})"
         ).format(psql.SQL(",").join(camera_sqls))
         database.update(query)
 
