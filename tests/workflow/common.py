@@ -36,13 +36,12 @@ def build_filter_world(pkl: bool = False):
             continue
         
         videofile = os.path.join(VIDEO_DIR, video['filename'])
-        if pkl:
-            camera = videofile.split('.')[0] + '.camera.pkl'
-        else:
-            camera = [camera_config(*c) for c in video['frames']]
+        camera = [camera_config(*c) for c in video['frames']]
         keep = bitarray(len(camera))
         keep.setall(0)
         keep[(len(camera) * 3 // 4):] = 1
+        if pkl:
+            camera = videofile[:-len("mp4")] + 'camera.pkl'
 
         world.addVideo(GeospatialVideo(videofile, camera, keep))
     

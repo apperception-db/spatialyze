@@ -1,5 +1,4 @@
 from . import F
-from .bbox_to_data3d import bbox_to_data3d
 from .compute_heading import compute_heading
 from .create_transform_matrix import create_transform_matrix
 from .df_to_camera_config import df_to_camera_config
@@ -18,6 +17,5 @@ __all__ = [
     "export_tables",
     "join",
     "transformation",
-    "bbox_to_data3d",
     "ingest_road",
 ]
