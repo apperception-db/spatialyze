@@ -2,2435 +2,3229 @@
  "./data/pipeline/videos/boston-seaport-scene-0655-CAM_FRONT.mp4": [
   [
    177,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385106912404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385106912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    178,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    179,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107112404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107112404.jpg",
+   [
+    "5"
+   ]
+  ],
+  [
+   179,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107112404.jpg",
+   [
+    "6"
+   ]
+  ],
+  [
+   179,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    180,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107162404.jpg",
+   [
+    "5"
+   ]
+  ],
+  [
+   180,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    181,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107262404.jpg",
+   [
+    "5"
+   ]
+  ],
+  [
+   181,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    182,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107362404.jpg",
+   [
+    "5"
+   ]
+  ],
+  [
+   182,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    183,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107412404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107412404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   183,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107412404.jpg",
+   [
+    "5"
+   ]
+  ],
+  [
+   183,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    184,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107512404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   184,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107512404.jpg",
+   [
+    "5"
+   ]
+  ],
+  [
+   184,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    185,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107612404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107612404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   185,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    186,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107762404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   186,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    187,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107862404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   187,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    188,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107912404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107912404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   188,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    189,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108012404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   189,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    190,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108112404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108112404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   190,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    191,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108162404.jpg",
+   [
+    "12"
+   ]
+  ],
+  [
+   191,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108162404.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   191,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    192,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108262414.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108262414.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   192,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108262414.jpg",
+   [
+    "3"
+   ]
   ],
   [
    193,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108362424.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108362424.jpg",
+   [
+    "14"
+   ]
+  ],
+  [
+   193,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108362424.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   193,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108362424.jpg",
+   [
+    "3"
+   ]
   ],
   [
    194,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108412412.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108412412.jpg",
+   [
+    "14"
+   ]
+  ],
+  [
+   194,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108412412.jpg",
+   [
+    "7"
+   ]
+  ],
+  [
+   194,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108412412.jpg",
+   [
+    "3"
+   ]
   ],
   [
    195,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108512404.jpg",
+   [
+    "15"
+   ]
+  ],
+  [
+   195,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108512404.jpg",
+   [
+    "18"
+   ]
+  ],
+  [
+   195,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    196,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108612404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108612404.jpg",
+   [
+    "15"
+   ]
+  ],
+  [
+   196,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    197,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    198,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108762404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   198,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    199,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg",
+   [
+    "28"
+   ]
+  ],
+  [
+   199,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg",
+   [
+    "27"
+   ]
+  ],
+  [
+   199,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   199,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    200,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108912404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108912404.jpg",
+   [
+    "29"
+   ]
+  ],
+  [
+   200,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108912404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   200,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    201,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109012404.jpg",
+   [
+    "29"
+   ]
+  ],
+  [
+   201,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109012404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   201,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    202,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109112404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109112404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   202,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    203,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109162404.jpg",
+   [
+    "32"
+   ]
+  ],
+  [
+   203,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109162404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   203,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    204,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109262404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   204,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    205,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109362404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109362404.jpg",
+   [
+    "34"
+   ]
+  ],
+  [
+   205,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109362404.jpg",
+   [
+    "24"
+   ]
+  ],
+  [
+   205,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    206,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109412404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   206,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109412404.jpg",
+   [
+    "34"
+   ]
+  ],
+  [
+   206,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    207,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109512404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   207,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    208,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109612404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109612404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   208,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109612404.jpg",
+   [
+    "37"
+   ]
+  ],
+  [
+   208,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    209,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109662404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   209,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    210,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109762404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   210,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    211,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109862404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109862404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   211,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    212,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109912404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   212,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    213,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110012404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   213,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    214,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110112404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110112404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   214,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    215,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110162404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   215,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    216,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110262404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   216,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    217,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110362404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   217,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    218,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110412404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110412404.jpg",
+   [
+    "43"
+   ]
+  ],
+  [
+   218,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110412404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   218,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    219,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110512665.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110512665.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   219,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110512665.jpg",
+   [
+    "3"
+   ]
   ],
   [
    220,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110612404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110612404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   220,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    221,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110662404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   221,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    222,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110762404.jpg",
+   [
+    "35"
+   ]
+  ],
+  [
+   222,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    223,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110862404.jpg",
+   [
+    "44"
+   ]
+  ],
+  [
+   223,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    224,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110912404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    225,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    226,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111112404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111112404.jpg",
+   [
+    "47"
+   ]
+  ],
+  [
+   226,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    227,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    228,
-   "_obj_3",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111262404.jpg"
-  ],
-  [
-   229,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111362404.jpg"
-  ],
-  [
-   230,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111412404.jpg"
-  ],
-  [
-   231,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111512404.jpg"
-  ],
-  [
-   232,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111612404.jpg"
-  ],
-  [
-   233,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111662404.jpg"
-  ],
-  [
-   234,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111762405.jpg"
-  ],
-  [
-   235,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111862404.jpg"
-  ],
-  [
-   236,
-   "_obj_3",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111912404.jpg"
-  ],
-  [
-   232,
-   "scene-0726-CAM_FRONT_LEFT_obj_162",
-   "scene-0726-CAM_FRONT_LEFT",
-   "sweeps/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573842154799.jpg"
-  ],
-  [
-   233,
-   "scene-0726-CAM_FRONT_LEFT_obj_163",
-   "scene-0726-CAM_FRONT_LEFT",
-   "sweeps/CAM_FRONT_LEFT/n008-2018-08-29-16-04-13-0400__CAM_FRONT_LEFT__1535573842254799.jpg"
-  ],
-  [
-   179,
-   "_obj_6",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107112404.jpg"
-  ],
-  [
-   179,
-   "_obj_5",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107112404.jpg"
-  ],
-  [
-   180,
-   "_obj_5",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107162404.jpg"
-  ],
-  [
-   181,
-   "_obj_5",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107262404.jpg"
-  ],
-  [
-   182,
-   "_obj_5",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107362404.jpg"
-  ],
-  [
-   183,
-   "_obj_5",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107412404.jpg"
-  ],
-  [
-   184,
-   "_obj_5",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107512404.jpg"
-  ],
-  [
-   183,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107412404.jpg"
-  ],
-  [
-   184,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107512404.jpg"
-  ],
-  [
-   185,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107612404.jpg"
-  ],
-  [
-   186,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107762404.jpg"
-  ],
-  [
-   187,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107862404.jpg"
-  ],
-  [
-   188,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385107912404.jpg"
-  ],
-  [
-   189,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108012404.jpg"
-  ],
-  [
-   190,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108112404.jpg"
-  ],
-  [
-   191,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108162404.jpg"
-  ],
-  [
-   192,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108262414.jpg"
-  ],
-  [
-   193,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108362424.jpg"
-  ],
-  [
-   194,
-   "_obj_7",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108412412.jpg"
-  ],
-  [
-   191,
-   "_obj_12",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108162404.jpg"
-  ],
-  [
-   223,
-   "_obj_44",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110862404.jpg"
-  ],
-  [
-   193,
-   "_obj_14",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108362424.jpg"
-  ],
-  [
-   194,
-   "_obj_14",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108412412.jpg"
-  ],
-  [
-   195,
-   "_obj_18",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108512404.jpg"
-  ],
-  [
-   195,
-   "_obj_15",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108512404.jpg"
-  ],
-  [
-   196,
-   "_obj_15",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108612404.jpg"
-  ],
-  [
-   198,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108762404.jpg"
-  ],
-  [
-   199,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg"
-  ],
-  [
-   200,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108912404.jpg"
-  ],
-  [
-   201,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109012404.jpg"
-  ],
-  [
-   202,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109112404.jpg"
-  ],
-  [
-   203,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109162404.jpg"
-  ],
-  [
-   204,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109262404.jpg"
-  ],
-  [
-   205,
-   "_obj_24",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109362404.jpg"
-  ],
-  [
-   199,
-   "_obj_27",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg"
-  ],
-  [
-   199,
-   "_obj_28",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108862404.jpg"
-  ],
-  [
-   200,
-   "_obj_29",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385108912404.jpg"
-  ],
-  [
-   201,
-   "_obj_29",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109012404.jpg"
-  ],
-  [
-   203,
-   "_obj_32",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109162404.jpg"
-  ],
-  [
-   205,
-   "_obj_34",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109362404.jpg"
-  ],
-  [
-   206,
-   "_obj_34",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109412404.jpg"
-  ],
-  [
-   206,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109412404.jpg"
-  ],
-  [
-   207,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109512404.jpg"
-  ],
-  [
-   208,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109612404.jpg"
-  ],
-  [
-   209,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109662404.jpg"
-  ],
-  [
-   210,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109762404.jpg"
-  ],
-  [
-   211,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109862404.jpg"
-  ],
-  [
-   212,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109912404.jpg"
-  ],
-  [
-   213,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110012404.jpg"
-  ],
-  [
-   214,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110112404.jpg"
-  ],
-  [
-   215,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110162404.jpg"
-  ],
-  [
-   216,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110262404.jpg"
-  ],
-  [
-   217,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110362404.jpg"
-  ],
-  [
-   218,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110412404.jpg"
-  ],
-  [
-   219,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110512665.jpg"
-  ],
-  [
-   220,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110612404.jpg"
-  ],
-  [
-   221,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110662404.jpg"
-  ],
-  [
-   222,
-   "_obj_35",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110762404.jpg"
-  ],
-  [
-   208,
-   "_obj_37",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385109612404.jpg"
-  ],
-  [
-   218,
-   "_obj_43",
-   "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385110412404.jpg"
-  ],
-  [
-   226,
-   "_obj_47",
-   "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111112404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111262404.jpg",
+   [
+    "48"
+   ]
   ],
   [
    228,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    229,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111362404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   229,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    230,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111412404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111412404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   230,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    231,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111512404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   231,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    232,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111612404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111612404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   232,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    233,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111662404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   233,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    234,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111762405.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111762405.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   234,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111762405.jpg",
+   [
+    "3"
+   ]
   ],
   [
    235,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111862404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   235,
+   "scene-0655-CAM_FRONT",
+   "sweeps/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    236,
-   "_obj_48",
    "scene-0655-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111912404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111912404.jpg",
+   [
+    "48"
+   ]
+  ],
+  [
+   236,
+   "scene-0655-CAM_FRONT",
+   "samples/CAM_FRONT/n008-2018-08-27-11-48-51-0400__CAM_FRONT__1535385111912404.jpg",
+   [
+    "3"
+   ]
   ]
  ],
  "./data/pipeline/videos/boston-seaport-scene-0757-CAM_FRONT.mp4": [
   [
    177,
-   "_obj_4",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123162404.jpg",
+   [
+    "4"
+   ]
   ],
   [
    177,
-   "_obj_2",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123162404.jpg",
+   [
+    "2"
+   ]
   ],
   [
    177,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    178,
-   "_obj_4",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123262404.jpg",
+   [
+    "4"
+   ]
   ],
   [
    178,
-   "_obj_2",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123262404.jpg",
+   [
+    "2"
+   ]
   ],
   [
    178,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    179,
-   "_obj_4",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123362404.jpg",
+   [
+    "4"
+   ]
   ],
   [
    179,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    180,
-   "_obj_12",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg",
+   [
+    "12"
+   ]
   ],
   [
    180,
-   "_obj_11",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg",
+   [
+    "11"
+   ]
   ],
   [
    180,
-   "_obj_4",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg",
+   [
+    "4"
+   ]
   ],
   [
    180,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    181,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123512404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    181,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    182,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123612404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    182,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    183,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123662404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    183,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    184,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    184,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    184,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    184,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    185,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    185,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    185,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    185,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    186,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    186,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    186,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    186,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657123912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    187,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    187,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    187,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    187,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    188,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    188,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    188,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    188,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    188,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    189,
-   "_obj_24",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg",
+   [
+    "24"
+   ]
   ],
   [
    189,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    189,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    189,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    189,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    189,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    190,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    190,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    190,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    190,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    190,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    191,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    191,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    191,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    191,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    191,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    191,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    192,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    192,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    192,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    192,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    192,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    192,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    193,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    193,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    193,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    193,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    193,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    193,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    194,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    194,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    194,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    194,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    194,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    194,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    195,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    195,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    195,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    195,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    195,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    195,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    196,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    196,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    196,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    196,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    196,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    196,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    197,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    197,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    197,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    197,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    197,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    197,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    198,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    198,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    198,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    198,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    198,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    198,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657124912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    199,
-   "_obj_30",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "30"
+   ]
   ],
   [
    199,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    199,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    199,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    199,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    199,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    199,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    200,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    200,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    200,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    200,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    200,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    200,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    201,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    201,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    201,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    201,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    201,
-   "_obj_14",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg",
+   [
+    "14"
+   ]
   ],
   [
    201,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    202,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    202,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    202,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    202,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    202,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    203,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    203,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    203,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    203,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    203,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    204,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    204,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    204,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    204,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    204,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    205,
-   "_obj_33",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg",
+   [
+    "33"
+   ]
   ],
   [
    205,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    205,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    205,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    205,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    205,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125512404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    206,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    206,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    206,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    206,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    206,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125612404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    207,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    207,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    207,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    207,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    207,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125662404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    208,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    208,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    208,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    208,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    208,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125762404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    209,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    209,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    209,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    209,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    209,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125862404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    210,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    210,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    210,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    210,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    210,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125912404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    211,
-   "_obj_34",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg",
+   [
+    "34"
+   ]
   ],
   [
    211,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    211,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    211,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    211,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    211,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126012404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    212,
-   "_obj_35",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg",
+   [
+    "35"
+   ]
   ],
   [
    212,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    212,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    212,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    212,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    212,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126112404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    213,
-   "_obj_35",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg",
+   [
+    "35"
+   ]
   ],
   [
    213,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    213,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    213,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    213,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    213,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126162404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    214,
-   "_obj_35",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg",
+   [
+    "35"
+   ]
   ],
   [
    214,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    214,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    214,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    214,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    214,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126262404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    215,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    215,
-   "_obj_35",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "35"
+   ]
   ],
   [
    215,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    215,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    215,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    215,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    215,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126362404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    216,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    216,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    216,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    216,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    216,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    216,
-   "_obj_3",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126412404.jpg",
+   [
+    "3"
+   ]
   ],
   [
    217,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    217,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    217,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    217,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    217,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126512404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    218,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    218,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    218,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    218,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    218,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126612404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    219,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    219,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    219,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    219,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    219,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126662404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    220,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    220,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    220,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    220,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    220,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126762404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    221,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    221,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    221,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    221,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    221,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126862404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    222,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    222,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    222,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    222,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    222,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657126912404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    223,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    223,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    223,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    223,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    223,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127012404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    224,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    224,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    224,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    224,
-   "_obj_19",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg",
+   [
+    "19"
+   ]
   ],
   [
    224,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127112404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    225,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    225,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    225,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    225,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127162404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    226,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    226,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    226,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    226,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127262404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    227,
-   "_obj_40",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg",
+   [
+    "40"
+   ]
   ],
   [
    227,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    227,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    227,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    227,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127362404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    228,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    228,
-   "_obj_26",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg",
+   [
+    "26"
+   ]
   ],
   [
    228,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    228,
-   "_obj_18",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127412404.jpg",
+   [
+    "18"
+   ]
   ],
   [
    229,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127512404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    229,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127512404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127512404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    230,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127612404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    230,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127612404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127612404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    231,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127662404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    231,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127662404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127662404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    232,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127762404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    232,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127762404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127762404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    233,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127862404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    233,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127862404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127862404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    234,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127912404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    234,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127912404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657127912404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    235,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128012404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    235,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128012404.jpg"
+   "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128012404.jpg",
+   [
+    "22"
+   ]
   ],
   [
    236,
-   "_obj_36",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128112404.jpg",
+   [
+    "36"
+   ]
   ],
   [
    236,
-   "_obj_22",
    "scene-0757-CAM_FRONT",
-   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128112404.jpg"
+   "samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657128112404.jpg",
+   [
+    "22"
+   ]
   ]
  ]
 }
