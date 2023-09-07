@@ -19,10 +19,10 @@ def test_simple_workflow():
     world = build_filter_world()
     objects, trackings = _execute(world, optimization=False)
 
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
-    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
-    #     pickle.dump(trackings, f)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
+        pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -49,10 +49,10 @@ def test_simple_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
-    #     json.dump(objects, f, indent=1)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
-    #     pickle.dump(objects, f)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
+        json.dump(objects, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
+        pickle.dump(objects, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)
