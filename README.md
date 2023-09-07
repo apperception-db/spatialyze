@@ -120,3 +120,6 @@ This paper is currently under review for [VLDB](https://vldb.org/2024/).
     primaryClass={cs.DB}
 }
 ```
+
+## Codecov
+<img width=100% src="https://codecov.io/gh/apperception-db/spatialyze/graphs/icicle.svg?token=A4FHKVI1Ua">
