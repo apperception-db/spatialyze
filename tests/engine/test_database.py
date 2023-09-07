@@ -1,15 +1,15 @@
 import pickle
 
-from spatialyze.database import Database
+from spatialyze.database import Database, CAMERA_TABLE, TRAJ_TABLE
 import psycopg2
 import psycopg2.errors
 import os
 import pytest
 
 TABLES = [
-    ("Cameras", 1),
+    (CAMERA_TABLE, 1),
     # "General_Bbox",
-    ("Item_General_Trajectory", 1),
+    (TRAJ_TABLE, 1),
 ]
 
 
@@ -27,6 +27,7 @@ def test_reset():
     with open('./data/nuscenes/processed/annotations.pkl', 'rb') as f:
         annotaions = pickle.load(f)
     key = [*cameras.keys()][0]
+    d.reset(commit=True)
     d.load_nuscenes(
         {key: annotaions[key]},
         {key: cameras[key]},
