@@ -5,7 +5,6 @@ from .create_transform_matrix import create_transform_matrix
 from .df_to_camera_config import df_to_camera_config
 from .export_tables import export_tables
 from .import_pickle import import_pickle
-from .import_tables import import_tables
 from .ingest_road import ingest_road
 from .join import join
 from .transformation import transformation
@@ -15,7 +14,6 @@ __all__ = [
     "compute_heading",
     "df_to_camera_config",
     "create_transform_matrix",
-    "import_tables",
     "import_pickle",
     "export_tables",
     "join",
