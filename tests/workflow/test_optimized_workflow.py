@@ -83,3 +83,7 @@ def test_optimized_workflow():
         assert np.allclose(o2.bboxes, og.bboxes), (o2.bboxes, og.bboxes)
         assert np.allclose(o2.frame_ids, og.frame_ids), (o2.frame_ids, og.frame_ids)
         assert o2.camera_id == og.camera_id, (o2.camera_id, og.camera_id)
+    
+    world.saveVideos('.')
+    assert os.path.exists('./scene-0655-CAM_FRONT-result.mp4')
+    assert os.path.exists('./scene-0757-CAM_FRONT-result.mp4')
