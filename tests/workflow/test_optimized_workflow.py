@@ -19,10 +19,10 @@ def test_optimized_workflow():
     world = build_filter_world(pkl=True)
     objects, trackings = _execute(world)
 
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
-        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
-        pickle.dump(trackings, f)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
+    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
+    #     pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -49,10 +49,10 @@ def test_optimized_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
-        json.dump(objects, f, indent=1)
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'wb') as f:
-        pickle.dump(objects, f)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
+    #     json.dump(objects, f, indent=1)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'wb') as f:
+    #     pickle.dump(objects, f)
     
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)
@@ -64,3 +64,22 @@ def test_optimized_workflow():
         assert len(ops) == len(ogs), (len(ops), len(ogs))
         for p, og in zip(sorted(ops), sorted(ogs)):
             assert tuple(p) == tuple(og), (p, og)
+
+    world._objects, world._trackings = objects, trackings
+    objects2 = world.getObjects()
+
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects2.json'), 'w') as f:
+        json.dump(objects2, f, indent=1)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects2.pkl'), 'wb') as f:
+        pickle.dump(objects2, f)
+    
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects2.pkl'), 'rb') as f:
+        objects2_groundtruth = pickle.load(f)
+    
+    for o2, og in zip(sorted(objects2), sorted(objects2_groundtruth)):
+        assert o2.id == og.id, (o2.id, og.id)
+        assert o2.type == og.type, (o2.type, og.type)
+        assert np.allclose(o2.track, og.track), (o2.track, og.track)
+        assert np.allclose(o2.bboxes, og.bboxes), (o2.bboxes, og.bboxes)
+        assert np.allclose(o2.frame_ids, og.frame_ids), (o2.frame_ids, og.frame_ids)
+        assert o2.camera_id == og.camera_id, (o2.camera_id, og.camera_id)

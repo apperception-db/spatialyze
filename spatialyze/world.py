@@ -51,6 +51,8 @@ class World:
         self._videos = videos or []
         self._geogConstructs = geogConstructs or []
         self._objectCounts = 0
+        self._objects: "dict[str, list[QueryResult]] | None" = None
+        self._trackings: "dict[str, list[T3DMetadatum]] | None" = None
         # self._cameraCounts = 0
 
     @property
@@ -63,14 +65,17 @@ class World:
 
     def filter(self, predicate: "PredicateNode") -> "World":
         self._predicates.append(predicate)
+        self._objects, self._trackings = None, None
         return self
 
     def addVideo(self, video: "GeospatialVideo") -> "World":
         self._videos.append(video)
+        self._objects, self._trackings = None, None
         return self
 
     def addGeogConstructs(self, geogConstructs: "RoadNetwork") -> "World":
         self._geogConstructs.append(geogConstructs)
+        self._objects, self._trackings = None, None
         return self
 
     def object(self, index: "int | None" = None):
@@ -88,10 +93,11 @@ class World:
         return road_segment(type)
 
     def saveVideos(self, outputDir: "str", addBoundingBoxes: "bool" = False):
-        objects, trackings = _execute(self)
+        if self._objects is None or self._trackings is None:
+            self._objects, self._trackings = _execute(self)
         return save_video_util(
-            objects,
-            trackings,
+            self._objects,
+            self._trackings,
             outputDir,
             addBoundingBoxes,
         )
@@ -106,9 +112,10 @@ class World:
         - frame IDs
         - camera id
         """
-        objects, trackings = _execute(self)
+        if self._objects is None or self._trackings is None:
+            self._objects, self._trackings = _execute(self)
 
-        return get_object_list(objects, trackings)
+        return get_object_list(self._objects, self._trackings)
 
 
 def _execute(world: "World", optimization=True):
