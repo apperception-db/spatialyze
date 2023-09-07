@@ -1,14 +1,15 @@
+import pickle
+
 from spatialyze.database import Database
-from spatialyze.utils import import_tables
 import psycopg2
 import psycopg2.errors
 import os
 import pytest
 
-TABLE_NAMES = [
-    "Cameras",
+TABLES = [
+    ("Cameras", 1),
     # "General_Bbox",
-    "Item_General_Trajectory",
+    ("Item_General_Trajectory", 1),
 ]
 
 
@@ -21,12 +22,21 @@ def test_reset():
         password="docker",
     ))
 
-    import_tables(d, './data/scenic/database')
-    for t in TABLE_NAMES:
-        assert not d.sql(f"select * from {t} limit 1").empty
+    with open('./data/nuscenes/processed/cameras.pkl', 'rb') as f:
+        cameras = pickle.load(f)
+    with open('./data/nuscenes/processed/annotations.pkl', 'rb') as f:
+        annotaions = pickle.load(f)
+    key = [cameras.keys()][0]
+    d.load_nuscenes(
+        {key: annotaions[key]},
+        {key: cameras[key]},
+    )
+
+    for t, c in TABLES:
+        assert d.sql(f"select count(*) from {t}")[0][0] == c
 
     d.reset()
-    for t in TABLE_NAMES:
+    for t, _ in TABLES:
         assert d.sql("select * from " + t).empty
 
 
