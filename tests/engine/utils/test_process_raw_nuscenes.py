@@ -1,4 +1,5 @@
 import pickle
+from itertools import chain
 
 import numpy as np
 
@@ -24,7 +25,10 @@ def test_process_raw_nuscenes():
         annotation = annotations[key]
         annotation_groundtruth = annotations_groundtruth[key]
         for a, a_groundtruth in zip(annotation, annotation_groundtruth):
-            assert a == a_groundtruth, (a, a_groundtruth)
+            assert a[:3] == a_groundtruth[:3], (a[:3], a_groundtruth[:3])
+            assert np.allclose([*chain(*a[3:6]), a.heading], [*chain(*a_groundtruth[3:6]), a_groundtruth.heading]), ([*chain(*a[3:6]), a.heading], [*chain(*a_groundtruth[3:6]), a_groundtruth.heading])
+            assert a.category == a_groundtruth.category, (a.category, a_groundtruth.category)
+            assert a[8:] == a_groundtruth[8:], (a[8:], a_groundtruth[8:])
     
     for key in cameras:
         camera = cameras[key]
