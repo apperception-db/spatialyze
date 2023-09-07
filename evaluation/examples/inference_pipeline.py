@@ -18,4 +18,4 @@ for scene in SCENES:
     ))
 obj = world.object()
 world.filter((obj.type == 'bus') | (obj.type == 'car'))
-objects = world.saveVideos('./data/pipeline/videos/', addBoundingBoxes=True)
+objects = world.saveVideos('./evaluation/examples/videos/', addBoundingBoxes=True)
