@@ -141,17 +141,18 @@ def _flush(
     threshold: "int | None" = None,
 ) -> "tuple[list[psql.Composable], list[psql.Composable]]":
     if threshold is None or len(camera_sqls) + len(item_sqls) >= threshold:
-        query = psql.SQL(
-            "INSERT INTO Cameras ("
-            "cameraId, frameId, "
-            "frameNum, fileName, "
-            "cameraTranslation, cameraRotation, "
-            "cameraIntrinsic, egoTranslation, "
-            "egoRotation, timestamp, "
-            "cameraHeading, egoHeading"
-            ") VALUES ({})"
-        ).format(psql.SQL(",").join(camera_sqls))
-        database.update(query)
+        if len(camera_sqls) != 0:
+            query = psql.SQL(
+                "INSERT INTO Cameras ("
+                "cameraId, frameId, "
+                "frameNum, fileName, "
+                "cameraTranslation, cameraRotation, "
+                "cameraIntrinsic, egoTranslation, "
+                "egoRotation, timestamp, "
+                "cameraHeading, egoHeading"
+                ") VALUES {}"
+            ).format(psql.SQL(",").join(camera_sqls))
+            database.update(query)
 
         if len(item_sqls) != 0:
             query = psql.SQL(
