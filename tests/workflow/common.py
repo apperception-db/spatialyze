@@ -14,7 +14,7 @@ OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 ROAD_DIR = './data/scenic/road-network/boston-seaport'
 
-def build_filter_world():
+def build_filter_world(pkl: bool = False):
     database = Database(
         psycopg2.connect(
             dbname=environ.get("AP_DB", "mobilitydb"),
@@ -36,7 +36,10 @@ def build_filter_world():
             continue
         
         videofile = os.path.join(VIDEO_DIR, video['filename'])
-        camera = [camera_config(*c) for c in video['frames']]
+        if pkl:
+            camera = videofile.split('.')[0] + '.camera.pkl'
+        else:
+            camera = [camera_config(*c) for c in video['frames']]
         keep = bitarray(len(camera))
         keep.setall(0)
         keep[(len(camera) * 3 // 4):] = 1

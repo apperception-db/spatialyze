@@ -16,7 +16,7 @@ disable_cache()
 
 
 def test_optimized_workflow():
-    world = build_filter_world()
+    world = build_filter_world(pkl=True)
     objects, trackings = _execute(world)
 
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
