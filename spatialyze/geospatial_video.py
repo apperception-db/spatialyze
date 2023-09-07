@@ -19,16 +19,14 @@ class GeospatialVideo:
             if camera.endswith(".json"):
                 with open(camera, "r") as f:
                     camera_configs = json.load(f)
-                    assert isinstance(camera_configs, list), camera_configs
-                    self.camera = [_camera_config(c) for c in camera_configs]
             else:
                 assert camera.endswith(".camera.pkl")
                 with open(camera, "rb") as f:
                     camera_configs = pickle.load(f)
-                    if isinstance(camera_configs, dict):
-                        camera_configs = camera_configs["frames"]
-                    assert isinstance(camera_configs, list), camera_configs
-                    self.camera = [_camera_config(c) for c in camera_configs]
+                if isinstance(camera_configs, dict):
+                    camera_configs = camera_configs["frames"]
+            assert isinstance(camera_configs, list), camera_configs
+            self.camera = [_camera_config(c) for c in camera_configs]
         else:
             self.camera = camera
         self.keep = keep

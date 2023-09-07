@@ -1,6 +1,7 @@
 from spatialyze.database import Database
 from spatialyze.utils import import_tables
 import psycopg2
+import psycopg2.errors
 import os
 import pytest
 
