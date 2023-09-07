@@ -34,7 +34,7 @@ def test_reset():
     )
 
     for t, c in TABLES:
-        assert d.sql(f"select count(*) from {t}")[0][0] == c
+        assert d.execute(f"select count(*) from {t}")[0][0] == c
 
     d.reset()
     for t, _ in TABLES:
