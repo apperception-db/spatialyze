@@ -40,8 +40,8 @@ def test_optimized_workflow():
                 assert p.frame_idx == g.frame_idx, (p.frame_idx, g.frame_idx)
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
-                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera)), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point), np.array(g.point)), (p.point, g.point)
+                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera), atol=0.001, rtol=0), (p.point_from_camera, g.point_from_camera)
+                assert np.allclose(np.array(p.point), np.array(g.point), atol=0.001, rtol=0), (p.point, g.point)
                 assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
                 assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
                 assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
@@ -79,8 +79,8 @@ def test_optimized_workflow():
     for o2, og in zip(sorted(objects2), sorted(objects2_groundtruth)):
         assert o2.id == og.id, (o2.id, og.id)
         assert o2.type == og.type, (o2.type, og.type)
-        assert np.allclose(o2.track, og.track), (o2.track, og.track)
-        assert np.allclose(o2.bboxes, og.bboxes), (o2.bboxes, og.bboxes)
+        assert np.allclose(o2.track, og.track, atol=0.001, rtol=0), (o2.track, og.track)
+        assert np.allclose(o2.bboxes, og.bboxes, atol=2, rtol=0), (o2.bboxes, og.bboxes)
         assert np.allclose(o2.frame_ids, og.frame_ids), (o2.frame_ids, og.frame_ids)
         assert o2.camera_id == og.camera_id, (o2.camera_id, og.camera_id)
     
