@@ -8,9 +8,9 @@ from .infer_heading import infer_heading
 
 def insert_trajectory(
     database: "Database",
-    item_id: str,
-    camera_id: str,
-    object_type: str,
+    item_id: "int",
+    camera_id: "str",
+    object_type: "str",
     postgres_timestamps: "list[datetime.datetime]",
     pairs: "list[Float3]",
     itemHeading_list: "list[float | None]",

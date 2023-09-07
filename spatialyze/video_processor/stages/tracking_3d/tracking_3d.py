@@ -8,9 +8,9 @@ from ..stage import Stage
 
 @dataclass
 class Tracking3DResult:
-    frame_idx: int
-    detection_id: DetectionId
-    object_id: float
+    frame_idx: "int"
+    detection_id: "DetectionId"
+    object_id: "int"
     point_from_camera: "Float3"
     point: "Float3"
     bbox_left: float

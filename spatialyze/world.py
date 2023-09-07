@@ -2,12 +2,16 @@ import numpy as np
 
 from .data_types.camera import Camera
 from .data_types.camera_config import CameraConfig as _CameraConfig
+from .data_types.query_result import QueryResult
 from .database import Database
 from .database import database as default_database
 from .geospatial_video import GeospatialVideo
 from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode, lit
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
+from .utils.get_object_list import get_object_list
+from .utils.ingest_road import create_tables, drop_tables
+from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
 from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
@@ -20,7 +24,6 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
     FromDetection2DAndRoad,
 )
-from .video_processor.stages.detection_estimation import DetectionEstimation
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.stage import Stage
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
@@ -48,6 +51,8 @@ class World:
         self._videos = videos or []
         self._geogConstructs = geogConstructs or []
         self._objectCounts = 0
+        self._objects: "dict[str, list[QueryResult]] | None" = None
+        self._trackings: "dict[str, list[T3DMetadatum]] | None" = None
         # self._cameraCounts = 0
 
     @property
@@ -60,14 +65,17 @@ class World:
 
     def filter(self, predicate: "PredicateNode") -> "World":
         self._predicates.append(predicate)
+        self._objects, self._trackings = None, None
         return self
 
     def addVideo(self, video: "GeospatialVideo") -> "World":
         self._videos.append(video)
+        self._objects, self._trackings = None, None
         return self
 
     def addGeogConstructs(self, geogConstructs: "RoadNetwork") -> "World":
         self._geogConstructs.append(geogConstructs)
+        self._objects, self._trackings = None, None
         return self
 
     def object(self, index: "int | None" = None):
@@ -84,26 +92,40 @@ class World:
     def geogConstruct(self, type: "str"):
         return road_segment(type)
 
-    def saveVideos(self, addBoundingBoxes: "bool" = False):
-        # TODO: execute and save videos
-        objects = _execute(self)
-        return objects
+    def saveVideos(self, outputDir: "str", addBoundingBoxes: "bool" = False):
+        if self._objects is None or self._trackings is None:
+            self._objects, self._trackings = _execute(self)
+        return save_video_util(
+            self._objects,
+            self._trackings,
+            outputDir,
+            addBoundingBoxes,
+        )
 
     def getObjects(self):
-        # TODO: execute and return movable objects
-        # TODO: should always execute object tracker
-        objects = _execute(self)
-        return objects
+        """
+        Returns a list of moveble objects, with each object tuple containing:
+        - object id
+        - object type
+        - trajectory
+        - bounding boxes
+        - frame IDs
+        - camera id
+        """
+        if self._objects is None or self._trackings is None:
+            self._objects, self._trackings = _execute(self)
+
+        return get_object_list(self._objects, self._trackings)
 
 
 def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    # drop_tables(database)
-    # create_tables(database)
-    # for gc in world._geogConstructs:
-    #     gc.ingest(database)
+    drop_tables(database)
+    create_tables(database)
+    for gc in world._geogConstructs:
+        gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
     if optimization:
@@ -114,8 +136,8 @@ def _execute(world: "World", optimization=True):
         objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
         steps.append(objtypes_filter)
         steps.append(FromDetection2DAndRoad())
-        if all(t in ["car", "truck"] for t in objtypes_filter.types):
-            steps.append(DetectionEstimation())
+        # if all(t in ["car", "truck"] for t in objtypes_filter.types):
+        #     steps.append(DetectionEstimation())
     else:
         steps.append(DepthEstimation())
         steps.append(FromDetection2DAndDepth())
@@ -124,7 +146,7 @@ def _execute(world: "World", optimization=True):
 
     pipeline = Pipeline(steps)
 
-    qresults: "dict[str, list[tuple]]" = {}
+    qresults: "dict[str, list[QueryResult]]" = {}
     vresults: "dict[str, list[T3DMetadatum]]" = {}
     for v in world._videos:
         # reset database
@@ -164,7 +186,7 @@ def _execute(world: "World", optimization=True):
         ]
 
         camera = Camera(_camera_configs, v.camera[0].camera_id)
-        database.insert_cam(camera)
+        database.insert_camera(camera)
 
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults

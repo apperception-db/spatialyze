@@ -69,12 +69,14 @@ class FromTracking2DAndRoad(Tracking3D):
                 assert point_from_camera.shape == (3,)
                 assert isinstance(oid, int) or oid.is_integer()
                 oid = int(oid)
+                x, y, z = map(float, point)
+                _x, _y, _z = map(float, point_from_camera)
                 trackings3d[oid] = Tracking3DResult(
                     t.frame_idx,
                     t.detection_id,
                     oid,
-                    tuple(point_from_camera),
-                    tuple(point),
+                    (_x, _y, _z),
+                    (x, y, z),
                     t.bbox_left,
                     t.bbox_top,
                     t.bbox_w,
