@@ -280,7 +280,6 @@ jobs:
         run: |
           python ./scripts/ingest_road.py
           python ./scripts/import_tables.py
-          jupyter nbconvert --execute --to notebook ./scripts/optimized-scenic/add_attributes.ipynb
         env:
           AP_PORT: 25440
       
