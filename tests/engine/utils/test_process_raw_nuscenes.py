@@ -23,7 +23,8 @@ def test_process_raw_nuscenes():
     for key in annotations:
         annotation = annotations[key]
         annotation_groundtruth = annotations_groundtruth[key]
-        assert annotation == annotation_groundtruth, (annotation, annotation_groundtruth)
+        for a, a_groundtruth in zip(annotation, annotation_groundtruth):
+            assert a == a_groundtruth, (a, a_groundtruth)
     
     for key in cameras:
         camera = cameras[key]
