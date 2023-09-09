@@ -8,34 +8,29 @@ authors = ["Your Name <you@example.com>"]
 python = "^3.10"
 pyquaternion = "^0.9.9"
 numpy = "^1.22.4"
-matplotlib = "^3.5.2"
 opencv-python = "^4.6.0"
 pandas = "^1.4.2"
 bitarray = "^2.6.0"
 tqdm = "^4.64.1"
 shapely = "^1.8.5.post1"
-plpygis = "^0.2.0"
 
 # MobilityDB
 psycopg2-binary = "^2.9.3"
 postgis = "^1.0.4"
-# python-mobilitydb = "^0.1.2"
 python-mobilitydb = "^0.1.3"
 
 [tool.poetry.group.cv.dependencies]
 torch = "^1.13.0"
 torchvision = "^0.14.0"
+matplotlib = "^3.5.2"
 scipy = "^1.4.1"
-easydict = "^1.10"
 gdown = "^4.7.1"
-cython-bbox = {git = "https://github.com/apperception-db/cython_bbox.git"}
 ultralytics = "^8.0.148"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
 coverage = "^7.2.7"
 pytest-cov = "^4.1.0"
-notebook = "^6.4.12"
 
 [tool.poetry.group.dev.dependencies]
 types-psycopg2 = "^2.9.16"

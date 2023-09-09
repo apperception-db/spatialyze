@@ -1,10 +1,8 @@
 import logging
 import time
-from typing import Callable, List, Tuple
+from typing import Callable, List
 
 import postgis
-import shapely
-import shapely.geometry
 import torch
 from bitarray import bitarray
 from psycopg2 import sql
@@ -61,7 +59,6 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             return keep, {DetectionEstimation.classname(): [[]] * len(keep)}
 
         ego_views = get_ego_views(payload)
-        ego_views = [shapely.wkb.loads(view.to_ewkb(), hex=True) for view in ego_views]
 
         skipped_frame_num = []
         next_frame_num = 0
@@ -219,10 +216,10 @@ def prune_detection(
 def generate_sample_plan_once(
     video: "Video",
     next_frame_num: "int",
-    ego_views: "list[shapely.geometry.Polygon]",
+    ego_views: "list[postgis.Polygon]",
     all_detection_info: "list[DetectionInfo] | None" = None,
     fps: "int" = 13,
-) -> "Tuple[SamplePlan, None]":
+) -> "tuple[SamplePlan, None]":
     assert all_detection_info is not None
     next_sample_plan = generate_sample_plan(
         video, next_frame_num, all_detection_info, ego_views, 50, fps=fps

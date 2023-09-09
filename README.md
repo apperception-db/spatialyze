@@ -76,7 +76,6 @@ mamba activate spatialyze
 
 # install python dependencies
 poetry install
-pip install lap  # a bug in lap/poetry/conda that lap needs to be installed using pip.
 ```
 
 ## Spatialyze Demo

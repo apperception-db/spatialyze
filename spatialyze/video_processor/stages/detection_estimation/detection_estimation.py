@@ -16,22 +16,19 @@ TODO:
 """
 
 import datetime
-import os
-import sys
 import time
 from dataclasses import dataclass, field
 from typing import Any, Tuple
 
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir, os.pardir)))
-
+import postgis
 import shapely
 import shapely.geometry
 
 from ...camera_config import CameraConfig
 from ...types import DetectionId, obj_detection
 from ...video import Video
-from .optimized_segment_mapping import RoadPolygonInfo, get_detection_polygon_mapping
 from .sample_plan_algorithms import CAR_EXIT_SEGMENT, Action
+from .segment_mapping import RoadPolygonInfo, get_detection_polygon_mapping
 from .utils import (
     Float2,
     Float3,
@@ -158,7 +155,7 @@ class SamplePlan:
     video: "Video"
     next_frame_num: int
     all_detection_info: "list[DetectionInfo]"
-    ego_views: "list[shapely.geometry.Polygon]"
+    ego_views: "list[postgis.Polygon]"
     fps: int = 12
     metadata: Any = None
     current_priority: "float | None" = None
@@ -304,7 +301,7 @@ def generate_sample_plan(
     video: "Video",
     next_frame_num: int,
     all_detection_info: "list[DetectionInfo]",
-    ego_views: "list[shapely.geometry.Polygon]",
+    ego_views: "list[postgis.Polygon]",
     view_distance: float,
     fps: int = 12,
 ):

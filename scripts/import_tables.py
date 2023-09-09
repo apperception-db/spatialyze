@@ -75,4 +75,5 @@ def _insert_into_general_bbox(database: "Database", value: tuple, commit=True):
     database._commit(commit)
 
 
-import_tables(database, './data/scenic/database')
+if __name__ == "__main__":
+    import_tables(database, './data/scenic/database')

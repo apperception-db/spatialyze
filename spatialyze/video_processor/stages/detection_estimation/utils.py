@@ -1,26 +1,23 @@
 import datetime
 import logging
 import math
-from typing import TYPE_CHECKING, List, NamedTuple, Tuple
+from typing import TYPE_CHECKING, List, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
+import postgis
+import shapely
 import shapely.geometry
-
-from spatialyze.database import database
+import shapely.wkb
 
 if TYPE_CHECKING:
     from ...camera_config import CameraConfig
+    from ...types import Float2, Float3, Float22
     from .detection_estimation import DetectionInfo
-    from .optimized_segment_mapping import RoadPolygonInfo
-    from .segment_mapping import CameraPolygonMapping
+    from .segment_mapping import RoadPolygonInfo
 
 
 logger = logging.getLogger(__name__)
-
-Float2 = Tuple[float, float]
-Float3 = Tuple[float, float, float]
-Float22 = Tuple[Float2, Float2]
 
 
 SAME_DIRECTION = "same_direction"
@@ -214,10 +211,6 @@ def max_car_speed(road_type):
     return MAX_CAR_SPEED[road_type]
 
 
-def min_car_speed(road_type):
-    return max_car_speed(road_type) / 2
-
-
 ### HELPER FUNCTIONS ###
 def get_ego_trajectory(video: str, sorted_ego_config: "list[CameraConfig]"):
     assert sorted_ego_config is not None
@@ -245,50 +238,6 @@ def get_ego_avg_speed(ego_trajectory):
     return sum([speed.speed for speed in point_wise_ego_speed]) / len(point_wise_ego_speed)
 
 
-def detection_to_img_segment(
-    car_loc2d: "Float2",
-    cam_polygon_mapping: "list[CameraPolygonMapping]",
-):
-    """Get the image segment that contains the detected car."""
-    maximum_mapping: "CameraPolygonMapping | None" = None
-    maximum_mapping_area: float = 0.0
-    point = shapely.geometry.Point(car_loc2d)
-
-    for mapping in cam_polygon_mapping:
-        cam_segment, road_segment_info = mapping
-        p_cam_segment = shapely.geometry.Polygon(cam_segment)
-        segment_type = road_segment_info.road_type
-        if p_cam_segment.contains(point) and segment_type in SEGMENT_TO_MAP:
-            area = p_cam_segment.area
-            if area > maximum_mapping_area:
-                maximum_mapping = mapping
-                maximum_mapping_area = area
-
-    return maximum_mapping
-
-
-def detection_to_nearest_segment(
-    car_loc3d: "Float3",
-    cam_polygon_mapping: "list[CameraPolygonMapping]",
-):
-    assert len(cam_polygon_mapping) != 0
-    point = shapely.geometry.Point(car_loc3d[:2])
-
-    min_distance = float("inf")
-    min_mapping = None
-    for mapping in cam_polygon_mapping:
-        _, road_polygon_info = mapping
-        polygon = road_polygon_info.polygon
-
-        distance = polygon.distance(point)
-        if distance < min_distance:
-            min_distance = distance
-            min_mapping = mapping
-
-    assert min_mapping is not None
-    return min_mapping
-
-
 def get_segment_line(road_segment_info: "RoadPolygonInfo", car_loc3d: "Float3"):
     """Get the segment line the location is in."""
     segment_lines = road_segment_info.segment_lines
@@ -312,84 +261,6 @@ def get_segment_line(road_segment_info: "RoadPolygonInfo", car_loc3d: "Float3"):
                 return segment_line, segment_heading
 
     return longest_segment_line, longest_heading
-
-
-def location_calibration(car_loc3d: "Float3", road_segment_info: "RoadPolygonInfo") -> "Float3":
-    """Calibrate the 3d location of the car with the road segment
-    the car lies in.
-    """
-    segment_polygon = road_segment_info.polygon
-    assert segment_polygon is not None
-    segment_lines = road_segment_info.segment_lines
-    if segment_lines is None or len(segment_lines) == 0:
-        return car_loc3d
-    # TODO: project onto multiple linestrings and find the closest one
-    projection = project_point_onto_linestring(
-        shapely.geometry.Point(car_loc3d[:2]), segment_lines
-    ).coords
-    return projection[0], projection[1], car_loc3d[2]
-
-
-def get_largest_polygon_containing_ego(cam_segment_mapping: "List[CameraPolygonMapping]"):
-    maximum_mapping: "CameraPolygonMapping | None" = None
-    maximum_mapping_area: float = 0.0
-
-    for mapping in cam_segment_mapping:
-        _, road_segment_info = mapping
-        area = shapely.geometry.Polygon(road_segment_info.polygon).area
-        if road_segment_info.contains_ego and area > maximum_mapping_area:
-            maximum_mapping = mapping
-            maximum_mapping_area = area
-
-    assert maximum_mapping is not None, [c.road_polygon_info.id for c in cam_segment_mapping]
-    return maximum_mapping
-
-
-def time_to_nearest_frame(
-    video: str, timestamp: "datetime.datetime"
-) -> "Tuple[str, int, datetime.datetime]":
-    """Return the frame that is closest to the timestamp"""
-    query = f"""
-    WITH Cameras_with_diff as (
-        SELECT *, abs(extract(epoch from timestamp-\'{timestamp}\')) as diff
-        FROM Cameras
-        WHERE fileName LIKE '%{video}%'
-    )
-    SELECT
-        fileName,
-        frameNum,
-        cameras.timestamp
-    FROM Cameras_with_diff c1
-    WHERE c1.diff = (SELECT MIN(c2.diff) from Cameras_with_diff c2)
-    LIMIT 1
-    """
-    return database.execute(query)[0]
-
-
-def timestamp_to_nearest_trajectory(trajectory, timestamp):
-    """Return the trajectory point that is closest to the timestamp"""
-    return min(trajectory, key=lambda x: abs((x.timestamp - timestamp).total_seconds()))
-
-
-def point_to_nearest_trajectory(point, trajectory):
-    """Return the trajectory point that is closest to the point"""
-    return min(trajectory, key=lambda x: compute_distance(x.coordinates, point))
-
-
-def ego_departure(ego_trajectory: "List[trajectory_3d]", current_time: "datetime.datetime"):
-    for i in range(len(ego_trajectory)):
-        point = ego_trajectory[i]
-        if point.timestamp > current_time:
-            for j in range(i, len(ego_trajectory)):
-                if compute_distance(ego_trajectory[j].coordinates, point.coordinates) < 5:
-                    non_stop_point = ego_trajectory[j]
-                    break
-            if i == j:
-                return False, point.timestamp, point.coordinates
-            elif j == len(ego_trajectory) - 1:
-                return True, ego_trajectory[j].timestamp, ego_trajectory[j].coordinates
-            return True, non_stop_point.timestamp, non_stop_point.coordinates
-    return False, ego_trajectory[-1].timestamp, ego_trajectory[-1].coordinates
 
 
 def time_to_exit_current_segment(
@@ -454,117 +325,9 @@ def time_to_exit_current_segment(
     return None, None
 
 
-def meetup(
-    car1_loc: "Float3 | shapely.geometry.Point",
-    car2_loc: "Float3 | shapely.geometry.Point",
-    car1_heading,
-    car2_heading,
-    road_type,
-    current_time,
-    car1_trajectory: "List[trajectory_3d] | None" = None,
-    car2_trajectory: "List[trajectory_3d] | None" = None,
-    car1_speed=None,
-    car2_speed=None,
-):
-    """estimate the meetup point as the middle point between car1's loc and car2's loc
-
-    If both trajectories are given, the meetup point is the point where the two trajectories meets
-    If one trajectory is given, use that trajectory and other car's speed and direction
-    If none trajectory is given, use both cars' speed, or max speed if no speed is given and cars' direction
-
-    For timestamp, it's an estimation based on the trajectory or speed
-    Return: (timestamp, meetup_point)
-
-    Assumptions:
-        car1 and car2 are driving towards each other, not necessarily the opposite direction
-        There shouldn't be a point they intersect, otherwise it's a collision
-        If no trajectory, or speed is given, car drives at max speed
-        TODO: now I've just implemented the case for ego car to meet another detected car
-    """
-    car1_loc = shapely.geometry.Point(car1_loc[:2]) if isinstance(car1_loc, tuple) else car1_loc
-    assert isinstance(car1_loc, shapely.geometry.Point)
-    car2_loc = shapely.geometry.Point(car2_loc[:2]) if isinstance(car2_loc, tuple) else car2_loc
-    assert isinstance(car2_loc, shapely.geometry.Point)
-    if car1_trajectory is not None and car2_trajectory is None:
-        car2_speed = max_car_speed(road_type) if car2_speed is None else car2_speed
-        car2_heading += 90
-        car2_vector = (
-            car2_loc.x + math.cos(math.radians(car2_heading)),
-            car2_loc.y + math.sin(math.radians(car2_heading)),
-        )
-        car2_heading_line = (car2_loc, car2_vector)
-        car1_trajectory_points = [
-            point.coordinates for point in car1_trajectory if point.timestamp > current_time
-        ]
-        intersection = intersection_between_line_and_trajectory(
-            car2_heading_line, car1_trajectory_points
-        )
-        if len(intersection) == 1:  # i.e. one car drives towards south, the other towards east
-            # logger.info(f"at intersection 1")
-            meetup_point = intersection[0]
-            time1 = point_to_nearest_trajectory(meetup_point, car1_trajectory)
-            distance2 = compute_distance(car2_loc, meetup_point)
-            time2 = time_elapse(current_time, distance2 / car2_speed)
-            return (min(time1, time2), meetup_point)
-        elif len(intersection) == 0:  # i.e. one car drives towards south, the other towards north
-            # logger.info(f"at intersection 0")
-            meetup_point = shapely.geometry.Point(
-                (car1_loc.x + car2_loc.x) / 2, (car1_loc.y + car2_loc.y) / 2
-            )
-            time1 = point_to_nearest_trajectory(meetup_point, car1_trajectory).timestamp
-            if time1 < current_time:
-                time1 = current_time
-            distance2 = compute_distance(car2_loc, meetup_point)
-            time2 = time_elapse(current_time, distance2 / car2_speed)
-            if time2 < current_time:
-                time2 = current_time
-            return (min(time1, time2), meetup_point)
-
-
-def catchup_time(
-    car1_loc,
-    car2_loc,
-    road_type=None,
-    car1_trajectory=None,
-    car2_trajectory=None,
-    car1_speed=None,
-    car2_speed=None,
-):
-    """Return the time that car1 catches up to car2
-
-    Assumption:
-        1. car1 and car2 are driving towards the same direction
-        2. car1 drives at max speed, car2 drives at min speed
-           if no trajectory or speed is given
-        3. TODO: assume now ego is the slowest, it won't bypass another car
-    """
-
-
-def in_view(car_loc, ego_loc, view_distance):
-    """At this point, we only care about detect cars. So they are in the frame
-    in_view means whether the car is recognizable enough
-    """
-    return compute_distance(car_loc, ego_loc) < view_distance
-
-
-def time_to_exit_view(
-    ego_loc, car_loc, car_heading, ego_trajectory, current_time, road_type, view_distance
-):
-    """Return the time, and location that the car goes beyond ego's view distance
-
-    Assumption: car drives at max speed
-    """
-    ego_speed = get_ego_avg_speed(ego_trajectory)
-    car_speed = max_car_speed(road_type)
-    exit_view_time = time_elapse(
-        current_time, (view_distance - compute_distance(ego_loc, car_loc)) / (car_speed - ego_speed)
-    )
-    return timestamp_to_nearest_trajectory(ego_trajectory, exit_view_time)
-
-
 def get_car_exits_view_frame_num(
     detection_info: "DetectionInfo",
-    ego_views: "list[shapely.geometry.Polygon]",
+    ego_views: "list[postgis.Polygon]",
     max_frame_num: int,
     fps=20,
 ):
@@ -589,7 +352,7 @@ def car_exits_view_frame_num(
     car_loc: "Float2",
     car_heading: "float",
     road_type: "str",
-    ego_views: "list[shapely.geometry.Polygon]",
+    ego_views: "list[postgis.Polygon]",
     current_frame_num: "int",
     car_exits_segment_frame_num: "int",
     fps: "int",
@@ -602,30 +365,10 @@ def car_exits_view_frame_num(
     while current_frame_num + 1 < car_exits_segment_frame_num:
         next_frame_num = current_frame_num + 1
         next_ego_view = ego_views[next_frame_num]
+        next_ego_view = shapely.wkb.loads(next_ego_view.to_ewkb(), hex=True)
         duration = (next_frame_num - start_frame_num) / fps
         next_car_loc = car_move(car_loc, car_heading, car_speed, duration)
         if not next_ego_view.contains(shapely.geometry.Point(next_car_loc[:2])):
             return max(current_frame_num, start_frame_num + 1)
         current_frame_num = next_frame_num
     return car_exits_segment_frame_num
-
-
-def relative_direction_to_ego(obj_heading: float, ego_heading: float):
-    """Return the relative direction to ego
-    Now only support opposite and same direction
-    TODO: add driving into and driving away from
-    """
-    if obj_heading is None:
-        return
-
-    relative_heading = abs(obj_heading - ego_heading) % 360
-    if (
-        math.cos(math.radians(relative_heading)) < 1
-        and math.cos(math.radians(relative_heading)) > math.pi / 6
-    ):
-        return SAME_DIRECTION
-    elif (
-        math.cos(math.radians(relative_heading)) > -1
-        and math.cos(math.radians(relative_heading)) < -math.pi / 6
-    ):
-        return OPPOSITE_DIRECTION
