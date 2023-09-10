@@ -1,6 +1,6 @@
 import datetime
 
-from ..stages.segment_trajectory.construct_segment_trajectory import InvalidSegmentPoint
+from ..stages.segment_trajectory import InvalidSegmentPoint
 from ..types import Float3
 from .get_tracks import TrackPoint
 

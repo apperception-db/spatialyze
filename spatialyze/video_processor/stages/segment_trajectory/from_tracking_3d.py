@@ -4,30 +4,27 @@ from typing import NamedTuple
 import numpy as np
 import postgis
 import psycopg2.sql
-import shapely
-import shapely.geometry
+import shapely.geometry as sg
 import shapely.wkb
 import torch
 
-from spatialyze.database import database
-
+from ....database import database
 from ...payload import Payload
 from ...types import DetectionId, Float2
 from ..detection_3d import Detection3D
 from ..detection_3d import Metadatum as Detection3DMetadatum
 from ..tracking.tracking import Metadatum as TrackingMetadatum
 from ..tracking.tracking import Tracking
-from . import SegmentTrajectory, SegmentTrajectoryMetadatum
-from .construct_segment_trajectory import (
+from . import (
     InvalidSegmentPoint,
     PolygonAndId,
     SegmentPoint,
+    SegmentTrajectory,
+    SegmentTrajectoryMetadatum,
     ValidSegmentPoint,
 )
 
 USEFUL_TYPES = ["lane", "lanegroup", "intersection"]
-
-printed = False
 
 
 class FromTracking3D(SegmentTrajectory):
@@ -129,7 +126,7 @@ class FromTracking3D(SegmentTrajectory):
                     assert did.obj_order == _oid
 
                     polygon = shapely.wkb.loads(polygon.to_ewkb(), hex=True)
-                    assert isinstance(polygon, shapely.geometry.Polygon)
+                    assert isinstance(polygon, sg.Polygon)
 
                     type_ = next((t for t in types if t in USEFUL_TYPES), types[-1])
 
@@ -183,7 +180,7 @@ def valid_segment_point(
     segmentline: "postgis.LineString",
     segmentheading: "float",
     polygonid: "str",
-    shapely_polygon: "shapely.geometry.Polygon",
+    shapely_polygon: "sg.Polygon",
 ):
     x, y, z = map(float, ((det[6:9] + det[9:12]) / 2).tolist())
     return ValidSegmentPoint(
@@ -254,25 +251,6 @@ def map_points_and_directions_to_segment(
         dy=psycopg2.sql.Literal(dys),
         # fields=psycopg2.sql.SQL(',').join(map(psycopg2.sql.Literal, [frame_indices, object_indices, txs, tys, dxs, dys]))
     )
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print('fid')
-    # print(frame_indices)
-    # print('oid')
-    # print(object_indices)
-    # print('txs')
-    # print(txs)
-    # print('tys')
-    # print(tys)
-    # print('dxs')
-    # print(dxs)
-    # print('dys')
-    # print(dys)
 
     helper = psycopg2.sql.SQL(
         """
