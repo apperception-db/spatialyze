@@ -36,10 +36,15 @@ RT = '__ROADTYPES__'
 
     (o.type & (~((o.a | True) & True)), set()),
     (arr(o.type) | (~((o.a & False) | cast(False, 'int'))), set()),
+    (arr(o.type == 'car'), set()),
+    (F.contained(o.type == 'car', 'intersection'), {'car'}),
+    (o, set()),
+    (camera, set()),
 
     # General
-    ('car' == o.type, {'car'}),
+    (lit('car') == o.type, {'car'}),
     ((o.type == 'car') == (o1.type == 'car'), {'car'}),
+    ((o.type == 'car') + (o1.type == 'car'), {'car'}),
 ])
 def test_predicates(fn, types):
     _types = FindType()(fn)
