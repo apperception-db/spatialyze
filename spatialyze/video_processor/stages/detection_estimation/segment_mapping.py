@@ -23,8 +23,8 @@ import shapely.wkb as swkb
 
 from ....database import database
 from ...camera_config import CameraConfig
-from ...types import DetectionId, obj_detection
-from .utils import ROAD_TYPES, Float22
+from ...types import DetectionId, Float22, obj_detection
+from .utils import ROAD_TYPES
 
 SQL_ROAD_TYPES = ",".join("__RoadType__" + rt + "__" for rt in ROAD_TYPES)
 USEFUL_TYPES = ["lane", "lanegroup", "intersection"]

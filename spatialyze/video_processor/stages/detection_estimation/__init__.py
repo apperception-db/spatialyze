@@ -7,11 +7,10 @@ import torch
 from bitarray import bitarray
 from psycopg2 import sql
 
-from spatialyze.database import database
-
+from ....database import database
 from ...camera_config import CameraConfig
 from ...payload import Payload
-from ...types import DetectionId
+from ...types import DetectionId, obj_detection
 from ...video import Video
 from ..detection_2d.detection_2d import Detection2D
 from ..detection_2d.detection_2d import Metadatum as D2DMetadatum
@@ -23,7 +22,6 @@ from .detection_estimation import (
     SamplePlan,
     construct_all_detection_info,
     generate_sample_plan,
-    obj_detection,
 )
 from .utils import get_ego_avg_speed, trajectory_3d
 
