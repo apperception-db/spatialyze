@@ -36,7 +36,7 @@ RT = '__ROADTYPES__'
 
     (o.type & (~((o.a | True) & True)), set()),
     (arr(o.type) | (~((o.a & False) | cast(False, 'int'))), set()),
-    (arr(o.type == 'car'), set()),
+    (arr(o.type == 'car'), {'car'}),
     (F.contained(o.type == 'car', 'intersection'), {'car'}),
     (o, set()),
     (camera, set()),
