@@ -510,8 +510,8 @@ class FindRoadTypes(Visitor["set[str]"]):
     # def visit_BinOpNode(self, node: "BinOpNode") -> "set[str]":
     #     raise Exception("Invalid Node Type")
 
-    # def visit_BoolOpNode(self, node: "BoolOpNode") -> "set[str]":
-    #     return set.union(*map(self, node.exprs))
+    def visit_BoolOpNode(self, node: "BoolOpNode") -> "set[str]":
+        return set.union(*map(self, node.exprs))
 
     # def visit_UnaryOpNode(self, node: "UnaryOpNode") -> "set[str]":
     #     raise Exception("Invalid Node Type")
