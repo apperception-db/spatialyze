@@ -248,7 +248,9 @@ class CastNode(PredicateNode):
     expr: "PredicateNode"
 
 
-def cast(expr: "PredicateNode", to: str) -> "CastNode":
+def cast(expr: "Any", to: str) -> "CastNode":
+    if not isinstance(expr, PredicateNode):
+        expr = LiteralNode(expr, True)
     return CastNode(to, expr)
 
 
