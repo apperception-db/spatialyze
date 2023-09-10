@@ -18,7 +18,7 @@ TODO:
 import datetime
 import time
 from dataclasses import dataclass, field
-from typing import Any, Tuple
+from typing import Any
 
 import postgis
 import shapely
@@ -49,7 +49,7 @@ class DetectionInfo:
     road_polygon_info: "RoadPolygonInfo"
     car_loc3d: "Float3"
     car_loc2d: "Float2"
-    car_bbox3d: "Tuple[Float3, Float3]"
+    car_bbox3d: "tuple[Float3, Float3]"
     car_bbox2d: "Float22"
     ego_trajectory: "list[trajectory_3d]"
     ego_config: "CameraConfig"

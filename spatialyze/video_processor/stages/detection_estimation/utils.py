@@ -1,7 +1,6 @@
 import datetime
-import logging
 import math
-from typing import TYPE_CHECKING, List, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
@@ -11,13 +10,9 @@ import shapely.geometry
 import shapely.wkb
 
 if TYPE_CHECKING:
-    from ...camera_config import CameraConfig
     from ...types import Float2, Float3, Float22
     from .detection_estimation import DetectionInfo
     from .segment_mapping import RoadPolygonInfo
-
-
-logger = logging.getLogger(__name__)
 
 
 SAME_DIRECTION = "same_direction"
@@ -105,7 +100,7 @@ def project_point_onto_linestring(
 
 
 def _construct_extended_line(
-    polygon: "shapely.geometry.Polygon | List[Float2] | List[Float3]", line: "Float22"
+    polygon: "shapely.geometry.Polygon | list[Float2] | list[Float3]", line: "Float22"
 ):
     """
     line: represented by 2 points
@@ -163,24 +158,9 @@ def _construct_extended_line(
     return extended_line
 
 
-def intersection_between_line_and_trajectory(line, trajectory: "List[Float3]"):
-    """Find the intersection between a line and a trajectory."""
-    # trajectory_to_polygon = shapely.geometry.Polygon(trajectory)
-    # TODO: should use a different function than _construct_extended_line
-    extended_line = _construct_extended_line(trajectory, line)
-    if len(trajectory) == 1:
-        intersection = extended_line.intersection(shapely.geometry.Point(trajectory[0]))
-    else:
-        intersection = extended_line.intersection(shapely.geometry.LineString(trajectory))
-    if not isinstance(intersection, shapely.geometry.LineString) or intersection.is_empty:
-        return tuple()
-    elif isinstance(intersection, shapely.geometry.LineString):
-        return tuple(intersection.coords)
-
-
 def line_to_polygon_intersection(
     polygon: "shapely.geometry.Polygon", line: "Float22"
-) -> "List[Float2]":
+) -> "list[Float2]":
     """Find the intersection between a line and a polygon."""
     try:
         extended_line = _construct_extended_line(polygon, line)
@@ -212,11 +192,6 @@ def max_car_speed(road_type):
 
 
 ### HELPER FUNCTIONS ###
-def get_ego_trajectory(video: str, sorted_ego_config: "list[CameraConfig]"):
-    assert sorted_ego_config is not None
-    return [trajectory_3d(config.ego_translation, config.timestamp) for config in sorted_ego_config]
-
-
 def get_ego_speed(ego_trajectory):
     """Get the ego speed based on the ego trajectory."""
     point_wise_temporal_speed = []
@@ -337,38 +312,18 @@ def get_car_exits_view_frame_num(
     if car_heading is None or road_type == "intersection":
         return None
 
-    return car_exits_view_frame_num(
-        car_loc,
-        car_heading,
-        road_type,
-        ego_views,
-        detection_info.detection_id.frame_idx,
-        max_frame_num,
-        fps,
-    )
-
-
-def car_exits_view_frame_num(
-    car_loc: "Float2",
-    car_heading: "float",
-    road_type: "str",
-    ego_views: "list[postgis.Polygon]",
-    current_frame_num: "int",
-    car_exits_segment_frame_num: "int",
-    fps: "int",
-):
-    assert car_exits_segment_frame_num < len(ego_views)
-    assert current_frame_num < car_exits_segment_frame_num
-    start_frame_num = current_frame_num
+    assert max_frame_num < len(ego_views)
+    assert detection_info.detection_id.frame_idx < max_frame_num
+    start_frame_num = detection_info.detection_id.frame_idx
     car_speed = max_car_speed(road_type)
     car_heading += 90
-    while current_frame_num + 1 < car_exits_segment_frame_num:
-        next_frame_num = current_frame_num + 1
+    while detection_info.detection_id.frame_idx + 1 < max_frame_num:
+        next_frame_num = detection_info.detection_id.frame_idx + 1
         next_ego_view = ego_views[next_frame_num]
         next_ego_view = shapely.wkb.loads(next_ego_view.to_ewkb(), hex=True)
         duration = (next_frame_num - start_frame_num) / fps
         next_car_loc = car_move(car_loc, car_heading, car_speed, duration)
         if not next_ego_view.contains(shapely.geometry.Point(next_car_loc[:2])):
-            return max(current_frame_num, start_frame_num + 1)
-        current_frame_num = next_frame_num
-    return car_exits_segment_frame_num
+            return max(detection_info.detection_id.frame_idx, start_frame_num + 1)
+        detection_info.detection_id.frame_idx = next_frame_num
+    return max_frame_num

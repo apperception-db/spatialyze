@@ -11,7 +11,6 @@ Usage example:
 """
 
 import array
-import logging
 import math
 import time
 from typing import NamedTuple, Tuple
@@ -27,41 +26,7 @@ from ...camera_config import CameraConfig
 from ...types import DetectionId, obj_detection
 from .utils import ROAD_TYPES, Float22
 
-logger = logging.getLogger(__name__)
-
-
 SQL_ROAD_TYPES = ",".join("__RoadType__" + rt + "__" for rt in ROAD_TYPES)
-
-
-MAX_POLYGON_CONTAIN_QUERY = sql.SQL(
-    f"""
-    WITH
-    AvailablePolygon AS (
-        SELECT *
-        FROM SegmentPolygon as p
-        WHERE
-            p.location = {{location}}
-            AND ST_Contains(
-                p.elementpolygon,
-                {{ego_translation}}::geometry
-            )
-    ),
-    max_contain AS (
-        SELECT MAX(ST_Area(elementpolygon)) max_segment_area
-        FROM AvailablePolygon
-    )
-    SELECT
-        p.elementid,
-        p.elementpolygon::geometry,
-        ARRAY_AGG(s.segmentline)::geometry[],
-        ARRAY_AGG(s.heading)::real[],
-        {SQL_ROAD_TYPES}
-    FROM max_contain, AvailablePolygon AS p
-        LEFT OUTER JOIN segment AS s USING (elementid)
-    WHERE ST_Area(p.elementpolygon) = max_contain.max_segment_area
-    GROUP BY p.elementid, p.elementpolygon, {SQL_ROAD_TYPES};"""
-)
-
 USEFUL_TYPES = ["lane", "lanegroup", "intersection"]
 
 
@@ -120,58 +85,6 @@ def reformat_return_polygon(segments: "list[RoadSegmentWithHeading]") -> "list[S
         )
 
     return list(map(_, segments))
-
-
-def intersection(fov_line: Tuple[Float22, Float22], segmentpolygon: "sg.Polygon"):
-    """
-    return: intersection point: tuple[tuple]
-    """
-    left_fov_line, right_fov_line = fov_line
-    # left_intersection = line_to_polygon_intersection(segmentpolygon, left_fov_line)
-    # right_intersection = line_to_polygon_intersection(segmentpolygon, right_fov_line)
-    # return left_intersection + right_intersection
-    return []
-
-
-def is_roadsection(segmenttypes: "list[int]"):
-    for t, v in zip(ROAD_TYPES, segmenttypes):
-        if t == "roadsection" and v:
-            return True
-    return False
-
-
-def get_largest_polygon_containing_point(ego_config: "CameraConfig"):
-    point = postgis.Point(*ego_config.ego_translation[:2])
-    query = MAX_POLYGON_CONTAIN_QUERY.format(
-        ego_translation=sql.Literal(point), location=sql.Literal(ego_config.location)
-    )
-
-    results = database.execute(query)
-    if len(results) > 1:
-        for result in results:
-            segmenttypes = result[4:]
-            if not is_roadsection(segmenttypes):
-                results = [result]
-                break
-    assert len(results) == 1, (ROAD_TYPES, [r[4:] for r in results])
-    result = results[0]
-    assert len(result) == 4 + len(ROAD_TYPES), (len(results), len(ROAD_TYPES) + 4)
-
-    output = make_road_polygon_with_heading(result)
-
-    types, line, heading = output[2:5]
-    assert line is not None
-    assert types is not None
-    assert heading is not None
-    road_polygon = reformat_return_polygon([output])[0]
-    polygonid, roadpolygon, roadtype, segmentlines, segmentheadings = road_polygon
-    fov_lines = get_fov_lines(ego_config)
-
-    polygon = swkb.loads(roadpolygon.to_ewkb(), hex=True)
-    assert isinstance(polygon, sg.Polygon)
-    return RoadPolygonInfo(
-        polygonid, polygon, segmentlines, roadtype, segmentheadings, True, ego_config, fov_lines
-    )
 
 
 def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "CameraConfig"):
@@ -270,11 +183,6 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
     if any(p.road_type == "intersection" for p in mapped_polygons):
         return {}, times
     times.append(time.time())
-    fov_lines = get_fov_lines(ego_config)
-    times.append(time.time())
-
-    # def not_in_view(point: "Float2"):
-    #     return not in_view(point, ego_config.ego_translation, fov_lines)
 
     mapped_road_polygon_info: "dict[DetectionId, RoadPolygonInfo]" = {}
     for order_id, road_polygon in list(zip(order_ids, mapped_polygons)):
@@ -324,30 +232,7 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
             )
     times.append(time.time())
 
-    # logger.info(f'total mapping time: {time.time() - start_time}')
     return mapped_road_polygon_info, times
-
-
-def get_fov_lines(ego_config: "CameraConfig", ego_fov: float = 70.0) -> "Tuple[Float22, Float22]":
-    """
-    return: two lines representing fov in world coord
-            ((lx1, ly1), (lx2, ly2)), ((rx1, ry1), (rx2, ry2))
-    """
-
-    # TODO: accuracy improvement: find fov in 3d -> project down to z=0 plane
-    ego_heading = ego_config.ego_heading
-    x_ego, y_ego = ego_config.ego_translation[:2]
-    left_degree = math.radians(ego_heading + ego_fov / 2 + 90)
-    left_fov_line = (
-        (x_ego, y_ego),
-        (x_ego + math.cos(left_degree) * 50, y_ego + math.sin(left_degree) * 50),
-    )
-    right_degree = math.radians(ego_heading - ego_fov / 2 + 90)
-    right_fov_line = (
-        (x_ego, y_ego),
-        (x_ego + math.cos(right_degree) * 50, y_ego + math.sin(right_degree) * 50),
-    )
-    return left_fov_line, right_fov_line
 
 
 def hex_str_to_linestring(hex: "str"):
