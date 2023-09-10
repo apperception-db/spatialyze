@@ -159,6 +159,28 @@ def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "C
     return result
 
 
+def get_fov_lines(ego_config: "CameraConfig", ego_fov: float = 70.0) -> "tuple[Float22, Float22]":
+    """
+    return: two lines representing fov in world coord
+            ((lx1, ly1), (lx2, ly2)), ((rx1, ry1), (rx2, ry2))
+    """
+
+    # TODO: accuracy improvement: find fov in 3d -> project down to z=0 plane
+    ego_heading = ego_config.ego_heading
+    x_ego, y_ego = ego_config.ego_translation[:2]
+    left_degree = math.radians(ego_heading + ego_fov / 2 + 90)
+    left_fov_line = (
+        (x_ego, y_ego),
+        (x_ego + math.cos(left_degree) * 50, y_ego + math.sin(left_degree) * 50),
+    )
+    right_degree = math.radians(ego_heading - ego_fov / 2 + 90)
+    right_fov_line = (
+        (x_ego, y_ego),
+        (x_ego + math.cos(right_degree) * 50, y_ego + math.sin(right_degree) * 50),
+    )
+    return left_fov_line, right_fov_line
+
+
 def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config: "CameraConfig"):
     """
     Given a list of detections, return a list of RoadSegmentWithHeading
@@ -182,6 +204,8 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
     times.append(time.time())
     if any(p.road_type == "intersection" for p in mapped_polygons):
         return {}, times
+    times.append(time.time())
+    fov_lines = get_fov_lines(ego_config)
     times.append(time.time())
 
     mapped_road_polygon_info: "dict[DetectionId, RoadPolygonInfo]" = {}
