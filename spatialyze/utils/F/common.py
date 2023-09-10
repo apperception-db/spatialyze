@@ -1,4 +1,12 @@
-from spatialyze.predicate import BinOpNode, CastNode, PredicateNode, TableAttrNode
+from ...predicate import (
+    BinOpNode,
+    CameraTableNode,
+    CastNode,
+    ObjectTableNode,
+    PredicateNode,
+    TableAttrNode,
+    camera,
+)
 
 HEADINGS = {
     "trajCentroids": "itemHeadings",
@@ -29,3 +37,21 @@ def get_heading_at_time(arg: "PredicateNode"):
     if isinstance(arg, BinOpNode) and arg.op == "matmul":
         return CastNode("real", get_heading_at_time(arg.left) @ arg.right)
     return get_heading(arg)
+
+
+def default_location(object: "PredicateNode"):
+    if isinstance(object, ObjectTableNode):
+        object = object.traj @ camera.time
+    elif isinstance(object, CameraTableNode):
+        object = object.cam
+
+    return object
+
+
+def default_heading(object: "PredicateNode"):
+    if isinstance(object, ObjectTableNode):
+        object = object.traj @ camera.time
+    elif isinstance(object, CameraTableNode):
+        object = object.cam
+
+    return get_heading_at_time(object)

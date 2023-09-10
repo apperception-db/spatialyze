@@ -3,11 +3,13 @@ from .angle_between import angle_between
 from .angle_excluding import angle_excluding
 from .contained import contained
 from .contained_margin import contained_margin
+from .contains import contains
 from .contains_all import contains_all
 from .convert_camera import convert_camera
 from .distance import distance
 from .facing_relative import facing_relative
 from .get_ import get_
+from .heading_diff import heading_diff
 from .ignore_roadtype import ignore_roadtype
 from .is_other_roadtype import is_other_roadtype
 from .is_roadtype import is_roadtype
@@ -46,4 +48,6 @@ __all__ = [
     "is_other_roadtype",
     "ignore_roadtype",
     "left_turn",
+    "heading_diff",
+    "contains",
 ]

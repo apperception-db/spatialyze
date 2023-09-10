@@ -119,6 +119,9 @@ class PredicateNode:
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{k}={getattr(self, k).__repr__()}' for k in self.__annotations__)})"
 
+    def __hash__(self):
+        return id(self)
+
 
 class ArrayNode(PredicateNode):
     exprs: "list[PredicateNode]"
@@ -219,17 +222,24 @@ cameras = CameraTables()
 camera = CameraTableNode()
 
 
-Fn = Callable[["GenSqlVisitor", "list[PredicateNode]"], str]
+Fn = Callable[["GenSqlVisitor", "list[PredicateNode]"], str] | Callable[["GenSqlVisitor", "list[PredicateNode]", dict[str, PredicateNode]], str]
 
 
 class CallNode(PredicateNode):
     _fn: "tuple[Fn]"
     params: "list[PredicateNode]"
 
-    def __init__(self, fn: "Fn", name: "str", params: "list[PredicateNode]"):
+    def __init__(
+        self,
+        fn: "Fn",
+        name: "str",
+        params: "list[PredicateNode]",
+        named_params: "dict[str, PredicateNode] | None" = None,
+    ):
         self._fn = (fn,)
         self.name = name
         self.params = params
+        self.named_params = named_params
 
     @property
     def fn(self) -> "Fn":
@@ -237,8 +247,16 @@ class CallNode(PredicateNode):
 
 
 def call_node(fn: "Fn"):
-    def call_node_factory(*args: "PredicateNode | str | int | float | bool | list") -> "CallNode":
-        return CallNode(fn, fn.__name__, [*map(wrap_literal, args)])
+    def call_node_factory(
+        *args: "PredicateNode | str | int | float | bool | list",
+        **kargs: "PredicateNode | str | int | float | bool | list",
+    ) -> "CallNode":
+        return CallNode(
+            fn,
+            fn.__name__,
+            [*map(wrap_literal, args)],
+            {k: wrap_literal(v) for k, v in kargs.items()} if kargs else None,
+        )
 
     return call_node_factory
 
@@ -331,7 +349,7 @@ class BaseTransformer(Visitor[PredicateNode]):
         return TableAttrNode(node.name, self(node.table), node.shorten)
 
     def visit_CallNode(self, node: "CallNode") -> PredicateNode:
-        return CallNode(node.fn, node.name, [self(p) for p in node.params])
+        return CallNode(node.fn, node.name, [self(p) for p in node.params], node.named_params)
 
     def visit_TableNode(self, node: "TableNode") -> PredicateNode:
         return node
@@ -444,11 +462,17 @@ UNARY_OP: "dict[UnaryOp, str]" = {
 
 
 class GenSqlVisitor(Visitor[str]):
+    # Needed to that we ony add `@camera.time` once
+    prev_timed: "set[PredicateNode]" = set()
+
     def visit_ArrayNode(self, node: "ArrayNode"):
         elts = ",".join(self(e)[5 if isinstance(e, ArrayNode) else 0 :] for e in node.exprs)
         return f"ARRAY[{elts}]"
 
     def visit_BinOpNode(self, node: "BinOpNode"):
+        if node.op == "matmul":
+            self.prev_timed.add(node.left)
+
         left = self(node.left)
         right = self(node.right)
         if node.op != "matmul":
@@ -466,16 +490,22 @@ class GenSqlVisitor(Visitor[str]):
 
     def visit_CallNode(self, node: "CallNode"):
         fn = node.fn
-        return fn(self, node.params)
+        if node.named_params:
+            return fn(self, node.params, node.named_params)
+        else:
+            return fn(self, node.params)
 
     def visit_TableAttrNode(self, node: "TableAttrNode"):
         table = node.table
         assert isinstance(table, (ObjectTableNode, CameraTableNode)), "table type not supported"
 
         if isinstance(table, ObjectTableNode):
-            return resolve_object_attr(node.name, table.index)
+            if node.name in IS_TEMPORAL and IS_TEMPORAL[node.name] and node not in self.prev_timed:
+                self.prev_timed.add(node)
+                return self(node @ camera.time)
+            return resolve_object_attr(self, node.name, table.index)
         elif isinstance(table, CameraTableNode):
-            return resolve_camera_attr(node.name, table.index)
+            return resolve_camera_attr(self, node.name, table.index)
 
     def visit_CompOpNode(self, node: "CompOpNode"):
         left = self(node.left)
@@ -505,27 +535,41 @@ class GenSqlVisitor(Visitor[str]):
         return f"({self(node.expr)})::{node.to}"
 
 
-def resolve_object_attr(attr: str, num: "int | None" = None):
+def resolve_object_attr(visitior: "Visitor", attr: str, num: "int | None" = None):
     if num is None:
         return attr
     return f"t{num}.{attr}"
 
 
-def resolve_camera_attr(attr: str, num: "int | None" = None):
+def resolve_camera_attr(visitior: "Visitor", attr: str, num: "int | None" = None):
     if num is None:
         return attr
     return f"c{num}.{attr}"
 
+
+IS_TEMPORAL: "dict[str, bool]" = {
+    "itemId": False,
+    "cameraId": False,
+    "objectType": False,
+    "trajCentroids": True,
+    "translations": True,
+    "itemHeadings": True,
+    "bbox": True,
+}
 
 # TODO: this is duplicate with the one in database.py
 TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     ("itemId", "TEXT"),
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
-    ("color", "TEXT"),
+    # ("roadTypes", "ttext"),
     ("trajCentroids", "tgeompoint"),
-    ("largestBbox", "stbox"),
+    ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
     ("itemHeadings", "tfloat"),
+    # ("color", "TEXT"),
+    # ("largestBbox", "STBOX")
+    # ("roadPolygons", "tgeompoint"),
+    # ("period", "period") [today, nextweek]
 ]
 
 
