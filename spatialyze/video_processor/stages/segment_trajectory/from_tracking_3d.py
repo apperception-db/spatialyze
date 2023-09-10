@@ -251,25 +251,6 @@ def map_points_and_directions_to_segment(
         dy=psycopg2.sql.Literal(dys),
         # fields=psycopg2.sql.SQL(',').join(map(psycopg2.sql.Literal, [frame_indices, object_indices, txs, tys, dxs, dys]))
     )
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print()
-    # print('fid')
-    # print(frame_indices)
-    # print('oid')
-    # print(object_indices)
-    # print('txs')
-    # print(txs)
-    # print('tys')
-    # print(tys)
-    # print('dxs')
-    # print(dxs)
-    # print('dys')
-    # print(dys)
 
     helper = psycopg2.sql.SQL(
         """
