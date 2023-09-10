@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 from ..camera_config import CameraConfig
-from ..stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
+from ..stages.segment_trajectory import SegmentPoint
 from ..stages.segment_trajectory.from_tracking_3d import SegmentTrajectoryMetadatum
 from ..stages.tracking_3d.tracking_3d import Metadatum as Tracking3DMetadatum
 from ..stages.tracking_3d.tracking_3d import Tracking3DResult
