@@ -36,6 +36,7 @@ OTHER_ROAD_TYPES = {
     "lane": ["lanegroup", "road", "roadsection", "intersection"],
     "lanesection": ["lanegroup", "road", "roadsection", "intersection"],
     "lanegroup": ["road", "roadsection", "intersection"],
+    "intersection": ["lanegroup", "lane", "lanesection"],
 }
 
 
@@ -319,14 +320,14 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
 
 
 class PushInversionInForRoadTypePredicates(BaseTransformer):
-    def visit_ArrayNode(self, node: ArrayNode):
-        raise Exception("Invalid Node Type")
+    # def visit_ArrayNode(self, node: ArrayNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CompOpNode(self, node: CompOpNode):
-        raise Exception("Invalid Node Type")
+    # def visit_CompOpNode(self, node: CompOpNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_BinOpNode(self, node: BinOpNode):
-        raise Exception("Invalid Node Type")
+    # def visit_BinOpNode(self, node: BinOpNode):
+    #     raise Exception("Invalid Node Type")
 
     def visit_BoolOpNode(self, node: BoolOpNode):
         assert all(
@@ -356,38 +357,38 @@ class PushInversionInForRoadTypePredicates(BaseTransformer):
                 return F.is_roadtype(expr.params[0])
             return expr
 
-    def visit_LiteralNode(self, node: LiteralNode):
-        raise Exception("Invalid Node Type")
+    # def visit_LiteralNode(self, node: LiteralNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_TableAttrNode(self, node: TableAttrNode):
-        raise Exception("Invalid Node Type")
+    # def visit_TableAttrNode(self, node: TableAttrNode):
+    #     raise Exception("Invalid Node Type")
 
     def visit_CallNode(self, node: CallNode):
         assert node.fn in (IS_ROADTYPE, IS_OTHER_ROADTYPE, IGNORE_ROADTYPE), node.fn
         return node
 
-    def visit_TableNode(self, node: TableNode):
-        raise Exception("Invalid Node Type")
+    # def visit_TableNode(self, node: TableNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_ObjectTableNode(self, node: ObjectTableNode):
-        raise Exception("Invalid Node Type")
+    # def visit_ObjectTableNode(self, node: ObjectTableNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CameraTableNode(self, node: CameraTableNode):
-        raise Exception("Invalid Node Type")
+    # def visit_CameraTableNode(self, node: CameraTableNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CastNode(self, node: CastNode):
-        raise Exception("Invalid Node Type")
+    # def visit_CastNode(self, node: CastNode):
+    #     raise Exception("Invalid Node Type")
 
 
 class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
-    def visit_ArrayNode(self, node: ArrayNode):
-        raise Exception("Invalid Node Type")
+    # def visit_ArrayNode(self, node: ArrayNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CompOpNode(self, node: CompOpNode):
-        raise Exception("Invalid Node Type")
+    # def visit_CompOpNode(self, node: CompOpNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_BinOpNode(self, node: BinOpNode):
-        raise Exception("Invalid Node Type")
+    # def visit_BinOpNode(self, node: BinOpNode):
+    #     raise Exception("Invalid Node Type")
 
     def visit_BoolOpNode(self, node: BoolOpNode):
         exprs = [self(e) for e in node.exprs]
@@ -466,14 +467,14 @@ class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
             return _exprs[0]
         return BoolOpNode(node.op, _exprs)
 
-    def visit_UnaryOpNode(self, node: UnaryOpNode):
-        raise Exception("Invalid Node Type")
+    # def visit_UnaryOpNode(self, node: UnaryOpNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_LiteralNode(self, node: LiteralNode):
-        raise Exception("Invalid Node Type")
+    # def visit_LiteralNode(self, node: LiteralNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_TableAttrNode(self, node: TableAttrNode):
-        raise Exception("Invalid Node Type")
+    # def visit_TableAttrNode(self, node: TableAttrNode):
+    #     raise Exception("Invalid Node Type")
 
     def visit_CallNode(self, node: CallNode):
         assert node.fn in (IS_ROADTYPE, IS_OTHER_ROADTYPE, IGNORE_ROADTYPE), node.fn
@@ -486,40 +487,40 @@ class NormalizeInversionAndFlattenRoadTypePredicates(BaseTransformer):
             return BoolOpNode("or", [F.is_roadtype(e) for e in OTHER_ROAD_TYPES[rt_]])
         return node
 
-    def visit_TableNode(self, node: TableNode):
-        raise Exception("Invalid Node Type")
+    # def visit_TableNode(self, node: TableNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_ObjectTableNode(self, node: ObjectTableNode):
-        raise Exception("Invalid Node Type")
+    # def visit_ObjectTableNode(self, node: ObjectTableNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CameraTableNode(self, node: CameraTableNode):
-        raise Exception("Invalid Node Type")
+    # def visit_CameraTableNode(self, node: CameraTableNode):
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CastNode(self, node: CastNode):
-        raise Exception("Invalid Node Type")
+    # def visit_CastNode(self, node: CastNode):
+    #     raise Exception("Invalid Node Type")
 
 
 class FindRoadTypes(Visitor["set[str]"]):
-    def visit_ArrayNode(self, node: "ArrayNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_ArrayNode(self, node: "ArrayNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CompOpNode(self, node: "CompOpNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_CompOpNode(self, node: "CompOpNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_BinOpNode(self, node: "BinOpNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_BinOpNode(self, node: "BinOpNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_BoolOpNode(self, node: "BoolOpNode") -> "set[str]":
-        return set.union(*map(self, node.exprs))
+    # def visit_BoolOpNode(self, node: "BoolOpNode") -> "set[str]":
+    #     return set.union(*map(self, node.exprs))
 
-    def visit_UnaryOpNode(self, node: "UnaryOpNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_UnaryOpNode(self, node: "UnaryOpNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_LiteralNode(self, node: "LiteralNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_LiteralNode(self, node: "LiteralNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_TableAttrNode(self, node: "TableAttrNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_TableAttrNode(self, node: "TableAttrNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
     def visit_CallNode(self, node: "CallNode") -> "set[str]":
         assert node.fn == IS_ROADTYPE, node.fn
@@ -528,43 +529,43 @@ class FindRoadTypes(Visitor["set[str]"]):
         assert isinstance(param.value, str), type(param.value)
         return {param.value.lower()}
 
-    def visit_TableNode(self, node: "TableNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_TableNode(self, node: "TableNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_ObjectTableNode(self, node: "ObjectTableNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CameraTableNode(self, node: "CameraTableNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_CameraTableNode(self, node: "CameraTableNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CastNode(self, node: "CastNode") -> "set[str]":
-        raise Exception("Invalid Node Type")
+    # def visit_CastNode(self, node: "CastNode") -> "set[str]":
+    #     raise Exception("Invalid Node Type")
 
 
 class InViewPredicate(Visitor[str]):
     def __init__(self, param_name: "str"):
         self.param_name = param_name
 
-    def visit_ArrayNode(self, node: "ArrayNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_ArrayNode(self, node: "ArrayNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CompOpNode(self, node: "CompOpNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_CompOpNode(self, node: "CompOpNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_BinOpNode(self, node: "BinOpNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_BinOpNode(self, node: "BinOpNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
     def visit_BoolOpNode(self, node: "BoolOpNode") -> "str":
         return "(" + f" {node.op} ".join(map(self, node.exprs)) + ")"
 
-    def visit_UnaryOpNode(self, node: "UnaryOpNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_UnaryOpNode(self, node: "UnaryOpNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_LiteralNode(self, node: "LiteralNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_LiteralNode(self, node: "LiteralNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_TableAttrNode(self, node: "TableAttrNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_TableAttrNode(self, node: "TableAttrNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
     def visit_CallNode(self, node: "CallNode") -> "str":
         assert node.fn == IS_ROADTYPE, node.fn
@@ -576,17 +577,17 @@ class InViewPredicate(Visitor[str]):
         return f"('{rt_}' in {self.param_name})"
         # return rt in self.roadtypes
 
-    def visit_TableNode(self, node: "TableNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_TableNode(self, node: "TableNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_ObjectTableNode(self, node: "ObjectTableNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CameraTableNode(self, node: "CameraTableNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_CameraTableNode(self, node: "CameraTableNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
-    def visit_CastNode(self, node: "CastNode") -> "str":
-        raise Exception("Invalid Node Type")
+    # def visit_CastNode(self, node: "CastNode") -> "str":
+    #     raise Exception("Invalid Node Type")
 
 
 def create_inview_predicate(
