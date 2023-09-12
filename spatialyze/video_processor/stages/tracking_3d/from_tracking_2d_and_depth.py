@@ -38,12 +38,13 @@ class FromTracking2DAndDepth(Tracking3D):
                 point_from_camera = depth_to_3d(x, y, d, intrinsic)
                 rotated_offset = camera.camera_rotation.rotate(np.array(point_from_camera))
                 point: "npt.NDArray" = np.array(camera.camera_translation) + rotated_offset
+                _x, _y, _z = map(float, point.tolist())
                 trackings3d[object_id] = Tracking3DResult(
                     t.frame_idx,
                     t.detection_id,
                     t.object_id,
                     point_from_camera,
-                    point,
+                    (_x, _y, _z),
                     t.bbox_left,
                     t.bbox_top,
                     t.bbox_w,

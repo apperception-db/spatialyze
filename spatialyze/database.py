@@ -1,36 +1,37 @@
 from os import environ
-from typing import TYPE_CHECKING, Callable, List, Tuple
+from typing import TYPE_CHECKING, Callable
 
 import pandas as pd
 import psycopg2
 import psycopg2.errors
 import psycopg2.sql as psql
-
-# from mobilitydb.psycopg import register as mobilitydb_register
+from mobilitydb.psycopg import register as mobilitydb_register
 from postgis.psycopg import register as postgis_register
 
-from spatialyze.data_types import Trajectory
-from spatialyze.predicate import (
+from .data_types.camera_key import CameraKey
+from .data_types.nuscenes_annotation import NuscenesAnnotation
+from .data_types.nuscenes_camera import NuscenesCamera
+from .data_types.query_result import QueryResult
+from .predicate import (
     FindAllTablesVisitor,
     GenSqlVisitor,
     MapTablesTransformer,
     normalize,
 )
-from spatialyze.utils.add_recognized_objects import add_recognized_objects
-from spatialyze.utils.create_sql import create_sql
-from spatialyze.utils.fetch_camera import fetch_camera
-from spatialyze.utils.fetch_camera_framenum import fetch_camera_framenum
-from spatialyze.utils.overlay_bboxes import overlay_bboxes
-from spatialyze.utils.recognize import recognize
-from spatialyze.utils.reformat_bbox_trajectories import reformat_bbox_trajectories
-from spatialyze.utils.timestamp_to_framenum import timestamp_to_framenum
+from .utils.ingest_processed_nuscenes import ingest_processed_nuscenes
+from .utils.ingest_road import (
+    ROAD_TYPES,
+    add_segment_type,
+    create_tables,
+    drop_tables,
+    ingest_location,
+)
 
 if TYPE_CHECKING:
     from psycopg2 import connection as Connection
     from psycopg2 import cursor as Cursor
 
     from .data_types import Camera
-    from .legacy.world import World
     from .predicate import PredicateNode
 
 CAMERA_TABLE = "Cameras"
@@ -74,16 +75,12 @@ BBOX_COLUMNS: "list[tuple[str, str]]" = [
 ]
 
 
-def columns(fn: Callable[[Tuple[str, str]], str], columns: List[Tuple[str, str]]) -> str:
+def columns(fn: "Callable[[tuple[str, str]], str]", columns: "list[tuple[str, str]]") -> str:
     return ",".join(map(fn, columns))
 
 
-def _schema(column: Tuple[str, str]) -> str:
+def _schema(column: "tuple[str, str]") -> str:
     return " ".join(column)
-
-
-def _name(column: Tuple[str, str]) -> str:
-    return column[0]
 
 
 def place_holder(num: int):
@@ -97,11 +94,12 @@ class Database:
     def __init__(self, connection: "Connection"):
         self.connection = connection
         postgis_register(self.connection)
-        # mobilitydb_register(self.connection)
+        mobilitydb_register(self.connection)
         self.cursor = self.connection.cursor()
 
-    def reset(self, commit=False):
+    def reset(self, commit=True):
         self.reset_cursor()
+        self._drop_table(commit)
         self._create_camera_table(commit)
         self._create_item_general_trajectory_table(commit)
         self._create_general_bbox_table(commit)
@@ -112,14 +110,23 @@ class Database:
         assert self.cursor.closed
         self.cursor = self.connection.cursor()
 
-    def _create_camera_table(self, commit=True):
-        self.cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
-        self.cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
+    def _drop_table(self, commit=True):
+        cursor = self.connection.cursor()
+        cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
+        cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
+        cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
         self._commit(commit)
+        cursor.close()
+
+    def _create_camera_table(self, commit=True):
+        cursor = self.connection.cursor()
+        cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
+        self._commit(commit)
+        cursor.close()
 
     def _create_general_bbox_table(self, commit=True):
-        self.cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             f"""
             CREATE TABLE General_Bbox (
                 {columns(_schema, BBOX_COLUMNS)},
@@ -129,10 +136,11 @@ class Database:
             """
         )
         self._commit(commit)
+        cursor.close()
 
     def _create_item_general_trajectory_table(self, commit=True):
-        self.cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             f"""
             CREATE TABLE Item_General_Trajectory (
                 {columns(_schema, TRAJECTORY_COLUMNS)},
@@ -141,76 +149,72 @@ class Database:
             """
         )
         self._commit(commit)
+        cursor.close()
 
     def _create_index(self, commit=True):
-        self.cursor.execute("CREATE INDEX ON Cameras (cameraId);")
-        self.cursor.execute("CREATE INDEX ON Cameras (timestamp);")
-        self.cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
-        self.cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute("CREATE INDEX ON Cameras (cameraId);")
+        cursor.execute("CREATE INDEX ON Cameras (timestamp);")
+        cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
+        cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
+        cursor.execute(
             "CREATE INDEX IF NOT EXISTS traj_idx ON Item_General_Trajectory USING GiST(trajCentroids);"
         )
-        self.cursor.execute(
+        cursor.execute(
             "CREATE INDEX IF NOT EXISTS trans_idx ON Item_General_Trajectory USING GiST(translations);"
         )
-        # self.cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
-        # self.cursor.execute(
+        # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
+        # cursor.execute(
         #     "CREATE INDEX IF NOT EXISTS traj_bbox_idx ON General_Bbox USING GiST(trajBbox);"
         # )
-        # self.cursor.execute(
+        # cursor.execute(
         #     "CREATE INDEX IF NOT EXISTS item_id_timestampx ON General_Bbox(itemId, timestamp);"
         # )
         self._commit(commit)
-
-    def _insert_into_camera(self, value: tuple, commit=True):
-        self.cursor.execute(
-            f"INSERT INTO Cameras ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
-            tuple(value),
-        )
-        self._commit(commit)
-
-    def _insert_into_item_general_trajectory(self, value: tuple, commit=True):
-        self.cursor.execute(
-            f"INSERT INTO Item_General_Trajectory ({columns(_name, TRAJECTORY_COLUMNS)}) VALUES ({place_holder(len(TRAJECTORY_COLUMNS))})",
-            tuple(value),
-        )
-        self._commit(commit)
-
-    # def _insert_into_general_bbox(self, value: tuple, commit=True):
-    #     self.cursor.execute(
-    #         f"INSERT INTO General_Bbox ({columns(_name, BBOX_COLUMNS)}) VALUES ({place_holder(len(BBOX_COLUMNS))})",
-    #         tuple(value),
-    #     )
-    #     self._commit(commit)
+        cursor.close()
 
     def _commit(self, commit=True):
         if commit:
             self.connection.commit()
 
+    def execute_and_cursor(
+        self, query: "str | psql.Composable", vars: "tuple | list | None" = None
+    ) -> "tuple[list[tuple], Cursor]":
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query, vars)
+            if cursor.pgresult_ptr is not None:
+                return cursor.fetchall(), cursor
+            else:
+                return [], cursor
+        except psycopg2.errors.DatabaseError as error:
+            for notice in cursor.connection.notices:
+                print(notice)
+            self.connection.rollback()
+            cursor.close()
+            raise error
+
     def execute(
         self, query: "str | psql.Composable", vars: "tuple | list | None" = None
     ) -> "list[tuple]":
-        try:
-            self.cursor.execute(query, vars)
-            for notice in self.cursor.connection.notices:
-                print(notice)
-            if self.cursor.pgresult_ptr is not None:
-                return self.cursor.fetchall()
-            else:
-                return []
-        except psycopg2.errors.DatabaseError as error:
-            self.connection.rollback()
-            raise error
+        results, cursor = self.execute_and_cursor(query, vars)
+        cursor.close()
+        return results
 
     def update(self, query: "str | psql.Composable", commit: bool = True) -> None:
+        cursor = self.connection.cursor()
         try:
-            self.cursor.execute(query)
+            cursor.execute(query)
             self._commit(commit)
         except psycopg2.errors.DatabaseError as error:
+            for notice in cursor.connection.notices:
+                print(notice)
             self.connection.rollback()
             raise error
+        finally:
+            cursor.close()
 
-    def insert_cam(self, camera: "Camera"):
+    def insert_camera(self, camera: "Camera"):
         values = [
             f"""(
                 '{camera.id}',
@@ -230,7 +234,8 @@ class Database:
             for config in camera.configs
         ]
 
-        self.cursor.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             f"""
             INSERT INTO Cameras ({",".join(col for col, _ in CAMERA_COLUMNS)})
             VALUES {','.join(values)};
@@ -239,176 +244,21 @@ class Database:
 
         # print("New camera inserted successfully.........")
         self.connection.commit()
+        cursor.close()
 
-    def retrieve_cam(self, query: "psql.Composed | str | None" = None, camera_id: str = ""):
-        """
-        Called when executing update commands (add_camera, add_objs ...etc)
-        """
+    def load_roadnetworks(self, dir: "str", location: "str"):
+        drop_tables(database)
+        create_tables(database)
+        ingest_location(self, dir, location)
+        add_segment_type(self, ROAD_TYPES)
+        self._commit()
 
-        q = self._select_cam_with_camera_id(camera_id)
-        return (psql.SQL("({}) UNION ({})").format(create_sql(query), q) if query else q).as_string(
-            self.cursor
-        )  # UNION
-
-    def _select_cam_with_camera_id(self, camera_id: str):
-        """
-        Select cams with certain world id
-        """
-        return psql.SQL("SELECT * FROM Cameras WHERE cameraId = {camera_id}").format(
-            camera_id=camera_id
-        )
-
-    def filter(self, query: "psql.Composable | str", predicate: "PredicateNode"):
-        tables, camera = FindAllTablesVisitor()(predicate)
-        tables = sorted(tables)
-        mapping = {t: i for i, t in enumerate(tables)}
-        predicate = normalize(predicate)
-        predicate = MapTablesTransformer(mapping)(predicate)
-        query_str = query if isinstance(query, str) else query.as_string(self.cursor)
-        joins = [f"JOIN ({query_str}) as t{i} USING (cameraId)" for i in range(1, len(tables))]
-
-        return f"""
-        SELECT DISTINCT *
-        FROM ({query_str}) as t0
-        {" ".join(joins)}
-        {f"JOIN Cameras USING (cameraId)" if camera else ""}
-        WHERE {GenSqlVisitor()(predicate)}
-        """
-
-    def exclude(self, query: "psql.Composable | str", world: "World"):
-        query_str = query if isinstance(query, str) else query.as_string(self.cursor)
-        return f"""
-        SELECT *
-        FROM ({query_str}) as __query__
-        EXCEPT
-        SELECT *
-        FROM ({world._execute_from_root()}) as __except__
-        """
-
-    def union(self, query: "psql.Composable | str", world: "World"):
-        query_str = query if isinstance(query, str) else query.as_string(self.cursor)
-        return f"""
-        SELECT *
-        FROM ({query_str}) as __query__
-        UNION
-        SELECT *
-        FROM ({world._execute_from_root()}) as __union__
-        """
-
-    def intersect(self, query: "psql.Composable | str", world: "World"):
-        query_str = query if isinstance(query, str) else query.as_string(self.cursor)
-        return f"""
-        SELECT *
-        FROM ({query_str}) as __query__
-        INTERSECT
-        SELECT *
-        FROM ({world._execute_from_root()}) as __intersect__
-        """
-
-    def get_cam(self, query: "psql.Composable | str"):
-        """
-        Execute sql command rapidly
-        """
-
-        # hack
-        q = psql.SQL(
-            "SELECT cameraID, frameId, frameNum, fileName, "
-            "cameraTranslation, cameraRotation, cameraIntrinsic, "
-            "egoTranslation, egoRotation, timestamp, cameraHeading, egoHeading "
-            "FROM ({query}) AS final"
-        ).format(query=create_sql(query))
-        return self.execute(q)
-
-    def fetch_camera(self, scene_name: str, frame_timestamp: List[str]):
-        return fetch_camera(self.connection, scene_name, frame_timestamp)
-
-    def fetch_camera_framenum(self, scene_name: str, frame_num: List[int]):
-        return fetch_camera_framenum(self.connection, scene_name, frame_num)
-
-    def timestamp_to_framenum(self, scene_name: str, timestamps: List[str]):
-        return timestamp_to_framenum(self.connection, scene_name, timestamps)
-
-    def insert_bbox_traj(self, camera: "Camera", annotation):
-        tracking_results = recognize(camera.configs, annotation)
-        add_recognized_objects(self.connection, tracking_results, camera.id)
-
-    def retrieve_bbox(self, query: "psql.Composable | str | None" = None, camera_id: str = ""):
-        q = psql.SQL("SELECT * FROM General_Bbox WHERE cameraId = {camera_id}").format(
-            camera_id=camera_id
-        )
-        return (psql.SQL("({}) UNION ({})").format(create_sql(query), q) if query else q).as_string(
-            self.cursor
-        )
-
-    def retrieve_traj(self, query: "psql.Composable | str | None" = None, camera_id: str = ""):
-        q = psql.SQL("SELECT * FROM Item_General_Trajectory WHERE cameraId = {camera_id}").format(
-            camera_id=camera_id
-        )
-        return (psql.SQL("({}) UNION ({})").format(create_sql(query), q) if query else q).as_string(
-            self.cursor
-        )
-
-    def road_direction(self, x: float, y: float, default_dir: float):
-        return self.execute(f"SELECT roadDirection({x}, {y}, {default_dir});")
-
-    def road_coords(self, x: float, y: float):
-        return self.execute(f"SELECT roadCoords({x}, {y});")
-
-    def select_all(self, query: "psql.Composable | str") -> List[tuple]:
-        print("select_all:", query if isinstance(query, str) else query.as_string(self.cursor))
-        return self.execute(query)
-
-    def get_traj(self, query: "psql.Composable | str") -> List[List[Trajectory]]:
-        # hack
-        _query = psql.SQL(
-            "SELECT asMFJSON(trajCentroids)::json->'sequences'" "FROM ({query}) as final"
-        ).format(query=query)
-
-        print("get_traj", _query.as_string(self.cursor))
-        trajectories = self.execute(_query)
-        return [
-            [
-                Trajectory(
-                    coordinates=t["coordinates"],
-                    datetimes=t["datetimes"],
-                    lower_inc=t["lower_inc"],
-                    upper_inc=t["upper_inc"],
-                )
-                for t in trajectory
-            ]
-            for (trajectory,) in trajectories
-        ]
-
-    def get_traj_key(self, query: "psql.Composable | str"):
-        _query = psql.SQL("SELECT itemId FROM ({query}) as final").format(query=create_sql(query))
-        print("get_traj_key", _query.as_string(self.cursor))
-        return self.execute(_query)
-
-    def get_id_time_camId_filename(self, query: "psql.Composable | str", num_joined_tables: int):
-        itemId = ",".join([f"t{i}.itemId" for i in range(num_joined_tables)])
-        timestamp = "cameras.timestamp"
-        camId = "cameras.cameraId"
-        filename = "cameras.filename"
-        _query = (
-            create_sql(query)
-            .as_string(self.cursor)
-            .replace("SELECT DISTINCT *", f"SELECT {itemId}, {timestamp}, {camId}, {filename}", 1)
-        )
-
-        # print("get_id_time_camId_filename", _query)
-        return self.execute(_query)
-
-    def get_video(self, query, cams, boxed):
-        query = psql.SQL(
-            "SELECT XMin(trajBbox), YMin(trajBbox), ZMin(trajBbox), "
-            "XMax(trajBbox), YMax(trajBbox), ZMax(trajBbox), TMin(trajBbox) "
-            f"FROM ({query}) "
-            "JOIN General_Bbox using (itemId)"
-        )
-
-        fetched_meta = self.execute(query)
-        _fetched_meta = reformat_bbox_trajectories(fetched_meta)
-        overlay_bboxes(_fetched_meta, cams, boxed)
+    def load_nuscenes(
+        self,
+        annotations: "dict[CameraKey, list[NuscenesAnnotation]]",
+        cameras: "dict[CameraKey, list[NuscenesCamera]]",
+    ):
+        ingest_processed_nuscenes(annotations, cameras, self)
 
     def predicate(self, predicate: "PredicateNode"):
         tables, camera = FindAllTablesVisitor()(predicate)
@@ -430,64 +280,25 @@ class Database:
             t_outputs += f", t{i}.itemId"
 
         sql_str = f"""
-            SELECT Cameras.frameNum {t_outputs}, Cameras.cameraId, Cameras.filename
+            SELECT Cameras.frameNum, Cameras.cameraId, Cameras.filename{t_outputs}
             FROM Cameras{t_tables}
             WHERE
             {GenSqlVisitor()(predicate)}
         """
-        return self.execute(sql_str)
+        return [
+            QueryResult(frame_number, camera_id, filename, tuple(item_ids))
+            for frame_number, camera_id, filename, *item_ids in self.execute(sql_str)
+        ]
 
     def sql(self, query: str) -> pd.DataFrame:
-        return pd.DataFrame(self.execute(query), columns=[d.name for d in self.cursor.description])
-
-    # def get_len(self, query: "psql.Composable | str"):
-    #     """
-    #     Execute sql command rapidly
-    #     """
-
-    #     # hack
-    #     q = psql.SQL(
-    #         "SELECT ratio, ST_X(origin), ST_Y(origin), "
-    #         "ST_Z(origin), fov, skev_factor "
-    #         "FROM ({query}) AS final"
-    #     ).format(query=query)
-    #     return self.execute(q)
-
-    # def get_traj_attr(self, query: "psql.Composable | str", attr: str):
-    #     _query = psql.SQL("SELECT {attr} FROM ({query}) as final").format(attr=attr, query=query)
-    #     print("get_traj_attr:", attr, _query.as_string(self.cursor))
-    #     return self.execute(_query)
-
-    # def get_bbox_geo(self, query: "psql.Composable | str"):
-    #     return self.execute(
-    #         psql.SQL(
-    #             "SELECT XMin(trajBbox), YMin(trajBbox), ZMin(trajBbox), "
-    #             "XMax(trajBbox), YMax(trajBbox), ZMax(trajBbox) "
-    #             "FROM ({query})"
-    #         ).format(query=create_sql(query))
-    #     )
-
-    # def get_time(self, query: "psql.Composable | str"):
-    #     return self.execute(
-    #         psql.SQL("SELECT Tmin(trajBbox) FROM ({query})").format(query=create_sql(query))
-    #     )
-
-    # def get_distance(self, query: "psql.Composable | str", start: str, end: str):
-    #     return self.execute(
-    #         psql.SQL(
-    #             "SELECT cumulativeLength(atPeriodSet(trajCentroids, {[{start}, {end})})) "
-    #             "FROM ({query})"
-    #         ).format(query=create_sql(query), start=psql.Literal(start), end=psql.Literal(end))
-    #     )
-
-    # def get_speed(self, query, start, end):
-    #     return self.execute(
-    #         psql.SQL(
-    #             "SELECT speed(atPeriodSet(trajCentroids, {[{start}, {end})})) " "FROM ({query})"
-    #         ).format(query=create_sql(query), start=psql.Literal(start), end=psql.Literal(end))
-    #     )
+        results, cursor = self.execute_and_cursor(query)
+        description = cursor.description
+        cursor.close()
+        return pd.DataFrame(results, columns=[d.name for d in description])
 
 
+### Do we still want to keep this??? Causes problems since if user uses a different port
+# will need to come in here to change
 database = Database(
     psycopg2.connect(
         dbname=environ.get("AP_DB", "mobilitydb"),

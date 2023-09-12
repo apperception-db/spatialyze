@@ -1,5 +1,3 @@
-from typing import List
-
 from spatialyze.predicate import (
     BinOpNode,
     GenSqlVisitor,
@@ -12,7 +10,7 @@ from .common import get_heading_at_time
 
 
 @call_node
-def ahead(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
+def ahead(visitor: "GenSqlVisitor", args: "list[PredicateNode]"):
     obj1, obj2 = args
 
     if not isinstance(obj2, TableAttrNode) and (

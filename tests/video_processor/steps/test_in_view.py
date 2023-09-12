@@ -1,8 +1,6 @@
-import json
 import os
 import pickle
 import pytest
-import numpy as np
 
 from spatialyze.predicate import *
 from spatialyze.utils import F
@@ -12,9 +10,9 @@ from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.video_processor.cache import disable_cache
 
-from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
-from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
+disable_cache()
 
 # Test Strategies
 # - Real use case -- simple predicates from the query
@@ -51,6 +49,10 @@ RT = '__ROADTYPES__'
         f"('intersection' in {RT})",
         {'intersection'}
     ]),
+    (arr(), ['ignore_roadtype()', None, None]),
+    (~(F.contained(o.traj, 'intersection') & F.contained(o2.trajc, 'lane')), ['(NOT (is_roadtype(intersection) AND is_roadtype(lane)))', '(is_other_roadtype(intersection) OR is_other_roadtype(lane))', '(is_roadtype(intersection) OR is_roadtype(lane) OR is_roadtype(lanegroup) OR is_roadtype(lanesection) OR is_roadtype(road) OR is_roadtype(roadsection))']),
+    (~(F.contained(o.traj, 'intersection') | F.contained(o2.trajc, 'lane')), ['(NOT (is_roadtype(intersection) OR is_roadtype(lane)))', '(is_other_roadtype(intersection) AND is_other_roadtype(lane))', '((is_roadtype(lanegroup) OR is_roadtype(lane) OR is_roadtype(lanesection)) AND (is_roadtype(lanegroup) OR is_roadtype(road) OR is_roadtype(roadsection) OR is_roadtype(intersection)))']),
+    (~(~F.contained(o.traj, 'intersection') | F.contained(o2.trajc, 'lane')), ['(NOT ((NOT is_roadtype(intersection)) OR is_roadtype(lane)))', '(is_roadtype(intersection) AND is_other_roadtype(lane))', 'is_roadtype(intersection)']),
 
     # Real Queries
     ((((o1.type == 'car') | (o1.type == 'truck')) &

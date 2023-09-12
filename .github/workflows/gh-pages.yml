@@ -1,0 +1,31 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Git repository
+      uses: actions/checkout@v3
+
+    - name: Setup GitHub Pages Folder
+      run: |
+        rm -rf ./build
+        mkdir ./build
+        cp ./README.md ./build/
+        mkdir -p ./build/data/assets
+        cp ./data/assets/* ./build/data/assets/
+
+    # - name: Publish Website
+    #   uses: JamesIves/github-pages-deploy-action@v4
+    #   with:
+    #     folder: 'build'
+    #     single-commit: true

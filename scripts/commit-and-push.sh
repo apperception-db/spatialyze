@@ -1,4 +1,4 @@
-if ! git diff --exit-code site src test test-runtime; then
+if ! git diff --exit-code data evaluation spatialyze; then
   git add --all
   git config --global user.name 'Github Actions Bot'
   git config --global user.email 'spatialyze-actions-bot@users.noreply.github.com'

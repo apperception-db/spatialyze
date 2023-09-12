@@ -25,7 +25,7 @@ def camera_config(
     camera_heading: float,
     ego_heading: float,
     location: str,
-    road_direction: float,
+    road_direction: float = 0,
 ):
     _frame = CameraConfig()
     _frame.camera_id = camera_id
@@ -70,7 +70,8 @@ class CameraConfig:
 
     @property
     def camera_translation(self) -> Float3:
-        return tuple(self._data[1:4].tolist())
+        x, y, z = self._data[1:4].tolist()
+        return x, y, z
 
     @property
     def camera_rotation(self) -> "Quaternion":
@@ -82,7 +83,8 @@ class CameraConfig:
 
     @property
     def ego_translation(self) -> Float3:
-        return tuple(self._data[17:20].tolist())
+        x, y, z = self._data[17:20].tolist()
+        return x, y, z
 
     @property
     def ego_rotation(self) -> "Quaternion":

@@ -1,15 +1,4 @@
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    List,
-    Literal,
-    Optional,
-    Set,
-    Tuple,
-    TypeVar,
-)
+from typing import Any, Callable, Generic, Literal, TypeVar
 
 BinOp = Literal["add", "sub", "mul", "div", "matmul"]
 BoolOp = Literal["and", "or"]
@@ -132,7 +121,7 @@ class PredicateNode:
 
 
 class ArrayNode(PredicateNode):
-    exprs: List["PredicateNode"]
+    exprs: "list[PredicateNode]"
 
 
 def wrap_literal(x: Any) -> "PredicateNode":
@@ -161,7 +150,7 @@ class BinOpNode(PredicateNode):
 
 class BoolOpNode(PredicateNode):
     op: BoolOp
-    exprs: List["PredicateNode"]
+    exprs: "list[PredicateNode]"
 
 
 class UnaryOpNode(PredicateNode):
@@ -179,7 +168,7 @@ def lit(value: Any, python: bool = True):
 
 
 class TableNode(PredicateNode):
-    index: Optional[int]
+    index: "int | None"
 
     def __getattr__(self, name: str) -> "TableAttrNode":
         return TableAttrNode(name, self, False)
@@ -202,7 +191,7 @@ class ObjectTableNode(TableNode):
 
 
 class CameraTableNode(TableNode):
-    def __init__(self, index: Optional[int] = None):
+    def __init__(self, index: "int | None" = None):
         self.index = index
         self.time = TableAttrNode("timestamp", self, True)
         self.ego = TableAttrNode("egoTranslation", self, True)
@@ -230,12 +219,12 @@ cameras = CameraTables()
 camera = CameraTableNode()
 
 
-Fn = Callable[["GenSqlVisitor", List["PredicateNode"]], str]
+Fn = Callable[["GenSqlVisitor", "list[PredicateNode]"], str]
 
 
 class CallNode(PredicateNode):
-    _fn: Tuple["Fn"]
-    params: List["PredicateNode"]
+    _fn: "tuple[Fn]"
+    params: "list[PredicateNode]"
 
     def __init__(self, fn: "Fn", name: "str", params: "list[PredicateNode]"):
         self._fn = (fn,)
@@ -259,7 +248,9 @@ class CastNode(PredicateNode):
     expr: "PredicateNode"
 
 
-def cast(expr: "PredicateNode", to: str) -> "CastNode":
+def cast(expr: "Any", to: str) -> "CastNode":
+    if not isinstance(expr, PredicateNode):
+        expr = LiteralNode(expr, True)
     return CastNode(to, expr)
 
 
@@ -358,7 +349,7 @@ class BaseTransformer(Visitor[PredicateNode]):
 class ExpandBoolOpTransformer(BaseTransformer):
     def __call__(self, node: "PredicateNode"):
         if isinstance(node, BoolOpNode):
-            exprs: List["PredicateNode"] = []
+            exprs: "list[PredicateNode]" = []
             for expr in node.exprs:
                 e = self(expr)
                 if isinstance(e, BoolOpNode) and e.op == node.op:
@@ -369,8 +360,8 @@ class ExpandBoolOpTransformer(BaseTransformer):
         return super().__call__(node)
 
 
-class FindAllTablesVisitor(Visitor[Tuple[Set[int], bool]]):
-    tables: Set[int]
+class FindAllTablesVisitor(Visitor["tuple[set[int], bool]"]):
+    tables: "set[int]"
     camera: bool
 
     def __init__(self):
@@ -393,9 +384,9 @@ class FindAllTablesVisitor(Visitor[Tuple[Set[int], bool]]):
 
 
 class MapTablesTransformer(BaseTransformer):
-    mapping: Dict[int, int]
+    mapping: "dict[int, int]"
 
-    def __init__(self, mapping: Dict[int, int]):
+    def __init__(self, mapping: "dict[int, int]"):
         self.mapping = mapping
 
     def visit_ObjectTableNode(self, node: "ObjectTableNode"):
@@ -415,7 +406,7 @@ class NormalizeArrayAtTime(BaseTransformer):
         return node
 
 
-normalizers: List[BaseTransformer] = [ExpandBoolOpTransformer(), NormalizeArrayAtTime()]
+normalizers: "list[BaseTransformer]" = [ExpandBoolOpTransformer(), NormalizeArrayAtTime()]
 
 
 def normalize(predicate: "PredicateNode") -> "PredicateNode":
@@ -425,19 +416,19 @@ def normalize(predicate: "PredicateNode") -> "PredicateNode":
     return predicate
 
 
-BIN_OP: Dict[BinOp, str] = {
+BIN_OP: "dict[BinOp, str]" = {
     "add": "+",
     "sub": "-",
     "mul": "*",
     "div": "/",
 }
 
-BOOL_OP: Dict[BoolOp, str] = {
+BOOL_OP: "dict[BoolOp, str]" = {
     "and": " AND ",
     "or": " OR ",
 }
 
-COMP_OP: Dict[CompOp, str] = {
+COMP_OP: "dict[CompOp, str]" = {
     "eq": "=",
     "ne": "<>",
     "ge": ">=",
@@ -446,7 +437,7 @@ COMP_OP: Dict[CompOp, str] = {
     "lt": "<",
 }
 
-UNARY_OP: Dict[UnaryOp, str] = {
+UNARY_OP: "dict[UnaryOp, str]" = {
     "invert": "NOT ",
     "neg": "-",
 }
@@ -514,20 +505,20 @@ class GenSqlVisitor(Visitor[str]):
         return f"({self(node.expr)})::{node.to}"
 
 
-def resolve_object_attr(attr: str, num: Optional[int] = None):
+def resolve_object_attr(attr: str, num: "int | None" = None):
     if num is None:
         return attr
     return f"t{num}.{attr}"
 
 
-def resolve_camera_attr(attr: str, num: Optional[int] = None):
+def resolve_camera_attr(attr: str, num: "int | None" = None):
     if num is None:
         return attr
     return f"c{num}.{attr}"
 
 
 # TODO: this is duplicate with the one in database.py
-TRAJECTORY_COLUMNS: List[Tuple[str, str]] = [
+TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     ("itemId", "TEXT"),
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
@@ -538,7 +529,7 @@ TRAJECTORY_COLUMNS: List[Tuple[str, str]] = [
 ]
 
 
-CAMERA_COLUMNS: List[Tuple[str, str]] = [
+CAMERA_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
     ("frameId", "TEXT"),
     ("frameNum", "Int"),

@@ -63,21 +63,20 @@ class FromTracking2DAndRoad(Tracking3D):
             points = rotated_directions * ts + translation[:, np.newaxis]
             points_from_camera = rotate(points - translation[:, np.newaxis], rotation.inverse)
 
-            for t, oid, point, point_from_camera in zip(_ts, oids, points.T, points_from_camera.T):
+            for t, oid, point, point_from_camera in zip(
+                _ts, oids, points.T.tolist(), points_from_camera.T.tolist()
+            ):
                 assert point_from_camera.shape == (3,)
                 assert isinstance(oid, int) or oid.is_integer()
                 oid = int(oid)
-                point_from_camera = (
-                    point_from_camera[0],
-                    point_from_camera[1],
-                    point_from_camera[2],
-                )
+                x, y, z = map(float, point)
+                _x, _y, _z = map(float, point_from_camera)
                 trackings3d[oid] = Tracking3DResult(
                     t.frame_idx,
                     t.detection_id,
                     oid,
-                    point_from_camera,
-                    point,
+                    (_x, _y, _z),
+                    (x, y, z),
                     t.bbox_left,
                     t.bbox_top,
                     t.bbox_w,
@@ -103,6 +102,7 @@ class FromTracking2DAndRoad(Tracking3D):
 
 def rotate(vectors: "npt.NDArray", rotation: "Quaternion") -> "npt.NDArray":
     """Rotate 3D Vector by rotation quaternion.
+
     Params:
         vectors: (3 x N) 3-vectors each specified as any ordered
             sequence of 3 real numbers corresponding to x, y, and z values.
