@@ -223,7 +223,9 @@ class GroundTruthDetection(Detection2D):
                 metadata.append(Metadatum(torch.Tensor([]), yolo_classes, []))
             else:
                 metadata.append(
-                    Metadatum(torch.Tensor(tensor), yolo_classes, [DetectionId(i, _id) for _id in ids])
+                    Metadatum(
+                        torch.Tensor(tensor), yolo_classes, [DetectionId(i, _id) for _id in ids]
+                    )
                 )
 
         return None, {self.classname(): metadata}
