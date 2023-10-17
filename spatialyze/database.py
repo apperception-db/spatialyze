@@ -205,8 +205,8 @@ class Database:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query, vars)
-            for notice in cursor.connection.notices:
-                print(notice)
+            # for notice in cursor.connection.notices:
+            #     print(notice)
             if cursor.pgresult_ptr is not None:
                 return cursor.fetchall(), cursor
             else:
