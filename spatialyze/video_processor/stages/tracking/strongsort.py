@@ -4,7 +4,6 @@ from typing import Literal
 
 import torch
 
-from ...cache import cache
 from ...modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ...modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
 from ...modules.yolo_tracker.yolov5.utils.torch_utils import select_device

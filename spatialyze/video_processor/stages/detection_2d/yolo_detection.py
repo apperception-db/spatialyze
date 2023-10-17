@@ -14,7 +14,6 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
-from ...cache import cache
 from ...modules.yolo_tracker.yolov5.utils.augmentations import letterbox
 from ...modules.yolo_tracker.yolov5.utils.general import (
     check_img_size,
