@@ -8,7 +8,7 @@ from ..stages.detection_3d.from_detection_2d_and_road import (
     TO_BOTTOM_RIGHT,
 )
 from ..video import Video
-from .data_types import Detection2D, Detection3D, skip
+from .data_types import Detection2D, Detection3D, Skip, skip
 from .reusable import reusable
 from .stream import Stream
 
@@ -21,7 +21,7 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
     def stream(self, video: Video):
         with torch.no_grad():
             for d2d, frame in zip(self.detection2ds.stream(video), video.camera_configs):
-                if d2d == skip:
+                if isinstance(d2d, Skip):
                     yield skip
                     continue
 
@@ -30,14 +30,14 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
                     yield Detection3D(det, class_mapping, dids)
                     continue
 
-                device = d2d.device
+                device = det.device
                 [[fx, s, x0], [_, fy, y0], [_, _, _]] = frame.camera_intrinsic
                 rotation = frame.camera_rotation
                 translation = np.array(frame.camera_translation)
 
-                _, d = d2d.shape
+                _, d = det.shape
 
-                d2dt = d2d.T[:4, :].cpu().numpy()
+                d2dt = det.T[:4, :].cpu().numpy()
                 assert isinstance(d2dt, np.ndarray)
 
                 _d, N = d2dt.shape
@@ -99,7 +99,7 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
 
                 d3d = torch.concatenate(
                     (
-                        d2d,
+                        det,
                         torch.tensor(bbox3d, device=device),
                         torch.tensor(bbox3d_from_camera, device=device),
                     ),

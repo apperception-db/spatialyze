@@ -1,19 +1,19 @@
 import cv2
+import numpy.typing as npt
 
 from ..video.video import Video
-from .data_types import Frame
 from .reusable import reusable
 from .stream import Stream
 
 
 @reusable
-class DecodeFrame(Stream[Frame]):
+class DecodeFrame(Stream[npt.NDArray]):
     def stream(self, video: Video):
         cap = cv2.VideoCapture(video.videofile)
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
-            yield Frame(frame)
+            yield frame
         cap.release()
         cv2.destroyAllWindows()

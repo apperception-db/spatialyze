@@ -22,11 +22,11 @@ class Frame(NamedTuple):
 
 class Detection2D(NamedTuple):
     detections: torch.Tensor
-    class_map: list[str] | None
+    class_map: list[str]
     detection_ids: list[DetectionId]
 
 
 class Detection3D(NamedTuple):
     detections: torch.Tensor
-    class_map: list[str] | None
+    class_map: list[str]
     detection_ids: list[DetectionId]

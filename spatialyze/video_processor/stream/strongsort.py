@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import torch
+import numpy as np
+import numpy.typing as npt
 
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
@@ -10,7 +12,7 @@ from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
-from .data_types import Detection2D, Frame, skip
+from .data_types import Detection2D, Skip, skip
 from .reusable import reusable
 from .stream import Stream
 
@@ -23,7 +25,7 @@ EMPTY_DETECTION = torch.Tensor(0, 6)
 
 @reusable
 class StrongSORT(Stream[Tracking2DResult]):
-    def __init__(self, detections: Stream[Detection2D], frames: Stream[Frame]):
+    def __init__(self, detections: Stream[Detection2D], frames: Stream[npt.NDArray]):
         self.detection2ds = detections
         self.frames = frames
 
@@ -46,7 +48,9 @@ class StrongSORT(Stream[Tracking2DResult]):
             # tracking_start = time.time()
             # assert len(detections) == len(images)
             saved_detections: list[torch.Tensor] = []
+            clss: list[str] | None = None
             for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
+                assert not isinstance(im0s, Skip), type(im0s)
                 im0 = im0s.copy()
                 curr_frame = im0
 
@@ -58,19 +62,21 @@ class StrongSORT(Stream[Tracking2DResult]):
                 # update_time += time.time() - update_start
 
                 det, dids = EMPTY_DETECTION, []
-                if detection != skip and len(detection[0]) > 0:
-                    det, _, dids = detection
+                if not isinstance(detection, Skip) and len(detection[0]) > 0:
+                    det, _classes, dids = detection
+                    if clss is None:
+                        clss = _classes
                 det = det.cpu()
                 strongsort.update(det, dids, im0)
                 saved_detections.append(det)
 
                 deleted_tracks = strongsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
-                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections)
+                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections, clss)
                     deleted_tracks_idx += 1
                 # skip_time += time.time() - skip_start
             for track in strongsort.tracker.tracks:
-                yield _process_track(track, saved_detections)
+                yield _process_track(track, saved_detections, clss)
             # tracking_end = time.time()
 
         # self.ss_benchmark.append({
@@ -88,20 +94,26 @@ class StrongSORT(Stream[Tracking2DResult]):
 class TrackingResult:
     detection_id: DetectionId
     object_id: int
-    confidence: "float | np.float32"
+    confidence: float | np.float32
     bbox: torch.Tensor
+    object_type: str
     next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
     prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
 
 
-def _process_track(track: Track, detections: list[torch.Tensor]):
+def _process_track(track: Track, detections: list[torch.Tensor], clss: list[str] | None):
     tid = track.track_id
     assert isinstance(tid, int), type(tid)
+
+    clss = clss or []
 
     def tracking_result(did_conf: tuple[DetectionId, float]):
         did, conf = did_conf
         fid, oid = did
-        return TrackingResult(did, tid, conf, detections[fid][oid])
+        assert isinstance(oid, int), type(oid)
+        bbox = detections[fid][oid]
+        cls = int(bbox[5])
+        return TrackingResult(did, tid, conf, detections[fid][oid], clss[cls])
 
     # Sort track by frame idx
     _track = map(tracking_result, zip(track.detection_ids, track.confs))

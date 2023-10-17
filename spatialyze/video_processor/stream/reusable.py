@@ -12,40 +12,43 @@ P = ParamSpec("P")
 def reusable(
     cls: Callable[P, Stream[T]] | type[Stream[T]]
 ) -> Callable[P, Stream[T]] | type[Stream[T]]:
-    class ReusableStream(Stream[T]):
+    class ReusableStream(Stream):
         children_count: int
         children_progress: list[int]
 
         def __init__(self, *args, **kwargs):
             for arg in args + tuple(kwargs.values()):
-                if isinstance(arg, ReusableStream):
+                if arg.__class__.__name__ == "ReusableStream":
                     arg.children_progress.append(0)
 
-            self.stream = cls(*args, **kwargs)
+            self._stream = cls(*args, **kwargs)
             self.children_count = 0
             self.children_progress = []
             self.front = 0
             self.results: list[T | Skip | None] = []
 
-            self._video: Video | None = None
-            self._stream: Iterator[T | Skip] | None = None
+            self.video: Video | None = None
+            self.iter_stream: Iterator[T | Skip] | None = None
 
         def stream(self, video: Video):
-            if self._video is None or self._video is None:
-                self._video = video
-                self._stream = iter(self.stream.stream(video))
-                self.results.append(next(self._stream))
-            assert self._video == video
+            if self.video is None or self.iter_stream is None:
+                self.video = video
+                self.iter_stream = iter(self._stream.stream(video))
+                self.results.append(next(self.iter_stream))
+            assert self.video == video
 
             idx = self._assign_stream_idx()
-            while True:
-                while len(self.results) <= self.children_progress[idx]:
-                    self.results.append(next(self._stream))
+            try:
+                while True:
+                    while len(self.results) <= self.children_progress[idx]:
+                        self.results.append(next(self.iter_stream))
 
-                yield self.results[self.children_progress[idx]]
-                self.children_progress[idx] += 1
+                    yield self.results[self.children_progress[idx]]
+                    self.children_progress[idx] += 1
 
-                self._free_memory()
+                    self._free_memory()
+            except StopIteration:
+                return
 
         def _assign_stream_idx(self):
             idx = self.children_count

@@ -22,7 +22,7 @@ class ObjectTypePruner(Stream[Detection2D]):
         type_indices_to_keep: set[int] | None = None
 
         for detection_2d in self.detections.stream(video):
-            if detection_2d == Skip():
+            if isinstance(detection_2d, Skip):
                 yield Skip()
                 continue
 

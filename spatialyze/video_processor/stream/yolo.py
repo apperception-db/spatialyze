@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import numpy as np
+import numpy.typing as npt
 import torch
 
 from ..modules.yolo_tracker.yolov5.models.common import DetectMultiBackend
@@ -14,7 +15,7 @@ from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.detection_2d.yolo_detection import YoloDetection, class_mapping_to_list
 from ..types import DetectionId
 from ..video.video import Video
-from .data_types import Detection2D, Frame, skip
+from .data_types import Detection2D, Frame, Skip, skip
 from .reusable import reusable
 from .stream import Stream
 
@@ -28,7 +29,7 @@ torch.hub.set_dir(str(WEIGHTS))
 class Yolo(Stream[Detection2D]):
     def __init__(
         self,
-        frames: Stream[Frame],
+        frames: Stream[npt.NDArray],
         half: bool = False,
         conf_thres: float = 0.25,
         iou_thres: float = 0.45,
@@ -72,8 +73,8 @@ class Yolo(Stream[Detection2D]):
             assert isinstance(self.imgsz, list), type(self.imgsz)
             self.model.warmup(imgsz=(1, 3, *self.imgsz))  # warmup
 
-            for frame_idx, im0 in enumerate(YoloDetection.tqdm(self.frames.stream(video))):
-                if im0 == skip:
+            for frame_idx, im0 in enumerate(self.frames.stream(video)):
+                if isinstance(im0, Skip):
                     yield skip
                     continue
 
