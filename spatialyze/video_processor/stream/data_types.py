@@ -8,7 +8,7 @@ from ..types import DetectionId
 
 class Skip:
     def __new__(cls):
-        if not hasattr(cls, '_instance'):
+        if not hasattr(cls, "_instance"):
             cls._instance = super(Skip, cls).__new__(cls)
         return cls._instance
 

@@ -1,17 +1,21 @@
 import logging
 import time
-from collections.abc import Iterator, Iterable
+from collections.abc import Iterable, Iterator
 from typing import Generic, TypeVar
 
 import shapely
 import shapely.wkb
 
-from .data_types import Detection3D, skip, Skip
-from .stream import Stream
-from ..stages.detection_estimation import trajectory_3d, get_ego_avg_speed, get_ego_views, generate_sample_plan_once, \
-    construct_estimated_all_detection_info
+from ..stages.detection_estimation import (
+    construct_estimated_all_detection_info,
+    generate_sample_plan_once,
+    get_ego_avg_speed,
+    get_ego_views,
+    trajectory_3d,
+)
 from ..video import Video
-
+from .data_types import Detection3D, Skip, skip
+from .stream import Stream
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -117,7 +121,7 @@ class ExitFrameSampler(Stream[bool]):
         # )
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class FutureIterator(Generic[T], Iterator[T]):

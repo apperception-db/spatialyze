@@ -1,11 +1,10 @@
 from collections.abc import Iterable
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
-from .data_types import Skip
 from ..video.video import Video
+from .data_types import Skip
 
-
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Stream(Generic[T]):

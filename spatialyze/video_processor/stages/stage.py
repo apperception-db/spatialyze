@@ -115,4 +115,3 @@ def _get_classnames(cls: "type") -> "list[str]":
     if cls == Stage:
         return []
     return [*_get_classnames(cls.__base__), cls.__name__]
-

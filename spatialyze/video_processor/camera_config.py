@@ -143,4 +143,3 @@ def interpolate(f1: CameraConfig, f2: CameraConfig, timestamp: datetime):
     _frame._data = (f2._data - f1._data) * ratio + f1._data
 
     return _frame
-

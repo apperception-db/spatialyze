@@ -1,9 +1,9 @@
+from ...predicate import PredicateNode
+from ..stages.detection_2d.object_type_filter import ObjectTypeFilter
+from ..video import Video
 from .data_types import Detection2D, Skip
 from .reusable import reusable
 from .stream import Stream
-from ..stages.detection_2d.object_type_filter import ObjectTypeFilter
-from ..video import Video
-from ...predicate import PredicateNode
 
 
 @reusable
@@ -12,7 +12,7 @@ class ObjectTypePruner(Stream[Detection2D]):
         self,
         detections: Stream[Detection2D],
         types: list[str] | None = None,
-        predicate: PredicateNode | None = None
+        predicate: PredicateNode | None = None,
     ):
         self.detections = detections
         self.object_type_filter = ObjectTypeFilter(types, predicate)
@@ -46,8 +46,4 @@ class ObjectTypePruner(Stream[Detection2D]):
                 if type_index in type_indices_to_keep:
                     det_to_keep.append(i)
 
-            yield Detection2D(
-                det[det_to_keep],
-                class_mapping,
-                [ids[k] for k in det_to_keep]
-            )
+            yield Detection2D(det[det_to_keep], class_mapping, [ids[k] for k in det_to_keep])

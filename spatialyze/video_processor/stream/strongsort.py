@@ -3,9 +3,6 @@ from pathlib import Path
 
 import torch
 
-from .data_types import Detection2D, Frame, skip
-from .reusable import reusable
-from .stream import Stream
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
 from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track
@@ -13,7 +10,9 @@ from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
-
+from .data_types import Detection2D, Frame, skip
+from .reusable import reusable
+from .stream import Stream
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent

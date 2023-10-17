@@ -1,15 +1,17 @@
 from collections.abc import Iterator
-from typing import ParamSpec, TypeVar, Callable
+from typing import Callable, ParamSpec, TypeVar
 
+from ..video import Video
 from .data_types import Skip
 from .stream import Stream
-from ..video import Video
 
 T = TypeVar("T")
 P = ParamSpec("P")
 
 
-def reusable(cls: Callable[P, Stream[T]] | type[Stream[T]]) -> Callable[P, Stream[T]] | type[Stream[T]]:
+def reusable(
+    cls: Callable[P, Stream[T]] | type[Stream[T]]
+) -> Callable[P, Stream[T]] | type[Stream[T]]:
     class ReusableStream(Stream[T]):
         children_count: int
         children_progress: list[int]
@@ -48,7 +50,10 @@ def reusable(cls: Callable[P, Stream[T]] | type[Stream[T]]) -> Callable[P, Strea
         def _assign_stream_idx(self):
             idx = self.children_count
             self.children_count += 1
-            assert len(self.children_progress) >= self.children_count, (len(self.children_progress), self.children_count)
+            assert len(self.children_progress) >= self.children_count, (
+                len(self.children_progress),
+                self.children_count,
+            )
             return idx
 
         def _free_memory(self):

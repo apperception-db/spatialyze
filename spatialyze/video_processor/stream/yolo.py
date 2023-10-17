@@ -1,11 +1,8 @@
 from pathlib import Path
 
-import torch
 import numpy as np
+import torch
 
-from .data_types import Detection2D, Frame, Skip, skip
-from .reusable import reusable
-from .stream import Stream
 from ..modules.yolo_tracker.yolov5.models.common import DetectMultiBackend
 from ..modules.yolo_tracker.yolov5.utils.augmentations import letterbox
 from ..modules.yolo_tracker.yolov5.utils.general import (
@@ -14,9 +11,12 @@ from ..modules.yolo_tracker.yolov5.utils.general import (
     scale_boxes,
 )
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
+from ..stages.detection_2d.yolo_detection import YoloDetection, class_mapping_to_list
 from ..types import DetectionId
 from ..video.video import Video
-from ..stages.detection_2d.yolo_detection import class_mapping_to_list, YoloDetection
+from .data_types import Detection2D, Frame, skip
+from .reusable import reusable
+from .stream import Stream
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent.parent
@@ -108,7 +108,5 @@ class Yolo(Stream[Detection2D]):
                 assert isinstance(det, torch.Tensor), type(det)
                 det[:, :4] = scale_boxes(im.shape[2:], det[:, :4], im0.shape).round()
                 yield Detection2D(
-                    det,
-                    names,
-                    [DetectionId(frame_idx, order) for order in range(len(det))]
+                    det, names, [DetectionId(frame_idx, order) for order in range(len(det))]
                 )

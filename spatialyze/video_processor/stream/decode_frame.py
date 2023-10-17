@@ -1,9 +1,10 @@
 import cv2
 
-from .reusable import reusable
-from .stream import Stream
 from ..video.video import Video
 from .data_types import Frame
+from .reusable import reusable
+from .stream import Stream
+
 
 @reusable
 class DecodeFrame(Stream[Frame]):

@@ -1,12 +1,12 @@
 from collections.abc import Iterable
 
-from .data_types import Skip, skip
-from .reusable import reusable
-from .stream import Stream
+from ...predicate import PredicateNode
 from ..payload import Payload
 from ..stages.in_view.in_view import InView
 from ..video import Video
-from ...predicate import PredicateNode
+from .data_types import Skip, skip
+from .reusable import reusable
+from .stream import Stream
 
 
 @reusable

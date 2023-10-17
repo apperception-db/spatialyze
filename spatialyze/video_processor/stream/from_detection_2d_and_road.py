@@ -1,13 +1,16 @@
-import torch
 import numpy as np
 import numpy.typing as npt
+import torch
 from pyquaternion import Quaternion
 
-from .data_types import Detection3D, Detection2D, skip
+from ..stages.detection_3d.from_detection_2d_and_road import (
+    TO_BOTTOM_LEFT,
+    TO_BOTTOM_RIGHT,
+)
+from ..video import Video
+from .data_types import Detection2D, Detection3D, skip
 from .reusable import reusable
 from .stream import Stream
-from ..stages.detection_3d.from_detection_2d_and_road import TO_BOTTOM_LEFT, TO_BOTTOM_RIGHT
-from ..video import Video
 
 
 @reusable
@@ -45,7 +48,7 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
                     [
                         TO_BOTTOM_LEFT @ d2dt,
                         TO_BOTTOM_RIGHT @ d2dt,
-                        ],
+                    ],
                     axis=1,
                 )
                 assert (2, N * 2) == bottoms.shape, ((2, N * 2), bottoms.shape)

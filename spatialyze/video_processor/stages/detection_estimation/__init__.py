@@ -4,8 +4,8 @@ from typing import Callable, List, Tuple
 
 import postgis
 import shapely
-import shapely.wkb
 import shapely.geometry
+import shapely.wkb
 import torch
 from bitarray import bitarray
 from psycopg2 import sql

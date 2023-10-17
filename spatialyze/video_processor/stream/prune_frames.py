@@ -1,10 +1,9 @@
 from typing import TypeVar
 
+from ..video import Video
 from .data_types import skip
 from .reusable import reusable
 from .stream import Stream
-from ..video import Video
-
 
 T = TypeVar("T")
 
