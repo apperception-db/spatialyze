@@ -70,7 +70,7 @@ class YoloDetection(Detection2D):
         self.agnostic_nms = agnostic_nms
         self.augment = augment
 
-    @cache
+    # @cache
     def _run(self, payload: "Payload"):
         if YoloDetection.progress:
             print(self.device)
