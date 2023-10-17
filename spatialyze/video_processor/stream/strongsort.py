@@ -1,0 +1,116 @@
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import torch
+
+from .data_types import Detection2D, Frame, skip
+from .reusable import reusable
+from .stream import Stream
+from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
+from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
+from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track
+from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
+from ..stages.tracking_2d.tracking_2d import Tracking2DResult
+from ..types import DetectionId
+from ..video import Video
+
+
+FILE = Path(__file__).resolve()
+SPATIALYZE = FILE.parent.parent.parent.parent
+WEIGHTS = SPATIALYZE / "weights"
+REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
+EMPTY_DETECTION = torch.Tensor(0, 6)
+
+
+@reusable
+class StrongSORT(Stream[Tracking2DResult]):
+    def __init__(self, detections: Stream[Detection2D], frames: Stream[Frame]):
+        self.detection2ds = detections
+        self.frames = frames
+
+    def stream(self, video: Video):
+        device = select_device()
+        strongsort = create_tracker("strongsort", REID_WEIGHTS, device, False)
+        assert isinstance(strongsort, _StrongSORT)
+        assert hasattr(strongsort, "tracker")
+        assert hasattr(strongsort.tracker, "camera_update")
+        assert hasattr(strongsort, "model")
+        assert hasattr(strongsort.model, "warmup")
+        curr_frame, prev_frame = None, None
+        deleted_tracks_idx = 0
+        with torch.no_grad():
+            strongsort.model.warmup()
+            # init_end = time.time()
+
+            # update_time = 0
+            # skip_time = 0
+            # tracking_start = time.time()
+            # assert len(detections) == len(images)
+            saved_detections: list[torch.Tensor] = []
+            for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
+                im0 = im0s.copy()
+                curr_frame = im0
+
+                # update_start = time.time()
+                # Always do camera update
+                if prev_frame is not None and curr_frame is not None:
+                    strongsort.tracker.camera_update(prev_frame, curr_frame, cache=True)
+                prev_frame = curr_frame
+                # update_time += time.time() - update_start
+
+                det, dids = EMPTY_DETECTION, []
+                if detection != skip and len(detection[0]) > 0:
+                    det, _, dids = detection
+                det = det.cpu()
+                strongsort.update(det, dids, im0)
+                saved_detections.append(det)
+
+                deleted_tracks = strongsort.tracker.deleted_tracks
+                while deleted_tracks_idx < len(deleted_tracks):
+                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections)
+                    deleted_tracks_idx += 1
+                # skip_time += time.time() - skip_start
+            for track in strongsort.tracker.tracks:
+                yield _process_track(track, saved_detections)
+            # tracking_end = time.time()
+
+        # self.ss_benchmark.append({
+        #     'file': payload.video.videofile,
+        #     'load_data': load_data_end - load_data_start,
+        #     'init': init_end - init_start,
+        #     'tracking': tracking_end - tracking_start,
+        #     'skip': skip_time,
+        #     'update_camera': update_time,
+        #     'postprocess': postprocess_end - postprocess_start,
+        # })
+
+
+@dataclass
+class TrackingResult:
+    detection_id: DetectionId
+    object_id: int
+    confidence: "float | np.float32"
+    bbox: torch.Tensor
+    next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
+    prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
+
+
+def _process_track(track: Track, detections: list[torch.Tensor]):
+    tid = track.track_id
+    assert isinstance(tid, int), type(tid)
+
+    def tracking_result(did_conf: tuple[DetectionId, float]):
+        did, conf = did_conf
+        fid, oid = did
+        return TrackingResult(did, tid, conf, detections[fid][oid])
+
+    # Sort track by frame idx
+    _track = map(tracking_result, zip(track.detection_ids, track.confs))
+    _track = sorted(_track, key=lambda d: d.detection_id.frame_idx)
+
+    # Link track
+    for before, after in zip(_track[:-1], _track[1:]):
+        before.next = after
+        after.prev = before
+
+    return _track

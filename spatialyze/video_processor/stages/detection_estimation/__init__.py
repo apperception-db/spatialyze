@@ -4,6 +4,7 @@ from typing import Callable, List, Tuple
 
 import postgis
 import shapely
+import shapely.wkb
 import shapely.geometry
 import torch
 from bitarray import bitarray
@@ -60,7 +61,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
         if ego_speed < 2:
             return keep, {DetectionEstimation.classname(): [[]] * len(keep)}
 
-        ego_views = get_ego_views(payload)
+        ego_views = get_ego_views(payload.video)
         ego_views = [shapely.wkb.loads(view.to_ewkb(), hex=True) for view in ego_views]
 
         skipped_frame_num = []
@@ -173,8 +174,8 @@ def objects_count_change(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
     return nxt
 
 
-def get_ego_views(payload: "Payload") -> "list[postgis.Polygon]":
-    indices, view_areas = get_views(payload, distance=100, skip=False)
+def get_ego_views(video: "Video") -> "list[postgis.Polygon]":
+    indices, view_areas = get_views(video, distance=100, skip=False)
     views_raw = database.execute(
         sql.SQL(
             """
@@ -191,7 +192,7 @@ def get_ego_views(payload: "Payload") -> "list[postgis.Polygon]":
     )
 
     idxs_set = set(idx for idx, _ in views_raw)
-    idxs_all = set(range(len(payload.video)))
+    idxs_all = set(range(len(video)))
     assert idxs_set == idxs_all, (idxs_set.difference(idxs_all), idxs_all.difference(idxs_set))
     return [v for _, v in sorted(views_raw)]
 

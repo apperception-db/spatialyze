@@ -132,8 +132,8 @@ class InView(Stage):
         return keep, None
 
 
-def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
-    w, h = payload.video.dimension
+def get_views(video: "Video", distance: "float" = 100, skip: "bool" = True):
+    w, h = video.dimension
     Z = distance
     view_vertices_2d = np.array(
         [
@@ -148,7 +148,7 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
     ).T
     assert view_vertices_2d.shape == (3, 5), view_vertices_2d.shape
 
-    [[fx, s, x0], [_, fy, y0], [_, _, _]] = payload.video.interpolated_frames[0].camera_intrinsic
+    [[fx, s, x0], [_, fy, y0], [_, _, _]] = video.interpolated_frames[0].camera_intrinsic
 
     # 3x3 matrix to convert points from pixel-coordinate to camera-coordinate
     pixel2camera = Z * np.array(
@@ -165,7 +165,7 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
 
     extrinsics: "list[npt.NDArray]" = []
     indices: "list[int]" = []
-    for i, (k, f) in enumerate(zip(payload.keep, payload.video.interpolated_frames)):
+    for i, (k, f) in enumerate(zip(keep, video.interpolated_frames)):
         if not k and skip:
             continue
 

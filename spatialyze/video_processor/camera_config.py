@@ -70,7 +70,8 @@ class CameraConfig:
 
     @property
     def camera_translation(self) -> Float3:
-        return tuple(self._data[1:4].tolist())
+        x, y, z = self._data[1:4].tolist()
+        return x, y, z
 
     @property
     def camera_rotation(self) -> "Quaternion":
@@ -82,7 +83,8 @@ class CameraConfig:
 
     @property
     def ego_translation(self) -> Float3:
-        return tuple(self._data[17:20].tolist())
+        x, y, z = self._data[17:20].tolist()
+        return x, y, z
 
     @property
     def ego_rotation(self) -> "Quaternion":
@@ -141,3 +143,4 @@ def interpolate(f1: CameraConfig, f2: CameraConfig, timestamp: datetime):
     _frame._data = (f2._data - f1._data) * ratio + f1._data
 
     return _frame
+
