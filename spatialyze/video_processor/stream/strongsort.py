@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import torch
 import numpy as np
 import numpy.typing as npt
+import torch
 
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
@@ -12,7 +12,7 @@ from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
-from .data_types import Detection2D, Skip, skip
+from .data_types import Detection2D, Skip
 from .reusable import reusable
 from .stream import Stream
 

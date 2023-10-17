@@ -12,10 +12,10 @@ from ..modules.yolo_tracker.yolov5.utils.general import (
     scale_boxes,
 )
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
-from ..stages.detection_2d.yolo_detection import YoloDetection, class_mapping_to_list
+from ..stages.detection_2d.yolo_detection import class_mapping_to_list
 from ..types import DetectionId
 from ..video.video import Video
-from .data_types import Detection2D, Frame, Skip, skip
+from .data_types import Detection2D, Skip, skip
 from .reusable import reusable
 from .stream import Stream
 

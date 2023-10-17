@@ -5,7 +5,9 @@ from ..stream.strongsort import TrackingResult
 from ..types import Float3
 
 
-def prepare_trajectory(video_name: "str", obj_id: "int", track: "list[TrackingResult]", configs: list[CameraConfig]):
+def prepare_trajectory(
+    video_name: "str", obj_id: "int", track: "list[TrackingResult]", configs: list[CameraConfig]
+):
     timestamps: "list[datetime.datetime]" = []
     pairs: "list[Float3]" = []
     itemHeadings: "list[float | None]" = [None] * len(track)
