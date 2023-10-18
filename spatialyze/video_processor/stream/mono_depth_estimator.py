@@ -3,12 +3,11 @@ import PIL.Image as Image
 import torch
 from torchvision import transforms
 
-from .data_types import Skip, skip
-
 from ..modules.monodepth2.monodepth2.layers import disp_to_depth
 from ..stages.depth_estimation import monodepth
-from .stream import Stream
 from ..video import Video
+from .data_types import Skip, skip
+from .stream import Stream
 
 
 class MonoDepthEstimator(Stream[npt.NDArray]):
