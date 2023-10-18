@@ -2,11 +2,9 @@ from ...predicate import PredicateNode
 from ..stages.detection_2d.object_type_filter import ObjectTypeFilter
 from ..video import Video
 from .data_types import Detection2D, Skip
-from .reusable import reusable
 from .stream import Stream
 
 
-@reusable
 class ObjectTypePruner(Stream[Detection2D]):
     def __init__(
         self,
@@ -18,7 +16,7 @@ class ObjectTypePruner(Stream[Detection2D]):
         self.object_type_filter = ObjectTypeFilter(types, predicate)
         self.types = self.object_type_filter.types
 
-    def stream(self, video: Video):
+    def _stream(self, video: Video):
         type_indices_to_keep: set[int] | None = None
 
         for detection_2d in self.detections.stream(video):

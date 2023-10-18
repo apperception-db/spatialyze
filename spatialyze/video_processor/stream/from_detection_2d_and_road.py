@@ -9,16 +9,14 @@ from ..stages.detection_3d.from_detection_2d_and_road import (
 )
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip, skip
-from .reusable import reusable
 from .stream import Stream
 
 
-@reusable
 class FromDetection2DAndRoad(Stream[Detection3D]):
     def __init__(self, detections: Stream[Detection2D]):
         self.detection2ds = detections
 
-    def stream(self, video: Video):
+    def _stream(self, video: Video):
         with torch.no_grad():
             for d2d, frame in zip(self.detection2ds.stream(video), video.camera_configs):
                 if isinstance(d2d, Skip):

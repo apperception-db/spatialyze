@@ -5,11 +5,9 @@ from ..payload import Payload
 from ..stages.in_view.in_view import InView
 from ..video import Video
 from .data_types import Skip, skip
-from .reusable import reusable
 from .stream import Stream
 
 
-@reusable
 class RoadVisibilityPruner(Stream[bool]):
     def __init__(
         self,
@@ -19,7 +17,7 @@ class RoadVisibilityPruner(Stream[bool]):
     ):
         self.inview = InView(distance, roadtypes, predicate)
 
-    def stream(self, video: Video) -> Iterable[bool | Skip]:
+    def _stream(self, video: Video) -> Iterable[bool | Skip]:
         keep, _ = self.inview.run(Payload(video))
         assert keep is not None
         return (True if k else skip for k in keep)

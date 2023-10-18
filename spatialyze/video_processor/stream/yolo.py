@@ -16,7 +16,6 @@ from ..stages.detection_2d.yolo_detection import class_mapping_to_list
 from ..types import DetectionId
 from ..video.video import Video
 from .data_types import Detection2D, Skip, skip
-from .reusable import reusable
 from .stream import Stream
 
 FILE = Path(__file__).resolve()
@@ -25,7 +24,6 @@ WEIGHTS = SPATIALYZE / "weights"
 torch.hub.set_dir(str(WEIGHTS))
 
 
-@reusable
 class Yolo(Stream[Detection2D]):
     def __init__(
         self,
@@ -62,7 +60,7 @@ class Yolo(Stream[Detection2D]):
 
         self.frames = frames
 
-    def stream(self, video: Video):
+    def _stream(self, video: Video):
         with torch.no_grad():
             _names = self.model.names
 

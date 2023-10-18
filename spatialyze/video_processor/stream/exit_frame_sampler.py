@@ -26,7 +26,7 @@ class ExitFrameSampler(Stream[bool]):
     def __init__(self, detections: Stream[Detection3D]):
         self.detections = detections
 
-    def stream(self, video: Video):
+    def _stream(self, video: Video):
         start_time = time.time()
 
         ego_trajectory = [trajectory_3d(v.ego_translation, v.timestamp) for v in video]

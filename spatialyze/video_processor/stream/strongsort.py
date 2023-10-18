@@ -13,7 +13,6 @@ from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
 from .data_types import Detection2D, Skip
-from .reusable import reusable
 from .stream import Stream
 
 FILE = Path(__file__).resolve()
@@ -23,13 +22,12 @@ REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
 EMPTY_DETECTION = torch.Tensor(0, 6)
 
 
-@reusable
 class StrongSORT(Stream[Tracking2DResult]):
     def __init__(self, detections: Stream[Detection2D], frames: Stream[npt.NDArray]):
         self.detection2ds = detections
         self.frames = frames
 
-    def stream(self, video: Video):
+    def _stream(self, video: Video):
         device = select_device()
         strongsort = create_tracker("strongsort", REID_WEIGHTS, device, False)
         assert isinstance(strongsort, _StrongSORT)
