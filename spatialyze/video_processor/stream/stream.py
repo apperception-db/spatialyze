@@ -9,84 +9,91 @@ T = TypeVar("T")
 
 
 class Stream(Generic[T], ABC):
-    __stream_count: int
-    __stream_progress: list[int]
+    _stream_count: int
+    _stream_progress: list[int]
 
-    __front: int
-    __results: list[T | Skip | None]
-    __video: Video | None
-    __iter_stream: Iterator[T | Skip] | None
+    _front: int
+    _results: list[T | Skip | None]
+    _video: Video | None
+    _iter_stream: Iterator[T | Skip] | None
+
+    _visited: bool
 
     def __new__(cls, *args, **kwargs):
         instance = super(Stream, cls).__new__(cls)
         for arg in args + tuple(kwargs.values()):
             if isinstance(arg, Stream):
-                arg.__stream_progress.append(0)
-        instance.__stream_count = 0
-        instance.__stream_progress = []
-        instance.__front = 0
-        instance.__results = []
-        instance.__video = None
-        instance.__iter_stream = None
+                arg._stream_progress.append(0)
+        instance._stream_count = 0
+        instance._stream_progress = []
+        instance._front = 0
+        instance._results = []
+        instance._video = None
+        instance._iter_stream = None
         return instance
 
     def execute(self, video: Video) -> list[T | Skip]:
-        self.__initialize_stream(video)
-        self.__initialize_stream_progress()
+        self._initialize_stream(video)
+        self._initialize_stream_progress()
         return list(self.stream(video))
 
     def stream(self, video: Video) -> Iterable[T | Skip]:
-        assert self.__video == video
-        assert self.__iter_stream is not None
+        assert self._video == video, self._video
+        assert self._iter_stream is not None
 
-        idx = self.__assign_stream_idx()
+        idx = self._assign_stream_idx()
         try:
             while True:
-                while len(self.__results) <= self.__stream_progress[idx]:
-                    self.__results.append(next(self.__iter_stream))
+                while len(self._results) <= self._stream_progress[idx]:
+                    self._results.append(next(self._iter_stream))
 
-                result = self.__results[self.__stream_progress[idx]]
+                result = self._results[self._stream_progress[idx]]
                 assert result is not None
                 yield result
-                self.__stream_progress[idx] += 1
+                self._stream_progress[idx] += 1
 
-                self.__free_memory()
+                self._free_memory()
         except StopIteration:
             return
 
-    def __initialize_stream(self, video: Video):
-        self.__stream_progress = []
-        self.__stream_count = 0
-        self.__video = video
-        self.__iter_stream = iter(self._stream(video))
-        self.__results = [next(self.__iter_stream)]
-        self.__front = 0
+    def _initialize_stream(self, video: Video):
+        self._stream_progress = []
+        self._stream_count = 0
+        self._video = video
+        self._iter_stream = iter(self._stream(video))
+        self._results = []
+        self._front = -1
+        self._visited = False
         for attr in dir(self):
             stream = getattr(self, attr)
             if isinstance(stream, Stream):
-                stream.__initialize_stream(video)
+                stream._initialize_stream(video)
 
-    def __initialize_stream_progress(self):
-        self.__stream_progress.append(0)
+    def _initialize_stream_progress(self):
+        self._stream_progress.append(0)
+        if self._visited:
+            return
+        self._visited = True
         for attr in dir(self):
             stream = getattr(self, attr)
             if isinstance(stream, Stream):
-                stream.__initialize_stream_progress()
+                stream._initialize_stream_progress()
 
-    def __assign_stream_idx(self):
-        idx = self.__stream_count
-        self.__stream_count += 1
-        assert len(self.__stream_progress) >= self.__stream_count, (
-            len(self.__stream_progress),
-            self.__stream_count,
+    def _assign_stream_idx(self):
+        idx = self._stream_count
+        self._stream_count += 1
+        assert len(self._stream_progress) >= self._stream_count, (
+            len(self._stream_progress),
+            self._stream_count,
         )
         return idx
 
-    def __free_memory(self):
-        _min_progress = min(self.__stream_progress)
-        while self.__front < _min_progress:
-            self.__results[self.__front] = None
-            self.__front += 1
+    def _free_memory(self):
+        _min_progress = min(self._stream_progress)
+        while self._front < _min_progress:
+            if self._front >= 0:
+                self._results[self._front] = None
+            self._front += 1
 
     @abstractmethod
     def _stream(self, video: Video) -> Iterable[T | Skip]:

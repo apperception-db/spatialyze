@@ -25,7 +25,7 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
 
                 det, class_mapping, dids = d2d
                 if len(det) == 0:
-                    yield Detection3D(det, class_mapping, dids)
+                    yield Detection3D(torch.tensor([], device=det.device), class_mapping, dids)
                     continue
 
                 device = det.device
