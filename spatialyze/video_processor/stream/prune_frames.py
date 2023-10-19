@@ -10,10 +10,10 @@ T = TypeVar("T")
 class PruneFrames(Stream[T]):
     def __init__(self, prunner: Stream[bool], stream: Stream[T]):
         self.prunner = prunner
-        self._stream = stream
+        self.stream_ = stream
 
     def _stream(self, video: Video):
-        for prune, frame in zip(self.prunner.stream(video), self._stream.stream(video)):
+        for prune, frame in zip(self.prunner.stream(video), self.stream_.stream(video)):
             if prune is True and frame != skip:
                 yield frame
             else:
