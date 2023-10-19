@@ -1,3 +1,15 @@
-from .custom_fn import custom_fn
+from ...predicate import (
+    GenSqlVisitor,
+    ObjectTableNode,
+    PredicateNode,
+    call_node,
+    camera,
+)
 
-contained = custom_fn("contained", 2)
+
+@call_node
+def contained(visitor: "GenSqlVisitor", args: "list[PredicateNode]"):
+    object, region = args
+    if isinstance(object, ObjectTableNode):
+        object = object.traj @ camera.time
+    return f"contained({visitor(object)},{visitor(region)})"

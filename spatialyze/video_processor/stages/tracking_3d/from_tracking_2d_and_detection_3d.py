@@ -50,12 +50,14 @@ class FromTracking2DAndDetection3D(Tracking3D):
                 did = t.detection_id
                 det, p, pfc = detection_map[did]
 
+                x, y, z = map(float, p)
+                _x, _y, _z = map(float, pfc)
                 trackings3d[object_id] = Tracking3DResult(
                     t.frame_idx,
                     t.detection_id,
                     t.object_id,
-                    tuple(pfc),
-                    tuple(p),
+                    (_x, _y, _z),
+                    (x, y, z),
                     t.bbox_left,
                     t.bbox_top,
                     t.bbox_w,

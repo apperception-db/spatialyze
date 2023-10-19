@@ -14,7 +14,7 @@ OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 ROAD_DIR = './data/scenic/road-network/boston-seaport'
 
-def build_filter_world():
+def build_filter_world(pkl: bool = False):
     database = Database(
         psycopg2.connect(
             dbname=environ.get("AP_DB", "mobilitydb"),
@@ -40,6 +40,8 @@ def build_filter_world():
         keep = bitarray(len(camera))
         keep.setall(0)
         keep[(len(camera) * 3 // 4):] = 1
+        if pkl:
+            camera = videofile[:-len("mp4")] + 'camera.pkl'
 
         world.addVideo(GeospatialVideo(videofile, camera, keep))
     

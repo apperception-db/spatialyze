@@ -1,6 +1,6 @@
 import datetime
 
-from ..stages.segment_trajectory.construct_segment_trajectory import InvalidSegmentPoint
+from ..stages.segment_trajectory import InvalidSegmentPoint
 from ..types import Float3
 from .get_tracks import TrackPoint
 
@@ -41,7 +41,7 @@ def format_trajectory(video_name: "str", obj_id: "int", track: "list[TrackPoint]
     #     print(f"itemHeadings for obj {obj_id}:", itemHeadings)
 
     return (
-        video_name + "_obj_" + str(obj_id),
+        obj_id,
         camera_id,
         object_type,
         timestamps,

@@ -16,13 +16,13 @@ disable_cache()
 
 
 def test_optimized_workflow():
-    world = build_filter_world()
+    world = build_filter_world(pkl=True)
     objects, trackings = _execute(world)
 
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
-        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
-        pickle.dump(trackings, f)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
+    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
+    #     pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -40,8 +40,8 @@ def test_optimized_workflow():
                 assert p.frame_idx == g.frame_idx, (p.frame_idx, g.frame_idx)
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
-                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera)), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point), np.array(g.point)), (p.point, g.point)
+                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera), atol=0.001, rtol=0), (p.point_from_camera, g.point_from_camera)
+                assert np.allclose(np.array(p.point), np.array(g.point), atol=0.001, rtol=0), (p.point, g.point)
                 assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
                 assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
                 assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
@@ -49,10 +49,10 @@ def test_optimized_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
-        json.dump(objects, f, indent=1)
-    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'wb') as f:
-        pickle.dump(objects, f)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
+    #     json.dump(objects, f, indent=1)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'wb') as f:
+    #     pickle.dump(objects, f)
     
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)
@@ -64,3 +64,26 @@ def test_optimized_workflow():
         assert len(ops) == len(ogs), (len(ops), len(ogs))
         for p, og in zip(sorted(ops), sorted(ogs)):
             assert tuple(p) == tuple(og), (p, og)
+
+    world._objects, world._trackings = objects, trackings
+    objects2 = world.getObjects()
+
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects2.json'), 'w') as f:
+    #     json.dump(objects2, f, indent=1)
+    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects2.pkl'), 'wb') as f:
+    #     pickle.dump(objects2, f)
+    
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects2.pkl'), 'rb') as f:
+        objects2_groundtruth = pickle.load(f)
+    
+    for o2, og in zip(sorted(objects2), sorted(objects2_groundtruth)):
+        assert o2.id == og.id, (o2.id, og.id)
+        assert o2.type == og.type, (o2.type, og.type)
+        assert np.allclose(o2.track, og.track, atol=0.001, rtol=0), (o2.track, og.track)
+        assert np.allclose(o2.bboxes, og.bboxes, atol=2, rtol=0), (o2.bboxes, og.bboxes)
+        assert np.allclose(o2.frame_ids, og.frame_ids), (o2.frame_ids, og.frame_ids)
+        assert o2.camera_id == og.camera_id, (o2.camera_id, og.camera_id)
+    
+    world.saveVideos('./outputs', addBoundingBoxes=True)
+    assert os.path.exists('./outputs/scene-0655-CAM_FRONT-result.mp4')
+    assert os.path.exists('./outputs/scene-0757-CAM_FRONT-result.mp4')

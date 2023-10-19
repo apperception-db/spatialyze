@@ -616,7 +616,7 @@ def add_segment_type(database: "Database", road_types: "set[str]"):
     index = index_factory(database)
 
     database.update("ALTER TABLE SegmentPolygon ADD segmentTypes text[];")
-    print("altered table")
+    # print("altered table")
 
     for road_type in road_types:
         database.update(f"ALTER TABLE SegmentPolygon ADD __RoadType__{road_type}__ boolean;")
@@ -632,11 +632,11 @@ def add_segment_type(database: "Database", road_types: "set[str]"):
             SET segmentTypes = ARRAY_APPEND(segmentTypes, '{road_type}')
             WHERE elementId IN (SELECT id FROM {road_type});"""
         )
-        print("added type:", road_type)
+        # print("added type:", road_type)
 
     for road_type in road_types:
         index("SegmentPolygon", f"__RoadType__{road_type}__")
-        print("index created:", road_type)
+        # print("index created:", road_type)
     database._commit()
 
 
@@ -663,7 +663,7 @@ INSERT: "dict[str, Callable[[Database, list[dict]], None]]" = {
 
 
 def ingest_location(database: "Database", directory: "str", location: "str"):
-    print("Location:", location)
+    # print("Location:", location)
     filenames = os.listdir(directory)
 
     assert set(filenames) == set([k + ".json" for k in INSERT.keys()]), (
@@ -675,7 +675,7 @@ def ingest_location(database: "Database", directory: "str", location: "str"):
         with open(os.path.join(directory, d + ".json"), "r") as f:
             data = json.load(f)
 
-        print("Ingesting", d)
+        # print("Ingesting", d)
         fn(database, [{"location": location, **d} for d in data])
 
 
@@ -690,13 +690,13 @@ def ingest_road(database: "Database", directory: str):
             if d == "boston-old":
                 continue
 
-            print(d)
+            # print(d)
             ingest_location(database, os.path.join(directory, d), d)
     else:
         assert all(os.path.isfile(os.path.join(directory, f)) for f in filenames)
         ingest_location(database, directory, "boston-seaport")
 
-    print("adding segment types")
+    # print("adding segment types")
     add_segment_type(database, ROAD_TYPES)
 
     database.reset()

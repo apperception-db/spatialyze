@@ -24,8 +24,8 @@ jobs:
         mkdir -p ./build/data/assets
         cp ./data/assets/* ./build/data/assets/
 
-    - name: Publish Website
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: 'build'
-        single-commit: true
+    # - name: Publish Website
+    #   uses: JamesIves/github-pages-deploy-action@v4
+    #   with:
+    #     folder: 'build'
+    #     single-commit: true

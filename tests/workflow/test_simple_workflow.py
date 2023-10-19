@@ -19,10 +19,10 @@ def test_simple_workflow():
     world = build_filter_world()
     objects, trackings = _execute(world, optimization=False)
 
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
-        json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
-        pickle.dump(trackings, f)
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
+    #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
+    #     pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -40,8 +40,8 @@ def test_simple_workflow():
                 assert p.frame_idx == g.frame_idx, (p.frame_idx, g.frame_idx)
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
-                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera)), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point), np.array(g.point)), (p.point, g.point)
+                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera), atol=0.001, rtol=0), (p.point_from_camera, g.point_from_camera)
+                assert np.allclose(np.array(p.point), np.array(g.point), atol=0.001, rtol=0), (p.point, g.point)
                 assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
                 assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
                 assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
@@ -49,10 +49,10 @@ def test_simple_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
     
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
-        json.dump(objects, f, indent=1)
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
-        pickle.dump(objects, f)
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
+    #     json.dump(objects, f, indent=1)
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'wb') as f:
+    #     pickle.dump(objects, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)

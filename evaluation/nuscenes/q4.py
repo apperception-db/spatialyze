@@ -2,13 +2,9 @@ import time
 from os import environ
 
 from spatialyze.database import database
-from spatialyze.legacy.world import empty_world
 from spatialyze.utils import F
 from spatialyze.predicate import camera, objects, lit
 database.connection
-
-name = 'ScenicWorld' # world name
-world = empty_world(name=name)
 
 cam = camera
 car1 = objects[0]

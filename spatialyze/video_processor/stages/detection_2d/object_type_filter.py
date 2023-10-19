@@ -29,13 +29,9 @@ class ObjectTypeFilter(Detection2D):
         else:
             assert types is not None, "Can only except either types or predicate"
             self.types = types
-        print("types", self.types)
 
     def __repr__(self) -> str:
-        return f"ObjectTypeFilter(types={self.types})"
-
-    def add_type(self, type: "str"):
-        self.types.append(type)
+        return f"ObjectTypeFilter(types={sorted(self.types)})"
 
     def _run(self, payload: "Payload"):
         detection_2d = Detection2D.get(payload)
