@@ -7,8 +7,8 @@ from postgis import MultiPoint
 from psycopg2 import sql
 from pyquaternion import Quaternion
 
-from spatialyze.database import database
-from spatialyze.predicate import (
+from ....database import database
+from ....predicate import (
     ArrayNode,
     BaseTransformer,
     BinOpNode,
@@ -26,8 +26,8 @@ from spatialyze.predicate import (
     Visitor,
     lit,
 )
-from spatialyze.utils import F
-
+from ....utils import F
+from ...video.video import Video
 from ...payload import Payload
 from ..stage import Stage
 
@@ -64,7 +64,7 @@ class InView(Stage):
         return f"InView(distance={self.distance}, roadtype={self.roadtypes}, predicate={self.predicate_str})"
 
     def _run(self, payload: "Payload") -> "tuple[bitarray, None]":
-        indices, view_areas = get_views(payload, self.distance)
+        indices, view_areas = get_views(payload.video, self.distance)
 
         keep = bitarray(len(payload.keep))
         keep.setall(1)
@@ -132,7 +132,7 @@ class InView(Stage):
         return keep, None
 
 
-def get_views(video: "Video", distance: "float" = 100, skip: "bool" = True):
+def get_views(video: "Video", distance: "float" = 100):
     w, h = video.dimension
     Z = distance
     view_vertices_2d = np.array(
@@ -165,10 +165,10 @@ def get_views(video: "Video", distance: "float" = 100, skip: "bool" = True):
 
     extrinsics: "list[npt.NDArray]" = []
     indices: "list[int]" = []
-    for i, (k, f) in enumerate(zip(keep, video.interpolated_frames)):
-        if not k and skip:
-            continue
-
+    # for i, (k, f) in enumerate(zip(keep, video.interpolated_frames)):
+    #     if not k and skip:
+    #         continue
+    for i, f in enumerate(video.interpolated_frames):
         rotation = Quaternion(f.camera_rotation)
         rotation_matrix = rotation.unit.rotation_matrix
         assert rotation_matrix.shape == (3, 3), rotation_matrix.shape
