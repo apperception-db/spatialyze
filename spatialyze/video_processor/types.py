@@ -22,3 +22,5 @@ Float22 = Tuple[Float2, Float2]
 
 Float3 = Tuple[float, float, float]
 Float33 = Tuple[Float3, Float3, Float3]
+
+Float4 = Tuple[float, float, float, float]

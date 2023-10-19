@@ -20,6 +20,7 @@ class Metadatum(NamedTuple):
     - bbox_h
     - conf
     - class
+
     - bbox3d_left_x
     - bbox3d_left_y
     - bbox3d_left_z

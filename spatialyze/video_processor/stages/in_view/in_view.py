@@ -7,8 +7,8 @@ from postgis import MultiPoint
 from psycopg2 import sql
 from pyquaternion import Quaternion
 
-from spatialyze.database import database
-from spatialyze.predicate import (
+from ....database import database
+from ....predicate import (
     ArrayNode,
     BaseTransformer,
     BinOpNode,
@@ -26,9 +26,9 @@ from spatialyze.predicate import (
     Visitor,
     lit,
 )
-from spatialyze.utils import F
-
+from ....utils import F
 from ...payload import Payload
+from ...video.video import Video
 from ..stage import Stage
 
 OTHER_ROAD_TYPES = {
@@ -64,7 +64,7 @@ class InView(Stage):
         return f"InView(distance={self.distance}, roadtype={self.roadtypes}, predicate={self.predicate_str})"
 
     def _run(self, payload: "Payload") -> "tuple[bitarray, None]":
-        indices, view_areas = get_views(payload, self.distance)
+        indices, view_areas = get_views(payload.video, self.distance)
 
         keep = bitarray(len(payload.keep))
         keep.setall(1)
@@ -132,8 +132,8 @@ class InView(Stage):
         return keep, None
 
 
-def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
-    w, h = payload.video.dimension
+def get_views(video: "Video", distance: "float" = 100):
+    w, h = video.dimension
     Z = distance
     view_vertices_2d = np.array(
         [
@@ -148,7 +148,7 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
     ).T
     assert view_vertices_2d.shape == (3, 5), view_vertices_2d.shape
 
-    [[fx, s, x0], [_, fy, y0], [_, _, _]] = payload.video.interpolated_frames[0].camera_intrinsic
+    [[fx, s, x0], [_, fy, y0], [_, _, _]] = video.interpolated_frames[0].camera_intrinsic
 
     # 3x3 matrix to convert points from pixel-coordinate to camera-coordinate
     pixel2camera = Z * np.array(
@@ -165,10 +165,10 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
 
     extrinsics: "list[npt.NDArray]" = []
     indices: "list[int]" = []
-    for i, (k, f) in enumerate(zip(payload.keep, payload.video.interpolated_frames)):
-        if not k and skip:
-            continue
-
+    # for i, (k, f) in enumerate(zip(keep, video.interpolated_frames)):
+    #     if not k and skip:
+    #         continue
+    for i, f in enumerate(video.interpolated_frames):
         rotation = Quaternion(f.camera_rotation)
         rotation_matrix = rotation.unit.rotation_matrix
         assert rotation_matrix.shape == (3, 3), rotation_matrix.shape
