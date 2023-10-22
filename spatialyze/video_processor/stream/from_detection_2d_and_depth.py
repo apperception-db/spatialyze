@@ -1,7 +1,6 @@
 import numpy as np
 import numpy.typing as npt
 import torch
-from pyquaternion import Quaternion
 
 from ..utils.depth_to_3d import depth_to_3d
 from ..video import Video
@@ -16,7 +15,9 @@ class FromDetection2DAndDepth(Stream[Detection3D]):
 
     def _stream(self, video: Video):
         with torch.no_grad():
-            for d2d, depth, frame in zip(self.detection2ds.stream(video), self.depths.stream(video), video.camera_configs):
+            for d2d, depth, frame in zip(
+                self.detection2ds.stream(video), self.depths.stream(video), video.camera_configs
+            ):
                 if isinstance(d2d, Skip) or isinstance(depth, Skip):
                     yield skip
                     continue
@@ -48,6 +49,12 @@ class FromDetection2DAndDepth(Stream[Detection3D]):
                     rotated_offset_r = frame.camera_rotation.rotate(np.array(point_from_camera_r))
                     point_r = np.array(frame.camera_translation) + rotated_offset_r
 
-                    d3d = [*detection, *point_l, *point_r, *point_from_camera_l, *point_from_camera_r]
+                    d3d = [
+                        *detection,
+                        *point_l,
+                        *point_r,
+                        *point_from_camera_l,
+                        *point_from_camera_r,
+                    ]
                     d3ds.append(d3d)
                 yield Detection3D(torch.tensor(d3ds, device=det.device), class_mapping, dids)
