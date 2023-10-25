@@ -123,26 +123,26 @@ T = TypeVar("T")
 
 class FutureIterator(Generic[T], Iterator[T]):
     def __init__(self, it: Iterable[T]):
-        self.it = iter(it)
-        self.idx = -1
-        self.mem: list[T | None] = []
+        self._it = iter(it)
+        self._idx = -1
+        self._mem: list[T | None] = []
 
     def __next__(self):
-        if self.idx >= 0:
-            self.mem[self.idx] = None
-        self.idx += 1
-        while len(self.mem) <= self.idx:
-            self.mem.append(next(self.it))
-        return self.mem[self.idx]
+        if self._idx >= 0:
+            self._mem[self._idx] = None
+        self._idx += 1
+        ret = self[0]
+        assert ret is not None
+        return ret
 
     def __getitem__(self, item: int):
         try:
-            while len(self.mem) <= self.idx + item:
-                self.mem.append(next(self.it))
-            return self.mem[self.idx + item]
+            while len(self._mem) <= self._idx + item:
+                self._mem.append(next(self._it))
+            return self._mem[self._idx + item]
         except StopIteration:
             if item == 0:
-                raise StopIteration
+                raise StopIteration()
             return None
 
 
