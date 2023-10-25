@@ -1,7 +1,7 @@
 from ...predicate import PredicateNode
 from ..stages.detection_2d.object_type_filter import ObjectTypeFilter
 from ..video import Video
-from .data_types import Detection2D, Skip
+from .data_types import Detection2D, Skip, skip
 from .stream import Stream
 
 
@@ -21,7 +21,7 @@ class ObjectTypePruner(Stream[Detection2D]):
 
         for detection_2d in self.detections.stream(video):
             if isinstance(detection_2d, Skip):
-                yield Skip()
+                yield skip
                 continue
 
             det, class_mapping, ids = detection_2d

@@ -36,7 +36,7 @@ class ExitFrameSampler(Stream[bool]):
             return self.detections.stream(video)
 
         ego_views = get_ego_views(video)
-        ego_views = [shapely.wkb.loads(view.to_ewkb(), hex=True) for view in ego_views]
+        # ego_views = [shapely.wkb.loads(view.to_ewkb(), hex=True) for view in ego_views]
 
         skipped_frame_num = []
         next_frame_num = 0
@@ -51,17 +51,16 @@ class ExitFrameSampler(Stream[bool]):
                 yield True
                 continue
 
-            if i != next_frame_num:
-                yield skip
+            if i != next_frame_num or isinstance(detection, Skip):
+                yield False
                 continue
 
             next_frame_num = i + 1
 
             det, _, dids = detection
-            if new_car(detections, 5) <= i + 1:
+            if new_car(detections, min(5, len(video) - i - 1)) <= 1:
                 # do not map segment if cannot skip in the first place
-                skipped_frame_num.append(i)
-                yield skip
+                yield True
                 continue
 
             start_detection_time = time.time()
@@ -79,9 +78,7 @@ class ExitFrameSampler(Stream[bool]):
             all_detection_info_pruned = all_detection_info
 
             if len(det) == 0 or len(all_detection_info_pruned) == 0:
-                skipped_frame_num.append(i)
-                # metadata.append([])
-                yield skip
+                yield True
                 continue
 
             start_generate_sample_plan = time.time()
@@ -90,9 +87,9 @@ class ExitFrameSampler(Stream[bool]):
             )
             total_sample_plan_time.append(time.time() - start_generate_sample_plan)
             next_frame_num = next_sample_plan.get_next_frame_num()
-            next_frame_num = new_car(detections, next_frame_num - i)
+            next_frame_num = i + new_car(detections, min(next_frame_num, len(video) - 1) - i)
             logger.info(f"founded next_frame_num {next_frame_num}")
-            yield detection
+            yield True
 
             next_action_type = next_sample_plan.get_action_type()
             if next_action_type not in action_type_counts:
@@ -128,7 +125,7 @@ class FutureIterator(Generic[T], Iterator[T]):
     def __init__(self, it: Iterable[T]):
         self.it = iter(it)
         self.idx = -1
-        self.mem = []
+        self.mem: list[T | None] = []
 
     def __next__(self):
         if self.idx >= 0:
@@ -144,13 +141,19 @@ class FutureIterator(Generic[T], Iterator[T]):
                 self.mem.append(next(self.it))
             return self.mem[self.idx + item]
         except StopIteration:
+            if item == 0:
+                raise StopIteration
             return None
 
 
 def new_car(detections: FutureIterator[Detection3D | Skip], nxt: int):
-    len_det = len(detections[0][0])
+    detection = detections[0]
+    assert detection is not None
+    assert not isinstance(detection, Skip)
+    len_det = len(detection[0])
     for i in range(1, nxt + 1):
         det = detections[i]
+        assert not isinstance(det, Skip)
         if det is None:
             return i - 1
         future_det = det[0]

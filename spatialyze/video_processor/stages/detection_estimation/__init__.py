@@ -60,7 +60,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             return keep, {DetectionEstimation.classname(): [[]] * len(keep)}
 
         ego_views = get_ego_views(payload.video)
-        ego_views = [shapely.wkb.loads(view.to_ewkb(), hex=True) for view in ego_views]
+        # ego_views: list[shapely.geometry.Polygon] = [shapely.wkb.loads(view.to_ewkb(), hex=True) for view in ego_views]
 
         skipped_frame_num = []
         next_frame_num = 0
@@ -78,14 +78,17 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             if i != next_frame_num:
                 skipped_frame_num.append(i)
                 metadata.append([])
+                print('skip   ', i, next_frame_num)
                 continue
 
             next_frame_num = i + 1
 
             det, _, dids = dets[i]
+            print('--new    ', i, new_car(dets, i, i + 5))
             if new_car(dets, i, i + 5) <= i + 1:
                 # will not map segment if cannot skip in the first place
                 metadata.append([])
+                print('new    ', i, new_car(dets, i, i + 5))
                 continue
 
             start_detection_time = time.time()
@@ -97,13 +100,15 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
                 (time.time() - start_detection_time, len(det), len(all_detection_info), times)
             )
 
-            all_detection_info_pruned, det = prune_detection(
-                all_detection_info, det, self.predicates
-            )
+            # all_detection_info_pruned, det = prune_detection(
+            #     all_detection_info, det, self.predicates
+            # )
+            all_detection_info_pruned = all_detection_info
 
             if len(det) == 0 or len(all_detection_info_pruned) == 0:
                 # skipped_frame_num.append(i)
                 metadata.append([])
+                print('0      ', i)
                 continue
 
             start_generate_sample_plan = time.time()
@@ -114,6 +119,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             next_frame_num = next_sample_plan.get_next_frame_num()
             next_frame_num = new_car(dets, i, next_frame_num)
             logger.info(f"founded next_frame_num {next_frame_num}")
+            print('next   ', i)
             metadata.append(all_detection_info)
 
             next_action_type = next_sample_plan.get_action_type()
@@ -158,7 +164,7 @@ def new_car(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
         future_det = dets[j][0]
         if len(future_det) > len_det:
             return j
-    return nxt
+    return min(nxt, len(dets) - 1)
 
 
 def objects_count_change(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
@@ -173,7 +179,7 @@ def objects_count_change(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
 
 
 def get_ego_views(video: "Video") -> "list[postgis.Polygon]":
-    indices, view_areas = get_views(video, distance=100, skip=False)
+    indices, view_areas = get_views(video, distance=100)
     views_raw = database.execute(
         sql.SQL(
             """
@@ -220,7 +226,7 @@ def generate_sample_plan_once(
     next_frame_num: "int",
     ego_views: "list[postgis.Polygon]",
     all_detection_info: "list[DetectionInfo] | None" = None,
-    fps: "int" = 13,
+    fps: "float" = 13,
 ) -> "tuple[SamplePlan, None]":
     assert all_detection_info is not None
     next_sample_plan = generate_sample_plan(
@@ -234,7 +240,7 @@ def construct_estimated_all_detection_info(
     detection_ids: "list[DetectionId]",
     ego_config: "CameraConfig",
     ego_trajectory: "list[trajectory_3d]",
-) -> "list[DetectionInfo]":
+) -> "tuple[list[DetectionInfo], float]":
     _times = time.time()
     all_detections = []
     for det, did in zip(detections, detection_ids):
