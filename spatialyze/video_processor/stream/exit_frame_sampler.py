@@ -3,9 +3,6 @@ import time
 from collections.abc import Iterable, Iterator
 from typing import Generic, TypeVar
 
-import shapely
-import shapely.wkb
-
 from ..stages.detection_estimation import (
     construct_estimated_all_detection_info,
     generate_sample_plan_once,
@@ -14,7 +11,7 @@ from ..stages.detection_estimation import (
     trajectory_3d,
 )
 from ..video import Video
-from .data_types import Detection3D, Skip, skip
+from .data_types import Detection3D, Skip
 from .stream import Stream
 
 logging.basicConfig()
