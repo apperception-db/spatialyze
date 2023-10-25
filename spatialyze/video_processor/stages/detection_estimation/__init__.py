@@ -78,17 +78,17 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             if i != next_frame_num:
                 skipped_frame_num.append(i)
                 metadata.append([])
-                print('skip   ', i, next_frame_num)
+                print("skip   ", i, next_frame_num)
                 continue
 
             next_frame_num = i + 1
 
             det, _, dids = dets[i]
-            print('--new    ', i, new_car(dets, i, i + 5))
+            print("--new    ", i, new_car(dets, i, i + 5))
             if new_car(dets, i, i + 5) <= i + 1:
                 # will not map segment if cannot skip in the first place
                 metadata.append([])
-                print('new    ', i, new_car(dets, i, i + 5))
+                print("new    ", i, new_car(dets, i, i + 5))
                 continue
 
             start_detection_time = time.time()
@@ -108,7 +108,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             if len(det) == 0 or len(all_detection_info_pruned) == 0:
                 # skipped_frame_num.append(i)
                 metadata.append([])
-                print('0      ', i)
+                print("0      ", i)
                 continue
 
             start_generate_sample_plan = time.time()
@@ -119,7 +119,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             next_frame_num = next_sample_plan.get_next_frame_num()
             next_frame_num = new_car(dets, i, next_frame_num)
             logger.info(f"founded next_frame_num {next_frame_num}")
-            print('next   ', i)
+            print("next   ", i)
             metadata.append(all_detection_info)
 
             next_action_type = next_sample_plan.get_action_type()
