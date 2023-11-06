@@ -104,12 +104,13 @@ cv2.destroyAllWindows()
 
 # In[28]:
 
-n = 633
+n = 600
 
-for i in [3]:
-    result = cv2.VideoWriter(f'./loop-video-{i}0.avi',  
-                            cv2.VideoWriter_fourcc(*'MJPG'), 
-                            20, (1600, 900)) 
+for i in [1, 4]:
+    result = cv2.VideoWriter(f'./loop-video-{i}0.mp4',  
+                            cv2.VideoWriter_fourcc(*"mp4v"), 
+                            12,
+                            frames[0].shape[1::-1]) 
     for i in tqdm(range(n * i)):
         for frame in frames:
             result.write(frame) 
