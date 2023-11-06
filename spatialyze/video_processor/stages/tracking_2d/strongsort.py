@@ -1,6 +1,6 @@
+import time
 from pathlib import Path
 from typing import Literal
-import time
 
 import torch
 
@@ -43,7 +43,7 @@ class StrongSORT(Tracking2D):
 
         names = detections[0][1]
         assert names is not None
-        
+
         frame_process_time = []
 
         for (dets, _, dids), ts in StrongSORT.tqdm(zip(detections, trackings)):
@@ -69,7 +69,7 @@ class StrongSORT(Tracking2D):
             for before, after in zip(trajectory[:-1], trajectory[1:]):
                 before.next = after
                 after.prev = before
-                
+
         self._benchmark.append(
             {
                 "name": payload.video.videofile,
