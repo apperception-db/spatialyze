@@ -17,3 +17,4 @@
 \i roadSegment.sql;
 \i sameRegion.sql;
 \i viewAngle.sql;
+\i leftTurn.sql

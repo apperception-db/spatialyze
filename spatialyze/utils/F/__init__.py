@@ -17,6 +17,7 @@ from .road_direction import road_direction
 from .road_segment import road_segment
 from .same_region import same_region
 from .view_angle import view_angle
+from .left_turn import left_turn
 
 get_x = get_("x")
 get_y = get_("y")
@@ -44,4 +45,5 @@ __all__ = [
     "is_roadtype",
     "is_other_roadtype",
     "ignore_roadtype",
+    "left_turn"
 ]
