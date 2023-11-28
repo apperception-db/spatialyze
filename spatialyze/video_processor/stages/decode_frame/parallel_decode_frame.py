@@ -30,7 +30,7 @@ def decode(args: "tuple[str, int, int]"):
 
 
 class ParallelDecodeFrame(DecodeFrame):
-    @cache
+    # @cache
     def _run(self, payload: "Payload"):
         try:
             metadata: "list[npt.NDArray]" = []
