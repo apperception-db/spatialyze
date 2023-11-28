@@ -24,8 +24,8 @@ class StrongSORT(Tracking2D):
         cache: "bool" = True,
     ) -> None:
         super().__init__()
-        self._benchmark = []
         self.tracking = Tracking(method=method, cache=cache)
+        self._benchmark = self.tracking._benchmark
         if hasattr(self.tracking, "ss_benchmark"):
             self.ss_benchmark = getattr(self.tracking, "ss_benchmark")
 
@@ -44,8 +44,6 @@ class StrongSORT(Tracking2D):
         names = detections[0][1]
         assert names is not None
 
-        frame_process_time = []
-
         for (dets, _, dids), ts in StrongSORT.tqdm(zip(detections, trackings)):
             current_process_start = time.time()
             d2ds_map: "dict[DetectionId, torch.Tensor]" = {}
@@ -63,19 +61,11 @@ class StrongSORT(Tracking2D):
                     trajectories[oid] = []
                 trajectories[oid].append(tr)
             metadata.append(metadatum)
-            frame_process_time.append(time.time() - current_process_start)
 
         for trajectory in trajectories.values():
             for before, after in zip(trajectory[:-1], trajectory[1:]):
                 before.next = after
                 after.prev = before
-
-        self._benchmark.append(
-            {
-                "name": payload.video.videofile,
-                "frame_process_time": frame_process_time,
-            }
-        )
 
         return None, {self.classname(): metadata}
 

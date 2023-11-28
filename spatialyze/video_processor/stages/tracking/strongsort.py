@@ -1,4 +1,4 @@
-# import time
+import time
 from pathlib import Path
 from typing import Literal
 
@@ -27,6 +27,7 @@ class StrongSORT(Tracking):
         super().__init__()
         self.cache = cache
         self.method: "Literal['increment-ages', 'update-empty']" = method
+        self._benchmark = []
         # self.ss_benchmark = []
 
     # @cache
@@ -53,11 +54,14 @@ class StrongSORT(Tracking):
             strongsort.model.warmup()
             # init_end = time.time()
 
+            frame_process_time = []
+
             # update_time = 0
             # skip_time = 0
             # tracking_start = time.time()
             assert len(detections) == len(images)
             for idx, ((det, _, dids), im0s) in enumerate(StrongSORT.tqdm(zip(detections, images))):
+                current_process_start = time.time()
                 im0 = im0s.copy()
                 curr_frame = im0
 
@@ -70,6 +74,7 @@ class StrongSORT(Tracking):
 
                 if payload.keep[idx] and len(det) != 0:
                     strongsort.update(det.cpu(), dids, im0)
+                    frame_process_time.append(time.time() - current_process_start)
                     continue
 
                 # Skip if no detections or filtered frame
@@ -80,6 +85,7 @@ class StrongSORT(Tracking):
                     strongsort.update(torch.Tensor(0, 6), [], im0)
                 else:
                     raise Exception(f"method {self.method} is not supported")
+                frame_process_time.append(time.time() - current_process_start)
                 # skip_time += time.time() - skip_start
             # tracking_end = time.time()
 
@@ -117,5 +123,11 @@ class StrongSORT(Tracking):
         #     'update_camera': update_time,
         #     'postprocess': postprocess_end - postprocess_start,
         # })
+        self._benchmark.append(
+            {
+                "name": payload.video.videofile,
+                "frame_process_time": frame_process_time,
+            }
+        )
 
         return None, {self.classname(): metadata}
