@@ -1,3 +1,13 @@
-from .custom_fn import custom_fn
+from ...predicate import (
+    GenSqlVisitor,
+    ObjectTableNode,
+    PredicateNode,
+    call_node,
+    camera,
+)
 
-left_turn = custom_fn("leftTurn", 3)
+
+@call_node
+def left_turn(visitor: "GenSqlVisitor", args: "list[PredicateNode]"):
+    object = args[0]
+    return f"leftTurn({visitor(object.itemHeadings)}, Cameras.frameNum, Cameras.cameraId)"

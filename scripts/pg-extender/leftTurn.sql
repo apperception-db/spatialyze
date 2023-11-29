@@ -1,35 +1,67 @@
+-- DROP FUNCTION IF EXISTS leftTurn(tfloat, int, text);
+-- CREATE OR REPLACE FUNCTION leftTurn(itemHeadings tfloat, frameNum int, cameraId text) RETURNS boolean AS
+-- $BODY$
+-- DECLARE i int;
+-- DECLARE maxAngle real;
+-- DECLARE currentAngle real;
+-- BEGIN
+--     -- Turn Duration = 3sec. FPS = 30FPS. Frame 90 Frames
+--     i := frameNum - 90;
+--     maxAngle := valueAtTimestamp(itemHeadings, getTimestamp(frameNum, cameraId));
+
+--     WHILE i < frameNum + 90
+--     LOOP
+--         i := i + 30;
+--         currentAngle := valueAtTimestamp(itemHeadings, getTimestamp(frameNum, cameraId));
+--         if angleBetween(facingRelative(maxAngle, currentAngle), 75, 100) THEN
+--             RETURN true;
+--         END IF;
+--         maxAngle := MAX(maxAngle, currentAngle);
+--     END LOOP;
+
+--     RETURN false;
+-- END
+-- $BODY$
+-- LANGUAGE 'plpgsql' ;
+
 DROP FUNCTION IF EXISTS leftTurn(tfloat, int, text);
 CREATE OR REPLACE FUNCTION leftTurn(itemHeadings tfloat, frameNum int, cameraId text) RETURNS boolean AS
 $BODY$
-DECLARE i int;
-DECLARE maxAngle real;
+DECLARE nextFrame int;
+DECLARE prevFrame int;
 DECLARE currentAngle real;
-DECLARE LEFT_THRESHOLD real = 75;
+DECLARE nextAngle real;
+DECLARE prevAngle real;
 BEGIN
-    -- Turn Duration = 3sec. FPS = 30FPS. Frame 90 Frames
-    i := frameNum - 90;
-    maxAngle := valueAtTimestamp(itemHeadings, getTimestamp(frameNum, cameraId));
+    -- Turn Duration = 2sec. FPS = 30FPS. Frame 60 Frames
+    nextFrame := frameNum + 60;
+    prevFrame := frameNum - 60;
+    
+    currentAngle := valueAtTimestamp(itemHeadings, getTimestamp(frameNum, cameraId));
+    nextAngle = valueAtTimestamp(itemHeadings, getTimestamp(nextFrame, cameraId));
+    prevAngle = valueAtTimestamp(itemHeadings, getTimestamp(prevFrame, cameraId));
 
-    WHILE i < frameNum + 90
-    LOOP
-        i := i + 1;
-        currentAngle := valueAtTimestamp(itemHeadings, getTimestamp(frameNum, cameraId));
-        if angleBetween(facingRelative(currentAngle, maxAngle), 0, LEFT_THRESHOLD) THEN
-            RETURN true;
-        END IF;
-    END LOOP;
-
+    if angleBetween(facingRelative(currentAngle, nextAngle), 75, 100) THEN
+        RETURN true;
+    END IF;
+    if angleBetween(facingRelative(prevAngle, currentAngle), 75, 100) THEN
+        RETURN true;
+    END IF;
+    if angleBetween(facingRelative(prevAngle, nextAngle), 75, 100) THEN
+        RETURN true;
+    END IF;
+    
     RETURN false;
 END
 $BODY$
 LANGUAGE 'plpgsql' ;
 
 DROP FUNCTION IF EXISTS getTimestamp(int, text);
-CREATE OR REPLACE FUNCTION getTimestamp(frameNum int, cameraId text) RETURNS timestamptz AS
+CREATE OR REPLACE FUNCTION getTimestamp(frame int, camId text) RETURNS timestamptz AS
 $BODY$
 BEGIN
     return (SELECT timestamp FROM Cameras AS c 
-           WHERE c.cameraId = cameraId AND c.frameNum = frameNum);  
+           WHERE c.cameraId = camId AND c.frameNum = frame);  
 END
 $BODY$
 LANGUAGE 'plpgsql' ;
