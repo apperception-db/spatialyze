@@ -1,10 +1,4 @@
-from ...predicate import (
-    GenSqlVisitor,
-    ObjectTableNode,
-    PredicateNode,
-    call_node,
-    camera,
-)
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
 
 
 @call_node
