@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 import cv2
 
-from ...cache import cache
 from .decode_frame import DecodeFrame
 
 if TYPE_CHECKING:
