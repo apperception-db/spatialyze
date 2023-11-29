@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class DecodeFrame(Stage[np.ndarray]):
-    @cache
+    # @cache
     def _run(self, payload: "Payload"):
         metadata: "list[npt.NDArray]" = []
 
