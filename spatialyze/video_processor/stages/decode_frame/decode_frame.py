@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 import cv2
 import numpy as np
 
-from ...cache import cache
 from ..stage import Stage
 
 if TYPE_CHECKING:
