@@ -10,7 +10,6 @@ from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNo
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
-from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
