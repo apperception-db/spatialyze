@@ -122,10 +122,10 @@ def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    drop_tables(database)
-    create_tables(database)
-    for gc in world._geogConstructs:
-        gc.ingest(database)
+    # drop_tables(database)
+    # create_tables(database)
+    # for gc in world._geogConstructs:
+    #     gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
     if optimization:
