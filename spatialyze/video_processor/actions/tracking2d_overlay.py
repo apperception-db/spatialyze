@@ -56,11 +56,11 @@ def tracking2d_overlay(t2ds: list[list[TrackingResult]], video: Video, base_dir:
         for det in t2d:
             oid = det.object_id
             oid = int(oid)
-            l, t, w, h = det.bbox[:4]
-            l -= w / 2
-            t -= h / 2
-            start = (int(l), int(t))
-            end = (int(l + w), int(t + h))
+            left, top, width, height = det.bbox[:4]
+            left -= width / 2
+            top -= height / 2
+            start = (int(left), int(top))
+            end = (int(left + width), int(top + height))
 
             ccode = [
                 "#1f77b4",
