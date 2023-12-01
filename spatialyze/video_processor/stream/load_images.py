@@ -1,8 +1,8 @@
 import cv2
 import numpy.typing as npt
 
-from .data_types import Skip, skip
 from ..video.video import Video
+from .data_types import Skip, skip
 from .stream import Stream
 
 

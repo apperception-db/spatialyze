@@ -4,10 +4,10 @@ from typing import NamedTuple
 
 import numpy as np
 import numpy.typing as npt
-import torch
 import shapely.errors
-from shapely.geometry import Polygon
+import torch
 from scipy.optimize import linear_sum_assignment
+from shapely.geometry import Polygon
 
 from ..types import DetectionId
 from ..video import Video
@@ -52,21 +52,20 @@ class SORT(Stream[list[TrackingResult]]):
             for frameIdx, dlist in enumerate(self.detection2ds.stream(video)):
                 if not isinstance(dlist, Skip):
                     detectionMap: list[Detection] = [
-                        Detection(did, det.detach().cpu().numpy())
-                        for det, _, did in zip(*dlist)
+                        Detection(did, det.detach().cpu().numpy()) for det, _, did in zip(*dlist)
                     ]
-                    
+
                     matches, unmatched = hungarianMatcher(activeSequences, detectionMap)
                     for seqID, detection in matches.items():
                         sequences[seqID].append(detection)
-                    
+
                     # new sequences for unmatched detections
                     for detID in unmatched:
                         seqID = len(sequences)
                         seq = [detectionMap[detID]]
                         activeSequences[seqID] = seq
                         sequences.append(seq)
-                
+
                 # remove old active sequences
                 for seqID, seq in [*activeSequences.items()]:
                     lastTime = seq[-1].did.frame_idx
@@ -95,19 +94,18 @@ def _process_track(track: Sequence, tid: int):
 
 
 def hungarianMatcher(
-    sequences: dict[int, Sequence],
-    detections: list[Detection]
+    sequences: dict[int, Sequence], detections: list[Detection]
 ) -> tuple[dict[int, Detection], list[int]]:
     M, N = len(sequences), len(detections)
     if M == 0 or N == 0:
         return {}, list(range(N))
-    
+
     sequenceList: list[Sequence] = []
     sequenceIDs: list[int] = []
     for id, seq in sequences.items():
         sequenceList.append(seq)
         sequenceIDs.append(id)
-    
+
     detectionList: list[Detection] = detections
     costMatrix = np.empty((M, N))
     for i, seq in enumerate(sequenceList):
@@ -147,4 +145,3 @@ def hungarianMatcher(
         matched.add(j)
 
     return matches, list(set(range(N)) - matched)
-

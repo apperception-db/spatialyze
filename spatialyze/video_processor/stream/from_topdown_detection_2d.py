@@ -7,15 +7,17 @@ from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip, skip
 from .stream import Stream
 
-
 width = 1920
 height = 1080
-src_points = np.array([
-    [0, 0],
-    [width, 0],
-    [width, height],
-    [0, height],
-], dtype='float32').reshape(-1, 1, 2)
+src_points = np.array(
+    [
+        [0, 0],
+        [width, 0],
+        [width, height],
+        [0, height],
+    ],
+    dtype="float32",
+).reshape(-1, 1, 2)
 
 
 class FromTopDownDetection2D(Stream[Detection3D]):
@@ -37,7 +39,7 @@ class FromTopDownDetection2D(Stream[Detection3D]):
                 device = det.device
 
                 camera_frame: tuple[Float2, Float2, Float2, Float2] = frame[:4]
-                dst_points = np.array(camera_frame, dtype='float32').reshape(-1, 1, 2)
+                dst_points = np.array(camera_frame, dtype="float32").reshape(-1, 1, 2)
                 H, _ = cv2.findHomography(src_points, dst_points)
 
                 d2d = det[:, :4].cpu().numpy()
@@ -58,30 +60,35 @@ class FromTopDownDetection2D(Stream[Detection3D]):
                 br = d2d[:, :2].copy()
                 br += d2d[:, 2:4]
 
-                points = np.concatenate([tl, tr, br, bl], axis=0, dtype='float32')
+                points = np.concatenate([tl, tr, br, bl], axis=0, dtype="float32")
                 assert (N * 4, 2) == points.shape, points.shape
                 points = points.reshape(-1, 1, 2)
                 assert (N * 4, 1, 2) == points.shape, points.shape
                 # points = np.array(d2d[:, :2] + d2d[:, 2:4] / 2.0, dtype='float32').reshape(-1, 1, 2)
-                transformed_points = torch.tensor(cv2.perspectiveTransform(points, H), device=device)
+                transformed_points = torch.tensor(
+                    cv2.perspectiveTransform(points, H), device=device
+                )
                 zeros = torch.zeros((N, 1), device=device)
-                
-                tl = transformed_points[:N, 0, :]
-                tr = transformed_points[N:2*N, 0, :]
-                br = transformed_points[2*N:3*N, 0, :]
-                bl = transformed_points[3*N:4*N, 0, :]
 
-                d3d = torch.concatenate([
-                    det,
-                    tl,
-                    zeros,
-                    tr,
-                    zeros,
-                    br,
-                    zeros,
-                    bl,
-                    zeros,
-                ], dim=1)
+                tl = transformed_points[:N, 0, :]
+                tr = transformed_points[N : 2 * N, 0, :]
+                br = transformed_points[2 * N : 3 * N, 0, :]
+                bl = transformed_points[3 * N : 4 * N, 0, :]
+
+                d3d = torch.concatenate(
+                    [
+                        det,
+                        tl,
+                        zeros,
+                        tr,
+                        zeros,
+                        br,
+                        zeros,
+                        bl,
+                        zeros,
+                    ],
+                    dim=1,
+                )
                 assert (N, (d + 12)) == d3d.shape, d3d.shape
 
                 yield Detection3D(d3d, class_mapping, dids)

@@ -1,4 +1,14 @@
-from ctypes import Structure, c_float, c_int, c_void_p, POINTER, pointer, pointer, c_char_p, CDLL, RTLD_GLOBAL
+from ctypes import (
+    CDLL,
+    POINTER,
+    RTLD_GLOBAL,
+    Structure,
+    c_char_p,
+    c_float,
+    c_int,
+    c_void_p,
+    pointer,
+)
 from pathlib import Path
 from typing import NamedTuple
 
@@ -24,26 +34,22 @@ LIBDARKNET = DARKNET / "libdarknet.so"
 
 
 class BOX(Structure):
-    _fields_ = [("x", c_float),
-                ("y", c_float),
-                ("w", c_float),
-                ("h", c_float)]
+    _fields_ = [("x", c_float), ("y", c_float), ("w", c_float), ("h", c_float)]
 
 
 class DETECTION(Structure):
-    _fields_ = [("bbox", BOX),
-                ("classes", c_int),
-                ("prob", POINTER(c_float)),
-                ("mask", POINTER(c_float)),
-                ("objectness", c_float),
-                ("sort_class", c_int)]
+    _fields_ = [
+        ("bbox", BOX),
+        ("classes", c_int),
+        ("prob", POINTER(c_float)),
+        ("mask", POINTER(c_float)),
+        ("objectness", c_float),
+        ("sort_class", c_int),
+    ]
 
 
 class IMAGE(Structure):
-    _fields_ = [("w", c_int),
-                ("h", c_int),
-                ("c", c_int),
-                ("data", POINTER(c_float))]
+    _fields_ = [("w", c_int), ("h", c_int), ("c", c_int), ("data", POINTER(c_float))]
 
 
 lib = CDLL(str(LIBDARKNET), RTLD_GLOBAL)
@@ -56,7 +62,16 @@ set_gpu = lib.cuda_set_device
 set_gpu.argtypes = [c_int]
 
 get_network_boxes = lib.get_network_boxes
-get_network_boxes.argtypes = [c_void_p, c_int, c_int, c_float, c_float, POINTER(c_int), c_int, POINTER(c_int)]
+get_network_boxes.argtypes = [
+    c_void_p,
+    c_int,
+    c_int,
+    c_float,
+    c_float,
+    POINTER(c_int),
+    c_int,
+    POINTER(c_int),
+]
 get_network_boxes.restype = POINTER(DETECTION)
 
 free_detections = lib.free_detections
@@ -81,14 +96,15 @@ predict_image.argtypes = [c_void_p, IMAGE]
 predict_image.restype = POINTER(c_float)
 
 
-def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
+def detect(net, meta, image, thresh=0.5, hier_thresh=0.5, nms=0.45):
     im = load_image(image, 0, 0)
     num = c_int(0)
     pnum = pointer(num)
     predict_image(net, im)
     dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, None, 0, pnum)
     num = pnum[0]
-    if (nms): do_nms_obj(dets, num, meta.classes, nms);
+    if nms:
+        do_nms_obj(dets, num, meta.classes, nms)
 
     res: list[tuple[str, float, Float4]] = []
     for j in range(num):
@@ -125,14 +141,18 @@ class DetectTopDownCars(Stream[Detection2D]):
 
     def _stream(self, video: Video):
         with torch.no_grad():
-            for frame_idx, im0 in tqdm(enumerate(self.frames.stream(video)), total=len(video.camera_configs)):
+            for frame_idx, im0 in tqdm(
+                enumerate(self.frames.stream(video)), total=len(video.camera_configs)
+            ):
                 if isinstance(im0, Skip):
                     yield skip
                     continue
 
-                r: list[tuple[str, float, Float4]] = detect(self.net, self.meta, im0.encode("utf-8"), thresh=.3)
+                r: list[tuple[str, float, Float4]] = detect(
+                    self.net, self.meta, im0.encode("utf-8"), thresh=0.3
+                )
                 _dets = [(x, y, w, h, conf, 0) for _, conf, (x, y, w, h) in r]
                 dets: torch.Tensor = torch.tensor(_dets, dtype=torch.float32, device=self.device)
                 yield Detection2D(
-                    dets, ['car'], [DetectionId(frame_idx, order) for order in range(len(_dets))]
+                    dets, ["car"], [DetectionId(frame_idx, order) for order in range(len(_dets))]
                 )

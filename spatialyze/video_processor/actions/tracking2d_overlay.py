@@ -4,17 +4,21 @@ import cv2
 import numpy as np
 
 from ...utils.tqdm import tqdm
-from ..stream.load_images import LoadImages
 from ..stream.list_images import ListImages
-from ..video.video import Video
+from ..stream.load_images import LoadImages
 from ..stream.sort import TrackingResult
+from ..video.video import Video
+
 # from ..payload import Payload
 # from ..stages.decode_frame.decode_frame import DecodeFrame
 # from ..stages.tracking_2d.tracking_2d import Tracking2D
 
 
 def interpolate(prev: TrackingResult, next: TrackingResult, i: int):
-    return ((next.bbox * (next.detection_id.frame_idx - i)) + (prev.bbox * (i - prev.detection_id.frame_idx))) / (next.detection_id.frame_idx - prev.detection_id.frame_idx)
+    return (
+        (next.bbox * (next.detection_id.frame_idx - i))
+        + (prev.bbox * (i - prev.detection_id.frame_idx))
+    ) / (next.detection_id.frame_idx - prev.detection_id.frame_idx)
 
 
 def tracking2d_overlay(t2ds: list[list[TrackingResult]], video: Video, base_dir: str):
@@ -25,22 +29,24 @@ def tracking2d_overlay(t2ds: list[list[TrackingResult]], video: Video, base_dir:
     for tr in t2ds:
         prev: None | TrackingResult = None
         for det in tr:
-            fid = det.detection_id.frame_idx 
+            fid = det.detection_id.frame_idx
             if prev is not None:
                 for i in range(prev.detection_id.frame_idx + 1, fid):
-                    dets[i].append(TrackingResult(
-                        detection_id=None,
-                        object_id=det.object_id,
-                        confidence=det.confidence,
-                        bbox=interpolate(prev, det, i),
-                        object_type=det.object_type,
-                    ))
+                    dets[i].append(
+                        TrackingResult(
+                            detection_id=None,
+                            object_id=det.object_id,
+                            confidence=det.confidence,
+                            bbox=interpolate(prev, det, i),
+                            object_type=det.object_type,
+                        )
+                    )
             prev = det
             dets[fid].append(det)
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     # print('dir', videofile)
-    videofile = os.path.join(base_dir, video.videofile.split("/")[-1] + '.mp4')
+    videofile = os.path.join(base_dir, video.videofile.split("/")[-1] + ".mp4")
     out = cv2.VideoWriter(videofile, fourcc, int(15), (1920, 1080))
 
     for t2d, image in tqdm(zip(dets, images), total=len(dets)):
@@ -88,7 +94,6 @@ def tracking2d_overlay(t2ds: list[list[TrackingResult]], video: Video, base_dir:
 
     out.release()
     cv2.destroyAllWindows()
-    
 
 
 # def tracking2d_overlay(payload: "Payload", base_dir: "str"):

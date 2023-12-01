@@ -1,14 +1,13 @@
 from collections.abc import Iterable
 
+import numpy as np
 from postgis import MultiPoint
 from psycopg2 import sql
-import numpy as np
 
 from ...database import database
 from ..video import Video
 from .data_types import Skip
 from .stream import Stream
-
 
 BATCH_SIZE = 1000
 
@@ -55,7 +54,7 @@ def get_views(configs: list[list[tuple[float, float]]], start_idx: int):
         view_area = MultiPoint(view_area_2d[:4])
         view_areas.append(view_area)
         indices.append(ind)
-    if len(indices) == 0 :
-        print('get-views ----------------', configs)
+    if len(indices) == 0:
+        print("get-views ----------------", configs)
 
     return indices, view_areas
