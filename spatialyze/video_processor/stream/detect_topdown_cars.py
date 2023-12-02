@@ -12,9 +12,9 @@ from ctypes import (
 from pathlib import Path
 from typing import NamedTuple
 
-import torch
 import numpy as np
 import numpy.typing as npt
+import torch
 from tqdm.notebook import tqdm
 
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device

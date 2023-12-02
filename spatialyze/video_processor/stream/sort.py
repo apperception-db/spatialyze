@@ -54,7 +54,8 @@ class SORT(Stream[list[TrackingResult]]):
                 if not isinstance(dlist, Skip):
                     detectionMap: list[Detection] = [
                         # Detection(did, det.detach().cpu().numpy()) for det, _, did in zip(*dlist)
-                        Detection(did, det) for det, _, did in zip(*dlist)
+                        Detection(did, det)
+                        for det, _, did in zip(*dlist)
                     ]
 
                     matches, unmatched = hungarianMatcher(activeSequences, detectionMap)
