@@ -41,13 +41,13 @@ BEGIN
     nextAngle = valueAtTimestamp(itemHeadings, getTimestamp(nextFrame, cameraId));
     prevAngle = valueAtTimestamp(itemHeadings, getTimestamp(prevFrame, cameraId));
 
-    if angleBetween(facingRelative(currentAngle, nextAngle), 75, 100) THEN
+    if angleBetween(facingRelative(currentAngle, nextAngle), 60, 100) THEN
         RETURN true;
     END IF;
-    if angleBetween(facingRelative(prevAngle, currentAngle), 75, 100) THEN
+    if angleBetween(facingRelative(prevAngle, currentAngle), 60, 100) THEN
         RETURN true;
     END IF;
-    if angleBetween(facingRelative(prevAngle, nextAngle), 75, 100) THEN
+    if angleBetween(facingRelative(prevAngle, nextAngle), 60, 100) THEN
         RETURN true;
     END IF;
     

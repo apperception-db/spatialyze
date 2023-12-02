@@ -20,15 +20,20 @@ from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 
 # %%
-OUTPUT_DIR = '../../data/pipeline/test-results'
-VIDEO_DIR =  '/home/youse/videos' # '../../data/pipeline/videos'
-ROAD_DIR = '../../data/scenic/road-network/boston-seaport'
+OUTPUT_DIR = '/home/youse/viva-results'
+VIDEO_DIR =  '/home/youse/viva-data' # '../../data/pipeline/videos'
+# ROAD_DIR = '../../data/scenic/road-network/boston-seaport'
 
 files = os.listdir(VIDEO_DIR)
-with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
-    videos = pickle.load(f)
+
+
 
 disable_cache()
+
+# %%
+# First run = 8015.9125235sec
+# We want 240 * 20sec =  4800sec worth of video. So we will use 4800s/5s = 960 videos
+files = [x for x in files if int(x.split(".")[0]) <= 960]
 
 # %%
 # database = Database(
@@ -43,15 +48,48 @@ disable_cache()
 
 # %%
 world = World(database)
-world.addGeogConstructs(RoadNetwork('Boston-Seaport', ROAD_DIR))
+# world.addGeogConstructs(RoadNetwork('Boston-Seaport', ROAD_DIR))
 
 # %%
-for video in videos.values():
-    if video['filename'] not in files:
-        continue
+from pyquaternion import Quaternion
 
-    videofile = os.path.join(VIDEO_DIR, video['filename'])
-    camera = [camera_config(*c) for c in video['frames']]
+CAMERA_INTRINSIC = np.array([
+    [1272,    0, 960],
+    [   0, 1272, 540],
+    [   0,    0,   1]
+])
+
+CAMERA_TRANSLATION = np.array([0, 0, 5])
+
+CAMERA_ROTATION = Quaternion((0.430, -0.561, 0.561, -0.430))
+
+# %%
+import cv2
+import datetime
+
+for video in files:
+    videofile = os.path.join(VIDEO_DIR, video)
+    
+    cap = cv2.VideoCapture(videofile)
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    camera = []
+    for frame in range(frame_count):
+        camera.append(camera_config(
+            camera_id=video,
+            camera_heading=90,
+            camera_intrinsic=CAMERA_INTRINSIC,
+            camera_translation=CAMERA_TRANSLATION,
+            ego_heading=0,
+            ego_rotation=Quaternion((1, 0, 0, 0)),
+            camera_rotation=CAMERA_ROTATION,
+            filename=videofile,
+            ego_translation=np.array([0, 0, 0]),
+            frame_id=frame,
+            frame_num=frame,
+            location="viva-data",
+            timestamp=datetime.datetime.fromtimestamp(frame + 10),
+            road_direction=0,
+        ))
 
     world.addVideo(GeospatialVideo(videofile, camera))
 
@@ -59,19 +97,19 @@ for video in videos.values():
 from spatialyze.utils import F
 
 o = world.object()
-p = world.object()
+# p = world.object()
 c = world.camera()
 world.filter(
-    (o.type == 'car') & (p.type == 'person') &
-    F.contains_all('intersection', [o.trans, p.trans]@c.time) &
-    F.left_turn(o) 
+    (o.type == 'car') &
+    # F.contained(o.trans@c.time, 'intersection') &
+    F.left_turn(o)
 )
 
 # %%
 import time
 
+print("running query")
 start = time.time()
-print("hi")
 result = world.getObjects()
 end = time.time()
 
@@ -81,9 +119,10 @@ print("result", format(end-start))
 
 
 # %%
+# result = world.getObjects()
 # result
 
-# %%
+# # %%
 # world.saveVideos(outputDir=OUTPUT_DIR, addBoundingBoxes=True)
 
-# result 3819.9058001041412
+
