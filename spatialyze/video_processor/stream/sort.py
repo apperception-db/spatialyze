@@ -18,7 +18,8 @@ FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
 WEIGHTS = SPATIALYZE / "weights"
 REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
-EMPTY_DETECTION = torch.Tensor(0, 6)
+# EMPTY_DETECTION = torch.Tensor(0, 6)
+EMPTY_DETECTION = np.empty((0, 6))
 
 
 @dataclass
@@ -52,7 +53,8 @@ class SORT(Stream[list[TrackingResult]]):
             for frameIdx, dlist in enumerate(self.detection2ds.stream(video)):
                 if not isinstance(dlist, Skip):
                     detectionMap: list[Detection] = [
-                        Detection(did, det.detach().cpu().numpy()) for det, _, did in zip(*dlist)
+                        # Detection(did, det.detach().cpu().numpy()) for det, _, did in zip(*dlist)
+                        Detection(did, det) for det, _, did in zip(*dlist)
                     ]
 
                     matches, unmatched = hungarianMatcher(activeSequences, detectionMap)
@@ -79,7 +81,8 @@ class SORT(Stream[list[TrackingResult]]):
 def _process_track(track: Sequence, tid: int):
     def tracking_result(detection: Detection):
         did, det = detection
-        return TrackingResult(did, tid, det[6], torch.from_numpy(det), "car")
+        # return TrackingResult(did, tid, det[6], torch.from_numpy(det), "car")
+        return TrackingResult(did, tid, det[6], det, "car")
 
     # Sort track by frame idx
     _track = map(tracking_result, track)

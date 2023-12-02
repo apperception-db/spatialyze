@@ -33,16 +33,18 @@ class FromTopDownDetection2D(Stream[Detection3D]):
 
                 det, class_mapping, dids = d2d
                 if len(det) == 0:
-                    yield Detection3D(torch.tensor([], device=det.device), class_mapping, dids)
+                    # yield Detection3D(torch.tensor([], device=det.device), class_mapping, dids)
+                    yield Detection3D(np.array([]), class_mapping, dids)
                     continue
 
-                device = det.device
+                # device = det.device
 
                 camera_frame: tuple[Float2, Float2, Float2, Float2] = frame[:4]
                 dst_points = np.array(camera_frame, dtype="float32").reshape(-1, 1, 2)
                 H, _ = cv2.findHomography(src_points, dst_points)
 
-                d2d = det[:, :4].cpu().numpy()
+                # d2d = det[:, :4].cpu().numpy()
+                d2d = det[:, :4]
                 assert isinstance(d2d, np.ndarray)
 
                 _, d = det.shape
@@ -65,17 +67,17 @@ class FromTopDownDetection2D(Stream[Detection3D]):
                 points = points.reshape(-1, 1, 2)
                 assert (N * 4, 1, 2) == points.shape, points.shape
                 # points = np.array(d2d[:, :2] + d2d[:, 2:4] / 2.0, dtype='float32').reshape(-1, 1, 2)
-                transformed_points = torch.tensor(
-                    cv2.perspectiveTransform(points, H), device=device
-                )
-                zeros = torch.zeros((N, 1), device=device)
+                # transformed_points = torch.tensor(cv2.perspectiveTransform(points, H), device=device)
+                transformed_points = np.array(cv2.perspectiveTransform(points, H))
+                # zeros = torch.zeros((N, 1), device=device)
+                zeros = np.zeros((N, 1))
 
                 tl = transformed_points[:N, 0, :]
                 tr = transformed_points[N : 2 * N, 0, :]
                 br = transformed_points[2 * N : 3 * N, 0, :]
                 bl = transformed_points[3 * N : 4 * N, 0, :]
 
-                d3d = torch.concatenate(
+                d3d = np.concatenate(
                     [
                         det,
                         tl,
@@ -87,7 +89,7 @@ class FromTopDownDetection2D(Stream[Detection3D]):
                         bl,
                         zeros,
                     ],
-                    dim=1,
+                    axis=1,
                 )
                 assert (N, (d + 12)) == d3d.shape, d3d.shape
 

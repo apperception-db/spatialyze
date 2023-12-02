@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import NamedTuple
 
 import torch
+import numpy as np
+import numpy.typing as npt
 from tqdm.notebook import tqdm
 
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
@@ -96,6 +98,9 @@ predict_image.argtypes = [c_void_p, IMAGE]
 predict_image.restype = POINTER(c_float)
 
 
+set_gpu(0)
+
+
 def detect(net, meta, image, thresh=0.5, hier_thresh=0.5, nms=0.45):
     im = load_image(image, 0, 0)
     num = c_int(0)
@@ -116,9 +121,6 @@ def detect(net, meta, image, thresh=0.5, hier_thresh=0.5, nms=0.45):
     free_image(im)
     free_detections(dets, num)
     return res
-
-
-set_gpu(1)
 
 
 class YoloMeta(NamedTuple):
@@ -152,7 +154,8 @@ class DetectTopDownCars(Stream[Detection2D]):
                     self.net, self.meta, im0.encode("utf-8"), thresh=0.3
                 )
                 _dets = [(x, y, w, h, conf, 0) for _, conf, (x, y, w, h) in r]
-                dets: torch.Tensor = torch.tensor(_dets, dtype=torch.float32, device=self.device)
+                # dets: torch.Tensor = torch.tensor(_dets, dtype=torch.float32, device=self.device)
+                dets: npt.NDArray = np.array(_dets, dtype=np.float32)
                 yield Detection2D(
                     dets, ["car"], [DetectionId(frame_idx, order) for order in range(len(_dets))]
                 )
