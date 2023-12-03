@@ -8,5 +8,5 @@
 	branch = module
 [submodule "spatialyze/video_processor/modules/yolo_deepsort"]
 	path = spatialyze/video_processor/modules/yolo_deepsort
-	url = https://github.com/mikel-brostrom/yolo_tracking.git
-	branch = 8bd72cadfae822bbabdc67a45b9d57abbfdf0135
+	url = git@github.com:apperception-db/yolo_tracking.git
+	branch = spatialyze
