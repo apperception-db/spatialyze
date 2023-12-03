@@ -4,16 +4,15 @@ from pathlib import Path
 import torch
 
 from ...cache import cache
+from ...modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
+from ...modules.yolo_deepsort.deep_sort.utils.parser import get_config
+from ...modules.yolo_deepsort.yolov5.utils.general import xyxy2xywh
+from ...modules.yolo_deepsort.yolov5.utils.torch_utils import select_device
 from ...payload import Payload
+from ...types import DetectionId
 from ..decode_frame.decode_frame import DecodeFrame
 from ..detection_2d.detection_2d import Detection2D
-from ...types import DetectionId
 from .tracking import Tracking, TrackingResult
-
-from ...modules.yolo_deepsort.yolov5.utils.torch_utils import select_device
-from ...modules.yolo_deepsort.deep_sort.utils.parser import get_config
-from ...modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
-from ...modules.yolo_deepsort.yolov5.utils.general import xyxy2xywh
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent.parent
@@ -39,16 +38,18 @@ class DeepSORT(Tracking):
         metadata: "list[list[TrackingResult]]" = [[] for _ in range(len(payload.video))]
 
         with torch.no_grad():
-            device = select_device('0')
+            device = select_device("0")
             # initialize deepsort
             cfg = get_config()
-            cfg.merge_from_file('deep_sort/configs/deep_sort.yaml')
+            cfg.merge_from_file("deep_sort/configs/deep_sort.yaml")
             deepsort = DeepSort(
-                model_type='osnet_x0_25',
+                model_type="osnet_x0_25",
                 device=device,
                 max_dist=cfg.DEEPSORT.MAX_DIST,
                 max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
-                max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
+                max_age=cfg.DEEPSORT.MAX_AGE,
+                n_init=cfg.DEEPSORT.N_INIT,
+                nn_budget=cfg.DEEPSORT.NN_BUDGET,
             )
 
             assert len(detections) == len(images)
@@ -77,8 +78,7 @@ class DeepSORT(Tracking):
 
                 # Sort track by frame idx
                 _track = sorted(
-                    map(tracking_result, zip(track.detection_ids, track.confs)),
-                    key=frame_idx
+                    map(tracking_result, zip(track.detection_ids, track.confs)), key=frame_idx
                 )
 
                 # Link track
