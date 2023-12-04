@@ -6,3 +6,7 @@
 	path = spatialyze/video_processor/modules/yolo_tracker
 	url = git@github.com:apperception-db/Yolov5_StrongSORT_OSNet.git
 	branch = module
+[submodule "spatialyze/video_processor/modules/yolo_deepsort"]
+	path = spatialyze/video_processor/modules/yolo_deepsort
+	url = git@github.com:apperception-db/yolo_tracking.git
+	branch = spatialyze
