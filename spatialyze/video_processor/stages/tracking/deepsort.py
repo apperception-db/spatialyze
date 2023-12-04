@@ -111,6 +111,10 @@ class DeepSORT(Tracking):
 
             assert len(detections) == len(images)
             for idx, ((det, _, dids), im0s) in enumerate(DeepSORT.tqdm(zip(detections, images))):
+                if not payload.keep[idx] or len(det) == 0:
+                    deepsort.increment_ages()
+                    continue
+
                 im0 = im0s.copy()
 
                 xywhs = xyxy2xywh(det[:, 0:4])
@@ -118,11 +122,7 @@ class DeepSORT(Tracking):
                 confs = det[:, 4]
                 clss = det[:, 5]
 
-                if payload.keep[idx] and len(det) != 0:
-                    deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0, dids)
-                    continue
-
-                deepsort.increment_ages()
+                deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0, dids)
 
             # postprocess_start = time.time()
             for track in deepsort.tracker.tracks + deepsort.tracker.deleted_tracks:
