@@ -122,7 +122,7 @@ class DeepSORT(Tracking):
                 confs = det[:, 4]
                 clss = det[:, 5]
 
-                deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0, dids)
+                deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), dids, im0)
 
             # postprocess_start = time.time()
             for track in deepsort.tracker.tracks + deepsort.tracker.deleted_tracks:
