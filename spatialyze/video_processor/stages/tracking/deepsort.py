@@ -98,7 +98,9 @@ class DeepSORT(Tracking):
             device = select_device("0")
             # initialize deepsort
             cfg = get_config()
-            cfg.merge_from_file("deep_sort/configs/deep_sort.yaml")
+            cfg.merge_from_file(
+                "/home/youse/spatialyze/spatialyze/video_processor/modules/yolo_deepsort/deep_sort/configs/deep_sort.yaml"
+            )
             deepsort = DeepSort(
                 model_type="osnet_x0_25",
                 device=device,
