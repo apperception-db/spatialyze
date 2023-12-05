@@ -31,7 +31,7 @@ files = os.listdir(VIDEO_DIR)
 disable_cache()
 
 # %%
-# First run = 8015.9125235sec
+# First run = 8015.9125235sec. Deepsort run = 8616.58
 # We want 240 * 20sec =  4800sec worth of video. So we will use 4800s/5s = 960 videos
 files = [x for x in files if int(x.split(".")[0]) <= 960]
 
@@ -101,11 +101,11 @@ o = world.object()
 c = world.camera()
 world.filter(
     (o.type == 'car') &
-    # F.contained(o.trans@c.time, 'intersection') &
+    F.contained(o.trans@c.time, 'intersection') &
     F.left_turn(o)
 )
 
-# %%
+# %% 43452.52154326439, 8616.582023859024
 import time
 
 print("running query")

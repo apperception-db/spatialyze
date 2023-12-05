@@ -26,6 +26,7 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.stage import Stage
 from .video_processor.stages.tracking_2d.strongsort import StrongSORT
+from .video_processor.stages.tracking_2d.deepsort import DeepSORT
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_detection_3d import (
     FromTracking2DAndDetection3D,
 )
@@ -140,7 +141,7 @@ def _execute(world: "World", optimization=True):
     else:
         steps.append(DepthEstimation())
         steps.append(FromDetection2DAndDepth())
-    steps.append(StrongSORT())
+    steps.append(DeepSORT())
     steps.append(FromTracking2DAndDetection3D())
 
     pipeline = Pipeline(steps)
@@ -155,7 +156,7 @@ def _execute(world: "World", optimization=True):
         video = Video(v.video, v.camera)
         keep = v.keep
         output = pipeline.run(Payload(video, keep))
-        track_result = StrongSORT.get(output)
+        track_result = DeepSORT.get(output)
         assert track_result is not None
         tracking3d = Tracking3D.get(output)
         assert tracking3d is not None
