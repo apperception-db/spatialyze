@@ -25,7 +25,6 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
 )
 from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.stage import Stage
-from .video_processor.stages.tracking_2d.strongsort import StrongSORT
 from .video_processor.stages.tracking_2d.deepsort import DeepSORT
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_detection_3d import (
     FromTracking2DAndDetection3D,
