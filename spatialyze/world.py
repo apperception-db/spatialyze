@@ -9,6 +9,7 @@ from .geospatial_video import GeospatialVideo
 from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode, lit
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
+from .utils.ingest_road import create_tables, drop_tables
 from .utils.get_object_list import get_object_list
 from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
@@ -121,10 +122,10 @@ def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    # drop_tables(database)
-    # create_tables(database)
-    # for gc in world._geogConstructs:
-    #     gc.ingest(database)
+    drop_tables(database)
+    create_tables(database)
+    for gc in world._geogConstructs:
+        gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
     if optimization:
