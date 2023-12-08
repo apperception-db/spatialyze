@@ -70,7 +70,7 @@ def _3d_to_2d(
     return left, top, right, bottom
 
 
-classes = [
+yolo_classes = [
     "person",
     "bicycle",
     "car",
@@ -220,10 +220,12 @@ class GroundTruthDetection(Detection2D):
                 ids.append(a["token"])
 
             if len(tensor) == 0:
-                metadata.append(Metadatum(torch.Tensor([]), classes, []))
+                metadata.append(Metadatum(torch.Tensor([]), yolo_classes, []))
             else:
                 metadata.append(
-                    Metadatum(torch.Tensor(tensor), classes, [DetectionId(i, _id) for _id in ids])
+                    Metadatum(
+                        torch.Tensor(tensor), yolo_classes, [DetectionId(i, _id) for _id in ids]
+                    )
                 )
 
         return None, {self.classname(): metadata}

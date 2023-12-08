@@ -10,3 +10,6 @@
 	path = spatialyze/video_processor/modules/yolo_deepsort
 	url = git@github.com:apperception-db/yolo_tracking.git
 	branch = spatialyze
+[submodule "spatialyze/video_processor/modules/darknet"]
+	path = spatialyze/video_processor/modules/darknet
+	url = git@github.com:apperception-db/darknet.git

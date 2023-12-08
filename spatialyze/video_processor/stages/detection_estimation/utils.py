@@ -317,13 +317,14 @@ def get_car_exits_view_frame_num(
     start_frame_num = detection_info.detection_id.frame_idx
     car_speed = max_car_speed(road_type)
     car_heading += 90
-    while detection_info.detection_id.frame_idx + 1 < max_frame_num:
-        next_frame_num = detection_info.detection_id.frame_idx + 1
+    frame_idx = detection_info.detection_id.frame_idx
+    while frame_idx + 1 < max_frame_num:
+        next_frame_num = frame_idx + 1
         next_ego_view = ego_views[next_frame_num]
         next_ego_view = shapely.wkb.loads(next_ego_view.to_ewkb(), hex=True)
         duration = (next_frame_num - start_frame_num) / fps
         next_car_loc = car_move(car_loc, car_heading, car_speed, duration)
         if not next_ego_view.contains(shapely.geometry.Point(next_car_loc[:2])):
-            return max(detection_info.detection_id.frame_idx, start_frame_num + 1)
-        detection_info.detection_id.frame_idx = next_frame_num
+            return max(frame_idx, start_frame_num + 1)
+        frame_idx = next_frame_num
     return max_frame_num
