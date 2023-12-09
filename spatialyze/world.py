@@ -122,14 +122,14 @@ def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    drop_tables(database)
-    create_tables(database)
-    for gc in world._geogConstructs:
-        gc.ingest(database)
+    # drop_tables(database)
+    # create_tables(database)
+    # for gc in world._geogConstructs:
+    #     gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
-    if optimization:
-        steps.append(InView(distance=50, predicate=world.predicates))
+    # if optimization:
+    #     steps.append(InView(distance=50, predicate=world.predicates))
     steps.append(DecodeFrame())
     steps.append(YoloDetection())
     if optimization:
