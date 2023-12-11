@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
+import datetime
 
 import numpy as np
 import numpy.typing as npt
@@ -7,11 +8,13 @@ import torch
 
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
-from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track
+from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track as TrackS
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
+from ..modules.yolo_deepsort.deep_sort.sort.track import Track as TrackD
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
+from ..camera_config import CameraConfig
 from .data_types import Detection2D, Skip
 from .stream import Stream
 
@@ -20,6 +23,8 @@ SPATIALYZE = FILE.parent.parent.parent.parent
 WEIGHTS = SPATIALYZE / "weights"
 REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
 EMPTY_DETECTION = torch.Tensor(0, 6)
+
+Track = TrackS | TrackD
 
 
 class StrongSORT(Stream[Tracking2DResult]):
@@ -70,11 +75,11 @@ class StrongSORT(Stream[Tracking2DResult]):
 
                 deleted_tracks = strongsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
-                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections, clss)
+                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections, clss, video.camera_configs)
                     deleted_tracks_idx += 1
                 # skip_time += time.time() - skip_start
             for track in strongsort.tracker.tracks:
-                yield _process_track(track, saved_detections, clss)
+                yield _process_track(track, saved_detections, clss, video.camera_configs)
             # tracking_end = time.time()
 
         # self.ss_benchmark.append({
@@ -95,11 +100,17 @@ class TrackingResult:
     confidence: float | np.float32
     bbox: torch.Tensor
     object_type: str
+    timestamp: datetime.datetime
     next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
     prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
 
 
-def _process_track(track: Track, detections: list[torch.Tensor], clss: list[str] | None):
+def _process_track(
+    track: Track,
+    detections: list[torch.Tensor],
+    clss: list[str] | None,
+    camera_configs: list[CameraConfig],
+):
     tid = track.track_id
     assert isinstance(tid, int), type(tid)
 
@@ -111,7 +122,7 @@ def _process_track(track: Track, detections: list[torch.Tensor], clss: list[str]
         assert isinstance(oid, int), type(oid)
         bbox = detections[fid][oid]
         cls = int(bbox[5])
-        return TrackingResult(did, tid, conf, detections[fid][oid], clss[cls])
+        return TrackingResult(did, tid, conf, detections[fid][oid], clss[cls], camera_configs[fid].timestamp)
 
     # Sort track by frame idx
     _track = map(tracking_result, zip(track.detection_ids, track.confs))
