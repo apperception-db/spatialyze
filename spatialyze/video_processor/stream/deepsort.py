@@ -1,6 +1,6 @@
-from pathlib import Path
-import sys
 import os
+import sys
+from pathlib import Path
 
 import numpy as np
 import numpy.typing as npt
@@ -8,8 +8,8 @@ import torch
 
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip
-from .strongsort import TrackingResult, _process_track
 from .stream import Stream
+from .strongsort import TrackingResult, _process_track
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
@@ -42,7 +42,6 @@ sys.path.append(str(TORCHREID))
 
 from ..modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
 from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
-from ..modules.yolo_deepsort.deep_sort.sort.track import Track
 
 
 def xyxy2xywh(x):
@@ -80,7 +79,9 @@ def select_device(device="", batch_size=0, newline=True):
 
 
 class DeepSORT(Stream[list[TrackingResult]]):
-    def __init__(self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]):
+    def __init__(
+        self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]
+    ):
         self.detection2ds = detections
         self.frames = frames
 
@@ -125,7 +126,12 @@ class DeepSORT(Stream[list[TrackingResult]]):
 
                 deleted_tracks = deepsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
-                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections, classes, video.camera_configs)
+                    yield _process_track(
+                        deleted_tracks[deleted_tracks_idx],
+                        saved_detections,
+                        classes,
+                        video.camera_configs,
+                    )
                     deleted_tracks_idx += 1
             for track in deepsort.tracker.tracks:
                 yield _process_track(track, saved_detections, classes, video.camera_configs)
