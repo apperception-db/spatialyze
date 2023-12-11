@@ -1,0 +1,49 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_13_2)">
+<!-- intersection -->
+<path d="M1888 658L1799.5 977.5H1771L1739 988.5L1712.5 1002L1680 1022L469 812L500.5 801.5L515 788L520.5 775L513 755.5L489.5 747.5L960.5 622L1013 620.5L1097.5 611.5L1150.5 602L1791.5 621L1799.5 631L1823 643L1841.5 650L1888 658Z" stroke="black"/>
+<!-- intersection - segment -->
+<path d="M1186 736.5L1306 708.5" stroke="black"/>
+
+
+<!-- lane - south/out -->
+<path d="M-95 947L469 812L1011 907L123.5 1293L-95 947Z" stroke="black"/>
+<!-- lane - south/in -->
+<path d="M210.5 1256L1012.5 906L1680 1022L1245 1363L210.5 1256Z" stroke="black"/>
+<!-- lane - east/out -->
+<path d="M1799.5 977L1850 794.5L2262.5 814.5L2255 1034.5L1799.5 977Z" stroke="black"/>
+<!-- lane - east/in -->
+<path d="M1888 658.5L1850 794.5L2262.5 814.5V658.5H1888Z" stroke="black"/>
+<!-- lane - north/out -->
+<path d="M1754.5 491.5L1439 610L1791 620.5L1908.5 491.5H1754.5Z" stroke="black"/>
+<!-- lane - north/in -->
+<path d="M1439 610.5L1754.5 491.5H1645L1149.5 601.5L1439 610.5Z" stroke="black"/>
+<!-- lane - west/out -->
+<path d="M92.5 617.5L734.5 682L960 622L174 594L92.5 617.5Z" stroke="black"/>
+<!-- lane - west/in -->
+<path d="M9 656.5L489.5 747.5L734.5 682L93 617.5L9 656.5Z" stroke="black"/>
+
+
+<!-- lane - south/out - segment -->
+<path d="M469 812L-95 947" stroke="black"/>
+<!-- lane - south/in - segment -->
+<path d="M1680 1022L1245 1363" stroke="black"/>
+<!-- lane - east/out - segment -->
+<path d="M1799.5 977L2255 1034.5" stroke="black"/>
+<!-- lane - east/in - segment -->
+<path d="M1888 658.5H2262.5" stroke="black"/>
+<!-- lane - north/out - segment -->
+<path d="M1908.5 491.5L1791 620.5" stroke="black"/>
+<!-- lane - north/in - segment -->
+<path d="M1149.5 601.5L1645 491.5" stroke="black"/>
+<!-- lane - west/out - segment -->
+<path d="M174 594L960 622" stroke="black"/>
+<!-- lane - west/in - segment -->
+<path d="M489.5 747.5L9 656.5" stroke="black"/>
+</g>
+<defs>
+<clipPath id="clip0_13_2">
+<rect width="1920" height="1080" fill="white"/>
+</clipPath>
+</defs>
+</svg>
