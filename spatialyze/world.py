@@ -130,9 +130,10 @@ def _execute(world: "World", optimization=True):
         database.reset()
 
         # analyze predicates to generate video processing plan
-        inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
-        decode0 = DecodeFrame()
-        decode = PruneFrames(inview, decode0)
+        decode = DecodeFrame()
+        if optimization:
+            inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
+            decode = PruneFrames(inview, decode)
         d2ds = Yolo(decode)
         if optimization:
             d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
