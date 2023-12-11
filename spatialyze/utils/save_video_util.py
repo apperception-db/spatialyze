@@ -4,7 +4,7 @@ from typing import NamedTuple
 import cv2
 
 from ..data_types.query_result import QueryResult
-from ..video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
+from ..video_processor.stream.deepsort import TrackingResult
 from .get_object_list import MovableObject, get_object_list
 
 TEXT_PADDING = 5
@@ -12,7 +12,7 @@ TEXT_PADDING = 5
 
 def save_video_util(
     objects: "dict[str, list[QueryResult]]",
-    trackings: "dict[str, list[T3DMetadatum]]",
+    trackings: "dict[str, list[list[TrackingResult]]]",
     outputDir: "str",
     addBoundingBoxes: "bool" = False,
 ) -> "list[tuple[str, int]]":

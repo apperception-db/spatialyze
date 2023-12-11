@@ -14,7 +14,6 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
-from ...cache import cache
 from ...modules.yolo_tracker.yolov5.utils.augmentations import letterbox
 from ...modules.yolo_tracker.yolov5.utils.general import (
     check_img_size,
@@ -70,7 +69,7 @@ class YoloDetection(Detection2D):
         self.agnostic_nms = agnostic_nms
         self.augment = augment
 
-    @cache
+    # @cache
     def _run(self, payload: "Payload"):
         if YoloDetection.progress:
             print(self.device)
