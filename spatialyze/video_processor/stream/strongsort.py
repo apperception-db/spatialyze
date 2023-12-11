@@ -1,20 +1,20 @@
+import datetime
 from dataclasses import dataclass, field
 from pathlib import Path
-import datetime
 
 import numpy as np
 import numpy.typing as npt
 import torch
 
+from ..camera_config import CameraConfig
+from ..modules.yolo_deepsort.deep_sort.sort.track import Track as TrackD
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
 from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track as TrackS
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
-from ..modules.yolo_deepsort.deep_sort.sort.track import Track as TrackD
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
-from ..camera_config import CameraConfig
 from .data_types import Detection2D, Skip
 from .stream import Stream
 
@@ -75,7 +75,12 @@ class StrongSORT(Stream[Tracking2DResult]):
 
                 deleted_tracks = strongsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
-                    yield _process_track(deleted_tracks[deleted_tracks_idx], saved_detections, clss, video.camera_configs)
+                    yield _process_track(
+                        deleted_tracks[deleted_tracks_idx],
+                        saved_detections,
+                        clss,
+                        video.camera_configs,
+                    )
                     deleted_tracks_idx += 1
                 # skip_time += time.time() - skip_start
             for track in strongsort.tracker.tracks:
@@ -122,7 +127,9 @@ def _process_track(
         assert isinstance(oid, int), type(oid)
         bbox = detections[fid][oid]
         cls = int(bbox[5])
-        return TrackingResult(did, tid, conf, detections[fid][oid], clss[cls], camera_configs[fid].timestamp)
+        return TrackingResult(
+            did, tid, conf, detections[fid][oid], clss[cls], camera_configs[fid].timestamp
+        )
 
     # Sort track by frame idx
     _track = map(tracking_result, zip(track.detection_ids, track.confs))

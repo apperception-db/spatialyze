@@ -67,11 +67,7 @@ def get_object_list(
     for video in objects:
         _trackings = trackings[video]
         _trackings = {
-            tr[0].object_id: {
-                t.detection_id.frame_idx: t
-                for t in tr
-            }
-            for tr in _trackings
+            tr[0].object_id: {t.detection_id.frame_idx: t for t in tr} for tr in _trackings
         }
         for obj in objects[video]:
             frameId, cameraId, _, objectIds = obj
