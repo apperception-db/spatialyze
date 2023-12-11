@@ -17,6 +17,17 @@ FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent.parent
 WEIGHTS = SPATIALYZE / "weights"
 
+DEEPSORT = (
+    SPATIALYZE
+    / "spatialyze"
+    / "video_processor"
+    / "modules"
+    / "yolo_deepsort"
+    / "deep_sort"
+    / "configs"
+    / "deep_sort.yaml"
+)
+
 TORCHREID = (
     SPATIALYZE
     / "spatialyze"
@@ -98,9 +109,7 @@ class DeepSORT(Tracking):
             device = select_device("0")
             # initialize deepsort
             cfg = get_config()
-            cfg.merge_from_file(
-                "/home/youse/spatialyze/spatialyze/video_processor/modules/yolo_deepsort/deep_sort/configs/deep_sort.yaml"
-            )
+            cfg.merge_from_file(str(DEEPSORT))
             deepsort = DeepSort(
                 model_type="osnet_x0_25",
                 device=device,
