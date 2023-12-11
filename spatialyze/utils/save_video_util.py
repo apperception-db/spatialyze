@@ -35,7 +35,7 @@ def save_video_util(
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         vid_writer = cv2.VideoWriter(
-            output_file, cv2.VideoWriter_fourcc(*"mp4v"), 30, (width, height)
+            output_file, cv2.VideoWriter_fourcc(*"mp4v"), 1, (width, height)
         )
 
         frame_cnt = 0

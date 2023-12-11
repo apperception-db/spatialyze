@@ -10,7 +10,6 @@ from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNo
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
-from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
 from .video_processor.payload import Payload
 from .video_processor.pipeline import Pipeline
@@ -24,7 +23,6 @@ from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
 from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
     FromDetection2DAndRoad,
 )
-from .video_processor.stages.in_view.in_view import InView
 from .video_processor.stages.stage import Stage
 from .video_processor.stages.tracking_2d.deepsort import DeepSORT
 from .video_processor.stages.tracking_3d.from_tracking_2d_and_detection_3d import (
@@ -122,14 +120,14 @@ def _execute(world: "World", optimization=True):
     database = world._database
 
     # add geographic constructs
-    drop_tables(database)
-    create_tables(database)
-    for gc in world._geogConstructs:
-        gc.ingest(database)
+    # drop_tables(database)
+    # create_tables(database)
+    # for gc in world._geogConstructs:
+    #     gc.ingest(database)
     # analyze predicates to generate pipeline
     steps: "list[Stage]" = []
-    if optimization:
-        steps.append(InView(distance=50, predicate=world.predicates))
+    # if optimization:
+    #     steps.append(InView(distance=50, predicate=world.predicates))
     steps.append(DecodeFrame())
     steps.append(YoloDetection())
     if optimization:
