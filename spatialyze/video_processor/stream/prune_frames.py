@@ -1,7 +1,7 @@
 from typing import TypeVar
 
 from ..video import Video
-from .data_types import skip
+from .data_types import skip, Skip
 from .stream import Stream
 
 T = TypeVar("T")
@@ -14,7 +14,7 @@ class PruneFrames(Stream[T]):
 
     def _stream(self, video: Video):
         for prune, frame in zip(self.prunner.stream(video), self.stream_.stream(video)):
-            if prune is True and frame != skip:
+            if not isinstance(frame, Skip):
                 yield frame
             else:
                 yield skip

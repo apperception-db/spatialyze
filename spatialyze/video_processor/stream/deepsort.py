@@ -122,7 +122,9 @@ class DeepSORT(Stream[list[TrackingResult]]):
                     confs = det[:, 4]
                     cls = det[:, 5]
 
+                    det = det.cpu()
                     deepsort.update(xywhs.cpu(), confs.cpu(), cls.cpu(), dids, im0)
+                    saved_detections.append(det)
 
                 deleted_tracks = deepsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
