@@ -38,10 +38,9 @@ TORCHREID = (
     / "reid"
 )
 sys.path.append(str(TORCHREID))
-from .strongsort import TrackingResult, _process_track
-
 from ..modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
 from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
+from .strongsort import TrackingResult, _process_track
 
 
 def xyxy2xywh(x):
@@ -106,7 +105,9 @@ class DeepSORT(Stream[list[TrackingResult]]):
             deleted_tracks_idx = 0
             saved_detections: list[dict[int, torch.Tensor]] = []
             classes: list[str] | None = None
-            for idx, (detection, im0s) in enumerate(zip(self.detection2ds.stream(video), self.frames.stream(video))):
+            for idx, (detection, im0s) in enumerate(
+                zip(self.detection2ds.stream(video), self.frames.stream(video))
+            ):
                 assert not isinstance(im0s, Skip), type(im0s)
 
                 if isinstance(detection, Skip) or len(detection[0]) == 0:
@@ -129,10 +130,7 @@ class DeepSORT(Stream[list[TrackingResult]]):
                     # assert all(idx == did.frame_idx for did in dids), dids
                     # assert all(len(det) > int(did.obj_order) for did in dids), dids
                     deepsort.update(xywhs.cpu(), confs.cpu(), cls.cpu(), dids, im0)
-                    saved_detections.append({
-                        int(did.obj_order): dt
-                        for dt, did in zip(det, dids)
-                    })
+                    saved_detections.append({int(did.obj_order): dt for dt, did in zip(det, dids)})
 
                 deleted_tracks = deepsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):

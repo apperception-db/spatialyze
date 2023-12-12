@@ -71,10 +71,7 @@ class StrongSORT(Stream[Tracking2DResult]):
                         clss = _classes
                 det = det.cpu()
                 strongsort.update(det, dids, im0)
-                saved_detections.append({
-                    int(did.obj_order): dt
-                    for dt, did in zip(det, dids)
-                })
+                saved_detections.append({int(did.obj_order): dt for dt, did in zip(det, dids)})
 
                 deleted_tracks = strongsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
