@@ -50,7 +50,7 @@ class StrongSORT(Stream[Tracking2DResult]):
             # skip_time = 0
             # tracking_start = time.time()
             # assert len(detections) == len(images)
-            saved_detections: list[torch.Tensor] = []
+            saved_detections: list[dict[int, torch.Tensor]] = []
             clss: list[str] | None = None
             for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
                 assert not isinstance(im0s, Skip), type(im0s)
@@ -71,7 +71,10 @@ class StrongSORT(Stream[Tracking2DResult]):
                         clss = _classes
                 det = det.cpu()
                 strongsort.update(det, dids, im0)
-                saved_detections.append(det)
+                saved_detections.append({
+                    int(did.obj_order): dt
+                    for dt, did in zip(det, dids)
+                })
 
                 deleted_tracks = strongsort.tracker.deleted_tracks
                 while deleted_tracks_idx < len(deleted_tracks):
@@ -112,7 +115,7 @@ class TrackingResult:
 
 def _process_track(
     track: Track,
-    detections: list[torch.Tensor],
+    detections: list[dict[int, torch.Tensor]],
     clss: list[str] | None,
     camera_configs: list[CameraConfig],
 ):
