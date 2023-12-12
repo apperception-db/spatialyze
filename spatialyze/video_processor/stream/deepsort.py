@@ -111,8 +111,10 @@ class DeepSORT(Stream[list[TrackingResult]]):
 
                 if isinstance(detection, Skip) or len(detection[0]) == 0:
                     deepsort.increment_ages()
+                    saved_detections.append(EMPTY_DETECTION)
                 else:
                     det, _classes, dids = detection
+                    # print(det.shape)
                     if _classes is not None:
                         classes = _classes
                     im0 = im0s.copy()
