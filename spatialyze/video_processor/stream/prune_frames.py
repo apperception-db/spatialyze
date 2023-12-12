@@ -14,7 +14,7 @@ class PruneFrames(Stream[T]):
 
     def _stream(self, video: Video):
         for prune, frame in zip(self.prunner.stream(video), self.stream_.stream(video)):
-            if not isinstance(frame, Skip):
+            if prune is True and not isinstance(frame, Skip):
                 yield frame
             else:
                 yield skip
