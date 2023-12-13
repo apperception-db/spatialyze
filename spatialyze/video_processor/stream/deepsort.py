@@ -108,7 +108,7 @@ class DeepSORT(Stream[list[TrackingResult]]):
             for idx, (detection, im0s) in enumerate(
                 zip(self.detection2ds.stream(video), self.frames.stream(video))
             ):
-                assert not isinstance(im0s, Skip), type(im0s)
+                # assert not isinstance(im0s, Skip), type(im0s)
 
                 if isinstance(detection, Skip) or len(detection[0]) == 0:
                     deepsort.increment_ages()

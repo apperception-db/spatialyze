@@ -192,9 +192,10 @@ o = world.object()
 p = world.object()
 c = world.camera()
 world.filter(
-    (o.type == 'car') & (p.type == 'person') &
+    (o.type == 'car') & (p.type == 'person')
     # F.contained(o.trans@c.time, 'intersection') &
-    F.left_turn(o)
+    # F.contained(p.trans@c.time, 'intersection') 
+    # F.left_turn(o)
 )
 savert(starttime, 'define-query')
 
@@ -351,8 +352,11 @@ save_video_util(world._objects, world._trackings, OUTPUT_DIR, addBoundingBoxes=T
 # %%
 starttime = time.time()
 result = world.getObjects()
+print(len(result))
 savert(starttime, 'process-and-objects')
-result
+with open ('viva-nuscenes-tracks.txt', 'w') as out_file:
+    for track in result:
+        print(track, file=out_file) 
 
 # %%
 world.saveVideos(outputDir=OUTPUT_DIR, addBoundingBoxes=True)
