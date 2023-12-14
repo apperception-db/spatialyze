@@ -93,13 +93,13 @@ BEGIN
     nextPoint = valueAtTimestamp(translations, getTimestamp(nextFrame, cameraId));
     prevPoint = valueAtTimestamp(translations, getTimestamp(prevFrame, cameraId));
 
-    if ST_X(ConvertCamera(nextPoint, currentPoint, currentAngle)) < -1 THEN
+    if ST_X(ConvertCamera(nextPoint, currentPoint, currentAngle)) < -4 THEN
         RETURN true;
     END IF;
-    if ST_X(ConvertCamera(currentPoint, prevPoint, prevAngle)) < -1 THEN
+    if ST_X(ConvertCamera(currentPoint, prevPoint, prevAngle)) < -4 THEN
         RETURN true;
     END IF;
-    if ST_X(ConvertCamera(nextPoint, prevPoint, prevAngle)) < -1 THEN
+    if ST_X(ConvertCamera(nextPoint, prevPoint, prevAngle)) < -4 THEN
         RETURN true;
     END IF;
     
