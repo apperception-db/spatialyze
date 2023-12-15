@@ -70,10 +70,11 @@ files.sort()
 
 # %%
 starttime = time.time()
+FPS = 1
 writer = cv2.VideoWriter(
     os.path.join(VIDEO_DIR, VIDEO_NAME),
     cv2.VideoWriter_fourcc(*'mp4v'),
-    15,
+    FPS,
     (360, 240),
 )
 # images = []
@@ -92,7 +93,7 @@ for file in files:
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
-            if idx % (int(cap.get(cv2.CAP_PROP_FPS)) / 15) == 0:                 ## <-- updated this
+            if idx % (int(cap.get(cv2.CAP_PROP_FPS)) / FPS) == 0:                 ## <-- updated this
                 # images.append(cv2.resize(frame, (360, 240)))
                 img = cv2.resize(frame, (360, 240))
                 writer.write(img)
@@ -352,7 +353,6 @@ save_video_util(world._objects, world._trackings, OUTPUT_DIR, addBoundingBoxes=T
 # print("result", format(end-start))
 
 
-# %%
 starttime = time.time()
 result = world.getObjects()
 print(len(result))
@@ -361,5 +361,10 @@ with open ('viva-nuscenes-tracks.txt', 'w') as out_file:
     for track in result:
         print(track, file=out_file) 
 
-# %%
-world.saveVideos(outputDir=OUTPUT_DIR, addBoundingBoxes=True)
+starttime = time.time()
+result = world.getObjects()
+print(len(result))
+savert(starttime, 'process-and-objects')
+with open ('mobility-all-tracks.txt', 'w') as out_file:
+    print(world._objects, file=out_file) 
+    print(world._trackings, file=out_file) 
