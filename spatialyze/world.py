@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 from .data_types.camera import Camera
@@ -30,7 +32,6 @@ from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
 from .video_processor.video import Video
 
-import time
 
 class World:
     def __init__(
@@ -185,7 +186,7 @@ def _execute(world: "World", optimization=True):
         start = time.time()
         qresults[v.video] = database.predicate(world.predicates)
         end = time.time()
-        print("MobilityDB:", format(end-start))
+        print("MobilityDB:", format(end - start))
     return qresults, vresults
 
 
