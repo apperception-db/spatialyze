@@ -18,8 +18,8 @@ class Video(Iterable["CameraConfig"]):
         self.videofile = videofile
         self._camera_configs: "list[CameraConfig]" = camera_configs
         assert all(
-            prev.timestamp < next.timestamp
-            for prev, next in zip(camera_configs[:-1], camera_configs[1:])
+            prev is None or nxt is None or prev.timestamp < nxt.timestamp
+            for prev, nxt in zip(camera_configs[:-1], camera_configs[1:])
         )
         self._start: "datetime | None" = start
         self._length: "int | None" = None

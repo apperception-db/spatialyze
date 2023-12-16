@@ -29,7 +29,7 @@ def prepare_trajectory(
         return None
 
     return (
-        video_name + "_obj_" + str(obj_id),
+        f"{video_name}_obj_{str(obj_id)}",
         camera_id,
         object_type,
         timestamps,

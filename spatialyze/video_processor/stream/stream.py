@@ -37,6 +37,11 @@ class Stream(Generic[T], ABC):
         self._initialize_stream_progress()
         return list(self.stream(video))
 
+    def iterate(self, video: Video) -> Iterable[T | Skip]:
+        self._initialize_stream(video)
+        self._initialize_stream_progress()
+        return self.stream(video)
+
     def stream(self, video: Video) -> Iterable[T | Skip]:
         assert self._video == video, self._video
         assert self._iter_stream is not None
