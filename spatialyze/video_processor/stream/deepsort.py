@@ -9,6 +9,7 @@ import torch
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip
 from .stream import Stream
+from .strongsort import TrackingResult, _process_track
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
@@ -38,9 +39,9 @@ TORCHREID = (
     / "reid"
 )
 sys.path.append(str(TORCHREID))
+
 from ..modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
 from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
-from .strongsort import TrackingResult, _process_track
 
 
 def xyxy2xywh(x):
