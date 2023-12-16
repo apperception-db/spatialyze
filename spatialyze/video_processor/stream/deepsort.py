@@ -19,6 +19,9 @@ WEIGHTS = SPATIALYZE / "weights"
 REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
 EMPTY_DETECTION = torch.Tensor(0, 6)
 
+if not os.path.exists(WEIGHTS):
+    os.makedirs(WEIGHTS)
+
 DEEPSORT = (
     SPATIALYZE
     / "spatialyze"
