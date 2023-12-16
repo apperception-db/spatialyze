@@ -1,7 +1,7 @@
 import datetime
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
-import os
 
 import numpy as np
 import numpy.typing as npt
@@ -25,6 +25,7 @@ EMPTY_DETECTION = torch.Tensor(0, 6)
 
 if not os.path.exists(WEIGHTS):
     os.makedirs(WEIGHTS)
+
 
 @dataclass
 class TrackingResult:
