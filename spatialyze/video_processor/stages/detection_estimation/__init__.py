@@ -3,8 +3,6 @@ import time
 from typing import Callable, List
 
 import postgis
-import shapely
-import shapely.geometry
 import torch
 from bitarray import bitarray
 from psycopg2 import sql
