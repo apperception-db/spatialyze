@@ -7,10 +7,9 @@ import numpy.typing as npt
 import torch
 
 from ..camera_config import CameraConfig
-from ..modules.yolo_deepsort.deep_sort.sort.track import Track as TrackD
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
-from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track as TrackS
+from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
@@ -23,8 +22,6 @@ SPATIALYZE = FILE.parent.parent.parent.parent
 WEIGHTS = SPATIALYZE / "weights"
 REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
 EMPTY_DETECTION = torch.Tensor(0, 6)
-
-Track = TrackS | TrackD
 
 
 class StrongSORT(Stream[Tracking2DResult]):
