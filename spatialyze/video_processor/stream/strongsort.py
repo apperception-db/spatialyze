@@ -14,7 +14,7 @@ from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
-from .data_types import Detection2D, Skip
+from .data_types import Detection2D, Detection3D, Skip
 from .stream import Stream
 
 FILE = Path(__file__).resolve()
@@ -25,7 +25,7 @@ EMPTY_DETECTION = torch.Tensor(0, 6)
 
 
 class StrongSORT(Stream[Tracking2DResult]):
-    def __init__(self, detections: Stream[Detection2D], frames: Stream[npt.NDArray]):
+    def __init__(self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]):
         self.detection2ds = detections
         self.frames = frames
 

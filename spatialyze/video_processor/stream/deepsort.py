@@ -109,11 +109,7 @@ class DeepSORT(Stream[list[TrackingResult]]):
             deleted_tracks_idx = 0
             saved_detections: list[dict[int, torch.Tensor]] = []
             classes: list[str] | None = None
-            for idx, (detection, im0s) in enumerate(
-                zip(self.detection2ds.stream(video), self.frames.stream(video))
-            ):
-                # assert not isinstance(im0s, Skip), type(im0s)
-
+            for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
                 if isinstance(detection, Skip) or len(detection[0]) == 0:
                     deepsort.increment_ages()
                     saved_detections.append({})
@@ -123,6 +119,8 @@ class DeepSORT(Stream[list[TrackingResult]]):
                     # print(det.shape)
                     if _classes is not None:
                         classes = _classes
+
+                    assert not isinstance(im0s, Skip), type(im0s)
                     im0 = im0s.copy()
 
                     xywhs = xyxy2xywh(det[:, 0:4])
