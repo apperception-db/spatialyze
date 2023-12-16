@@ -15,7 +15,6 @@ coverage.xml
 .virtual_documents
 
 *.pickle
-maps
 samples
 sweeps
 
