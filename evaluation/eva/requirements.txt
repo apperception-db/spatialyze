@@ -1,0 +1,2 @@
+evadb==0.3.3
+nuscenes-devkit

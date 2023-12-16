@@ -243,6 +243,7 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
 
     def visit_BoolOpNode(self, node: BoolOpNode):
         visited = super().visit_BoolOpNode(node)
+        assert isinstance(visited, BoolOpNode), visited
         annihilator = ANNIHILATORS[node.op]
         # print(visited.op, annihilator)
         # print(visited)
@@ -262,6 +263,7 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
 
     def visit_UnaryOpNode(self, node: UnaryOpNode):
         visited = super().visit_UnaryOpNode(node)
+        assert isinstance(visited, UnaryOpNode), visited
         # print(node.op, visited)
 
         if node.op == "neg":
@@ -339,6 +341,7 @@ class PushInversionInForRoadTypePredicates(BaseTransformer):
         assert node.op == "invert"
 
         visited = super().visit_UnaryOpNode(node)
+        assert isinstance(visited, UnaryOpNode), visited
         expr = visited.expr
 
         assert isinstance(expr, (BoolOpNode, CallNode)), expr
