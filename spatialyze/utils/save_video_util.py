@@ -4,7 +4,7 @@ from typing import NamedTuple
 import cv2
 
 from ..data_types.query_result import QueryResult
-from ..video_processor.stream.deepsort import TrackingResult
+from ..video_processor.stream.strongsort import TrackingResult
 from .get_object_list import MovableObject, get_object_list
 
 TEXT_PADDING = 5
