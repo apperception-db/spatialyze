@@ -1,25 +1,40 @@
-import shutup;
-shutup.please()
 import sys
-sys.path.append("/home/chanwutk/spatialyze")
+import shutil
 import os
 import time
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
+import pickle
+from pathlib import Path
+
+import shutup;
+import evadb
+import pandas as pd
 import torch
 torch.cuda.empty_cache()
-import evadb
-import shutil
+
+shutup.please()
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(ROOT))
+
 from spatialyze.database import database
-import pandas as pd
-import pickle
+
+EVA = ROOT / "evaluation" / "eva"
+VIDEO_PATH = "/home/chanwutk/data/processed/videos/"
+
 
 def delete_db():
     try:
-        shutil.rmtree("/home/chanwutk/spatialyze/evaluation/eva/evadb_data", ignore_errors=True)
+        shutil.rmtree(os.path.join(EVA, "evadb_data"), ignore_errors=True)
     except Exception:
         print("Dir does not exist")
     print("deleting db")
+
+
+def create_udf(cursor, name: str, impl: str):
+    cursor.query(f"DROP UDF IF EXISTS {name}").df()
+    cursor.query(f"CREATE UDF IF NOT EXISTS {name} IMPL'{str(EVA)}/udfs/{impl}.py';").df()
+
 
 def setup_udfs():
     cursor = evadb.connect().cursor()
@@ -33,53 +48,17 @@ def setup_udfs():
     """).df() 
 
     ### Set up Monodepth UDF
-    cursor.query("DROP UDF IF EXISTS MonodepthDetection").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS MonodepthDetection
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/monodepth_detection.py';
-    """).df()
+    create_udf(cursor, "MonodepthDetection", "monodepth_detection")
 
     ### Set up Location UDF
-    cursor.query("DROP UDF IF EXISTS LocationDetection").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS LocationDetection
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/location_detection.py';
-    """).df()
+    create_udf(cursor, "LocationDetection", "location_detection")
 
-    ### Set up Q1 Query UDF
-    cursor.query("DROP UDF IF EXISTS QE1").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS QE1
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/QE1.py';
-    """).df()
-
-    ### Set up Q2 Query UDF
-    cursor.query("DROP UDF IF EXISTS QE2").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS QE2
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/QE2.py';
-    """).df()
-
-    ### Set up Q3 Query UDF
-    cursor.query("DROP UDF IF EXISTS QE3").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS QE3
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/QE3.py';
-    """).df()
-
-    ### Set up Q4 Query UDF
-    cursor.query("DROP UDF IF EXISTS QE4").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS QE4
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/QE4.py';
-    """).df()
+    for i in [1, 2, 3, 4]:
+        ### Set up Qi Query UDF
+        create_udf(cursor, f"QE{i}", f"QE{i}")
 
     ### Set up SameVideo UDF
-    cursor.query("DROP UDF IF EXISTS SameVideo").df()
-    cursor.query(""" 
-            CREATE UDF IF NOT EXISTS SameVideo
-            IMPL'/home/chanwutk/spatialyze/evaluation/eva/udfs/same_video.py';
-    """).df()
+    create_udf(cursor, "SameVideo", "same_video")
 
 def load_data(sceneNumbers):
     cursor = evadb.connect().cursor()
@@ -104,12 +83,11 @@ def load_data(sceneNumbers):
         video_name = f"boston-seaport-scene-{sceneNumber}-CAM_FRONT_LEFT.mp4"
         camera_name = f"boston-seaport-scene-{sceneNumber}-CAM_FRONT_LEFT.pkl"
         scene = f"scene-{sceneNumber}-CAM_FRONT_LEFT"
-        video_path = "/home/chanwutk/data/processed/videos/"
-        cursor.load(file_regex=video_path + video_name, format="VIDEO", table_name='ObjectDetectionVideos').df()
+        cursor.load(file_regex=VIDEO_PATH + video_name, format="VIDEO", table_name='ObjectDetectionVideos').df()
 
         # Add camera configs
         result = database.execute(f"SELECT cameraId, ROW_NUMBER() OVER (Order by frameNum) AS RowNumber, cameraTranslation, cameraRotation, cameraIntrinsic, egoHeading, filename FROM Cameras WHERE cameraId = '{scene}'")
-        with open(os.path.join(video_path, camera_name), 'rb') as f:
+        with open(os.path.join(VIDEO_PATH, camera_name), 'rb') as f:
             result = pickle.load(f)['frames']
         df = pd.DataFrame()
         for r in result:
@@ -201,34 +179,34 @@ while len(sceneNumbers) > 0:
     q4_time = q4(cursor)
     write_times(currentScenes, "q4", q4_time)
 
-    # delete_db()
-    # setup_udfs()
-    # load_data(currentScenes)
-    # cursor = evadb.connect().cursor()
-    # cursor._evadb.config.update_value("executor", "batch_mem_size", 300000)
-    # cursor._evadb.config.update_value("executor", "gpu_ids", [0])
-    # q4_time = q4(cursor)
-    # q1_time = q1(cursor)
-    # write_times(currentScenes, "q1", q1_time)
+    delete_db()
+    setup_udfs()
+    load_data(currentScenes)
+    cursor = evadb.connect().cursor()
+    cursor._evadb.config.update_value("executor", "batch_mem_size", 300000)
+    cursor._evadb.config.update_value("executor", "gpu_ids", [0])
+    q4_time = q4(cursor)
+    q1_time = q1(cursor)
+    write_times(currentScenes, "q1", q1_time)
 
-    # delete_db()
-    # setup_udfs()
-    # load_data(currentScenes)
-    # cursor = evadb.connect().cursor()
-    # cursor._evadb.config.update_value("executor", "batch_mem_size", 300000)
-    # cursor._evadb.config.update_value("executor", "gpu_ids", [0])
-    # q1_time = q1(cursor)
-    # q2_time = q2(cursor)
-    # write_times(currentScenes, "q2", q2_time)
+    delete_db()
+    setup_udfs()
+    load_data(currentScenes)
+    cursor = evadb.connect().cursor()
+    cursor._evadb.config.update_value("executor", "batch_mem_size", 300000)
+    cursor._evadb.config.update_value("executor", "gpu_ids", [0])
+    q1_time = q1(cursor)
+    q2_time = q2(cursor)
+    write_times(currentScenes, "q2", q2_time)
 
-    # delete_db()
-    # setup_udfs()
-    # load_data(currentScenes)
-    # cursor = evadb.connect().cursor()
-    # cursor._evadb.config.update_value("executor", "batch_mem_size", 300000)
-    # cursor._evadb.config.update_value("executor", "gpu_ids", [0])
-    # q2_time = q2(cursor)
-    # q3_time = q3(cursor)
-    # write_times(currentScenes, "q3", q3_time)
+    delete_db()
+    setup_udfs()
+    load_data(currentScenes)
+    cursor = evadb.connect().cursor()
+    cursor._evadb.config.update_value("executor", "batch_mem_size", 300000)
+    cursor._evadb.config.update_value("executor", "gpu_ids", [0])
+    q2_time = q2(cursor)
+    q3_time = q3(cursor)
+    write_times(currentScenes, "q3", q3_time)
 
 
