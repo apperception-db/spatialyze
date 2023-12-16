@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 from .data_types.camera import Camera
@@ -182,7 +184,10 @@ def _execute(world: "World", optimization=True):
         camera = Camera(_camera_configs, v.camera[0].camera_id)
         database.insert_camera(camera)
 
+        start = time.time()
         qresults[v.video] = database.predicate(world.predicates)
+        end = time.time()
+        print("MobilityDB:", format(end - start))
     return qresults, vresults
 
 
