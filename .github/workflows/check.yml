@@ -52,5 +52,5 @@ jobs:
       - name: Type Check with pyright
         if: always()
         run: poetry run pyright spatialyze
-        env:
-          PYRIGHT_PYTHON_FORCE_VERSION: latest
+        # env:
+        #   PYRIGHT_PYTHON_FORCE_VERSION: latest
