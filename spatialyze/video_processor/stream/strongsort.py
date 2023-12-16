@@ -36,7 +36,9 @@ class TrackingResult:
 
 
 class StrongSORT(Stream[list[TrackingResult]]):
-    def __init__(self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]):
+    def __init__(
+        self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]
+    ):
         self.detection2ds = detections
         self.frames = frames
 
