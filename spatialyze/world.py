@@ -15,8 +15,6 @@ from .utils.get_object_list import get_object_list
 from .utils.save_video_util import save_video_util
 from .video_processor.stream.data_types import Skip
 from .video_processor.stream.decode_frame import DecodeFrame
-# from .video_processor.stream.deepsort import DeepSORT, TrackingResult
-from .video_processor.stream.strongsort import StrongSORT, TrackingResult
 from .video_processor.stream.exit_frame_sampler import ExitFrameSampler
 from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
 from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
@@ -26,6 +24,9 @@ from .video_processor.stream.prune_frames import PruneFrames
 
 # stream
 from .video_processor.stream.road_visibility_pruner import RoadVisibilityPruner
+
+# from .video_processor.stream.deepsort import DeepSORT, TrackingResult
+from .video_processor.stream.strongsort import StrongSORT, TrackingResult
 from .video_processor.stream.yolo import Yolo
 from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
