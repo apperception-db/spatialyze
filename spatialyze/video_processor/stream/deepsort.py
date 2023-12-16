@@ -6,10 +6,9 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
-
-from ..video import Video
 from ..camera_config import CameraConfig
 from ..types import DetectionId
+from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip
 from .stream import Stream
 from .strongsort import TrackingResult
@@ -44,8 +43,8 @@ TORCHREID = (
 sys.path.append(str(TORCHREID))
 
 from ..modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
-from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
 from ..modules.yolo_deepsort.deep_sort.sort.track import Track
+from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
 
 
 def xyxy2xywh(x):
