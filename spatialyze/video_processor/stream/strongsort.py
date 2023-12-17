@@ -66,9 +66,15 @@ class StrongSORT(Stream[list[TrackingResult]]):
             # assert len(detections) == len(images)
             saved_detections: list[dict[int, torch.Tensor]] = []
             clss: list[str] | None = None
+            empty_img = None
             for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
-                assert not isinstance(im0s, Skip), type(im0s)
-                im0 = im0s.copy()
+                if not isinstance(detection, Skip):
+                    assert not isinstance(im0s, Skip), type(im0s)
+                    im0 = im0s.copy()
+                else:
+                    if empty_img is None:
+                        empty_img = np.zeros((video.dimension[0], video.dimension[1], 3), dtype=np.uint8)
+                    im0 = empty_img
                 curr_frame = im0
 
                 # update_start = time.time()

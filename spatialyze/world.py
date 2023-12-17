@@ -1,6 +1,5 @@
-import time
-
 import numpy as np
+from bitarray import bitarray
 
 from .data_types.camera import Camera
 from .data_types.camera_config import CameraConfig as _CameraConfig
@@ -15,11 +14,11 @@ from .utils.get_object_list import get_object_list
 from .utils.save_video_util import save_video_util
 from .video_processor.stream.data_types import Skip
 from .video_processor.stream.decode_frame import DecodeFrame
-from .video_processor.stream.exit_frame_sampler import ExitFrameSampler
 from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
 from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
 from .video_processor.stream.mono_depth_estimator import MonoDepthEstimator
 from .video_processor.stream.object_type_pruner import ObjectTypePruner
+from .video_processor.stream.prefilter import Prefilter
 from .video_processor.stream.prune_frames import PruneFrames
 
 # stream
@@ -131,8 +130,9 @@ def _execute(world: "World", optimization=True):
         # reset database
         database.reset()
 
-        # analyze predicates to generate video processing plan
         decode = DecodeFrame()
+        prefilter = Prefilter(bitarray('1') * len(v.camera) if v.keep is None else v.keep)
+        decode = PruneFrames(prefilter, decode)
         if optimization:
             inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
             decode = PruneFrames(inview, decode)
@@ -140,9 +140,9 @@ def _execute(world: "World", optimization=True):
         if optimization:
             d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
             d3ds = FromDetection2DAndRoad(d2ds)
-            if all(t in ["car", "truck"] for t in d2ds.types):
-                efs = ExitFrameSampler(d3ds)
-                d3ds = PruneFrames(efs, d3ds)
+            # if all(t in ["car", "truck"] for t in d2ds.types):
+            #     efs = ExitFrameSampler(d3ds)
+            #     d3ds = PruneFrames(efs, d3ds)
         else:
             depths = MonoDepthEstimator(decode)
             d3ds = FromDetection2DAndDepth(d2ds, depths)
@@ -184,10 +184,7 @@ def _execute(world: "World", optimization=True):
         camera = Camera(_camera_configs, v.camera[0].camera_id)
         database.insert_camera(camera)
 
-        start = time.time()
         qresults[v.video] = database.predicate(world.predicates)
-        end = time.time()
-        print("MobilityDB:", format(end - start))
     return qresults, vresults
 
 
