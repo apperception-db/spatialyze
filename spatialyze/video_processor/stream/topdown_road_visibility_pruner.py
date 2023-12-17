@@ -4,8 +4,8 @@ import numpy as np
 from postgis import MultiPoint
 from psycopg2 import sql
 
-from ..camera_config import CameraConfig
 from ...database import database
+from ..camera_config import CameraConfig
 from ..video import Video
 from .data_types import Skip
 from .stream import Stream
@@ -52,7 +52,7 @@ def get_views(configs: list[list[tuple[float, float]]] | list[CameraConfig]):
     for ind, view_area_2d in enumerate(configs):
         if view_area_2d is None:
             continue
-        
+
         assert isinstance(view_area_2d, list), view_area_2d
         view_area = MultiPoint(view_area_2d[:4])
         view_areas.append(view_area)

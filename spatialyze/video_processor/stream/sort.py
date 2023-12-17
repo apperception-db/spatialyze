@@ -54,7 +54,9 @@ class SORT(Stream[list[TrackingResult]]):
                 if not isinstance(dlist, Skip):
                     detectionMap: list[Detection] = [
                         # Detection(did, det.detach().cpu().numpy()) for det, _, did in zip(*dlist)
-                        Detection(did, det if isinstance(det, np.ndarray) else det.detach().cpu().numpy())
+                        Detection(
+                            did, det if isinstance(det, np.ndarray) else det.detach().cpu().numpy()
+                        )
                         for det, _, did in zip(*dlist)
                     ]
 

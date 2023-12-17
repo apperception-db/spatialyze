@@ -3,11 +3,11 @@ import os
 import cv2
 import numpy as np
 
-from ..types import DetectionId
 from ...utils.tqdm import tqdm
 from ..stream.list_images import ListImages
 from ..stream.load_images import LoadImages
 from ..stream.sort import TrackingResult
+from ..types import DetectionId
 from ..video.video import Video
 
 # from ..payload import Payload

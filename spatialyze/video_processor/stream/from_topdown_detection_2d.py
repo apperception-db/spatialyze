@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import torch
 
-from ..types import Float2
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip, skip
 from .stream import Stream
