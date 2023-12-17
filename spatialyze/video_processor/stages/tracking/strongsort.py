@@ -28,7 +28,6 @@ class StrongSORT(Tracking):
         self.method: "Literal['increment-ages', 'update-empty']" = method
         # self.ss_benchmark = []
 
-
     def _run(self, payload: "Payload"):
         # load_data_start = time.time()
         detections = Detection2D.get(payload)
