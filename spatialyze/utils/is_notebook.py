@@ -12,3 +12,6 @@ def is_notebook() -> bool:
     except NameError:
         # Probably standard Python interpreter
         return False
+    except ModuleNotFoundError:
+        # IPython not installed
+        return False
