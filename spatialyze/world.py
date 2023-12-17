@@ -131,7 +131,7 @@ def _execute(world: "World", optimization=True):
         database.reset()
 
         decode = DecodeFrame()
-        prefilter = Prefilter(bitarray('1') * len(v.camera) if v.keep is None else v.keep)
+        prefilter = Prefilter(bitarray("1") * len(v.camera) if v.keep is None else v.keep)
         decode = PruneFrames(prefilter, decode)
         if optimization:
             inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
