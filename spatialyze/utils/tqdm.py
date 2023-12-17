@@ -1,9 +1,9 @@
 from .is_notebook import is_notebook
 
 if is_notebook():
-    from tqdm.notebook import tqdm as _tqdm
+    from tqdm.notebook import tqdm
 else:
-    from tqdm import tqdm as _tqdm
+    from tqdm import tqdm
 
 
-tqdm = _tqdm
+__all__ = ["tqdm"]

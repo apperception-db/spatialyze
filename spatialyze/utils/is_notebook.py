@@ -7,11 +7,8 @@ def is_notebook() -> bool:
         if shell == "ZMQInteractiveShell":
             # Jupyter notebook or qtconsole
             return True
-        elif shell == "TerminalInteractiveShell":
-            # Terminal running IPython
-            return False
         else:
-            # Other type (?)
+            # shell == 'TerminalInteractiveShell' -> Terminal running IPython
             return False
     except NameError:
         # Probably standard Python interpreter
