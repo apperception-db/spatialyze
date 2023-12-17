@@ -1,5 +1,4 @@
 import numpy as np
-from bitarray import bitarray
 
 from .data_types.camera import Camera
 from .data_types.camera_config import CameraConfig as _CameraConfig
@@ -131,8 +130,9 @@ def _execute(world: "World", optimization=True):
         database.reset()
 
         decode = DecodeFrame()
-        prefilter = Prefilter(bitarray('1') * len(v.camera) if v.keep is None else v.keep)
-        decode = PruneFrames(prefilter, decode)
+        if v.keep is not None:
+            prefilter = Prefilter(v.keep)
+            decode = PruneFrames(prefilter, decode)
         if optimization:
             inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
             decode = PruneFrames(inview, decode)
