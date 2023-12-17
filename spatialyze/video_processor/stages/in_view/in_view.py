@@ -62,7 +62,7 @@ class InView(Stage):
             self.predicate = eval(str(self.predicate_str))
 
     def __repr__(self) -> str:
-        return f"InView(distance={self.distance}, roadtype={self.roadtypes}, predicate={self.predicate_str})"
+        return f"InView(distance={self.distance}, roadtype={self.roadtypes is not None and self.roadtypes}, predicate={hasattr(self, 'predicate_str') and self.predicate_str})"
 
     def _run(self, payload: "Payload") -> "tuple[bitarray, None]":
         indices, view_areas = get_views(payload.video, self.distance)
