@@ -73,7 +73,9 @@ class StrongSORT(Stream[list[TrackingResult]]):
                     im0 = im0s.copy()
                 else:
                     if empty_img is None:
-                        empty_img = np.zeros((video.dimension[0], video.dimension[1], 3), dtype=np.uint8)
+                        empty_img = np.zeros(
+                            (video.dimension[0], video.dimension[1], 3), dtype=np.uint8
+                        )
                     im0 = empty_img
                 curr_frame = im0
 
