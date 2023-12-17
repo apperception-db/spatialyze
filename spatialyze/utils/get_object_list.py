@@ -1,64 +1,43 @@
 from typing import NamedTuple
 
-import numpy as np
-
 from ..data_types.camera_config import Float3, Float4
 from ..data_types.query_result import QueryResult
-from ..video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
-from ..video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
+from ..video_processor.stream.strongsort import TrackingResult
 from ..video_processor.types import DetectionId
 
 
 def interpolate_track(
-    trackings: "list[T3DMetadatum]", objectId: "int", frameNum: "int"
-) -> "Tracking3DResult":
+    trackings: dict[int, TrackingResult],
+    frameNum: int,
+) -> "TrackingResult":
     left, right = None, None
     leftNum, rightNum = frameNum, frameNum
 
     while left is None:
         leftNum -= 1
-        if objectId in trackings[leftNum]:
-            left = trackings[leftNum][objectId]
+        if leftNum in trackings:
+            left = trackings[leftNum]
 
     while right is None:
         rightNum += 1
-        if objectId in trackings[rightNum]:
-            right = trackings[rightNum][objectId]
+        if rightNum in trackings:
+            right = trackings[rightNum]
 
     leftWeight = 1 - (frameNum - leftNum) / (rightNum - leftNum)
     rightWeight = (frameNum - leftNum) / (rightNum - leftNum)
-    newPoint = np.array(left.point) * leftWeight + np.array(right.point) * rightWeight
-    newPointFromCamera = (
-        np.array(left.point_from_camera) * leftWeight
-        + np.array(right.point_from_camera) * rightWeight
-    )
-    newBboxCenterX = (left.bbox_left + left.bbox_w / 2.0) * leftWeight + (
-        right.bbox_left + right.bbox_w / 2.0
-    ) * rightWeight
-    newBboxCenterY = (left.bbox_top + left.bbox_h / 2.0) * leftWeight + (
-        right.bbox_top + right.bbox_h / 2.0
-    ) * rightWeight
-    newBboxHeight = left.bbox_h * leftWeight + right.bbox_h * rightWeight
-    newBboxWidth = left.bbox_w * leftWeight + right.bbox_w * rightWeight
-    newBboxLeft = newBboxCenterX - newBboxWidth / 2.0
-    newBboxTop = newBboxCenterY - newBboxHeight / 2.0
+
+    newBbox = (left.bbox * leftWeight) + (right.bbox * rightWeight)
 
     timedelta = right.timestamp - left.timestamp
     newTimestamp = left.timestamp + timedelta * rightWeight
 
-    x, y, z = newPoint.tolist()
-    _x, _y, _z = newPointFromCamera.tolist()
-    return Tracking3DResult(
-        frame_idx=frameNum,
-        point=(x, y, z),
-        point_from_camera=(_x, _y, _z),
-        bbox_left=newBboxLeft,
-        bbox_top=newBboxTop,
-        bbox_h=newBboxHeight,
-        bbox_w=newBboxWidth,
-        detection_id=DetectionId(frameNum, -1),
-        object_id=objectId,
-        object_type=left.object_type,
+    values = list(trackings.values())
+    return TrackingResult(
+        detection_id=DetectionId(frameNum, DetectionId.unique(frameNum)),
+        object_id=values[0].object_id,
+        confidence=values[0].confidence,
+        bbox=newBbox,
+        object_type=values[0].object_type,
         timestamp=newTimestamp,
     )
 
@@ -79,7 +58,7 @@ class ObjectListKey(NamedTuple):
 
 def get_object_list(
     objects: "dict[str, list[QueryResult]]",
-    trackings: "dict[str, list[T3DMetadatum]]",
+    trackings: "dict[str, list[list[TrackingResult]]]",
 ) -> "list[MovableObject]":
     tracks: "dict[ObjectListKey, list[Float3]]" = {}
     bboxes: "dict[ObjectListKey, list[Float4]]" = {}
@@ -87,28 +66,35 @@ def get_object_list(
     objectTypes: "dict[ObjectListKey, str]" = {}
 
     for video in objects:
+        _trackings = trackings[video]
+        _trackings = {
+            tr[0].object_id: {t.detection_id.frame_idx: t for t in tr} for tr in _trackings
+        }
         for obj in objects[video]:
             frameId, cameraId, _, objectIds = obj
             for objectId in map(int, objectIds):
                 key = ObjectListKey(cameraId, objectId)
+                __trackings = _trackings[objectId]
 
-                if objectId in trackings[video][frameId]:
-                    track = trackings[video][frameId][objectId]
+                if frameId in __trackings:
+                    track = __trackings[frameId]
                 else:
-                    track = interpolate_track(trackings[video], objectId, frameId)
+                    track = interpolate_track(__trackings, frameId)
 
                 if key not in tracks:
                     tracks[key] = []
-                tracks[key].append(track.point)
+                x, y, z = (track.bbox[6:9] + track.bbox[9:12]) / 2
+                tracks[key].append((float(x), float(y), float(z)))
 
                 if key not in bboxes:
                     bboxes[key] = []
-                bbox = track.bbox_left, track.bbox_top, track.bbox_w, track.bbox_h
+                l, t, r, b = track.bbox[:4]
+                bbox = float(l), float(t), float(r - l), float(b - t)
                 bboxes[key].append(bbox)
 
                 if key not in frameIds:
                     frameIds[key] = []
-                frameIds[key].append(track.frame_idx)
+                frameIds[key].append(track.detection_id.frame_idx)
 
                 objectTypes[key] = track.object_type
 

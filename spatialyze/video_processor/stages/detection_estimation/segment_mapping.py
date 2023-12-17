@@ -186,7 +186,7 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
     Given a list of detections, return a list of RoadSegmentWithHeading
     """
     # start_time = time.time()
-    times = []
+    times: list[float] = []
     times.append(time.time())
     results = map_detections_to_segments(detections, ego_config)
     times.append(time.time())
@@ -202,13 +202,13 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
     times.append(time.time())
     mapped_polygons = reformat_return_polygon(mapped_polygons)
     times.append(time.time())
+    mapped_road_polygon_info: "dict[DetectionId, RoadPolygonInfo]" = {}
     if any(p.road_type == "intersection" for p in mapped_polygons):
-        return {}, times
+        return mapped_road_polygon_info, times
     times.append(time.time())
     fov_lines = get_fov_lines(ego_config)
     times.append(time.time())
 
-    mapped_road_polygon_info: "dict[DetectionId, RoadPolygonInfo]" = {}
     for order_id, road_polygon in list(zip(order_ids, mapped_polygons)):
         frame_idx = detections[0].detection_id.frame_idx
         det_id = DetectionId(frame_idx=frame_idx, obj_order=order_id)
@@ -221,7 +221,7 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
 
         # assert all(isinstance(line, sg.LineString) for line in segmentlines)
 
-        p = swkb.loads(road_polygon.to_ewkb(), hex=True)
+        p = swkb.loads(roadpolygon.to_ewkb(), hex=True)
         assert isinstance(p, sg.Polygon)
         XYs: "Tuple[array.array[float], array.array[float]]" = p.exterior.xy
         assert isinstance(XYs, tuple)

@@ -20,20 +20,6 @@ def format_trajectory(video_name: "str", obj_id: "int", track: "list[TrackPoint]
     #     print(f"obj_id, {obj_id}:", [e[1].filename for e in track])
     for tracking_result_3d, ego_info, segment_mapping in track:
         if ego_info:
-            if (
-                ego_info.filename is not None
-                and "sweeps/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657125362404.jpg"
-                in ego_info.filename
-            ):
-                info_found.append(
-                    [
-                        obj_id,
-                        tracking_result_3d.bbox_left,
-                        tracking_result_3d.bbox_top,
-                        tracking_result_3d.bbox_w,
-                        tracking_result_3d.bbox_h,
-                    ]
-                )
             camera_id = ego_info.camera_id
             object_type = tracking_result_3d.object_type
             timestamps.append(ego_info.timestamp)

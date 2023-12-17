@@ -29,3 +29,4 @@ outputs
 
 yolov5s.pt
 yolov8m.pt
+data/skyquery/car-model/yolov3.best

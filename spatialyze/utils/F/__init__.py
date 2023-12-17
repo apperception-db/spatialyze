@@ -11,6 +11,7 @@ from .get_ import get_
 from .ignore_roadtype import ignore_roadtype
 from .is_other_roadtype import is_other_roadtype
 from .is_roadtype import is_roadtype
+from .left_turn import left_turn
 from .like import like
 from .min_distance import min_distance
 from .road_direction import road_direction
@@ -44,4 +45,5 @@ __all__ = [
     "is_roadtype",
     "is_other_roadtype",
     "ignore_roadtype",
+    "left_turn",
 ]

@@ -8,7 +8,7 @@ from .infer_heading import infer_heading
 
 def insert_trajectory(
     database: "Database",
-    item_id: "int",
+    item_id: "int | str",
     camera_id: "str",
     object_type: "str",
     postgres_timestamps: "list[datetime.datetime]",

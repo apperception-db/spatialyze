@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from ...payload import Payload
 
 
-# TODO: not xywh -> ltrb
+# Note: output from yolo is ltrb not xywh
 TO_BOTTOM_LEFT = np.array(
     [
         [1, 0, 0, 0],

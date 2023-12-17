@@ -4,7 +4,7 @@ from typing import NamedTuple
 import cv2
 
 from ..data_types.query_result import QueryResult
-from ..video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
+from ..video_processor.stream.strongsort import TrackingResult
 from .get_object_list import MovableObject, get_object_list
 
 TEXT_PADDING = 5
@@ -12,7 +12,7 @@ TEXT_PADDING = 5
 
 def save_video_util(
     objects: "dict[str, list[QueryResult]]",
-    trackings: "dict[str, list[T3DMetadatum]]",
+    trackings: "dict[str, list[list[TrackingResult]]]",
     outputDir: "str",
     addBoundingBoxes: "bool" = False,
 ) -> "list[tuple[str, int]]":
@@ -35,7 +35,7 @@ def save_video_util(
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         vid_writer = cv2.VideoWriter(
-            output_file, cv2.VideoWriter_fourcc(*"mp4v"), 30, (width, height)
+            output_file, cv2.VideoWriter_fourcc(*"mp4v"), 1, (width, height)
         )
 
         frame_cnt = 0
