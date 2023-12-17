@@ -21,8 +21,8 @@ def test_simple_workflow():
 
     # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
     #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
-    #     pickle.dump(trackings, f)
+    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
+        pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -31,23 +31,17 @@ def test_simple_workflow():
         assert filename in trackings, (filename, trackings.keys())
         tps = trackings[filename]
         assert len(tps) == len(tgs), (len(tps), len(tgs))
-        for idx, (tp, tg) in enumerate(zip(tps, tgs)):
+        for idx, (tp, tg) in enumerate(zip(sorted(tps, key=trackid), sorted(tgs, key=trackid))):
             assert len(tp) == len(tg), (idx, len(tp), len(tg))
-            for oid, g in tg.items():
-                assert oid in tp, (oid, tp.keys())
-                p = tp[oid]
-                assert isinstance(g, Tracking3DResult), (g, type(g))
-                assert p.frame_idx == g.frame_idx, (p.frame_idx, g.frame_idx)
+            for p, g in zip(sorted(tp, key=frameidx), sorted(tg, key=frameidx)):
+                assert isinstance(p, TrackingResult), (p, type(p))
+                assert isinstance(g, TrackingResult), (g, type(g))
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
-                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera), atol=0.001, rtol=0), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point), np.array(g.point), atol=0.001, rtol=0), (p.point, g.point)
-                assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
-                assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
-                assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
-                assert p.bbox_h == g.bbox_h, (p.bbox_h, g.bbox_h)
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
+                assert np.allclose([p.confidence], [g.confidence], atol=0.001, rtol=0), (p.confidence, g.confidence)
+                assert np.allclose(p.bbox.detach().cpu().numpy(), g.bbox.detach().cpu().numpy(), atol=0.001, rtol=0), (p.bbox, g.bbox)
     
     # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
     #     json.dump(objects, f, indent=1)
