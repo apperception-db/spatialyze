@@ -309,40 +309,40 @@ class Visitor(Generic[T]):
 
 
 class BaseTransformer(Visitor[PredicateNode]):
-    def visit_ArrayNode(self, node: "ArrayNode"):
+    def visit_ArrayNode(self, node: "ArrayNode") -> PredicateNode:
         return ArrayNode([self(e) for e in node.exprs])
 
-    def visit_CompOpNode(self, node: "CompOpNode"):
+    def visit_CompOpNode(self, node: "CompOpNode") -> PredicateNode:
         return CompOpNode(self(node.left), node.op, self(node.right))
 
-    def visit_BinOpNode(self, node: "BinOpNode"):
+    def visit_BinOpNode(self, node: "BinOpNode") -> PredicateNode:
         return BinOpNode(self(node.left), node.op, self(node.right))
 
-    def visit_BoolOpNode(self, node: "BoolOpNode"):
+    def visit_BoolOpNode(self, node: "BoolOpNode") -> PredicateNode:
         return BoolOpNode(node.op, [self(e) for e in node.exprs])
 
-    def visit_UnaryOpNode(self, node: "UnaryOpNode"):
+    def visit_UnaryOpNode(self, node: "UnaryOpNode") -> PredicateNode:
         return UnaryOpNode(node.op, self(node.expr))
 
-    def visit_LiteralNode(self, node: "LiteralNode"):
+    def visit_LiteralNode(self, node: "LiteralNode") -> PredicateNode:
         return node
 
-    def visit_TableAttrNode(self, node: "TableAttrNode"):
+    def visit_TableAttrNode(self, node: "TableAttrNode") -> PredicateNode:
         return TableAttrNode(node.name, self(node.table), node.shorten)
 
-    def visit_CallNode(self, node: "CallNode"):
+    def visit_CallNode(self, node: "CallNode") -> PredicateNode:
         return CallNode(node.fn, node.name, [self(p) for p in node.params])
 
-    def visit_TableNode(self, node: "TableNode"):
+    def visit_TableNode(self, node: "TableNode") -> PredicateNode:
         return node
 
-    def visit_ObjectTableNode(self, node: "ObjectTableNode"):
+    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> PredicateNode:
         return node
 
-    def visit_CameraTableNode(self, node: "CameraTableNode"):
+    def visit_CameraTableNode(self, node: "CameraTableNode") -> PredicateNode:
         return node
 
-    def visit_CastNode(self, node: "CastNode"):
+    def visit_CastNode(self, node: "CastNode") -> PredicateNode:
         return CastNode(node.to, self(node.expr))
 
 
