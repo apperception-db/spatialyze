@@ -12,8 +12,6 @@ from ctypes import (
 from pathlib import Path
 from typing import NamedTuple
 
-import numpy as np
-import numpy.typing as npt
 import torch
 from tqdm.notebook import tqdm
 
@@ -155,7 +153,7 @@ class DetectTopDownCars(Stream[Detection2D]):
                 )
                 _dets = [(x, y, w, h, conf, 0) for _, conf, (x, y, w, h) in r]
                 # dets: torch.Tensor = torch.tensor(_dets, dtype=torch.float32, device=self.device)
-                dets: npt.NDArray = np.array(_dets, dtype=np.float32)
+                dets = torch.tensor(_dets, dtype=torch.float32)
                 yield Detection2D(
                     dets, ["car"], [DetectionId(frame_idx, order) for order in range(len(_dets))]
                 )

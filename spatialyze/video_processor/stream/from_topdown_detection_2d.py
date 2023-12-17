@@ -34,18 +34,20 @@ class FromTopDownDetection2D(Stream[Detection3D]):
                 det, class_mapping, dids = d2d
                 if len(det) == 0:
                     # yield Detection3D(torch.tensor([], device=det.device), class_mapping, dids)
-                    yield Detection3D(np.array([]), class_mapping, dids)
+                    yield Detection3D(torch.tensor([]), class_mapping, dids)
                     continue
 
                 # device = det.device
+                if isinstance(det, torch.Tensor):
+                    det = det.cpu().numpy()
 
-                camera_frame: tuple[Float2, Float2, Float2, Float2] = frame[:4]
+                assert isinstance(frame, list)
+                camera_frame = frame[:4]
                 dst_points = np.array(camera_frame, dtype="float32").reshape(-1, 1, 2)
                 H, _ = cv2.findHomography(src_points, dst_points)
 
                 # d2d = det[:, :4].cpu().numpy()
                 d2d = det[:, :4]
-                assert isinstance(d2d, np.ndarray)
 
                 _, d = det.shape
                 N, _d = d2d.shape
@@ -93,4 +95,4 @@ class FromTopDownDetection2D(Stream[Detection3D]):
                 )
                 assert (N, (d + 12)) == d3d.shape, d3d.shape
 
-                yield Detection3D(d3d, class_mapping, dids)
+                yield Detection3D(torch.from_numpy(d3d), class_mapping, dids)

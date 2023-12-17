@@ -3,6 +3,7 @@ import os
 import cv2
 import numpy as np
 
+from ..types import DetectionId
 from ...utils.tqdm import tqdm
 from ..stream.list_images import ListImages
 from ..stream.load_images import LoadImages
@@ -34,7 +35,7 @@ def tracking2d_overlay(t2ds: list[list[TrackingResult]], video: Video, base_dir:
                 for i in range(prev.detection_id.frame_idx + 1, fid):
                     dets[i].append(
                         TrackingResult(
-                            detection_id=None,
+                            detection_id=DetectionId(frame_idx=i, obj_order=DetectionId.unique(i)),
                             object_id=det.object_id,
                             confidence=det.confidence,
                             bbox=interpolate(prev, det, i),

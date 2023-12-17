@@ -27,7 +27,7 @@ class TrackingResult:
     detection_id: DetectionId
     object_id: int
     confidence: float | np.float32
-    bbox: torch.Tensor
+    bbox: torch.Tensor | npt.NDArray
     object_type: str
     next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
     prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
@@ -54,7 +54,7 @@ class SORT(Stream[list[TrackingResult]]):
                 if not isinstance(dlist, Skip):
                     detectionMap: list[Detection] = [
                         # Detection(did, det.detach().cpu().numpy()) for det, _, did in zip(*dlist)
-                        Detection(did, det)
+                        Detection(did, det if isinstance(det, np.ndarray) else det.detach().cpu().numpy())
                         for det, _, did in zip(*dlist)
                     ]
 

@@ -33,7 +33,7 @@ def interpolate_track(
 
     values = list(trackings.values())
     return TrackingResult(
-        detection_id=DetectionId(frameNum, -1),
+        detection_id=DetectionId(frameNum, DetectionId.unique(frameNum)),
         object_id=values[0].object_id,
         confidence=values[0].confidence,
         bbox=newBbox,

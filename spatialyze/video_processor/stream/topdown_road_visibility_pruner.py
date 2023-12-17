@@ -4,6 +4,7 @@ import numpy as np
 from postgis import MultiPoint
 from psycopg2 import sql
 
+from ..camera_config import CameraConfig
 from ...database import database
 from ..video import Video
 from .data_types import Skip
@@ -22,7 +23,7 @@ class TopDownRoadVisibilityPruner(Stream[bool]):
             start = i * BATCH_SIZE
             end = min(N, (i + 1) * BATCH_SIZE)
             batch = video.camera_configs[start:end]
-            indices, view_areas = get_views(batch, start)
+            indices, view_areas = get_views(batch)
             results = database.execute(
                 sql.SQL(
                     "SELECT index "
@@ -45,12 +46,14 @@ class TopDownRoadVisibilityPruner(Stream[bool]):
             i += 1
 
 
-def get_views(configs: list[list[tuple[float, float]]], start_idx: int):
+def get_views(configs: list[list[tuple[float, float]]] | list[CameraConfig]):
     indices: list[int] = []
     view_areas: list[MultiPoint] = []
     for ind, view_area_2d in enumerate(configs):
         if view_area_2d is None:
             continue
+        
+        assert isinstance(view_area_2d, list), view_area_2d
         view_area = MultiPoint(view_area_2d[:4])
         view_areas.append(view_area)
         indices.append(ind)
