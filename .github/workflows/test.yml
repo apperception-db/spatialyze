@@ -77,8 +77,8 @@ jobs:
           name: workflow-coverage
           path: ./coverage.xml
       
-      - name: Commit generated test inputs
-        run: ./scripts/commit-and-push.sh "[CI] update test"
+      # - name: Commit generated test inputs
+      #   run: ./scripts/commit-and-push.sh "[CI] update test"
 
   test-video-processor:
     name: Test Video Processor

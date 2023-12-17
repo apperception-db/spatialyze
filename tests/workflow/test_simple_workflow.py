@@ -30,8 +30,8 @@ def test_simple_workflow():
 
     # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.json'), 'w') as f:
     #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
-        pickle.dump(trackings, f)
+    # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'wb') as f:
+    #     pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'simple-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
