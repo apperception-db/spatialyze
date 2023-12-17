@@ -6,6 +6,7 @@ import numpy as np
 from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
+from spatialyze.video_processor.stream.strongsort import TrackingResult
 from spatialyze.world import _execute
 
 from common import build_filter_world
@@ -15,14 +16,22 @@ OUTPUT_DIR = './data/pipeline/test-results'
 disable_cache()
 
 
+def trackid(track: list[TrackingResult]):
+    return track[0].object_id
+
+
+def frameidx(track: TrackingResult):
+    return track.detection_id.frame_idx
+
+
 def test_optimized_workflow():
     world = build_filter_world(pkl=True)
     objects, trackings = _execute(world)
 
     # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.json'), 'w') as f:
     #     json.dump(trackings, f, indent=1, cls=MetadataJSONEncoder)
-    # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
-    #     pickle.dump(trackings, f)
+    with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'wb') as f:
+        pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-trackings.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
@@ -31,23 +40,17 @@ def test_optimized_workflow():
         assert filename in trackings, (filename, trackings.keys())
         tps = trackings[filename]
         assert len(tps) == len(tgs), (len(tps), len(tgs))
-        for idx, (tp, tg) in enumerate(zip(tps, tgs)):
+        for idx, (tp, tg) in enumerate(zip(sorted(tps, key=trackid), sorted(tgs, key=trackid))):
             assert len(tp) == len(tg), (idx, len(tp), len(tg))
-            for oid, g in tg.items():
-                assert oid in tp, (oid, tp.keys())
-                p = tp[oid]
-                assert isinstance(g, Tracking3DResult), (g, type(g))
-                assert p.frame_idx == g.frame_idx, (p.frame_idx, g.frame_idx)
+            for p, g in zip(sorted(tp, key=frameidx), sorted(tg, key=frameidx)):
+                assert isinstance(p, TrackingResult), (p, type(p))
+                assert isinstance(g, TrackingResult), (g, type(g))
                 assert tuple(p.detection_id) == tuple(g.detection_id), (p.detection_id, g.detection_id)
                 assert p.object_id == g.object_id, (p.object_id, g.object_id)
-                assert np.allclose(np.array(p.point_from_camera), np.array(g.point_from_camera), atol=0.001, rtol=0), (p.point_from_camera, g.point_from_camera)
-                assert np.allclose(np.array(p.point), np.array(g.point), atol=0.001, rtol=0), (p.point, g.point)
-                assert p.bbox_left == g.bbox_left, (p.bbox_left, g.bbox_left)
-                assert p.bbox_top == g.bbox_top, (p.bbox_top, g.bbox_top)
-                assert p.bbox_w == g.bbox_w, (p.bbox_w, g.bbox_w)
-                assert p.bbox_h == g.bbox_h, (p.bbox_h, g.bbox_h)
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
+                assert np.allclose([p.confidence], [g.confidence], atol=0.001, rtol=0), (p.confidence, g.confidence)
+                assert np.allclose(p.bbox.detach().cpu().numpy(), g.bbox.detach().cpu().numpy(), atol=0.001, rtol=0), (p.bbox, g.bbox)
     
     # with open(os.path.join(OUTPUT_DIR, 'optimized-workflow-objects.json'), 'w') as f:
     #     json.dump(objects, f, indent=1)
