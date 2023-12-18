@@ -1,14 +1,11 @@
-from ...predicate import (
-    GenSqlVisitor,
-    PredicateNode,
-    call_node,
-)
-
-from .common import get_heading_at_time, default_location
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
+from .common import default_location, get_heading_at_time
 
 
 @call_node
-def heading_diff(visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"):
+def heading_diff(
+    visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"
+):
     object1, object2 = args
 
     object1 = default_location(object1)

@@ -222,7 +222,10 @@ cameras = CameraTables()
 camera = CameraTableNode()
 
 
-Fn = Callable[["GenSqlVisitor", "list[PredicateNode]"], str] | Callable[["GenSqlVisitor", "list[PredicateNode]", dict[str, PredicateNode]], str]
+Fn = (
+    Callable[["GenSqlVisitor", "list[PredicateNode]"], str]
+    | Callable[["GenSqlVisitor", "list[PredicateNode]", dict[str, PredicateNode]], str]
+)
 
 
 class CallNode(PredicateNode):
