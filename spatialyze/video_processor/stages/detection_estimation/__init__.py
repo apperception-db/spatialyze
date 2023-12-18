@@ -3,6 +3,9 @@ import time
 from typing import Callable, List
 
 import postgis
+import shapely
+import shapely.geometry
+import shapely.wkb
 import torch
 from bitarray import bitarray
 from psycopg2 import sql
@@ -64,28 +67,31 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
         action_type_counts = {}
         total_detection_time = []
         total_sample_plan_time = []
+        skip_track = []
         dets = Detection3D.get(payload)
         assert dets is not None, [*payload.metadata.keys()]
         metadata: "list[DetectionEstimationMetadatum]" = []
         # investigation_frame_nums = []
         current_fps = payload.video.fps
         for i in Stage.tqdm(range(len(payload.video) - 1)):
+            start_current_de = time.time()
             current_ego_config = payload.video[i]
 
             if i != next_frame_num:
                 skipped_frame_num.append(i)
                 metadata.append([])
-                print("skip   ", i, next_frame_num)
+                # print("skip   ", i, next_frame_num)
                 continue
 
             next_frame_num = i + 1
 
             det, _, dids = dets[i]
-            print("--new    ", i, new_car(dets, i, i + 5))
+            # print("--new    ", i, new_car(dets, i, i + 5))
             if new_car(dets, i, i + 5) <= i + 1:
                 # will not map segment if cannot skip in the first place
                 metadata.append([])
-                print("new    ", i, new_car(dets, i, i + 5))
+                skip_track.append((i, next_frame_num, time.time() - start_current_de))
+                # print("new    ", i, new_car(dets, i, i + 5))
                 continue
 
             start_detection_time = time.time()
@@ -103,9 +109,10 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             all_detection_info_pruned = all_detection_info
 
             if len(det) == 0 or len(all_detection_info_pruned) == 0:
-                # skipped_frame_num.append(i)
+                skipped_frame_num.append(i)
                 metadata.append([])
-                print("0      ", i)
+                skip_track.append((i, next_frame_num, time.time() - start_current_de))
+                # print("0      ", i)
                 continue
 
             start_generate_sample_plan = time.time()
@@ -116,7 +123,8 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             next_frame_num = next_sample_plan.get_next_frame_num()
             next_frame_num = new_car(dets, i, next_frame_num)
             logger.info(f"founded next_frame_num {next_frame_num}")
-            print("next   ", i)
+            # print("next   ", i)
+            skip_track.append((i, next_frame_num, time.time() - start_current_de))
             metadata.append(all_detection_info)
 
             next_action_type = next_sample_plan.get_action_type()
@@ -126,7 +134,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
 
         # TODO: ignore the last frame ->
         metadata.append([])
-        # skipped_frame_num.append(len(payload.video) - 1)
+        skipped_frame_num.append(len(payload.video) - 1)
 
         #     times.append([t2 - t1 for t1, t2 in zip(t[:-1], t[1:])])
         # logger.info(np.array(times).sum(axis=0))
@@ -142,6 +150,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
             {
                 "name": payload.video.videofile,
                 "skipped_frames": skipped_frame_num,
+                "skip_track": skip_track,
                 "actions": action_type_counts,
                 "runtime": total_run_time,
                 "detection": total_detection_time,

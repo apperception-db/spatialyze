@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 import cv2
 import numpy as np
 
-from ...cache import cache
 from ..stage import Stage
 
 if TYPE_CHECKING:
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class DecodeFrame(Stage[np.ndarray]):
-    @cache
+    # @cache
     def _run(self, payload: "Payload"):
         metadata: "list[npt.NDArray]" = []
 
