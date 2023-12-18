@@ -521,12 +521,20 @@ class GenSqlVisitor(Visitor[str]):
         assert isinstance(table, (ObjectTableNode, CameraTableNode)), "table type not supported"
 
         if isinstance(table, ObjectTableNode):
+            if node.name in IS_TEMPORAL:
+                raise Exception('Dropping support for temporal attributes -> use object')
             if node.name in IS_TEMPORAL and IS_TEMPORAL[node.name] and node not in self.prev_timed:
                 self.prev_timed.add(node)
                 return self(node @ camera.time)
             return resolve_object_attr(self, node.name, table.index)
         elif isinstance(table, CameraTableNode):
             return resolve_camera_attr(self, node.name, table.index)
+
+    def visit_TableNode(self, node: "TableNode"):
+        if isinstance(node, ObjectTableNode):
+            return f"valueAtTimestamp({resolve_object_attr(self, 'translations', node.index)},timestamp)"
+        elif isinstance(node, CameraTableNode):
+            return resolve_camera_attr(self, 'cameraTranslation', node.index)
 
     def visit_CompOpNode(self, node: "CompOpNode"):
         left = self(node.left)
@@ -542,9 +550,6 @@ class GenSqlVisitor(Visitor[str]):
 
     def visit_UnaryOpNode(self, node: "UnaryOpNode"):
         return f"({UNARY_OP[node.op]}{self(node.expr)})"
-
-    def visit_TableNode(self, node: "TableNode"):
-        raise Exception("table type not supported")
 
     def visit_ObjectTableNode(self, node: "ObjectTableNode"):
         return self(node.traj)

@@ -3,37 +3,37 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
+    # (
+    #     contains_all('intersection', [o.trans, 2] @ c.time),
+    #     """(EXISTS(SELECT 1
+    #         FROM intersection
+    #             JOIN SegmentPolygon
+    #                 ON SegmentPolygon.elementId = intersection.id
+    #             JOIN unnest(valueAtTimestamp(ARRAY[t0.translations,2],timestamp)) point
+    #                 ON ST_Covers(SegmentPolygon.elementPolygon, point)
+    #         GROUP BY intersection.id
+    #         HAVING COUNT(point) = cardinality(valueAtTimestamp(ARRAY[t0.translations,2],timestamp))
+    #     ))"""
+    # ),
+    # (
+    #     contains_all('intersection', c.time),
+    #     """(EXISTS(SELECT 1
+    #         FROM intersection
+    #             JOIN SegmentPolygon
+    #                 ON SegmentPolygon.elementId = intersection.id
+    #             JOIN unnest(timestamp) point
+    #                 ON ST_Covers(SegmentPolygon.elementPolygon, point)
+    #         GROUP BY intersection.id
+    #         HAVING COUNT(point) = cardinality(timestamp)
+    #     ))"""
+    # ),
     (
-        contains_all('intersection', [o.trans, 2] @ c.time),
-        """(EXISTS(SELECT 1
-            FROM intersection
-                JOIN SegmentPolygon
-                    ON SegmentPolygon.elementId = intersection.id
-                JOIN unnest(valueAtTimestamp(ARRAY[t0.translations,2],timestamp)) point
-                    ON ST_Covers(SegmentPolygon.elementPolygon, point)
-            GROUP BY intersection.id
-            HAVING COUNT(point) = cardinality(valueAtTimestamp(ARRAY[t0.translations,2],timestamp))
-        ))"""
-    ),
-    (
-        contains_all('intersection', c.time),
-        """(EXISTS(SELECT 1
-            FROM intersection
-                JOIN SegmentPolygon
-                    ON SegmentPolygon.elementId = intersection.id
-                JOIN unnest(timestamp) point
-                    ON ST_Covers(SegmentPolygon.elementPolygon, point)
-            GROUP BY intersection.id
-            HAVING COUNT(point) = cardinality(timestamp)
-        ))"""
-    ),
-    (
-        contains_all('intersection', [c.time, o.trans]),
+        contains_all('intersection', [o, o2]),
         """(EXISTS(SELECT 1
             FROM SegmentPolygon
             WHERE
                 SegmentPolygon.__RoadType__intersection__ AND
-                ST_Covers(SegmentPolygon.elementPolygon, timestamp) AND ST_Covers(SegmentPolygon.elementPolygon, t0.translations)
+                ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.translation,timestamp)) AND ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.translations,timestamp))
         ))"""
     )
 ])
