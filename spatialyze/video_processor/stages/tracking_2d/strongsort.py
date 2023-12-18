@@ -45,7 +45,7 @@ class StrongSORT(Tracking2D):
         assert names is not None
 
         for (dets, _, dids), ts in StrongSORT.tqdm(zip(detections, trackings)):
-            current_process_start = time.time()
+            # current_process_start = time.time()
             d2ds_map: "dict[DetectionId, torch.Tensor]" = {}
             for d2d, did in zip(dets, dids):
                 d2ds_map[did] = d2d
