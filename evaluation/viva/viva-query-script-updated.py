@@ -61,7 +61,7 @@ disable_cache()
 savert(starttime, 'setup')
 
 files = []
-for day in ['2017-12-17']:
+for day in ['2017-12-14']:
     path = os.path.join(VIDEO_DIR, day)
     for video in os.listdir(path):
         files.append(os.path.join(path, video))
@@ -115,7 +115,6 @@ writer.release()
 cv2.destroyAllWindows()
 print(f"{_size / 1000 / 1000 / 1000} GB")
 savert(starttime, 'resize-videos')
-
 
 # %%
 # database = Database(
@@ -353,6 +352,7 @@ save_video_util(world._objects, world._trackings, OUTPUT_DIR, addBoundingBoxes=T
 # print("result", format(end-start))
 
 
+# %%
 starttime = time.time()
 result = world.getObjects()
 print(len(result))
@@ -361,7 +361,7 @@ with open ('viva-nuscenes-tracks.txt', 'w') as out_file:
     for track in result:
         print(track, file=out_file) 
 
-starttime = time.time()
+starttime = time.time() 
 result = world.getObjects()
 print(len(result))
 savert(starttime, 'process-and-objects')
