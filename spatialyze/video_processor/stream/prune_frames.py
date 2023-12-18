@@ -1,7 +1,7 @@
 from typing import TypeVar
 
-from ..video import Video=
-from .data_types import Skip, skip=
+from ..video import Video
+from .data_types import Skip, skip
 from .stream import Stream
 
 T = TypeVar("T")
