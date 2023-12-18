@@ -30,7 +30,6 @@ class StrongSORT(Tracking):
         self._benchmark = []
         # self.ss_benchmark = []
 
-    # @cache
     def _run(self, payload: "Payload"):
         # load_data_start = time.time()
         detections = Detection2D.get(payload)

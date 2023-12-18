@@ -122,24 +122,22 @@ from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3D
 from spatialyze.video_processor.stages.tracking_3d.from_tracking_2d_and_detection_3d import FromTracking2DAndDetection3D as FromT2DAndD3D
 
 from spatialyze.video_processor.stages.segment_trajectory import SegmentTrajectory
-# from spatialyze.video_processor.stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
+from spatialyze.video_processor.stages.segment_trajectory.construct_segment_trajectory import SegmentPoint
 from spatialyze.video_processor.stages.segment_trajectory.from_tracking_3d import FromTracking3D
 
 
 # In[10]:
 
 
-from spatialyze.video_processor.cache import disable_cache
-disable_cache()
+# from spatialyze.video_processor.cache import disable_cache
+# disable_cache()
 
 
 # In[11]:
 
 
-from spatialyze.video_processor.utils.format_trajectory import format_trajectory
-from spatialyze.video_processor.utils.insert_trajectory import insert_trajectory
-from spatialyze.video_processor.utils.get_tracks import get_tracks
-# from spatialyze.video_processor.actions.tracking2d_overlay import tracking2d_overlay
+from spatialyze.video_processor.utils.process_pipeline import format_trajectory, insert_trajectory, get_tracks
+from spatialyze.video_processor.actions.tracking2d_overlay import tracking2d_overlay
 
 
 # In[12]:
@@ -147,7 +145,7 @@ from spatialyze.video_processor.utils.get_tracks import get_tracks
 
 from spatialyze.utils.ingest_road import ingest_road
 from spatialyze.database import database, Database
-# from spatialyze.legacy.world import empty_world
+from spatialyze.legacy.world import empty_world
 from spatialyze.utils import F
 from spatialyze.predicate import camera, objects, lit, FindAllTablesVisitor, normalize, MapTablesTransformer, GenSqlVisitor
 from spatialyze.data_types.camera import Camera as ACamera
@@ -248,7 +246,7 @@ def run_benchmark(pipeline, filename, predicates, run=0, ignore_error=False):
     }
     print('# of total    videos:', len(videos))
 
-    names = set(sampled_scenes[:20])
+    names = set(sampled_scenes[60:80])
     # names = set(sampled_scenes)
     filtered_videos = [
         n for n in videos
@@ -337,7 +335,7 @@ def run_benchmark(pipeline, filename, predicates, run=0, ignore_error=False):
                     )
                     accs.append(acc)
                 camera = ACamera(accs, cc.camera_id)
-                database.insert_camera(camera)
+                database.insert_cam(camera)
 
                 query = get_sql(predicate)
                 qresult = database.execute(query)
@@ -351,7 +349,7 @@ def run_benchmark(pipeline, filename, predicates, run=0, ignore_error=False):
 
             # save video
             start_video = time.time()
-            # tracking2d_overlay(output, './tmp.mp4')
+            tracking2d_overlay(output, './tmp.mp4')
             time_video = time.time() - start_video
             # runtime_video.append({'name': name, 'runtime': time_video})
 
@@ -361,10 +359,7 @@ def run_benchmark(pipeline, filename, predicates, run=0, ignore_error=False):
                     lambda x: video['filename'] in x['name'],
                     stage.benchmark
                 )]
-                try:
-                    assert len(benchmarks) == 1
-                except:
-                    print(benchmarks)
+                assert len(benchmarks) == 1
                 perf.append({
                     'stage': stage.classname(),
                     'benchmark': benchmarks[0]
@@ -630,6 +625,23 @@ pipelines = {
 
 
 def run(__test):
+    o = objects[0]
+    c = camera
+    pred1 = (
+        (o.type == 'person') &
+        # F.contained(c.ego, 'intersection') &
+        F.contained(o.trans@c.time, 'intersection') &
+        F.angle_excluding(F.facing_relative(o.traj@c.time, c.cam), lit(-70), lit(70)) &
+        # F.angle_between(F.facing_relative(c.cam, F.road_direction(c.ego)), lit(-15), lit(15)) &
+        (F.distance(c.cam, o.traj@c.time) < lit(50)) # &
+        # (F.view_angle(o.trans@c.time, c.camAbs) < lit(35))
+    )
+    pred1_notrack = (
+        F.contained(o.trans@c.time, 'intersection') &
+        (F.distance(c.cam, o.traj@c.time) < lit(50)) &
+        (o.type == 'person')
+    )
+
     obj1 = objects[0]
     obj2 = objects[1]
     cam = camera
@@ -659,20 +671,94 @@ def run(__test):
         ((obj2.type == 'car') | (obj2.type == 'truck'))
     )
 
+    obj1 = objects[0]
+    cam = camera
+    pred3 = (
+        ((obj1.type == 'car') | (obj1.type == 'truck')) &
+        # (F.view_angle(obj1.trans@cam.time, cam.ego) < 70 / 2) &
+        F.angle_between(F.facing_relative(cam.cam, F.road_direction(cam.ego, cam.ego)), 135, 225) &
+        F.contained(cam.cam, F.road_segment('lane')) &
+        F.contained(obj1.trans@cam.time, F.road_segment('lane')) &
+        F.angle_between(F.facing_relative(obj1.trans@cam.time, F.road_direction(obj1.traj@cam.time, cam.ego)), -15, 15) &
+        # F.angle_between(F.facing_relative(obj1.trans@cam.time, cam.ego), 135, 225) &
+        (F.distance(cam.cam, obj1.trans@cam.time) < 10)
+    )
+    pred3_notrack = (
+        # F.contained(cam.cam, F.road_segment('lane')) &
+        F.contained(obj1.trans@cam.time, F.road_segment('lane')) &
+        (F.distance(cam.cam, obj1.trans@cam.time) < 10) &
+        ((obj1.type == 'car') | (obj1.type == 'truck'))
+    )
+
+    cam = camera
+    car1 = objects[0]
+    opposite_car_1 = objects[1]
+    opposite_car_2 = objects[2]
+
+    pred4 = (
+        ((car1.type == 'car') | (car1.type == 'truck')) &
+        ((opposite_car_2.type == 'car') | (opposite_car_2.type == 'truck')) &
+        ((opposite_car_1.type == 'car') | (opposite_car_1.type == 'truck')) &
+        (opposite_car_1.id != opposite_car_2.id) &
+        (car1.id != opposite_car_2.id) &
+        (car1.id != opposite_car_1.id) &
+
+        F.contained(cam.cam, F.road_segment('lane')) &
+        F.contained(car1.trans@cam.time, F.road_segment('lane')) &
+        F.contained(opposite_car_1.trans@cam.time, F.road_segment('lane')) &
+        F.contained(opposite_car_2.trans@cam.time, F.road_segment('lane')) &
+        F.angle_between(F.facing_relative(cam.cam, F.road_direction(cam.cam, cam.cam)), -15, 15) &
+        # (F.view_angle(car1.traj@cam.time, cam.ego) < 70 / 2) &
+        (F.distance(cam.cam, car1.traj@cam.time) < 40) &
+        F.angle_between(F.facing_relative(car1.traj@cam.time, cam.ego), -15, 15) &
+        # F.angle_between(F.facing_relative(car1.traj@cam.time, F.road_direction(car1.traj@cam.time, cam.ego)), -15, 15) &
+        F.ahead(car1.traj@cam.time, cam.cam) &
+        # (F.convert_camera(opposite_car.traj@cam.time, cam.ego) > [-10, 0]) &
+        # (F.convert_camera(opposite_car.traj@cam.time, cam.ego) < [-1, 50]) &
+        F.angle_between(F.facing_relative(opposite_car_1.traj@cam.time, cam.ego), 135, 225) &
+        # (F.distance(opposite_car@cam.time, car2@cam.time) < 40)# &
+        F.angle_between(F.facing_relative(opposite_car_2.traj@cam.time, opposite_car_1.traj@cam.time), -15, 15) &
+        F.angle_between(F.facing_relative(opposite_car_2.traj@cam.time, F.road_direction(opposite_car_2.traj@cam.time, cam.ego)), -15, 15) &
+        F.ahead(opposite_car_2.traj@cam.time, opposite_car_1.traj@cam.time)
+    )
+    pred4_notrack = (
+        # F.contained(cam.cam,                       F.road_segment('lane')) &
+        F.contained(car1.trans@cam.time,           F.road_segment('lane')) &
+        F.contained(opposite_car_1.trans@cam.time, F.road_segment('lane')) &
+        F.contained(opposite_car_2.trans@cam.time, F.road_segment('lane')) &
+        ((car1.type == 'car') | (car1.type == 'truck')) &
+        ((opposite_car_2.type == 'car') | (opposite_car_2.type == 'truck')) &
+        ((opposite_car_1.type == 'car') | (opposite_car_1.type == 'truck')) &
+        (opposite_car_1.id != opposite_car_2.id) &
+        (car1.id != opposite_car_2.id) &
+        (car1.id != opposite_car_1.id)
+    )
+
+    p1 = pipelines[__test](pred1)
     p2 = pipelines[__test](pred2)
+    p34 = pipelines[__test](pred3)
 
     print('Pipeline P2:')
     for s in p2.stages:
         print(' -', s)
     run_benchmark(p2, 'q2-' + __test, [pred2, pred2_notrack], run=1, ignore_error=True)
 
+    print('Pipeline P3,P4:')
+    for s in p34.stages:
+        print(' -', s)
+    run_benchmark(p34, 'q34-' + __test, [pred3, pred4, pred3_notrack, pred4_notrack], run=1, ignore_error=True)
+
+    if __test != 'optde' and __test != 'de':
+        print('Pipeline P1:')
+        for s in p1.stages:
+            print(' -', s)
+        run_benchmark(p1, 'q1-' + __test, [pred1, pred1_notrack], run=1, ignore_error=True)
+
 
 # In[24]:
 
-
-# tests = ['optde', 'de', 'noopt', 'inview', 'objectfilter', 'geo', 'opt']
-# tests = ['de', 'noopt', 'inview', 'objectfilter']
-tests = ['de', 'noopt']
+tests = ['optde', 'de', 'noopt', 'inview', 'objectfilter', 'geo', 'opt']
+tests = ['de', 'noopt', 'inview', 'objectfilter']
 # random.shuffle(tests)
 
 for _test in tests:
@@ -710,9 +796,8 @@ for idx, _test in enumerate(tests):
 
 # In[ ]:
 
-
-# if not is_notebook():
-#     subprocess.Popen('sudo shutdown -h now', shell=True)
+if not is_notebook():
+    subprocess.Popen('sudo shutdown -h now', shell=True)
 
 
 # In[ ]:

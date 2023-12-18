@@ -15,7 +15,6 @@ coverage.xml
 .virtual_documents
 
 *.pickle
-maps
 samples
 sweeps
 
@@ -30,3 +29,4 @@ outputs
 
 yolov5s.pt
 yolov8m.pt
+data/skyquery/car-model/yolov3.best
