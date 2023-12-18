@@ -26,7 +26,7 @@ matplotlib = "^3.5.2"
 scipy = "^1.4.1"
 gdown = "^4.7.1"
 ultralytics = "^8.0.148"
-notebook = "^6.5.5"
+notebook = "^7.0.6"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -41,11 +41,11 @@ flake8 = "^5.0.4"
 pre-commit = "^3.2.2"
 
 # Notebook
-jupyterlab = "^3.6.2"
-ipywidgets = "^8.0.6"
-jupyterlab-lsp = "^4.0.1"
+jupyterlab = "^4.0.7"
+ipywidgets = "^8.1.1"
+jupyterlab-lsp = "^5.0.0"
 python-lsp-server = {extras = ["all"], version = "^1.7.1"}
-jupyterlab-vim = "^0.16.0"
+jupyterlab-vim = "^4.1.0"
 nbdime = "^3.2.1"
 altair = "^4.2.2"
 

@@ -153,7 +153,8 @@ class Database:
 
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute("CREATE INDEX ON Cameras (cameraId);")
+        # cursor.execute("CREATE INDEX ON Cameras (cameraId);")
+        cursor.execute("CREATE INDEX ON Cameras (cameraId, frameNum);")
         cursor.execute("CREATE INDEX ON Cameras (timestamp);")
         cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
         cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")

@@ -15,11 +15,13 @@ from nuscenes.nuscenes import NuScenes
 from nuscenes.map_expansion.map_api import NuScenesMap
 from nuscenes.map_expansion import arcline_path_utils
 from nuscenes.map_expansion.bitmap import BitMap
+from pathlib import Path
+EVA = Path(__file__).parent.parent
 
 class QE2(AbstractUDF):
     @setup(cacheable=True, udf_type="Query", batchable=True)
     def setup(self):
-        self.nusc_map = NuScenesMap(dataroot='/work/apperception/data/raw/nuScenes/Map-expansion', map_name='boston-seaport')
+        self.nusc_map = NuScenesMap(dataroot=str(EVA), map_name='boston-seaport')
     
     @forward(
         input_signatures=[

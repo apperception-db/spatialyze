@@ -152,7 +152,7 @@ class SamplePlan:
     next_frame_num: int
     all_detection_info: "list[DetectionInfo]"
     ego_views: "list[postgis.Polygon]"
-    fps: int = 12
+    fps: float = 12
     current_priority: "float | None" = None
     action: "Action | None" = None
 
@@ -259,7 +259,7 @@ def construct_all_detection_info(
     ego_config: "CameraConfig",
     ego_trajectory: "list[trajectory_3d]",
     all_detections: "list[obj_detection]",
-):
+) -> tuple[list[DetectionInfo], list[float]]:
     all_detection_info: "list[DetectionInfo]" = []
     if len(all_detections) == 0:
         return all_detection_info, []
@@ -267,7 +267,7 @@ def construct_all_detection_info(
     # ego_road_polygon_info = get_largest_polygon_containing_point(ego_config)
     detections_polygon_mapping, times = get_detection_polygon_mapping(all_detections, ego_config)
     if len(detections_polygon_mapping) == 0:
-        return [], times
+        return all_detection_info, times
 
     # assert len(all_detections) == len(detections_polygon_mapping)
     for detection in all_detections:
@@ -298,7 +298,7 @@ def generate_sample_plan(
     all_detection_info: "list[DetectionInfo]",
     ego_views: "list[postgis.Polygon]",
     view_distance: float,
-    fps: int = 12,
+    fps: float = 12,
 ):
     ### the object detection with higher priority doesn't necessarily get sampled first,
     # it also based on the sample plan
