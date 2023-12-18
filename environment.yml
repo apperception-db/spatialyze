@@ -1,4 +1,4 @@
-name: spatialyze-benchmark
+name: spatialyze
 
 channels:
   - conda-forge
