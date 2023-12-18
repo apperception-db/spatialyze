@@ -66,6 +66,8 @@ for day in ['2017-12-14']:
     for video in os.listdir(path):
         files.append(os.path.join(path, video))
 
+files.sort()
+
 # %%
 starttime = time.time()
 FPS = 1

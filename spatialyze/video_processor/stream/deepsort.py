@@ -6,15 +6,21 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
+from ..camera_config import CameraConfig
+from ..types import DetectionId
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip
 from .stream import Stream
+from .strongsort import TrackingResult
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
 WEIGHTS = SPATIALYZE / "weights"
 REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
 EMPTY_DETECTION = torch.Tensor(0, 6)
+
+if not os.path.exists(WEIGHTS):
+    os.makedirs(WEIGHTS)
 
 DEEPSORT = (
     SPATIALYZE
@@ -38,9 +44,10 @@ TORCHREID = (
     / "reid"
 )
 sys.path.append(str(TORCHREID))
+
 from ..modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
+from ..modules.yolo_deepsort.deep_sort.sort.track import Track
 from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
-from .strongsort import TrackingResult, _process_track
 
 
 def xyxy2xywh(x):
@@ -105,11 +112,7 @@ class DeepSORT(Stream[list[TrackingResult]]):
             deleted_tracks_idx = 0
             saved_detections: list[dict[int, torch.Tensor]] = []
             classes: list[str] | None = None
-            for idx, (detection, im0s) in enumerate(
-                zip(self.detection2ds.stream(video), self.frames.stream(video))
-            ):
-                # assert not isinstance(im0s, Skip), type(im0s)
-
+            for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
                 if isinstance(detection, Skip) or len(detection[0]) == 0:
                     deepsort.increment_ages()
                     saved_detections.append({})
@@ -119,6 +122,8 @@ class DeepSORT(Stream[list[TrackingResult]]):
                     # print(det.shape)
                     if _classes is not None:
                         classes = _classes
+
+                    assert not isinstance(im0s, Skip), type(im0s)
                     im0 = im0s.copy()
 
                     xywhs = xyxy2xywh(det[:, 0:4])
@@ -143,3 +148,36 @@ class DeepSORT(Stream[list[TrackingResult]]):
                     deleted_tracks_idx += 1
             for track in deepsort.tracker.tracks:
                 yield _process_track(track, saved_detections, classes, video.camera_configs)
+
+
+def _process_track(
+    track: Track,
+    detections: list[dict[int, torch.Tensor]],
+    clss: list[str] | None,
+    camera_configs: list[CameraConfig],
+):
+    tid = track.track_id
+    assert isinstance(tid, int), type(tid)
+
+    clss = clss or []
+
+    def tracking_result(did_conf: tuple[DetectionId, float]):
+        did, conf = did_conf
+        fid, oid = did
+        assert isinstance(oid, int), type(oid)
+        bbox = detections[fid][oid]
+        cls = int(bbox[5])
+        return TrackingResult(
+            did, tid, conf, detections[fid][oid], clss[cls], camera_configs[fid].timestamp
+        )
+
+    # Sort track by frame idx
+    _track = map(tracking_result, zip(track.detection_ids, track.confs))
+    _track = sorted(_track, key=lambda d: d.detection_id.frame_idx)
+
+    # Link track
+    for before, after in zip(_track[:-1], _track[1:]):
+        before.next = after
+        after.prev = before
+
+    return _track

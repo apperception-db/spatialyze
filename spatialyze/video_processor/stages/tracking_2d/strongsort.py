@@ -24,6 +24,7 @@ class StrongSORT(Tracking2D):
     ) -> None:
         super().__init__()
         self.tracking = Tracking(method=method, cache=cache)
+        self._benchmark = self.tracking._benchmark
         if hasattr(self.tracking, "ss_benchmark"):
             self.ss_benchmark = getattr(self.tracking, "ss_benchmark")
 
@@ -43,6 +44,7 @@ class StrongSORT(Tracking2D):
         assert names is not None
 
         for (dets, _, dids), ts in StrongSORT.tqdm(zip(detections, trackings)):
+            # current_process_start = time.time()
             d2ds_map: "dict[DetectionId, torch.Tensor]" = {}
             for d2d, did in zip(dets, dids):
                 d2ds_map[did] = d2d

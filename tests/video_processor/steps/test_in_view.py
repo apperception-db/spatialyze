@@ -123,6 +123,10 @@ def test_predicates(fn, sqls):
         assert roadtypes == sqls[4], roadtypes
 
 
+def test_repr():
+    assert repr(InView(10, roadtypes=['intersection'])) == "InView(distance=10, roadtype=['intersection'], predicate=False)"
+
+
 # TODO: add these predicates
 
 # @pytest.mark.parametrize("fn, sql", [

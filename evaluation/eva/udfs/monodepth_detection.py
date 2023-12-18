@@ -1,5 +1,6 @@
 import sys
-sys.path.append("/home/youse/apperception")
+sys.path.append("/work/apperception/shared/spatialyze-yousef")
+sys.path.append("/work/apperception")
 
 import os
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
@@ -89,6 +90,7 @@ class monodepth:
         else:
             self.device = torch.device("cpu")
             print("GPU not visible; CPU mode")
+            raise Exception('no gpu')
 
         if pred_metric_depth and "stereo" not in model_name:
             print(
@@ -155,7 +157,7 @@ class monodepth:
         with torch.no_grad():
             # for im in tqdm(input_images):
             for index, row in input_images.iterrows():
-                im = row["objectdetectionvideos.data"]
+                im = row["data"]
                 if im is None:
                     output.append(None)
                     continue

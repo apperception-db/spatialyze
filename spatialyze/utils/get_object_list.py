@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 from ..data_types.camera_config import Float3, Float4
 from ..data_types.query_result import QueryResult
-from ..video_processor.stream.deepsort import TrackingResult
+from ..video_processor.stream.strongsort import TrackingResult
 from ..video_processor.types import DetectionId
 
 
@@ -33,7 +33,7 @@ def interpolate_track(
 
     values = list(trackings.values())
     return TrackingResult(
-        detection_id=DetectionId(frameNum, -1),
+        detection_id=DetectionId(frameNum, DetectionId.unique(frameNum)),
         object_id=values[0].object_id,
         confidence=values[0].confidence,
         bbox=newBbox,

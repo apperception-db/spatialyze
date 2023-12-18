@@ -1,4 +1,5 @@
 import datetime
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -7,15 +8,13 @@ import numpy.typing as npt
 import torch
 
 from ..camera_config import CameraConfig
-from ..modules.yolo_deepsort.deep_sort.sort.track import Track as TrackD
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
-from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track as TrackS
+from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
-from ..stages.tracking_2d.tracking_2d import Tracking2DResult
 from ..types import DetectionId
 from ..video import Video
-from .data_types import Detection2D, Skip
+from .data_types import Detection2D, Detection3D, Skip
 from .stream import Stream
 
 FILE = Path(__file__).resolve()
@@ -24,11 +23,26 @@ WEIGHTS = SPATIALYZE / "weights"
 REID_WEIGHTS = WEIGHTS / "osnet_x0_25_msmt17.pt"
 EMPTY_DETECTION = torch.Tensor(0, 6)
 
-Track = TrackS | TrackD
+if not os.path.exists(WEIGHTS):
+    os.makedirs(WEIGHTS)
 
 
-class StrongSORT(Stream[Tracking2DResult]):
-    def __init__(self, detections: Stream[Detection2D], frames: Stream[npt.NDArray]):
+@dataclass
+class TrackingResult:
+    detection_id: DetectionId
+    object_id: int
+    confidence: float | np.float32
+    bbox: torch.Tensor
+    object_type: str
+    timestamp: datetime.datetime
+    next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
+    prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
+
+
+class StrongSORT(Stream[list[TrackingResult]]):
+    def __init__(
+        self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]
+    ):
         self.detection2ds = detections
         self.frames = frames
 
@@ -52,9 +66,17 @@ class StrongSORT(Stream[Tracking2DResult]):
             # assert len(detections) == len(images)
             saved_detections: list[dict[int, torch.Tensor]] = []
             clss: list[str] | None = None
+            empty_img = None
             for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
-                assert not isinstance(im0s, Skip), type(im0s)
-                im0 = im0s.copy()
+                if not isinstance(detection, Skip):
+                    assert not isinstance(im0s, Skip), type(im0s)
+                    im0 = im0s.copy()
+                else:
+                    if empty_img is None:
+                        empty_img = np.zeros(
+                            (video.dimension[0], video.dimension[1], 3), dtype=np.uint8
+                        )
+                    im0 = empty_img
                 curr_frame = im0
 
                 # update_start = time.time()
@@ -96,18 +118,6 @@ class StrongSORT(Stream[Tracking2DResult]):
         #     'update_camera': update_time,
         #     'postprocess': postprocess_end - postprocess_start,
         # })
-
-
-@dataclass
-class TrackingResult:
-    detection_id: DetectionId
-    object_id: int
-    confidence: float | np.float32
-    bbox: torch.Tensor
-    object_type: str
-    timestamp: datetime.datetime
-    next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
-    prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
 
 
 def _process_track(

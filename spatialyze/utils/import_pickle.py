@@ -10,7 +10,8 @@ def import_pickle(database: "Database", data_path: str):
         data_frames = pickle.loads(f.read())
 
     with open(
-        "/home/youse/apperception/data/evaluation/video-samples/boston-seaport.txt", "r"
+        "/work/apperception/shared/spatialyze-yousef/data/evaluation/video-samples/boston-seaport.txt",
+        "r",
     ) as f:
         sceneNumbers = f.readlines()
         sceneNumbers = [x.strip() for x in sceneNumbers]

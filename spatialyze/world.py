@@ -11,20 +11,20 @@ from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
 from .utils.save_video_util import save_video_util
-from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
-from .video_processor.stages.tracking_2d.deepsort import DeepSORT
 from .video_processor.stream.data_types import Skip
 from .video_processor.stream.decode_frame import DecodeFrame
-from .video_processor.stream.deepsort import DeepSORT, TrackingResult
-from .video_processor.stream.exit_frame_sampler import ExitFrameSampler
 from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
 from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
 from .video_processor.stream.mono_depth_estimator import MonoDepthEstimator
 from .video_processor.stream.object_type_pruner import ObjectTypePruner
+from .video_processor.stream.prefilter import Prefilter
 from .video_processor.stream.prune_frames import PruneFrames
 
 # stream
 from .video_processor.stream.road_visibility_pruner import RoadVisibilityPruner
+
+# from .video_processor.stream.deepsort import DeepSORT, TrackingResult
+from .video_processor.stream.strongsort import StrongSORT, TrackingResult
 from .video_processor.stream.yolo import Yolo
 from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
@@ -129,21 +129,24 @@ def _execute(world: "World", optimization=True):
         # reset database
         database.reset()
 
-        # analyze predicates to generate video processing plan
-        inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
-        decode0 = DecodeFrame()
-        decode = PruneFrames(inview, decode0)
+        decode = DecodeFrame()
+        if v.keep is not None:
+            prefilter = Prefilter(v.keep)
+            decode = PruneFrames(prefilter, decode)
+        if optimization:
+            inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
+            decode = PruneFrames(inview, decode)
         d2ds = Yolo(decode)
         if optimization:
             d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
             d3ds = FromDetection2DAndRoad(d2ds)
-            if all(t in ["car", "truck"] for t in d2ds.types):
-                efs = ExitFrameSampler(d3ds)
-                d3ds = PruneFrames(efs, d3ds)
+            # if all(t in ["car", "truck"] for t in d2ds.types):
+            #     efs = ExitFrameSampler(d3ds)
+            #     d3ds = PruneFrames(efs, d3ds)
         else:
             depths = MonoDepthEstimator(decode)
             d3ds = FromDetection2DAndDepth(d2ds, depths)
-        t3ds = DeepSORT(d3ds, decode)
+        t3ds = StrongSORT(d3ds, decode)
 
         # execute pipeline
         video = Video(v.video, v.camera)

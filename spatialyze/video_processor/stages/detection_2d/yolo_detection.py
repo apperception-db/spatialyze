@@ -35,6 +35,9 @@ SPATIALYZE = FILE.parent.parent.parent.parent.parent
 WEIGHTS = SPATIALYZE / "weights"
 torch.hub.set_dir(str(WEIGHTS))
 
+REPO = "ultralytics/yolov5:v7.0"
+MODEL = "yolov5s"
+
 
 class YoloDetection(Detection2D):
     def __init__(
@@ -49,12 +52,10 @@ class YoloDetection(Detection2D):
     ):
         self.device = select_device("")
         try:
-            model = torch.hub.load("ultralytics/yolov5", "yolov5n", verbose=False, _verbose=False)
+            model = torch.hub.load(REPO, MODEL, verbose=False, _verbose=False)
             self.model: "DetectMultiBackend" = model.model.to(self.device)
         except BaseException:
-            model = torch.hub.load(
-                "ultralytics/yolov5", "yolov5n", verbose=False, _verbose=False, force_reload=True
-            )
+            model = torch.hub.load(REPO, MODEL, verbose=False, _verbose=False, force_reload=True)
             self.model: "DetectMultiBackend" = model.model.to(self.device)
         stride, pt = self.model.stride, self.model.pt
         assert isinstance(stride, int), type(stride)
