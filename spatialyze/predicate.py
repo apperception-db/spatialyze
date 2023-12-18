@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Literal, TypeVar, TypeGuard
+from typing import Any, Callable, Generic, Literal, TypeGuard, TypeVar
 
 BinOp = Literal["add", "sub", "mul", "div", "matmul"]
 BoolOp = Literal["and", "or"]
@@ -237,12 +237,17 @@ def is_fn_no_kwarg(fn: "FnOpt") -> TypeGuard[FnNoKwarg]:
 
 
 def make_fn(fn_opt: FnOpt) -> FnKwarg:
-    def fn(visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"):
+    def fn(
+        visitor: "GenSqlVisitor",
+        args: "list[PredicateNode]",
+        named_args: "dict[str, PredicateNode]",
+    ):
         if is_fn_kwarg(fn_opt):
             return fn_opt(visitor, args, named_args)
         elif is_fn_no_kwarg(fn_opt):
             return fn_opt(visitor, args)
-        raise Exception('Function does not have the right signature')
+        raise Exception("Function does not have the right signature")
+
     return fn
 
 
@@ -522,7 +527,7 @@ class GenSqlVisitor(Visitor[str]):
 
         if isinstance(table, ObjectTableNode):
             if node.name in IS_TEMPORAL:
-                raise Exception('Dropping support for temporal attributes -> use object')
+                raise Exception("Dropping support for temporal attributes -> use object")
             if node.name in IS_TEMPORAL and IS_TEMPORAL[node.name] and node not in self.prev_timed:
                 self.prev_timed.add(node)
                 return self(node @ camera.time)
@@ -534,7 +539,7 @@ class GenSqlVisitor(Visitor[str]):
         if isinstance(node, ObjectTableNode):
             return f"valueAtTimestamp({resolve_object_attr(self, 'translations', node.index)},timestamp)"
         elif isinstance(node, CameraTableNode):
-            return resolve_camera_attr(self, 'cameraTranslation', node.index)
+            return resolve_camera_attr(self, "cameraTranslation", node.index)
 
     def visit_CompOpNode(self, node: "CompOpNode"):
         left = self(node.left)
