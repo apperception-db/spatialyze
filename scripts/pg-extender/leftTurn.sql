@@ -82,8 +82,8 @@ DECLARE nextPoint geometry;
 DECLARE prevPoint geometry;
 BEGIN
     -- Turn Duration = 2sec. FPS = 30FPS. Frame 60 Frames
-    nextFrame := frameNum + 60;
-    prevFrame := frameNum - 60;
+    nextFrame := frameNum + 1;
+    prevFrame := frameNum - 1;
     
     currentAngle := valueAtTimestamp(itemHeadings, getTimestamp(frameNum, cameraId));
     nextAngle = valueAtTimestamp(itemHeadings, getTimestamp(nextFrame, cameraId));

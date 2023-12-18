@@ -31,12 +31,13 @@ def interpolate_track(
     timedelta = right.timestamp - left.timestamp
     newTimestamp = left.timestamp + timedelta * rightWeight
 
+    values = list(trackings.values())
     return TrackingResult(
         detection_id=DetectionId(frameNum, -1),
-        object_id=trackings[0].object_id,
-        confidence=trackings[0].confidence,
+        object_id=values[0].object_id,
+        confidence=values[0].confidence,
         bbox=newBbox,
-        object_type=trackings[0].object_type,
+        object_type=values[0].object_type,
         timestamp=newTimestamp,
     )
 

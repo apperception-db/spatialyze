@@ -100,9 +100,9 @@ o = world.object()
 # p = world.object()
 c = world.camera()
 world.filter(
-    (o.type == 'car') &
-    F.contained(o.trans@c.time, 'intersection') &
-    F.left_turn(o)
+    (o.type == 'car')
+    # F.contained(o.trans@c.time, 'intersection') &
+    # F.left_turn(o)
 )
 
 # %% 43452.52154326439, 8616.582023859024
@@ -115,7 +115,7 @@ end = time.time()
 
 
 # %%
-print("result", format(end-start))
+print("result", format(end-start), len(result))
 
 
 # %%
