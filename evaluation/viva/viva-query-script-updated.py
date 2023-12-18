@@ -60,23 +60,42 @@ VIDEO_NAME = 'output-small.mp4'
 disable_cache()
 savert(starttime, 'setup')
 
+files = []
+for day in ['2017-12-14']:
+    path = os.path.join(VIDEO_DIR, day)
+    for video in os.listdir(path):
+        files.append(os.path.join(path, video))
+
 # %%
 starttime = time.time()
-images = []
+FPS = 1
+writer = cv2.VideoWriter(
+    os.path.join(VIDEO_DIR, VIDEO_NAME),
+    cv2.VideoWriter_fourcc(*'mp4v'),
+    FPS,
+    (360, 240),
+)
+# images = []
 idx = 0
 last = None
 frame_count = 0
-for i in tqdm(range(1, 960 + 1), total=960):
+_size = 0
+N = 6490
+N = 50
+for file in files:
     # print('video', i)
-    cap = cv2.VideoCapture(os.path.join(VIDEO_DIR, str(i) + '.mp4'))
+    print ("Current File:", file, end="\r")
+    cap = cv2.VideoCapture(file)
     # print(cap.get(cv2.CAP_PROP_FPS))
     count = 0
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
-            if idx % cap.get(cv2.CAP_PROP_FPS) == 0:
-                images.append(cv2.resize(frame, (360, 240)))
-                # writer.write(frame)
+            if idx % (int(cap.get(cv2.CAP_PROP_FPS)) / FPS) == 0:                 ## <-- updated this
+                # images.append(cv2.resize(frame, (360, 240)))
+                img = cv2.resize(frame, (360, 240))
+                writer.write(img)
+                _size += img.size * img.itemsize
                 count += 1
                 # print('frame', frame_count)
                 frame_count += 1
@@ -87,32 +106,13 @@ for i in tqdm(range(1, 960 + 1), total=960):
     # print('c=', count)
     cap.release()
 # images.append(cv2.resize(last, (360, 240)))
-cv2.destroyAllWindows()
-savert(starttime, 'resize-videos')
-
-# %%
-len(images)
-_size = 0
-for x in images:
-    _size += x.size * x.itemsize
-_size / 1000 / 1000 / 1000
-
-# %%
-starttime = time.time()
-writer = cv2.VideoWriter(
-    os.path.join(VIDEO_DIR, VIDEO_NAME),
-    cv2.VideoWriter_fourcc(*'mp4v'),
-    1,
-    (360, 240),
-)
-
-for img in images:
-    # print(img.shape)
-    writer.write(img)
-
+img = cv2.resize(last, (360, 240))
+_size += img.size * img.itemsize
+writer.write(img)
 writer.release()
 cv2.destroyAllWindows()
-savert(starttime, 'save-resized-videos')
+print(f"{_size / 1000 / 1000 / 1000} GB")
+savert(starttime, 'resize-videos')
 
 # %%
 # database = Database(
@@ -170,8 +170,8 @@ def config(idx: int):
         camera_rotation=CAMERA_ROTATION,
         filename=videofile,
         ego_translation=np.array([0, 0, 0]),
-        frame_id=frame,
-        frame_num=frame,
+        frame_id=idx,
+        frame_num=idx,
         location="viva-data",
         timestamp=timestamp,
         road_direction=0,
@@ -188,14 +188,13 @@ savert(starttime, 'load-videos')
 
 # %%
 starttime = time.time()
-o = world.object()
-p = world.object()
+o = world.object(0)
+p = world.object(1)
 c = world.camera()
 world.filter(
-    (o.type == 'car') & (p.type == 'person')
-    # F.contained(o.trans@c.time, 'intersection') &
-    # F.contained(p.trans@c.time, 'intersection') 
-    # F.left_turn(o)
+    (o.type == 'car')  &  (p.type == 'person') &
+    F.contains_all('intersection', [o.trans, p.trans]@c.time) &
+    F.left_turn(o)
 )
 savert(starttime, 'define-query')
 
@@ -237,7 +236,7 @@ def save_video_util(
 
     for videoname, frame_tracking in bboxes.items():
         cameraId = video_to_camera[videoname]
-        output_file = os.path.join(outputDir, cameraId + "-result.mp4")
+        output_file = os.path.join(outputDir, cameraId + "-result-good.mp4")
 
         cap = cv2.VideoCapture(videoname)
         assert cap.isOpened(), f"Cannot read video file: {videoname}"
@@ -269,31 +268,33 @@ def save_video_util(
 
                         # Place Label Background
                         font = cv2.FONT_HERSHEY_SIMPLEX
-                        fontScale = 1
-                        fontThickness = 2
+                        fontScale = 0.5
+                        fontThickness = 1
                         label = f"{object_type}:{object_id}"
                         labelSize, _ = cv2.getTextSize(label, font, fontScale, fontThickness)
                         labelW, labelH = labelSize
 
-                        frame = cv2.rectangle(
-                            frame,
-                            (x1, y1 - labelH - 2 * TEXT_PADDING),
-                            (x1 + labelW + 2 * TEXT_PADDING, y1),
-                            bboxColor,
-                            cv2.FILLED,
-                        )
+                        if object_type == "car":
 
-                        # Place Label
-                        frame = cv2.putText(
-                            frame,
-                            label,
-                            (x1 + TEXT_PADDING, y1 - TEXT_PADDING),
-                            font,
-                            fontScale,
-                            (255, 255, 255),
-                            fontThickness,
-                            cv2.LINE_AA,
-                        )
+                            frame = cv2.rectangle(
+                                frame,
+                                (x1, y1 - labelH - 2 * TEXT_PADDING),
+                                (x1 + labelW + 2 * TEXT_PADDING, y1),
+                                bboxColor,
+                                cv2.FILLED,
+                            )
+
+                            # Place Label
+                            frame = cv2.putText(
+                                frame,
+                                label,
+                                (x1 + TEXT_PADDING, y1 - TEXT_PADDING),
+                                font,
+                                fontScale,
+                                (255, 255, 255),
+                                fontThickness,
+                                cv2.LINE_AA,
+                            )
                 vid_writer.write(frame)
                 result.append((videoname, frame_cnt))
 
@@ -358,28 +359,10 @@ with open ('viva-nuscenes-tracks.txt', 'w') as out_file:
     for track in result:
         print(track, file=out_file) 
 
-# %%
-world.saveVideos(outputDir=OUTPUT_DIR, addBoundingBoxes=True)
-
-# %%
-
-
-# %%
-
-
-# %%
-
-
-# %%
-
-
-# %%
-
-
-# %%
-
-
-# %%
-
-
-
+starttime = time.time() 
+result = world.getObjects()
+print(len(result))
+savert(starttime, 'process-and-objects')
+with open ('mobility-all-tracks.txt', 'w') as out_file:
+    print(world._objects, file=out_file) 
+    print(world._trackings, file=out_file) 
