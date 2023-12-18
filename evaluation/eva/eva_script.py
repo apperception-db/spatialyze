@@ -23,6 +23,11 @@ EVA = ROOT / "evaluation" / "eva"
 VIDEO_PATH = "/home/chanwutk/data/processed/videos/"
 
 
+
+CAM_DIRECTION = "CAM_FRONT"
+VIDEO_PATH = "/data/apperception-data/processed/nuscenes/full-dataset-v1.0/Mini/videos/"
+SCENE_NAMES = "scene-names-mini.txt"
+
 def delete_db():
     try:
         shutil.rmtree(os.path.join(EVA, "evadb_data"), ignore_errors=True)
@@ -80,9 +85,9 @@ def load_data(sceneNumbers):
     for sceneNumber in sceneNumbers:
         sceneNumber = sceneNumber.strip()
         # Load videos
-        video_name = f"boston-seaport-scene-{sceneNumber}-CAM_FRONT_LEFT.mp4"
-        camera_name = f"boston-seaport-scene-{sceneNumber}-CAM_FRONT_LEFT.pkl"
-        scene = f"scene-{sceneNumber}-CAM_FRONT_LEFT"
+        video_name = f"boston-seaport-scene-{sceneNumber}-{CAM_DIRECTION}.mp4"
+        camera_name = f"boston-seaport-scene-{sceneNumber}-{CAM_DIRECTION}.pkl"
+        scene = f"scene-{sceneNumber}-{CAM_DIRECTION}"
         cursor.load(file_regex=VIDEO_PATH + video_name, format="VIDEO", table_name='ObjectDetectionVideos').df()
 
         # Add camera configs
@@ -104,10 +109,14 @@ def write_times(sceneNumbers, query, time):
         f.write(str(sceneNumbers) + " - " + query + " - " + time + "\n")
         print(str(sceneNumbers) + " - " + query + " - " + time + "\n")
 
+
+"""
+For each query, we query for the frameNum, cameraId, filename, and trajectory/location, similar to what getObjects() of Spatialyze returns
+"""
 def q1(cursor):
     start = time.time()
     res1 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE1(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE1(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res1 = res1[res1["qe1.queryresult"]]    
@@ -118,7 +127,7 @@ def q1(cursor):
 def q2(cursor):
     start = time.time()
     res2 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE2(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE2(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res2 = res2[res2["qe2.queryresult"]]
@@ -129,7 +138,7 @@ def q2(cursor):
 def q3(cursor):
     start = time.time()
     res3 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE3(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE3(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res3 = res3[res3["qe3.queryresult"]]
@@ -140,7 +149,7 @@ def q3(cursor):
 def q4(cursor):
     start = time.time()
     res4 = cursor.query("""
-                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE4(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult
+                SELECT framenum, id, cameraid, filename, name, egoheading, cameratranslation, QE4(LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic), cameratranslation, egoheading).queryresult, LocationDetection(Yolo(data), MonodepthDetection(data).depth, cameratranslation, camerarotation, cameraintrinsic)
                     FROM ObjectDetectionVideos JOIN CameraConfigs ON (id = framenum AND SameVideo(name, cameraid).issame)
     """).df()
     res4= res4[res4["qe4.queryresult"]]
@@ -152,10 +161,14 @@ def q4(cursor):
 with open("eva-times.txt", 'w') as f:
         f.write("\n")
 
-with open("scene-names.txt", 'r') as f:
+with open(SCENE_NAMES, 'r') as f:
     sceneNumbers = f.readlines()
     sceneNumbers = [x.strip() for x in sceneNumbers]
 
+"""
+To measure the query time for each query, we start with a clean DB, and run two queries in parralel, in order to make use of Eva's
+cacheing mechanisms. For example, to measure the q4 runtime, we would run q3 first and then q4.
+"""
 bsize = 10
 while len(sceneNumbers) > 0:
     if len(sceneNumbers) > bsize:
