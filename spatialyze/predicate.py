@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Literal, TypeVar
+from typing import Any, Callable, Generic, Literal, TypeVar, TypeGuard
 
 BinOp = Literal["add", "sub", "mul", "div", "matmul"]
 BoolOp = Literal["and", "or"]
@@ -222,34 +222,55 @@ cameras = CameraTables()
 camera = CameraTableNode()
 
 
-Fn = (
-    Callable[["GenSqlVisitor", "list[PredicateNode]"], str]
-    | Callable[["GenSqlVisitor", "list[PredicateNode]", dict[str, PredicateNode]], str]
-)
+FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
+FnNoKwarg = Callable[["GenSqlVisitor", list[PredicateNode]], str]
+FnOpt = FnKwarg | FnNoKwarg
+# FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
+
+
+def is_fn_kwarg(fn: "FnOpt") -> TypeGuard[FnKwarg]:
+    return hasattr(fn, "__code__") and fn.__code__.co_argcount == 3
+
+
+def is_fn_no_kwarg(fn: "FnOpt") -> TypeGuard[FnNoKwarg]:
+    return hasattr(fn, "__code__") and fn.__code__.co_argcount == 2
+
+
+def make_fn(fn_opt: FnOpt) -> FnKwarg:
+    def fn(visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"):
+        if is_fn_kwarg(fn_opt):
+            return fn_opt(visitor, args, named_args)
+        elif is_fn_no_kwarg(fn_opt):
+            return fn_opt(visitor, args)
+        raise Exception('Function does not have the right signature')
+    return fn
 
 
 class CallNode(PredicateNode):
-    _fn: "tuple[Fn]"
+    _fn: "tuple[FnKwarg]"
     params: "list[PredicateNode]"
 
     def __init__(
         self,
-        fn: "Fn",
+        fn: "FnOpt",
         name: "str",
         params: "list[PredicateNode]",
         named_params: "dict[str, PredicateNode] | None" = None,
     ):
-        self._fn = (fn,)
+        assert fn.__code__.co_argcount in (2, 3), "Function does not have the right signature"
+        if fn.__code__.co_argcount == 2:
+            assert named_params is None, "Function does not have the right signature"
+        self._fn = (make_fn(fn),)
         self.name = name
         self.params = params
-        self.named_params = named_params
+        self.named_params = named_params or {}
 
     @property
-    def fn(self) -> "Fn":
+    def fn(self) -> "FnKwarg":
         return self._fn[0]
 
 
-def call_node(fn: "Fn"):
+def call_node(fn: "FnOpt"):
     def call_node_factory(
         *args: "PredicateNode | str | int | float | bool | list",
         **kargs: "PredicateNode | str | int | float | bool | list",
@@ -493,10 +514,7 @@ class GenSqlVisitor(Visitor[str]):
 
     def visit_CallNode(self, node: "CallNode"):
         fn = node.fn
-        if node.named_params:
-            return fn(self, node.params, node.named_params)
-        else:
-            return fn(self, node.params)
+        return fn(self, node.params, node.named_params)
 
     def visit_TableAttrNode(self, node: "TableAttrNode"):
         table = node.table

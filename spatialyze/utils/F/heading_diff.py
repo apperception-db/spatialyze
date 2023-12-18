@@ -1,4 +1,4 @@
-from ...predicate import GenSqlVisitor, PredicateNode, call_node
+from ...predicate import ArrayNode, GenSqlVisitor, LiteralNode, PredicateNode, call_node
 from .common import default_location, get_heading_at_time
 
 
@@ -16,15 +16,21 @@ def heading_diff(
     )
 
     if "between" in named_args:
-        heading_from, heading_to = named_args["between"]
         func_name = "angleBetween"
+        pair = named_args["between"]
     elif "excluding" in named_args:
-        heading_from, heading_to = named_args["excluding"]
         func_name = "angleExcluding"
+        pair = named_args["excluding"]
     else:
         return angle_diff
 
-    return f"{func_name}({angle_diff}, {heading_from}, {heading_to})"
+    assert isinstance(pair, ArrayNode), type(pair)
+    heading_from, heading_to = pair.exprs
+    assert isinstance(heading_from, LiteralNode), type(heading_from)
+    heading_from = heading_from.value
+    assert isinstance(heading_to, LiteralNode), type(heading_to)
+    heading_to = heading_to.value
+    assert isinstance(heading_from, (int, float)), type(heading_from)
+    assert isinstance(heading_to, (int, float)), type(heading_to)
 
-    return "a"
-    # return f"contained({visitor(object)},{visitor(region)})"
+    return f"{func_name}({angle_diff}, {heading_from}, {heading_to})"
