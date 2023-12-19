@@ -1,4 +1,5 @@
 from typing import TypeGuard
+
 from ...predicate import (
     AtTimeNode,
     BinOpNode,
@@ -8,7 +9,6 @@ from ...predicate import (
     PredicateNode,
     TableAttrNode,
     TableNode,
-    camera,
 )
 
 HEADINGS = {
@@ -59,7 +59,7 @@ def default_heading(object: "PredicateNode"):
         return AtTimeNode(object.heading)
     elif isinstance(object, CameraTableNode):
         return object.heading
-    
+
     assert isinstance(object.table, CameraTableNode), type(object.table)
     assert object.name in {"egoTranslation", "cameraTranslation"}, object.name
     if object.name == "egoTranslation":
@@ -68,4 +68,8 @@ def default_heading(object: "PredicateNode"):
 
 
 def is_location_type(p: PredicateNode) -> TypeGuard[TableNode | TableAttrNode]:
-    return isinstance(p, TableNode) or (isinstance(p, TableAttrNode) and isinstance(p.table, CameraTableNode) and p.name in {"egoTranslation", "cameraTranslation"})
+    return isinstance(p, TableNode) or (
+        isinstance(p, TableAttrNode)
+        and isinstance(p.table, CameraTableNode)
+        and p.name in {"egoTranslation", "cameraTranslation"}
+    )

@@ -1,6 +1,13 @@
 from typing import List
 
-from spatialyze.predicate import CameraTableNode, GenSqlVisitor, PredicateNode, TableAttrNode, call_node, camera
+from spatialyze.predicate import (
+    CameraTableNode,
+    GenSqlVisitor,
+    PredicateNode,
+    TableAttrNode,
+    call_node,
+    camera,
+)
 
 from .common import get_heading_at_time
 
@@ -9,7 +16,9 @@ from .common import get_heading_at_time
 def convert_camera(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
     object, _camera = args[:2]
     heading = get_heading_at_time(_camera)
-    if isinstance(_camera, CameraTableNode) or (isinstance(_camera, TableAttrNode) and _camera.name == "cameraTranslation"):
+    if isinstance(_camera, CameraTableNode) or (
+        isinstance(_camera, TableAttrNode) and _camera.name == "cameraTranslation"
+    ):
         heading = camera.heading
     else:
         assert isinstance(_camera, TableAttrNode), _camera

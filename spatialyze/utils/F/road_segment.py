@@ -10,5 +10,9 @@ from .common import ROAD_TYPES
 @call_node
 def road_segment(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
     table = args[0]
-    assert isinstance(table, LiteralNode) and isinstance(table.value, str) and table.value in ROAD_TYPES, f'road_segment() takes a string as argument, received {table}'
+    assert (
+        isinstance(table, LiteralNode)
+        and isinstance(table.value, str)
+        and table.value in ROAD_TYPES
+    ), f"road_segment() takes a string as argument, received {table}"
     return f"roadSegment('{table.value}')"

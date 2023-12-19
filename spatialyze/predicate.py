@@ -59,7 +59,7 @@ class PredicateNode:
     # def __rmatmul__(self, other):
     #     other = wrap_literal(other)
     #     return BinOpNode(other, "matmul", self)
-    
+
     def __mod__(self, other):
         other = wrap_literal(other)
         return BinOpNode(self, "mod", other)
@@ -361,7 +361,7 @@ class Visitor(Generic[T]):
 
     def visit_CastNode(self, node: "CastNode") -> Any:
         self(node.expr)
-    
+
     def visit_AtTimeNode(self, node: "AtTimeNode") -> Any:
         self(node.attr)
 
@@ -405,7 +405,7 @@ class BaseTransformer(Visitor[PredicateNode]):
 
     def visit_CastNode(self, node: "CastNode") -> PredicateNode:
         return CastNode(node.to, self(node.expr))
-    
+
     def visit_AtTimeNode(self, node: "AtTimeNode") -> PredicateNode:
         return AtTimeNode(self(node.attr))
 
@@ -474,7 +474,7 @@ class NormalizeDefaultValue(BaseTransformer):
     def visit_CallNode(self, node: CallNode) -> PredicateNode:
         # let the function handle the normalization
         return node
-    
+
     def visit_TableAttrNode(self, node: TableAttrNode) -> PredicateNode:
         table = node.table
         if isinstance(table, ObjectTableNode):
@@ -482,15 +482,15 @@ class NormalizeDefaultValue(BaseTransformer):
             if IS_TEMPORAL[name]:
                 return AtTimeNode(node)
         return node
-    
+
     def visit_CameraTableNode(self, node: CameraTableNode) -> PredicateNode:
         return node.cam
-    
+
     def visit_ObjectTableNode(self, node: ObjectTableNode) -> PredicateNode:
         return AtTimeNode(node.traj)
-    
+
     def visit_AtTimeNode(self, node: AtTimeNode) -> PredicateNode:
-        raise Exception('AtTimeNode is illegal prior NormalizeDefaultValue')
+        raise Exception("AtTimeNode is illegal prior NormalizeDefaultValue")
 
 
 normalizers: "list[BaseTransformer]" = [ExpandBoolOpTransformer(), NormalizeDefaultValue()]
@@ -577,7 +577,7 @@ class GenSqlVisitor(Visitor[str]):
             return resolve_camera_attr(node.name, table.index)
 
     def visit_TableNode(self, node: "TableNode"):
-        raise Exception('TableNode is illegal')
+        raise Exception("TableNode is illegal")
         # if isinstance(node, ObjectTableNode):
         #     return f"valueAtTimestamp({resolve_object_attr('translations', node.index)},timestamp)"
         # elif isinstance(node, CameraTableNode):
@@ -599,16 +599,16 @@ class GenSqlVisitor(Visitor[str]):
         return f"({UNARY_OP[node.op]}{self(node.expr)})"
 
     def visit_ObjectTableNode(self, node: "ObjectTableNode"):
-        raise Exception('ObjectTableNode is illegal')
+        raise Exception("ObjectTableNode is illegal")
 
     def visit_CameraTableNode(self, node: "CameraTableNode"):
-        raise Exception('CameraTableNode is illegal')
+        raise Exception("CameraTableNode is illegal")
 
     def visit_CastNode(self, node: "CastNode"):
         return f"({self(node.expr)})::{node.to}"
 
     def visit_AtTimeNode(self, node: AtTimeNode) -> Any:
-        if isinstance(node.attr.table, ObjectTableNode) and node.attr.name == 'bbox':
+        if isinstance(node.attr.table, ObjectTableNode) and node.attr.name == "bbox":
             return f"objectBBox({self(node.attr.table.id)},{self(camera.time)})"
         return f"valueAtTimestamp({self(node.attr)},{self(camera.time)})"
 

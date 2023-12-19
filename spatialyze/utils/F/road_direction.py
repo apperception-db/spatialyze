@@ -2,7 +2,7 @@ from typing import List
 
 from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
 
-from .common import default_heading, default_location, get_heading_at_time, is_location_type
+from .common import default_heading, default_location, is_location_type
 
 
 @call_node

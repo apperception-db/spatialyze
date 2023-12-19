@@ -1,6 +1,15 @@
-from ...predicate import ArrayNode, CameraTableNode, GenSqlVisitor, LiteralNode, PredicateNode, TableAttrNode, TableNode, call_node
-from .common import default_location as dl, is_location_type
-
+from ...predicate import (
+    ArrayNode,
+    CameraTableNode,
+    GenSqlVisitor,
+    LiteralNode,
+    PredicateNode,
+    TableAttrNode,
+    TableNode,
+    call_node,
+)
+from .common import default_location as dl
+from .common import is_location_type
 
 ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection"}
 
@@ -10,8 +19,7 @@ def contains(visitor: GenSqlVisitor, args: list[PredicateNode]):
     region, points = args
     if not isinstance(region, LiteralNode):
         raise Exception(
-            "Frist argument of contains_all should "
-            "be a constant, recieved " + str(region)
+            "Frist argument of contains_all should " "be a constant, recieved " + str(region)
         )
 
     assert isinstance(region.value, str), region.value

@@ -1,5 +1,6 @@
-from ...utils.F.common import default_location as dl, is_location_type
-from ...predicate import GenSqlVisitor, TableNode, PredicateNode, call_node
+from ...predicate import GenSqlVisitor, PredicateNode, TableNode, call_node
+from ...utils.F.common import default_location as dl
+from ...utils.F.common import is_location_type
 
 
 @call_node
@@ -17,4 +18,4 @@ def distance(visitor: GenSqlVisitor, args: list[PredicateNode]):
     o2 = object2
     if isinstance(o2, TableNode):
         o2 = dl(o2)
-    return (f"ST_Distance({visitor(o1)},{visitor(o2)})")
+    return f"ST_Distance({visitor(o1)},{visitor(o2)})"
