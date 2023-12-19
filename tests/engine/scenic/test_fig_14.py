@@ -1,7 +1,7 @@
-from spatialyze.data_types.query_result import QueryResult
 from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
+from common import get_results
 
 
 def test_fig_14():
@@ -18,7 +18,4 @@ def test_fig_14():
         (F.distance(cam.ego, obj1) < 10)
     )
 
-    assert set(results) == set([
-        QueryResult(frame_number=1, camera_id='scene-0769', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657491612404.jpg', item_ids=('9e02e0dcb5f04d01a4b8f0559d0e7d95',)),
-        QueryResult(frame_number=2, camera_id='scene-0769', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657492112404.jpg', item_ids=('9e02e0dcb5f04d01a4b8f0559d0e7d95',)),
-    ])
+    assert set(results) == set(get_results('./data/scenic/test-results/fig_14.py'))

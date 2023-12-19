@@ -1,5 +1,5 @@
 from spatialyze.database import database
-from spatialyze.predicate import AtTimeNode, objects, camera
+from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
 
 def test_fig_16():
