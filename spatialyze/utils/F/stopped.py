@@ -1,18 +1,13 @@
 from ...predicate import (
-    ArrayNode,
-    CameraTableNode,
     GenSqlVisitor,
     LiteralNode,
     ObjectTableNode,
     PredicateNode,
-    TableAttrNode,
-    TableNode,
     call_node,
+    camera,
     lit,
-    camera
 )
 from .common import default_location as dl
-from .common import is_location_type
 
 ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection"}
 
