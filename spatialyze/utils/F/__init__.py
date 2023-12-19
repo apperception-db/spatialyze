@@ -14,6 +14,7 @@ from .road_segment import road_segment
 from .same_region import same_region
 from .view_angle import view_angle
 from .has_types import has_types
+from .convert_camera import convert_camera
 
 __all__ = [
     "view_angle",
@@ -32,4 +33,5 @@ __all__ = [
     "heading_diff",
     "contains",
     "has_types",
+    "convert_camera"
 ]

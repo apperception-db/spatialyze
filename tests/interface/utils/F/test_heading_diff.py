@@ -3,9 +3,15 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (distance(o, o), "ST_Distance(valueAtTimestamp(t0.trajCentroids,c0.timestamp),valueAtTimestamp(t0.trajCentroids,c0.timestamp))"),
-    (distance(o, c), "ST_Distance(valueAtTimestamp(t0.trajCentroids,c0.timestamp),c0.cameraTranslation)"),
-    (distance(c.cam, c.ego), "ST_Distance(c0.cameraTranslation,c0.egoTranslation)"),
+    (heading_diff(o, o1), "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)"),
+    (heading_diff(o, c), "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.cameraHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, c.ego), "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.egoHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, o1, between=[40, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50))"),
+    (heading_diff(o, o1, between=[40+360, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50))"),
+    (heading_diff(o, o1, between=[40-360, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50))"),
+    (heading_diff(o, o1, between=[50, 40]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50) OR ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40))"),
+    (heading_diff(o, o1, excluding=[40, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<40) OR ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>50))"),
+    (heading_diff(o, o1, excluding=[50, 40]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>50) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<40))"),
 ])
 def test_heading_diff(fn, sql):
     assert gen(fn) == sql

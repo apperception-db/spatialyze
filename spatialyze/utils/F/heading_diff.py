@@ -33,11 +33,10 @@ def heading_diff(
     angle_from = ((angle_from.value % 360) + 360) % 360
     angle_to = ((angle_to.value % 360) + 360) % 360
 
-    op = "and" if angle_from <= angle_to else "or"
-    pred = BoolOpNode(op, [angle_from <= angle_diff, angle_diff <= angle_to])
-
-    if func == "excluding":
-        pred = ~pred
+    if (angle_from <= angle_to) == (func == "between"):
+        pred = (angle_from < angle_diff) & (angle_diff < angle_to)
+    else:
+        pred = (angle_from > angle_diff) | (angle_diff > angle_to)
     
     return visitor(pred)
 

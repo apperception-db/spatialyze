@@ -18,19 +18,19 @@ def test_fig_15():
         (car1.id != car2.id) &
         (car1.id != opposite_car.id) &
 
-        F.angle_between(F.facing_relative(cam.ego, F.road_direction(cam.ego, cam.ego)), -15, 15) &
-        (F.view_angle(car1.traj@cam.time, cam.ego) < 70 / 2) &
-        (F.distance(cam.ego, car1.traj@cam.time) < 40) &
-        F.angle_between(F.facing_relative(car1.traj@cam.time, cam.ego), -15, 15) &
-        F.angle_between(F.facing_relative(car1.traj@cam.time, F.road_direction(car1.traj@cam.time, cam.ego)), -15, 15) &
-        F.ahead(car1.traj@cam.time, cam.ego) &
-        F.angle_between(F.facing_relative(cam.ego, F.road_direction(cam.ego, cam.ego)), -15, 15) &
-        (F.convert_camera(opposite_car.traj@cam.time, cam.ego) > [-10, 0]) &
-        (F.convert_camera(opposite_car.traj@cam.time, cam.ego) < [-1, 50]) &
-        F.angle_between(F.facing_relative(opposite_car.traj@cam.time, cam.ego), 140, 180) &
-        (F.distance(opposite_car@cam.time, car2@cam.time) < 40) &
-        F.angle_between(F.facing_relative(car2.traj@cam.time, F.road_direction(car2.traj@cam.time, cam.ego)), -15, 15) &
-        F.ahead(car2.traj@cam.time, opposite_car.traj@cam.time)
+        F.heading_diff(cam.ego, F.road_direction(cam.ego, cam.ego), between=[-15, 15]) &
+        (F.view_angle(car1, cam.ego) < 70 / 2) &
+        (F.distance(cam.ego, car1) < 40) &
+        F.heading_diff(car1, cam.ego, between=[-15, 15]) &
+        F.heading_diff(car1, F.road_direction(car1, cam.ego), between=[-15, 15]) &
+        F.ahead(car1, cam.ego) &
+        F.heading_diff(cam.ego, F.road_direction(cam.ego, cam.ego), between=[-15, 15]) &
+        (F.convert_camera(opposite_car, cam.ego) > [-10, 0]) &
+        (F.convert_camera(opposite_car, cam.ego) < [-1, 50]) &
+        F.heading_diff(opposite_car, cam.ego, between=[140, 180]) &
+        (F.distance(opposite_car, car2) < 40) &
+        F.heading_diff(car2, F.road_direction(car2, cam.ego), between=[-15, 15]) &
+        F.ahead(car2, opposite_car)
     )
 
     assert set(results) == set([

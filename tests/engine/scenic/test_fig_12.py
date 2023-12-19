@@ -10,12 +10,12 @@ def test_fig_12():
     c = camera
     results = database.predicate(
         F.like(o.type, 'human.pedestrian%') &
-        F.contained(c.ego, F.road_segment('road')) &
-        (F.contained_margin(o.bbox@c.time, F.road_segment('road'), 0.50) | F.contained(o.trans@c.time, F.road_segment('road'))) &
-        F.angle_excluding(F.facing_relative(o.traj@c.time, c.ego), -70, 70) &
-        F.angle_between(F.facing_relative(c.ego, F.road_direction(c.ego, c.ego)), -15, 15) &
-        (F.distance(c.cam, o.traj@c.time) < 50) &
-        (F.view_angle(o.trans@c.time, c.cam) < 35)
+        F.contains('road', c.ego) &
+        (F.contained_margin(o.bbox, F.road_segment('road'), 0.50) | F.contains('road', o)) &
+        F.heading_diff(o, c.ego, excluding=[-70, 70]) &
+        F.heading_diff(c.ego, F.road_direction(c.ego, c.ego), between=[-15, 15]) &
+        (F.distance(c, o) < 50) &
+        (F.view_angle(o, c) < 35)
     )
 
     assert set(results) == set([
