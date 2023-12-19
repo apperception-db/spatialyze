@@ -4,7 +4,9 @@ from .common import default_heading, default_location, is_location_type
 
 
 @call_node
-def ahead(visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"):
+def ahead(
+    visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"
+):
     assert kwargs is None or len(kwargs) == 0, kwargs
     obj1, obj2 = args
 

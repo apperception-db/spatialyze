@@ -4,7 +4,9 @@ ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection", "lan
 
 
 @call_node
-def is_other_roadtype(visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"):
+def is_other_roadtype(
+    visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"
+):
     assert kwargs is None or len(kwargs) == 0, kwargs
     (param,) = args
     assert isinstance(param, LiteralNode)

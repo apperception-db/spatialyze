@@ -9,7 +9,9 @@ from .common import ROAD_TYPES
 
 
 @call_node
-def same_region(visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]):
+def same_region(
+    visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]
+):
     assert kwargs is None or len(kwargs) == 0, kwargs
     type_, traj1, traj2 = args
     if not isinstance(type_, ast.Constant) or type_.value.lower() not in ROAD_TYPES:
