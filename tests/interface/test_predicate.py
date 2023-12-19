@@ -63,6 +63,27 @@ def test_simple_ops(fn, sql):
     assert gen(normalize(fn)) == sql
 
 
+@pytest.mark.parametrize("fn, msg", [
+    (AtTimeNode(o), "ObjectTableNode is illegal: ObjectTableNode[0]"),
+    (o, "ObjectTableNode is illegal: ObjectTableNode[0]"),
+    (c, "CameraTableNode is illegal: CameraTableNode[0]"),
+    (TableNode(1), "TableNode is illegal: TableNode[1]"),
+])
+def test_unnormalized_node_exception(fn, msg):
+    with pytest.raises(Exception) as e_info:
+        gen(fn)
+    assert str(e_info.value) == msg
+
+
+@pytest.mark.parametrize("fn, msg", [
+    (AtTimeNode(o.traj), "AtTimeNode is illegal prior NormalizeDefaultValue: AtTimeNode(attr=TableAttrNode(name='trajCentroids', table=ObjectTableNode[0], shorten=True))"),
+])
+def test_normalize_exception(fn, msg):
+    with pytest.raises(Exception) as e_info:
+        normalize(fn)
+    assert str(e_info.value) == msg
+
+
 @pytest.mark.parametrize("args, kwargs, msg", [
     ((1,2,3), {}, 
         "Mismatch number of arguments: expecting 2, received 3 args and 0 kwargs"),
@@ -120,3 +141,13 @@ def test_map_tables(fn, mapping, sql):
 ])
 def test_array(fn, sql):
     assert gen(normalize(fn)) == sql
+
+
+@pytest.mark.parametrize("resolve, out", [
+    (resolve_camera_attr('test', None), "test"),
+    (resolve_object_attr('test', None), "test"),
+    (resolve_camera_attr('test', 1), "c1.test"),
+    (resolve_object_attr('test', 3), "t3.test"),
+])
+def test_resolve_attr(resolve, out):
+    assert resolve == out

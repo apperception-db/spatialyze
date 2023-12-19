@@ -179,14 +179,12 @@ def lit(value: Any, python: bool = True):
 
 
 class TableNode(PredicateNode):
-    index: "int | None"
+    index: int
 
     def __getattr__(self, name: str) -> "TableAttrNode":
         return TableAttrNode(name, self, False)
 
     def __repr__(self):
-        if self.index is None:
-            return self.__class__.__name__
         return f"{self.__class__.__name__}[{self.index}]"
 
 
@@ -203,7 +201,7 @@ class ObjectTableNode(TableNode):
 
 
 class CameraTableNode(TableNode):
-    def __init__(self, index: "int | None" = None):
+    def __init__(self, index: int):
         self.index = index
         self.time = TableAttrNode("timestamp", self, True)
         self.ego = TableAttrNode("egoTranslation", self, True)
@@ -233,34 +231,7 @@ cameras = CameraTables()
 camera = cameras[0]
 
 
-# FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
-# FnNoKwarg = Callable[["GenSqlVisitor", list[PredicateNode]], str]
-# FnOpt = FnKwarg | FnNoKwarg
-# # FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
 Fn = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
-
-
-# def is_fn_kwarg(fn: "FnOpt") -> TypeGuard[FnKwarg]:
-#     return hasattr(fn, "__code__") and fn.__code__.co_argcount == 3
-
-
-# def is_fn_no_kwarg(fn: "FnOpt") -> TypeGuard[FnNoKwarg]:
-#     return hasattr(fn, "__code__") and fn.__code__.co_argcount == 2
-
-
-# def make_fn(fn_opt: FnOpt) -> FnKwarg:
-#     def fn(
-#         visitor: "GenSqlVisitor",
-#         args: "list[PredicateNode]",
-#         named_args: "dict[str, PredicateNode]",
-#     ):
-#         if is_fn_kwarg(fn_opt):
-#             return fn_opt(visitor, args, named_args)
-#         elif is_fn_no_kwarg(fn_opt):
-#             return fn_opt(visitor, args)
-#         raise Exception("Function does not have the right signature")
-
-#     return fn
 
 
 class CallNode(PredicateNode):
@@ -274,9 +245,7 @@ class CallNode(PredicateNode):
         params: "list[PredicateNode]",
         named_params: "dict[str, PredicateNode] | None" = None,
     ):
-        assert fn.__code__.co_argcount in (2, 3), "Function does not have the right signature"
-        if fn.__code__.co_argcount == 2:
-            assert named_params is None, "Function does not have the right signature"
+        assert fn.__code__.co_argcount == 3, "Function does not have the right signature"
         self._fn = (fn,)
         self.name = name
         self.params = params
@@ -455,9 +424,8 @@ class MapTablesTransformer(BaseTransformer):
         self.mapping = mapping
 
     def visit_ObjectTableNode(self, node: "ObjectTableNode"):
-        if node.index in self.mapping:
-            return objects[self.mapping[node.index]]
-        return node
+        assert node.index in self.mapping, (node, self.mapping)
+        return objects[self.mapping[node.index]]
 
 
 # class NormalizeArrayAtTime(BaseTransformer):
@@ -491,7 +459,7 @@ class NormalizeDefaultValue(BaseTransformer):
         return AtTimeNode(node.traj)
 
     def visit_AtTimeNode(self, node: AtTimeNode) -> PredicateNode:
-        raise Exception("AtTimeNode is illegal prior NormalizeDefaultValue")
+        raise Exception(f"AtTimeNode is illegal prior NormalizeDefaultValue: {node}")
 
 
 normalizers: "list[BaseTransformer]" = [ExpandBoolOpTransformer(), NormalizeDefaultValue()]
@@ -533,27 +501,14 @@ UNARY_OP: "dict[UnaryOp, str]" = {
 
 
 class GenSqlVisitor(Visitor[str]):
-    # Needed to that we ony add `@camera.time` once
-    prev_timed: "set[PredicateNode]" = set()
-
     def visit_ArrayNode(self, node: "ArrayNode"):
         elts = ",".join(self(e)[5 if isinstance(e, ArrayNode) else 0 :] for e in node.exprs)
         return f"ARRAY[{elts}]"
 
     def visit_BinOpNode(self, node: "BinOpNode"):
-        # if node.op == "matmul":
-        #     self.prev_timed.add(node.left)
-
         left = self(node.left)
         right = self(node.right)
-        # if node.op != "matmul":
         return f"({left}{BIN_OP[node.op]}{right})"
-
-        # if isinstance(node.left, TableAttrNode) and node.left.name == "bbox":
-        #     return f"objectBBox({self(node.left.table.id)},{right})"
-        # if "Headings" in left:
-        #     return f"headingAtTimestamp({left},{right})"
-        # return f"valueAtTimestamp({left},{right})"
 
     def visit_BoolOpNode(self, node: "BoolOpNode"):
         op = BOOL_OP[node.op]
@@ -568,21 +523,12 @@ class GenSqlVisitor(Visitor[str]):
         assert isinstance(table, (ObjectTableNode, CameraTableNode)), "table type not supported"
 
         if isinstance(table, ObjectTableNode):
-            # if node.name in IS_TEMPORAL:
-            #     raise Exception("Dropping support for temporal attributes -> use object")
-            # if node.name in IS_TEMPORAL and IS_TEMPORAL[node.name] and node not in self.prev_timed:
-            #     self.prev_timed.add(node)
-            #     return self(node @ camera.time)
             return resolve_object_attr(node.name, table.index)
         elif isinstance(table, CameraTableNode):
             return resolve_camera_attr(node.name, table.index)
 
     def visit_TableNode(self, node: "TableNode"):
-        raise Exception("TableNode is illegal")
-        # if isinstance(node, ObjectTableNode):
-        #     return f"valueAtTimestamp({resolve_object_attr('translations', node.index)},timestamp)"
-        # elif isinstance(node, CameraTableNode):
-        #     return resolve_camera_attr("cameraTranslation", node.index)
+        raise Exception(f"TableNode is illegal: {node}")
 
     def visit_CompOpNode(self, node: "CompOpNode"):
         left = self(node.left)
@@ -600,10 +546,10 @@ class GenSqlVisitor(Visitor[str]):
         return f"({UNARY_OP[node.op]}{self(node.expr)})"
 
     def visit_ObjectTableNode(self, node: "ObjectTableNode"):
-        raise Exception("ObjectTableNode is illegal")
+        raise Exception(f"ObjectTableNode is illegal: {node}")
 
     def visit_CameraTableNode(self, node: "CameraTableNode"):
-        raise Exception("CameraTableNode is illegal")
+        raise Exception(f"CameraTableNode is illegal: {node}")
 
     def visit_CastNode(self, node: "CastNode"):
         return f"({self(node.expr)})::{node.to}"
