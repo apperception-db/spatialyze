@@ -80,7 +80,7 @@ class World:
         return node
 
     def camera(self) -> "CameraTableNode":
-        return CameraTableNode()
+        return CameraTableNode(0)
 
     def geogConstruct(self, type: "str"):
         return road_segment(type)
