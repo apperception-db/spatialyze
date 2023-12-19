@@ -34,15 +34,15 @@ RT = '__ROADTYPES__'
     (o.type & False, ['False']),
     (o.type | True, ['True']),
 
-    (o.type | (~(o.a & False)), ['True']),
-    (o.type & (~(o.a | True)), ['False']),
+    (o.type | (~(o.id & False)), ['True']),
+    (o.type & (~(o.id | True)), ['False']),
 
-    (o.type & (~((o.a | True) & True)), ['False']),
-    (o.type | (~((o.a & False) | False)), ['True']),
+    (o.type & (~((o.id | True) & True)), ['False']),
+    (o.type | (~((o.id & False) | False)), ['True']),
 
     # General
     (o.type & True, ['ignore_roadtype()', None, None]),
-    (o.type & True & F.contained(o.traj, 'intersection'), [
+    (o.type & True & F.contains('intersection', o), [
         '(ignore_roadtype() AND is_roadtype(intersection))',
         None,
         'is_roadtype(intersection)',
@@ -50,16 +50,16 @@ RT = '__ROADTYPES__'
         {'intersection'}
     ]),
     (arr(), ['ignore_roadtype()', None, None]),
-    (~(F.contained(o.traj, 'intersection') & F.contained(o2.trajc, 'lane')), ['(NOT (is_roadtype(intersection) AND is_roadtype(lane)))', '(is_other_roadtype(intersection) OR is_other_roadtype(lane))', '(is_roadtype(intersection) OR is_roadtype(lane) OR is_roadtype(lanegroup) OR is_roadtype(lanesection) OR is_roadtype(road) OR is_roadtype(roadsection))']),
-    (~(F.contained(o.traj, 'intersection') | F.contained(o2.trajc, 'lane')), ['(NOT (is_roadtype(intersection) OR is_roadtype(lane)))', '(is_other_roadtype(intersection) AND is_other_roadtype(lane))', '((is_roadtype(lanegroup) OR is_roadtype(lane) OR is_roadtype(lanesection)) AND (is_roadtype(lanegroup) OR is_roadtype(road) OR is_roadtype(roadsection) OR is_roadtype(intersection)))']),
-    (~(~F.contained(o.traj, 'intersection') | F.contained(o2.trajc, 'lane')), ['(NOT ((NOT is_roadtype(intersection)) OR is_roadtype(lane)))', '(is_roadtype(intersection) AND is_other_roadtype(lane))', 'is_roadtype(intersection)']),
+    (~(F.contains('intersection', o) & F.contains('lane', o2)), ['(NOT (is_roadtype(intersection) AND is_roadtype(lane)))', '(is_other_roadtype(intersection) OR is_other_roadtype(lane))', '(is_roadtype(intersection) OR is_roadtype(lane) OR is_roadtype(lanegroup) OR is_roadtype(lanesection) OR is_roadtype(road) OR is_roadtype(roadsection))']),
+    (~(F.contains('intersection', o) | F.contains('lane', o2)), ['(NOT (is_roadtype(intersection) OR is_roadtype(lane)))', '(is_other_roadtype(intersection) AND is_other_roadtype(lane))', '((is_roadtype(lanegroup) OR is_roadtype(lane) OR is_roadtype(lanesection)) AND (is_roadtype(lanegroup) OR is_roadtype(road) OR is_roadtype(roadsection) OR is_roadtype(intersection)))']),
+    (~(~F.contains('intersection', o) | F.contains('lane', o2)), ['(NOT ((NOT is_roadtype(intersection)) OR is_roadtype(lane)))', '(is_roadtype(intersection) AND is_other_roadtype(lane))', 'is_roadtype(intersection)']),
 
     # Real Queries
     ((((o1.type == 'car') | (o1.type == 'truck')) &
-        F.angle_between(F.facing_relative(c.ego, F.road_direction(c.ego)), -15, 15) &
-        (F.distance(c.ego, o1.trans@c.time) < 50) &
-        F.contains_all('intersection', [o1.trans]@c.time) &
-        F.angle_between(F.facing_relative(o1.trans@c.time, c.ego), 135, 225) &
+        F.heading_diff(c.ego, F.road_direction(c.ego), between=[-15, 15]) &
+        (F.distance(c.ego, o1) < 50) &
+        F.contains('intersection', [o1]) &
+        F.heading_diff(o1, c.ego, between=[135, 225]) &
         (F.min_distance(c.ego, 'intersection') < 10)), [
         '((ignore_roadtype() OR ignore_roadtype()) AND ignore_roadtype() AND ignore_roadtype() AND is_roadtype(intersection) AND ignore_roadtype() AND ignore_roadtype())',
         None,
@@ -68,18 +68,18 @@ RT = '__ROADTYPES__'
         {'intersection'}
     ]),
     (((((o1.type == 'car') | (o1.type == 'truck')) &
-        F.angle_between(F.facing_relative(c.ego, F.road_direction(c.ego)), -15, 15) &
-        (F.distance(c.ego, o1.trans@c.time) < 50) &
-        F.angle_between(F.facing_relative(o1.trans@c.time, c.ego), 135, 225) &
+        F.heading_diff(c.ego, F.road_direction(c.ego), between=[-15, 15]) &
+        (F.distance(c.ego, o1) < 50) &
+        F.heading_diff(o1, c.ego, between=[135, 225]) &
         (F.min_distance(c.ego, 'intersection') < 10)) |
-        F.contains_all('intersection', [o1.trans]@c.time)), [
+        F.contains('intersection', [o1])), [
         '(((ignore_roadtype() OR ignore_roadtype()) AND ignore_roadtype() AND ignore_roadtype() AND ignore_roadtype() AND ignore_roadtype()) OR is_roadtype(intersection))',
         None,
         'ignore_roadtype()',
     ]),
     ((((o1.type == 'car') | (o1.type == 'truck')) &
-        F.contains_all('intersection', [o1.trans]@c.time) &
-        F.contains_all('lanesection', [o1.trans]@c.time) &
+        F.contains('intersection', [o1]) &
+        F.contains('lanesection', [o1]) &
         (F.min_distance(c.ego, 'intersection') < 10)), [
         '((ignore_roadtype() OR ignore_roadtype()) AND is_roadtype(intersection) AND is_roadtype(lanesection) AND ignore_roadtype())',
         None,
@@ -88,8 +88,8 @@ RT = '__ROADTYPES__'
         {'intersection', 'lanesection'}
     ]),
     ((((o1.type == 'car') | (o1.type == 'truck')) &
-        F.contains_all('intersection', [o1.trans]@c.time) &
-        ~F.contains_all('lanesection', [o1.trans]@c.time) &
+        F.contains('intersection', [o1]) &
+        ~F.contains('lanesection', [o1]) &
         (F.min_distance(c.ego, 'intersection') < 10)), [
         '((ignore_roadtype() OR ignore_roadtype()) AND is_roadtype(intersection) AND (NOT is_roadtype(lanesection)) AND ignore_roadtype())',
         '((ignore_roadtype() OR ignore_roadtype()) AND is_roadtype(intersection) AND is_other_roadtype(lanesection) AND ignore_roadtype())',
@@ -143,10 +143,10 @@ def test_repr():
 
 #     (-o.c1, "(-t0.c1)"),
 #     (~o.c1, "(NOT t0.c1)"),
-#     (~F.contained('intersection', o.c1), "(NOT SegmentPolygon.__RoadType__intersection__)"),
-#     (~F.contains_all('intersection', o.c1), "(NOT SegmentPolygon.__RoadType__intersection__)"),
-#     (o.c1 & ~F.contained('intersection', o.c1) & F.contained('intersection', o.c1), "(true AND true AND SegmentPolygon.__RoadType__intersection__)"),
-#     (o.c1 | ~F.contained('intersection', o.c1) | F.contained('intersection', o.c1), "(true OR true OR SegmentPolygon.__RoadType__intersection__)"),
+#     (~F.contains('intersection', o.c1), "(NOT SegmentPolygon.__RoadType__intersection__)"),
+#     (~F.contains('intersection', o.c1), "(NOT SegmentPolygon.__RoadType__intersection__)"),
+#     (o.c1 & ~F.contains('intersection', o.c1) & F.contains('intersection', o.c1), "(true AND true AND SegmentPolygon.__RoadType__intersection__)"),
+#     (o.c1 | ~F.contains('intersection', o.c1) | F.contains('intersection', o.c1), "(true OR true OR SegmentPolygon.__RoadType__intersection__)"),
 #     (o.c1 @ c.timestamp, "valueAtTimestamp(t0.c1,timestamp)"),
 #     (c.timestamp @ 1, "valueAtTimestamp(timestamp,1)"),
 #     ([o.c1, o.c2] @ c.timestamp, "ARRAY[valueAtTimestamp(t0.c1,timestamp),valueAtTimestamp(t0.c2,timestamp)]"),
@@ -187,8 +187,8 @@ def test_detection_2d():
         pipeline1 = Pipeline([InView(distance, roadtypes='intersection')])
         pipeline2 = Pipeline([InView(distance, predicate=(
             ((o1.type == 'car') | (o1.type == 'truck')) &
-            F.contains_all('intersection', [o1.trans]@c.time) &
-            ~F.contains_all('lanesection', [o1.trans]@c.time) &
+            F.contains('intersection', [o1]) &
+            ~F.contains('lanesection', [o1]) &
             (F.min_distance(c.ego, 'intersection') < 10))
         )])
 

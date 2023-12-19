@@ -3,19 +3,18 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (contained_margin(1, 2, 3), "containedMargin(1,2,3)"),
+    (contained_margin(o.bbox, road_segment('intersection'), 3), "containedMargin(objectBBox(t0.itemId,c0.timestamp),roadSegment('intersection'),3)"),
 ])
 def test_contained_margin(fn, sql):
     assert gen(fn) == sql
 
 
 @pytest.mark.parametrize("fn, msg", [
-    (contained_margin(1), 
-        "contained_margin is expecting 3 arguments, but received 1"),
-    (contained_margin(1,2,3,4), 
-        "contained_margin is expecting 3 arguments, but received 4"),
+    (contained_margin(o.traj, road_segment('intersection'), o), "ObjectTableNode"),
+    (contained_margin(o.traj,o,3), "ObjectTableNode"),
+    (contained_margin(1, road_segment('intersection'), 3), "LiteralNode"),
 ])
 def test_exception(fn, msg):
     with pytest.raises(Exception) as e_info:
         gen(fn)
-    str(e_info.value) == msg
+    assert str(e_info.value) == msg
