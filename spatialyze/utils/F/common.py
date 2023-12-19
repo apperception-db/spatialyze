@@ -5,6 +5,7 @@ from ...predicate import (
     ObjectTableNode,
     PredicateNode,
     TableAttrNode,
+    TableNode,
     camera,
 )
 
@@ -39,13 +40,11 @@ def get_heading_at_time(arg: "PredicateNode"):
     return get_heading(arg)
 
 
-def default_location(object: "PredicateNode"):
-    if isinstance(object, ObjectTableNode):
-        object = object.traj @ camera.time
-    elif isinstance(object, CameraTableNode):
-        object = object.cam
-
-    return object
+def default_location(obj: TableNode):
+    assert isinstance(obj, (ObjectTableNode, CameraTableNode)), type(obj)
+    if isinstance(obj, ObjectTableNode):
+        return obj.trans @ camera.time
+    return obj.cam
 
 
 def default_heading(object: "PredicateNode"):

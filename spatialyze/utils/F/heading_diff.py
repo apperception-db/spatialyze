@@ -1,36 +1,63 @@
-from ...predicate import ArrayNode, GenSqlVisitor, LiteralNode, PredicateNode, call_node
-from .common import default_location, get_heading_at_time
+from ...predicate import ArrayNode, BoolOpNode, CameraTableNode, GenSqlVisitor, LiteralNode, ObjectTableNode, PredicateNode, TableAttrNode, TableNode, call_node, cast, camera
 
 
 @call_node
 def heading_diff(
     visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"
 ):
-    object1, object2 = args
+    obj1, obj2 = args
+    assert isinstance(obj1, (TableNode, TableAttrNode)), type(obj1)
+    assert isinstance(obj2, (TableNode, TableAttrNode)), type(obj2)
 
-    object1 = default_location(object1)
-    object2 = default_location(object2)
+    obj1 = default_heading(obj1)
+    obj2 = default_heading(obj2)
 
-    angle_diff = (
-        f"facingRelative({','.join(map(visitor, map(get_heading_at_time, [object1, object2])))})"
-    )
+    angle_diff = angle(obj1 - obj2)
 
-    if "between" in named_args:
-        func_name = "angleBetween"
-        pair = named_args["between"]
-    elif "excluding" in named_args:
-        func_name = "angleExcluding"
-        pair = named_args["excluding"]
-    else:
-        return angle_diff
-
+    if len(named_args) == 0:
+        return visitor(angle_diff)
+    
+    assert len(named_args) == 1, len(named_args)
+    func = next(iter(named_args.keys()))
+    pair = next(iter(named_args.values()))
+    assert func in {"between", "excluding"}, func
+    
     assert isinstance(pair, ArrayNode), type(pair)
-    heading_from, heading_to = pair.exprs
-    assert isinstance(heading_from, LiteralNode), type(heading_from)
-    heading_from = heading_from.value
-    assert isinstance(heading_to, LiteralNode), type(heading_to)
-    heading_to = heading_to.value
-    assert isinstance(heading_from, (int, float)), type(heading_from)
-    assert isinstance(heading_to, (int, float)), type(heading_to)
+    pair = pair.exprs
+    assert len(pair) == 2, len(pair)
 
-    return f"{func_name}({angle_diff}, {heading_from}, {heading_to})"
+    angle_from, angle_to = pair
+    assert isinstance(angle_from, LiteralNode) and isinstance(angle_from.value, (int, float)), type(angle_from)
+    assert isinstance(angle_to, LiteralNode) and isinstance(angle_to.value, (int, float)), type(angle_to)
+
+    angle_from = ((angle_from.value % 360) + 360) % 360
+    angle_to = ((angle_to.value % 360) + 360) % 360
+
+    op = "and" if angle_from <= angle_to else "or"
+    pred = BoolOpNode(op, [angle_from <= angle_diff, angle_diff <= angle_to])
+
+    if func == "excluding":
+        pred = ~pred
+    
+    return visitor(pred)
+
+
+def angle(x: PredicateNode):
+    return ((cast(x, 'numeric') % 360) + 360) % 360
+
+
+def default_heading(obj: TableNode | TableAttrNode):
+    assert isinstance(obj, (ObjectTableNode, CameraTableNode, TableAttrNode)), type(obj)
+    if isinstance(obj, ObjectTableNode):
+        return obj.heading @ camera.time
+    elif isinstance(obj, CameraTableNode):
+        return obj.heading
+
+    assert isinstance(obj.table, CameraTableNode), type(obj.table)
+    if obj.name == 'egoTranslation':
+        return obj.table.egoheading
+    elif obj.name == 'cameraTranslation':
+        return obj.table.heading
+    else:
+        return obj
+    
