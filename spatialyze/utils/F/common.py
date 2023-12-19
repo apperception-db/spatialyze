@@ -1,4 +1,6 @@
+from typing import TypeGuard
 from ...predicate import (
+    AtTimeNode,
     BinOpNode,
     CameraTableNode,
     CastNode,
@@ -40,17 +42,30 @@ def get_heading_at_time(arg: "PredicateNode"):
     return get_heading(arg)
 
 
-def default_location(obj: TableNode):
-    assert isinstance(obj, (ObjectTableNode, CameraTableNode)), type(obj)
+def default_location(obj: TableNode | TableAttrNode):
+    assert isinstance(obj, (ObjectTableNode, CameraTableNode, TableAttrNode)), type(obj)
     if isinstance(obj, ObjectTableNode):
-        return obj.trans @ camera.time
-    return obj.cam
+        return AtTimeNode(obj.traj)
+    elif isinstance(obj, CameraTableNode):
+        return obj.cam
+    assert isinstance(obj.table, CameraTableNode), type(obj.table)
+    assert obj.name in {"egoTranslation", "cameraTranslation"}, obj.name
+    return obj
 
 
 def default_heading(object: "PredicateNode"):
+    assert isinstance(object, (ObjectTableNode, CameraTableNode, TableAttrNode)), type(object)
     if isinstance(object, ObjectTableNode):
-        object = object.traj @ camera.time
+        return AtTimeNode(object.heading)
     elif isinstance(object, CameraTableNode):
-        object = object.cam
+        return object.heading
+    
+    assert isinstance(object.table, CameraTableNode), type(object.table)
+    assert object.name in {"egoTranslation", "cameraTranslation"}, object.name
+    if object.name == "egoTranslation":
+        return object.table.egoheading
+    return object.table.heading
 
-    return get_heading_at_time(object)
+
+def is_location_type(p: PredicateNode) -> TypeGuard[TableNode | TableAttrNode]:
+    return isinstance(p, TableNode) or (isinstance(p, TableAttrNode) and isinstance(p.table, CameraTableNode) and p.name in {"egoTranslation", "cameraTranslation"})

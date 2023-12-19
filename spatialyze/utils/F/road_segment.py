@@ -10,10 +10,5 @@ from .common import ROAD_TYPES
 @call_node
 def road_segment(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
     table = args[0]
-    if (
-        not isinstance(table, LiteralNode)
-        or not isinstance(table.value, str)
-        or table.value not in ROAD_TYPES
-    ):
-        raise Exception(f"Unsupported road type: {table}")
-    return f"roadSegment({visitor(table)})"
+    assert isinstance(table, LiteralNode) and isinstance(table.value, str) and table.value in ROAD_TYPES, f'road_segment() takes a string as argument, received {table}'
+    return f"roadSegment('{table.value}')"

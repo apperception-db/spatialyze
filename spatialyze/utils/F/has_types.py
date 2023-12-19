@@ -5,7 +5,7 @@ from ...predicate import ArrayNode, GenSqlVisitor, LiteralNode, ObjectTableNode,
 def has_types(visitor: GenSqlVisitor, args: list[PredicateNode]):
     obj, *types = args
 
-    assert isinstance(obj, ObjectTableNode), type(obj)
+    assert isinstance(obj, ObjectTableNode), repr(obj)
     assert len(types) > 0
 
     if len(types) == 1:
@@ -13,11 +13,11 @@ def has_types(visitor: GenSqlVisitor, args: list[PredicateNode]):
         if isinstance(t, ArrayNode):
             types = t.exprs
     
-    assert all(isinstance(t, LiteralNode) and isinstance(t.value, str) for t in types), [*map(type, types)]
+    assert all(isinstance(t, LiteralNode) and isinstance(t.value, str) for t in types), [*map(repr, types)]
     types = [t.value for t in types if isinstance(t, LiteralNode) and isinstance(t.value, str)]
 
     def has_type(type: str):
-        return f"{visitor(obj.type)} = '{type}'"
+        return f"({visitor(obj.type)} = '{type}')"
 
     return f"({' OR '.join(map(has_type, types))})"
 

@@ -4,16 +4,18 @@ from typing import List
 
 from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
 
-from .common import default_heading, default_location
+from .common import default_heading, default_location, is_location_type
 
 
 @call_node
 def view_angle(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
     object, pov = args
 
-    object = default_location(object)
-    pov = default_location(pov)
+    assert is_location_type(object), type(object)
+    assert is_location_type(pov), type(pov)
 
+    object = default_location(object)
+    _pov = default_location(pov)
     heading = default_heading(pov)
 
-    return f"viewAngle({','.join(map(visitor, [object, heading, pov]))})"
+    return f"viewAngle({','.join(map(visitor, [object, heading, _pov]))})"

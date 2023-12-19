@@ -7,12 +7,12 @@ c = camera
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (ahead(o.trans@c.time, c.ego), 
-        "ahead(valueAtTimestamp(t0.translations,timestamp),egoTranslation,egoHeading)"),
-    (ahead(o.trans@c.time, c.cam), 
-        "ahead(valueAtTimestamp(t0.translations,timestamp),cameraTranslation,cameraHeading)"),
-    (ahead(o.trans@c.time, o.trans@c.time), 
-        "ahead(valueAtTimestamp(t0.translations,timestamp),valueAtTimestamp(t0.translations,timestamp),(headingAtTimestamp(t0.itemHeadings,timestamp))::real)"),
+    (ahead(o, c.ego), 
+        "ahead(valueAtTimestamp(t0.trajCentroids,c0.timestamp),c0.egoTranslation,c0.egoHeading)"),
+    (ahead(o, c.cam), 
+        "ahead(valueAtTimestamp(t0.trajCentroids,c0.timestamp),c0.cameraTranslation,c0.cameraHeading)"),
+    (ahead(o, o), 
+        "ahead(valueAtTimestamp(t0.trajCentroids,c0.timestamp),valueAtTimestamp(t0.trajCentroids,c0.timestamp),valueAtTimestamp(t0.itemHeadings,c0.timestamp))"),
 ])
 def test_ahead(fn, sql):
     assert gen(fn) == sql

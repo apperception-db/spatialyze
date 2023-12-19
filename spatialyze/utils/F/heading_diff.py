@@ -1,4 +1,4 @@
-from ...predicate import ArrayNode, BoolOpNode, CameraTableNode, GenSqlVisitor, LiteralNode, ObjectTableNode, PredicateNode, TableAttrNode, TableNode, call_node, cast, camera
+from ...predicate import ArrayNode, AtTimeNode, BoolOpNode, CameraTableNode, GenSqlVisitor, LiteralNode, ObjectTableNode, PredicateNode, TableAttrNode, TableNode, call_node, cast, camera
 
 
 @call_node
@@ -6,8 +6,8 @@ def heading_diff(
     visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"
 ):
     obj1, obj2 = args
-    assert isinstance(obj1, (TableNode, TableAttrNode)), type(obj1)
-    assert isinstance(obj2, (TableNode, TableAttrNode)), type(obj2)
+    assert isinstance(obj1, (TableNode, TableAttrNode)), repr(obj1)
+    assert isinstance(obj2, (TableNode, TableAttrNode)), repr(obj2)
 
     obj1 = default_heading(obj1)
     obj2 = default_heading(obj2)
@@ -22,13 +22,13 @@ def heading_diff(
     pair = next(iter(named_args.values()))
     assert func in {"between", "excluding"}, func
     
-    assert isinstance(pair, ArrayNode), type(pair)
+    assert isinstance(pair, ArrayNode), repr(pair)
     pair = pair.exprs
     assert len(pair) == 2, len(pair)
 
     angle_from, angle_to = pair
-    assert isinstance(angle_from, LiteralNode) and isinstance(angle_from.value, (int, float)), type(angle_from)
-    assert isinstance(angle_to, LiteralNode) and isinstance(angle_to.value, (int, float)), type(angle_to)
+    assert isinstance(angle_from, LiteralNode) and isinstance(angle_from.value, (int, float)), repr(angle_from)
+    assert isinstance(angle_to, LiteralNode) and isinstance(angle_to.value, (int, float)), repr(angle_to)
 
     angle_from = ((angle_from.value % 360) + 360) % 360
     angle_to = ((angle_to.value % 360) + 360) % 360
@@ -47,17 +47,16 @@ def angle(x: PredicateNode):
 
 
 def default_heading(obj: TableNode | TableAttrNode):
-    assert isinstance(obj, (ObjectTableNode, CameraTableNode, TableAttrNode)), type(obj)
+    assert isinstance(obj, (ObjectTableNode, CameraTableNode, TableAttrNode)), repr(obj)
     if isinstance(obj, ObjectTableNode):
-        return obj.heading @ camera.time
+        return AtTimeNode(obj.heading)
     elif isinstance(obj, CameraTableNode):
         return obj.heading
 
-    assert isinstance(obj.table, CameraTableNode), type(obj.table)
+    assert isinstance(obj.table, CameraTableNode), repr(obj.table)
     if obj.name == 'egoTranslation':
         return obj.table.egoheading
     elif obj.name == 'cameraTranslation':
         return obj.table.heading
-    else:
-        return obj
+    return obj
     

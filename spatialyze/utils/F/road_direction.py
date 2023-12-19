@@ -2,13 +2,16 @@ from typing import List
 
 from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
 
-from .common import default_location, get_heading_at_time
+from .common import default_heading, default_location, get_heading_at_time, is_location_type
 
 
 @call_node
 def road_direction(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
     location = args[0]
-    location = default_location(location)
-    heading = get_heading_at_time(location if len(args) == 1 else args[1])
+    assert is_location_type(location), type(location)
+    _location = default_location(location)
 
-    return f"roadDirection({','.join(map(visitor, [location, heading]))})"
+    heading = location if len(args) == 1 else args[1]
+    heading = default_heading(heading)
+
+    return f"roadDirection({','.join(map(visitor, [_location, heading]))})"
