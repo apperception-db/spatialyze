@@ -24,11 +24,15 @@ def heading_diff(
 ):
     obj1, obj2 = args
 
-    assert isinstance(obj1, (TableNode, TableAttrNode)) or is_road_direction(obj1), obj1.__class__.__name__
+    assert isinstance(obj1, (TableNode, TableAttrNode)) or is_road_direction(
+        obj1
+    ), obj1.__class__.__name__
     if isinstance(obj1, (TableNode, TableAttrNode)):
         obj1 = default_heading(obj1)
 
-    assert isinstance(obj2, (TableNode, TableAttrNode)) or is_road_direction(obj2), obj2.__class__.__name__
+    assert isinstance(obj2, (TableNode, TableAttrNode)) or is_road_direction(
+        obj2
+    ), obj2.__class__.__name__
     if isinstance(obj2, (TableNode, TableAttrNode)):
         obj2 = default_heading(obj2)
 
@@ -75,7 +79,7 @@ def heading_diff(
 
 
 def is_road_direction(x: PredicateNode) -> TypeGuard[CallNode]:
-    return isinstance(x, CallNode) and x.name == 'road_direction'
+    return isinstance(x, CallNode) and x.name == "road_direction"
 
 
 def angle(x: PredicateNode):

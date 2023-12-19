@@ -14,7 +14,9 @@ from .common import default_location, get_heading_at_time
 
 
 @call_node
-def convert_camera(visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]):
+def convert_camera(
+    visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]
+):
     assert kwargs is None or len(kwargs) == 0, kwargs
     object, _camera = args[:2]
     assert isinstance(object, ObjectTableNode), object
