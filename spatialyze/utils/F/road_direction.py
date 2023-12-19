@@ -3,7 +3,8 @@ from .common import default_heading, default_location, is_location_type
 
 
 @call_node
-def road_direction(visitor: "GenSqlVisitor", args: "list[PredicateNode]"):
+def road_direction(visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"):
+    assert kwargs is None or len(kwargs) == 0, kwargs
     location = args[0]
     assert is_location_type(location), type(location)
     _location = default_location(location)

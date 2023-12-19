@@ -4,9 +4,9 @@ from .common import default_heading, default_location, is_location_type
 
 
 @call_node
-def ahead(visitor: "GenSqlVisitor", args: "list[PredicateNode]"):
+def ahead(visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"):
+    assert kwargs is None or len(kwargs) == 0, kwargs
     obj1, obj2 = args
-    print(obj1, obj2)
 
     assert is_location_type(obj1), type(obj1)
     assert is_location_type(obj2), type(obj2)

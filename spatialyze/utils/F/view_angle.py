@@ -8,7 +8,8 @@ from .common import default_heading, default_location, is_location_type
 
 
 @call_node
-def view_angle(visitor: "GenSqlVisitor", args: "List[PredicateNode]"):
+def view_angle(visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]):
+    assert kwargs is None or len(kwargs) == 0, kwargs
     object, pov = args
 
     assert is_location_type(object), type(object)

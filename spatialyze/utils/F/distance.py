@@ -4,7 +4,8 @@ from ...utils.F.common import is_location_type
 
 
 @call_node
-def distance(visitor: GenSqlVisitor, args: list[PredicateNode]):
+def distance(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str, PredicateNode]):
+    assert kwargs is None or len(kwargs) == 0, kwargs
     assert len(args) == 2, len(args)
     object1, object2 = args
     assert is_location_type(object1), repr(object1)

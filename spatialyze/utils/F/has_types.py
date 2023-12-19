@@ -9,7 +9,8 @@ from ...predicate import (
 
 
 @call_node
-def has_types(visitor: GenSqlVisitor, args: list[PredicateNode]):
+def has_types(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str, PredicateNode]):
+    assert kwargs is None or len(kwargs) == 0, kwargs
     obj, *types = args
 
     assert isinstance(obj, ObjectTableNode), repr(obj)

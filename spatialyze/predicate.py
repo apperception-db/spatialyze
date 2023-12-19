@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Literal, TypeGuard, TypeVar
+from typing import Any, Callable, Generic, Literal, TypeVar
 
 BinOp = Literal["add", "sub", "mul", "div", "matmul", "mod"]
 BoolOp = Literal["and", "or"]
@@ -233,42 +233,43 @@ cameras = CameraTables()
 camera = cameras[0]
 
 
-FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
-FnNoKwarg = Callable[["GenSqlVisitor", list[PredicateNode]], str]
-FnOpt = FnKwarg | FnNoKwarg
 # FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
+# FnNoKwarg = Callable[["GenSqlVisitor", list[PredicateNode]], str]
+# FnOpt = FnKwarg | FnNoKwarg
+# # FnKwarg = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
+Fn = Callable[["GenSqlVisitor", list[PredicateNode], dict[str, PredicateNode]], str]
 
 
-def is_fn_kwarg(fn: "FnOpt") -> TypeGuard[FnKwarg]:
-    return hasattr(fn, "__code__") and fn.__code__.co_argcount == 3
+# def is_fn_kwarg(fn: "FnOpt") -> TypeGuard[FnKwarg]:
+#     return hasattr(fn, "__code__") and fn.__code__.co_argcount == 3
 
 
-def is_fn_no_kwarg(fn: "FnOpt") -> TypeGuard[FnNoKwarg]:
-    return hasattr(fn, "__code__") and fn.__code__.co_argcount == 2
+# def is_fn_no_kwarg(fn: "FnOpt") -> TypeGuard[FnNoKwarg]:
+#     return hasattr(fn, "__code__") and fn.__code__.co_argcount == 2
 
 
-def make_fn(fn_opt: FnOpt) -> FnKwarg:
-    def fn(
-        visitor: "GenSqlVisitor",
-        args: "list[PredicateNode]",
-        named_args: "dict[str, PredicateNode]",
-    ):
-        if is_fn_kwarg(fn_opt):
-            return fn_opt(visitor, args, named_args)
-        elif is_fn_no_kwarg(fn_opt):
-            return fn_opt(visitor, args)
-        raise Exception("Function does not have the right signature")
+# def make_fn(fn_opt: FnOpt) -> FnKwarg:
+#     def fn(
+#         visitor: "GenSqlVisitor",
+#         args: "list[PredicateNode]",
+#         named_args: "dict[str, PredicateNode]",
+#     ):
+#         if is_fn_kwarg(fn_opt):
+#             return fn_opt(visitor, args, named_args)
+#         elif is_fn_no_kwarg(fn_opt):
+#             return fn_opt(visitor, args)
+#         raise Exception("Function does not have the right signature")
 
-    return fn
+#     return fn
 
 
 class CallNode(PredicateNode):
-    _fn: "tuple[FnKwarg]"
+    _fn: "tuple[Fn]"
     params: "list[PredicateNode]"
 
     def __init__(
         self,
-        fn: "FnOpt",
+        fn: "Fn",
         name: "str",
         params: "list[PredicateNode]",
         named_params: "dict[str, PredicateNode] | None" = None,
@@ -276,17 +277,17 @@ class CallNode(PredicateNode):
         assert fn.__code__.co_argcount in (2, 3), "Function does not have the right signature"
         if fn.__code__.co_argcount == 2:
             assert named_params is None, "Function does not have the right signature"
-        self._fn = (make_fn(fn),)
+        self._fn = (fn,)
         self.name = name
         self.params = params
         self.named_params = named_params or {}
 
     @property
-    def fn(self) -> "FnKwarg":
+    def fn(self) -> "Fn":
         return self._fn[0]
 
 
-def call_node(fn: "FnOpt"):
+def call_node(fn: "Fn"):
     def call_node_factory(
         *args: "PredicateNode | str | int | float | bool | list",
         **kargs: "PredicateNode | str | int | float | bool | list",
