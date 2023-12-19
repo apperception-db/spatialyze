@@ -1,7 +1,7 @@
 from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
-from common import get_results
+from scenic_common import get_results
 
 
 def test_fig_14():

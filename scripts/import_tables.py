@@ -50,18 +50,6 @@ def get_results(path: str = "./data/scenic/test-results"):
     return scenes, frame_range, items
 
 
-def filter_camera(frame_range: dict[str, list[QueryResult]]):
-    def f(row: pd.Series):
-        return row['cameraid'] in frame_range or random.random() < 0.2
-    return f
-
-
-def filter_item(items: set[str]):
-    def f(row: pd.Series):
-        return row['itemid'] in items or random.random() < 0.2
-    return f
-
-
 def import_tables(database: "Database", data_path: str):
     scenes, frame_range, items = get_results()
 
