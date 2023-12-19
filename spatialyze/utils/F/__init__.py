@@ -14,6 +14,7 @@ from .min_distance import min_distance
 from .road_direction import road_direction
 from .road_segment import road_segment
 from .same_region import same_region
+from .stopped import stopped
 from .view_angle import view_angle
 
 __all__ = [
@@ -34,4 +35,5 @@ __all__ = [
     "contains",
     "has_types",
     "convert_camera",
+    "stopped",
 ]
