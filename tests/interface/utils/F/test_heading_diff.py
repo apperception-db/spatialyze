@@ -18,8 +18,8 @@ def test_heading_diff(fn, sql):
 
 
 @pytest.mark.parametrize("fn, msg", [
-    (heading_diff(1, o), "LiteralNode(value=1, python=True)"),
-    (heading_diff(o, 1), "LiteralNode(value=1, python=True)"),
+    (heading_diff(1, o), "LiteralNode"),
+    (heading_diff(o, 1), "LiteralNode"),
     (heading_diff(o, o, test1=1, test2=2), "2"),
     (heading_diff(o, o, test1=1), "test1"),
     (heading_diff(o, o, between=1), "LiteralNode(value=1, python=True)"),
@@ -27,6 +27,7 @@ def test_heading_diff(fn, sql):
     (heading_diff(o, o, between=[o, c]), "ObjectTableNode[0]"),
     (heading_diff(o, o, between=[1, c]), "CameraTableNode[0]"),
     (heading_diff(o.type, o, between=[1, c]), "ObjectTableNode[0]"),
+    (heading_diff(o, distance(o, o), between=[1, c]), "CallNode"),
 ])
 def test_exception(fn, msg):
     with pytest.raises(Exception) as e_info:

@@ -277,14 +277,14 @@ class Database:
         for i in range(len(tables)):
             t_tables += (
                 f"JOIN Item_General_Trajectory AS t{i} "
-                f"ON  Cameras.timestamp <@ t{i}.trajCentroids::period "
-                f"AND Cameras.cameraId  =  t{i}.cameraId\n"
+                f"ON  c0.timestamp <@ t{i}.trajCentroids::period "
+                f"AND c0.cameraId  =  t{i}.cameraId\n"
             )
             t_outputs += f",\n   t{i}.itemId"
 
         sql_str = (
-            f"SELECT Cameras.frameNum, Cameras.cameraId, Cameras.filename{t_outputs}\n"
-            f"FROM Cameras\n{t_tables}"
+            f"SELECT c0.frameNum, c0.cameraId, c0.filename{t_outputs}\n"
+            f"FROM Cameras as c0\n{t_tables}"
             f"WHERE {GenSqlVisitor()(predicate)}"
         )
         return [

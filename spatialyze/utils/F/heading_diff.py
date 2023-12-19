@@ -1,6 +1,9 @@
+from typing import TypeGuard
+
 from ...predicate import (
     ArrayNode,
     AtTimeNode,
+    CallNode,
     CameraTableNode,
     GenSqlVisitor,
     LiteralNode,
@@ -15,14 +18,19 @@ from ...predicate import (
 
 @call_node
 def heading_diff(
-    visitor: "GenSqlVisitor", args: "list[PredicateNode]", named_args: "dict[str, PredicateNode]"
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    named_args: dict[str, PredicateNode],
 ):
     obj1, obj2 = args
-    assert isinstance(obj1, (TableNode, TableAttrNode)), repr(obj1)
-    assert isinstance(obj2, (TableNode, TableAttrNode)), repr(obj2)
 
-    obj1 = default_heading(obj1)
-    obj2 = default_heading(obj2)
+    assert isinstance(obj1, (TableNode, TableAttrNode)) or is_road_direction(obj1), obj1.__class__.__name__
+    if isinstance(obj1, (TableNode, TableAttrNode)):
+        obj1 = default_heading(obj1)
+
+    assert isinstance(obj2, (TableNode, TableAttrNode)) or is_road_direction(obj2), obj2.__class__.__name__
+    if isinstance(obj2, (TableNode, TableAttrNode)):
+        obj2 = default_heading(obj2)
 
     angle_diff = angle(obj1 - obj2)
 
@@ -54,7 +62,20 @@ def heading_diff(
     else:
         pred = (angle_from > angle_diff) | (angle_diff > angle_to)
 
+    # Incorrect old implementation
+    # if angle_from <= angle_to:
+    #     pred = (angle_from < angle_diff) & (angle_diff < angle_to)
+    # else:
+    #     pred = (angle_from < angle_diff) | (angle_diff < angle_to)
+
+    # if func == "excluding":
+    #     pred = ~pred
+
     return visitor(pred)
+
+
+def is_road_direction(x: PredicateNode) -> TypeGuard[CallNode]:
+    return isinstance(x, CallNode) and x.name == 'road_direction'
 
 
 def angle(x: PredicateNode):
