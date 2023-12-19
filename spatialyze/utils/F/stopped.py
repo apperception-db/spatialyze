@@ -9,8 +9,6 @@ from ...predicate import (
 )
 from .common import default_location as dl
 
-ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection"}
-
 
 @call_node
 def stopped(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str, PredicateNode]):
