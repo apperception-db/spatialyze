@@ -1,12 +1,8 @@
-from types import GeneratorType
-
 import numpy as np
 import numpy.typing as npt
 import torch
 
-from ..utils.exhausted import exhausted
 from ..utils.depth_to_3d import depth_to_3d
-from ..utils.exhausted import exhausted
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip, skip
 from .stream import Stream
@@ -20,10 +16,7 @@ class FromDetection2DAndDepth(Stream[Detection3D]):
     def _stream(self, video: Video):
         with torch.no_grad():
             for d2d, depth, frame in zip(
-                self.detection2ds.stream(video),
-                self.depths.stream(video),
-                iter(video),
-                strict=True
+                self.detection2ds.stream(video), self.depths.stream(video), iter(video), strict=True
             ):
                 if isinstance(d2d, Skip) or isinstance(depth, Skip):
                     yield skip

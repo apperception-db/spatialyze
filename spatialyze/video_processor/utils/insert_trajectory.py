@@ -1,9 +1,9 @@
 import datetime
 
-from ..utils.prepare_trajectory import Trajectory
 from ...database import Database
 from ...utils import join
 from ..types import Float3
+from ..utils.prepare_trajectory import Trajectory
 from .infer_heading import infer_heading
 
 
@@ -13,7 +13,15 @@ def insert_trajectory(
     # road_types: "list[str]",
     # roadpolygon_list: "list[list[tuple[float, float]]]"
 ):
-    item_id, camera_id, object_type, postgres_timestamps, pairs, itemHeading_list, translation_list = trajectory
+    (
+        item_id,
+        camera_id,
+        object_type,
+        postgres_timestamps,
+        pairs,
+        itemHeading_list,
+        translation_list,
+    ) = trajectory
 
     traj_centroids: "list[str]" = []
     translations: "list[str]" = []

@@ -59,7 +59,7 @@ class Stream(Generic[T], ABC):
                 self._free_memory()
         except StopIteration:
             return
-    
+
     def ended(self):
         if not self._ended:
             # raise Exception('not ended')
@@ -71,7 +71,7 @@ class Stream(Generic[T], ABC):
                     # raise Exception('not ended')
                     return False
         return True
-    
+
     def end(self):
         self._ended = True
 

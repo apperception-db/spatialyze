@@ -4,7 +4,6 @@ from ...predicate import PredicateNode
 from ..payload import Payload
 from ..stages.in_view.in_view import InView
 from ..video import Video
-from .data_types import Skip, skip
 from .stream import Stream
 
 
