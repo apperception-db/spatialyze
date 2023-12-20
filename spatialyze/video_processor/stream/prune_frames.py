@@ -1,5 +1,5 @@
-from typing import TypeVar
 from types import GeneratorType
+from typing import TypeVar
 
 from ..utils.exhausted import exhausted
 from ..video import Video
@@ -24,6 +24,6 @@ class PruneFrames(Stream[T]):
                 yield frame
             else:
                 yield skip
-        
+
         assert exhausted(pruner)
         assert exhausted(stream)
