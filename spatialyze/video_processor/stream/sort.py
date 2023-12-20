@@ -79,6 +79,7 @@ class SORT(Stream[list[TrackingResult]]):
 
                     yield _process_track(seq, seqID)
                     del activeSequences[seqID]
+        self.end()
 
 
 def _process_track(track: Sequence, tid: int):

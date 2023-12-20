@@ -17,7 +17,9 @@ class RoadVisibilityPruner(Stream[bool]):
     ):
         self.inview = InView(distance, roadtypes, predicate)
 
-    def _stream(self, video: Video) -> Iterable[bool | Skip]:
+    def _stream(self, video: Video) -> Iterable[bool]:
         keep, _ = self.inview.run(Payload(video))
         assert keep is not None
-        return (True if k else skip for k in keep)
+        for k in keep:
+            yield True if k else False
+        self.end()

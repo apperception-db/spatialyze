@@ -9,3 +9,4 @@ class ListImages(Stream[str]):
         directory = video.videofile
         for filename in sorted(os.listdir(directory)):
             yield os.path.join(directory, filename)
+        self.end()

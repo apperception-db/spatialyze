@@ -18,6 +18,7 @@ class Stream(Generic[T], ABC):
     _iter_stream: Iterator[T | Skip] | None
 
     _visited: bool
+    _ended: bool
 
     def __new__(cls, *args, **kwargs):
         instance = super(Stream, cls).__new__(cls)
@@ -58,6 +59,21 @@ class Stream(Generic[T], ABC):
                 self._free_memory()
         except StopIteration:
             return
+    
+    def ended(self):
+        if not self._ended:
+            # raise Exception('not ended')
+            return False
+        for attr in dir(self):
+            stream = getattr(self, attr)
+            if isinstance(stream, Stream):
+                if not stream.ended():
+                    # raise Exception('not ended')
+                    return False
+        return True
+    
+    def end(self):
+        self._ended = True
 
     def _initialize_stream(self, video: Video):
         self._stream_progress = []
@@ -67,6 +83,7 @@ class Stream(Generic[T], ABC):
         self._results = []
         self._front = -1
         self._visited = False
+        self._ended = False
         for attr in dir(self):
             stream = getattr(self, attr)
             if isinstance(stream, Stream):

@@ -86,7 +86,9 @@ def select_device(device="", batch_size=0, newline=True):
 
 class DeepSORT(Stream[list[TrackingResult]]):
     def __init__(
-        self, detections: Stream[Detection2D] | Stream[Detection3D], frames: Stream[npt.NDArray]
+        self,
+        detections: Stream[Detection2D] | Stream[Detection3D],
+        frames: Stream[npt.NDArray],
     ):
         self.detection2ds = detections
         self.frames = frames
@@ -112,7 +114,11 @@ class DeepSORT(Stream[list[TrackingResult]]):
             deleted_tracks_idx = 0
             saved_detections: list[dict[int, torch.Tensor]] = []
             classes: list[str] | None = None
-            for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
+            for detection, im0s in zip(
+                self.detection2ds.stream(video),
+                self.frames.stream(video),
+                strict=True
+            ):
                 if isinstance(detection, Skip) or len(detection[0]) == 0:
                     deepsort.increment_ages()
                     saved_detections.append({})
@@ -148,6 +154,7 @@ class DeepSORT(Stream[list[TrackingResult]]):
                     deleted_tracks_idx += 1
             for track in deepsort.tracker.tracks:
                 yield _process_track(track, saved_detections, classes, video.camera_configs)
+        self.end()
 
 
 def _process_track(

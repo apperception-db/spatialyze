@@ -43,7 +43,7 @@ class ExitFrameSampler(Stream[bool]):
         current_fps = video.fps
 
         detections = FutureIterator(self.detections.stream(video))
-        for i, (config, detection) in enumerate(zip(video, detections)):
+        for i, (config, detection) in enumerate(zip(iter(video), detections, strict=True)):
             if i == len(video) - 1:
                 yield True
                 continue
@@ -113,6 +113,7 @@ class ExitFrameSampler(Stream[bool]):
         #         "sample_plan": total_sample_plan_time,
         #     }
         # )
+        self.end()
 
 
 T = TypeVar("T")

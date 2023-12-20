@@ -41,3 +41,4 @@ class MonoDepthEstimator(Stream[npt.NDArray]):
                 )
 
                 yield depth_resized.squeeze().cpu().detach().numpy() * 5.4
+        self.end()

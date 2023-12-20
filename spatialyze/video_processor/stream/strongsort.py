@@ -67,7 +67,11 @@ class StrongSORT(Stream[list[TrackingResult]]):
             saved_detections: list[dict[int, torch.Tensor]] = []
             clss: list[str] | None = None
             empty_img = None
-            for detection, im0s in zip(self.detection2ds.stream(video), self.frames.stream(video)):
+            for detection, im0s in zip(
+                self.detection2ds.stream(video),
+                self.frames.stream(video),
+                strict=True,
+            ):
                 if not isinstance(detection, Skip):
                     assert not isinstance(im0s, Skip), type(im0s)
                     im0 = im0s.copy()
@@ -118,6 +122,7 @@ class StrongSORT(Stream[list[TrackingResult]]):
         #     'update_camera': update_time,
         #     'postprocess': postprocess_end - postprocess_start,
         # })
+        self.end()
 
 
 def _process_track(

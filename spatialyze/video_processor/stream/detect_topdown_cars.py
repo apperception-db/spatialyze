@@ -142,7 +142,8 @@ class DetectTopDownCars(Stream[Detection2D]):
     def _stream(self, video: Video):
         with torch.no_grad():
             for frame_idx, im0 in tqdm(
-                enumerate(self.frames.stream(video)), total=len(video.camera_configs)
+                enumerate(self.frames.stream(video)),
+                total=len(video.camera_configs),
             ):
                 if isinstance(im0, Skip):
                     yield skip
@@ -157,3 +158,4 @@ class DetectTopDownCars(Stream[Detection2D]):
                 yield Detection2D(
                     dets, ["car"], [DetectionId(frame_idx, order) for order in range(len(_dets))]
                 )
+        self.end()

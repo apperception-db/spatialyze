@@ -110,3 +110,4 @@ class Yolo(Stream[Detection2D]):
                 yield Detection2D(
                     det, names, [DetectionId(frame_idx, order) for order in range(len(det))]
                 )
+        self.end()

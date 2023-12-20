@@ -2,6 +2,7 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
+from ..utils.exhausted import exhausted
 from ..utils.depth_to_3d import depth_to_3d
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip, skip
@@ -16,7 +17,10 @@ class FromDetection2DAndDepth(Stream[Detection3D]):
     def _stream(self, video: Video):
         with torch.no_grad():
             for d2d, depth, frame in zip(
-                self.detection2ds.stream(video), self.depths.stream(video), video.camera_configs
+                self.detection2ds.stream(video),
+                self.depths.stream(video),
+                iter(video),
+                strict=True
             ):
                 if isinstance(d2d, Skip) or isinstance(depth, Skip):
                     yield skip
@@ -58,3 +62,4 @@ class FromDetection2DAndDepth(Stream[Detection3D]):
                     ]
                     d3ds.append(d3d)
                 yield Detection3D(torch.tensor(d3ds, device=det.device), class_mapping, dids)
+        self.end()
