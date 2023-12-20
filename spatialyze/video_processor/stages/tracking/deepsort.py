@@ -106,7 +106,7 @@ class DeepSORT(Tracking):
         metadata: "list[list[TrackingResult]]" = [[] for _ in range(len(payload.video))]
 
         with torch.no_grad():
-            device = select_device("0")
+            device = select_device("")
             # initialize deepsort
             cfg = get_config()
             cfg.merge_from_file(str(DEEPSORT))
