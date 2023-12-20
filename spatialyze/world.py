@@ -152,17 +152,16 @@ def _execute(world: "World", optimization=True):
         video = Video(v.video, v.camera)
         output = t3ds.iterate(video)
 
-        tracks_batch: list[list[TrackingResult]] = []
         vresults[v.video] = []
         for track in output:
             assert not isinstance(track, Skip)
             vresults[v.video].append(track)
-            if len(tracks_batch) < BATCH_SIZE:
-                tracks_batch.append(track)
-                continue
-            _flush(tracks_batch, video, database)
-            tracks_batch = []
-        _flush(tracks_batch, video, database)
+
+            obj_id = track[0].object_id
+            trajectory = prepare_trajectory(video.videofile, obj_id, track, video.camera_configs)
+            if trajectory:
+                insert_trajectory(database, trajectory)
+        assert t3ds.ended()
 
         _camera_configs: "list[_CameraConfig]" = [
             _CameraConfig(
@@ -186,29 +185,3 @@ def _execute(world: "World", optimization=True):
 
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults
-
-
-def _flush(tracks: list[list[TrackingResult]], video: Video, database: Database):
-    for track in tracks:
-        obj_id = track[0].object_id
-        trajectory = prepare_trajectory(video.videofile, obj_id, track, video.camera_configs)
-        if trajectory:
-            (
-                item_id,
-                camera_id,
-                object_type,
-                timestamps,
-                pairs,
-                itemHeadings,
-                translations,
-            ) = trajectory
-            insert_trajectory(
-                database,
-                item_id,
-                camera_id,
-                object_type,
-                timestamps,
-                pairs,
-                itemHeadings,
-                translations,
-            )

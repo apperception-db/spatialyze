@@ -44,6 +44,7 @@ class TopDownRoadVisibilityPruner(Stream[bool]):
                 yield k.item()
 
             i += 1
+        self.end()
 
 
 def get_views(configs: list[list[tuple[float, float]]] | list[CameraConfig]):

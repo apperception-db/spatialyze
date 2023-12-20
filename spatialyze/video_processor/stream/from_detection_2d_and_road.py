@@ -18,7 +18,7 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
 
     def _stream(self, video: Video):
         with torch.no_grad():
-            for d2d, frame in zip(self.detection2ds.stream(video), video.camera_configs):
+            for d2d, frame in zip(self.detection2ds.stream(video), iter(video), strict=True):
                 if isinstance(d2d, Skip):
                     yield skip
                     continue
@@ -106,6 +106,7 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
                 assert (N, (d + 12)) == d3d.shape, d3d.shape
 
                 yield Detection3D(d3d, class_mapping, dids)
+        self.end()
 
 
 def rotate(vectors: npt.NDArray, rotation: Quaternion) -> npt.NDArray:

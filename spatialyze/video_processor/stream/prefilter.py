@@ -12,4 +12,6 @@ class Prefilter(Stream[bool]):
         self.keep = keep
 
     def _stream(self, video: Video) -> Iterable[bool | Skip]:
-        return (True if k else skip for k in self.keep)
+        for k in self.keep:
+            yield True if k else skip
+        self.end()

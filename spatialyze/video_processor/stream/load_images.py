@@ -17,3 +17,4 @@ class LoadImages(Stream[npt.NDArray]):
                 continue
 
             yield cv2.imread(filename)
+        self.end()

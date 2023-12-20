@@ -45,3 +45,4 @@ class ObjectTypePruner(Stream[Detection2D]):
                     det_to_keep.append(i)
 
             yield Detection2D(det[det_to_keep], class_mapping, [ids[k] for k in det_to_keep])
+        self.end()
