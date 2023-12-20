@@ -1,9 +1,12 @@
+from types import GeneratorType
+
 import numpy as np
 import numpy.typing as npt
 import torch
 
 from ..utils.exhausted import exhausted
 from ..utils.depth_to_3d import depth_to_3d
+from ..utils.exhausted import exhausted
 from ..video import Video
 from .data_types import Detection2D, Detection3D, Skip, skip
 from .stream import Stream
