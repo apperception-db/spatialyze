@@ -371,29 +371,29 @@
    "frame_idx": 210,
    "detection_id": [
     210,
-    1
-   ],
-   "object_id": 6,
-   "bbox_left": 211.0,
-   "bbox_top": 374.0,
-   "bbox_w": 27.0,
-   "bbox_h": 45.0,
-   "object_type": "traffic light",
-   "confidence": 0.44730517268180847
-  },
-  "7": {
-   "frame_idx": 210,
-   "detection_id": [
-    210,
     3
    ],
-   "object_id": 7,
+   "object_id": 6,
    "bbox_left": 280.0,
    "bbox_top": 363.0,
    "bbox_w": 18.0,
    "bbox_h": 23.0,
    "object_type": "traffic light",
    "confidence": 0.2975020408630371
+  },
+  "7": {
+   "frame_idx": 210,
+   "detection_id": [
+    210,
+    1
+   ],
+   "object_id": 7,
+   "bbox_left": 211.0,
+   "bbox_top": 374.0,
+   "bbox_w": 27.0,
+   "bbox_h": 45.0,
+   "object_type": "traffic light",
+   "confidence": 0.44730517268180847
   }
  },
  {

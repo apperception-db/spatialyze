@@ -1,11 +1,8 @@
-import os
-import pickle
 import pytest
 
 from spatialyze.predicate import *
 from spatialyze.utils import F
 
-from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView
 from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.stages.detection_2d.object_type_filter import FindType, ObjectTypeFilter
 

@@ -41,7 +41,7 @@ def test_detection_3d():
         )
         keep = bitarray(len(frames))
         keep.setall(0)
-        keep[(len(frames) * 3) // 4:] = 1
+        keep[(len(frames) * 7) // 8:] = 1
 
         output = pipeline.run(Payload(frames, keep))
         # det_result = FromDetection2DAndRoad.get(output)
