@@ -49,6 +49,12 @@ from ..modules.yolo_deepsort.deep_sort.deep_sort import DeepSort
 from ..modules.yolo_deepsort.deep_sort.sort.track import Track
 from ..modules.yolo_deepsort.deep_sort.utils.parser import get_config
 
+MAX_DIST = "MAX_DIST"
+MAX_IOU_DISTANCE = "MAX_IOU_DISTANCE"
+MAX_AGE = "MAX_AGE"
+N_INIT = "N_INIT"
+NN_BUDGET = "NN_BUDGET"
+
 
 def xyxy2xywh(x):
     # Convert nx4 boxes from [x1, y1, x2, y2] to [x, y, w, h] where xy1=top-left, xy2=bottom-right
@@ -100,20 +106,20 @@ class DeepSORT(Stream[list[TrackingResult]]):
             cfg = get_config()
             cfg.merge_from_file(str(DEEPSORT))
             assert hasattr(cfg, "DEEPSORT"), (type(cfg), dir(cfg))
-            cfgds = getattr(cfg, "DEEPSORT")
-            assert hasattr(cfgds, "MAX_DIST"), (type(cfgds), dir(cfgds))
-            assert hasattr(cfgds, "MAX_IOU_DISTANCE"), (type(cfgds), dir(cfgds))
-            assert hasattr(cfgds, "MAX_AGE"), (type(cfgds), dir(cfgds))
-            assert hasattr(cfgds, "N_INIT"), (type(cfgds), dir(cfgds))
-            assert hasattr(cfgds, "NN_BUDGET"), (type(cfgds), dir(cfgds))
+            cfg = getattr(cfg, "DEEPSORT")
+            assert hasattr(cfg, MAX_DIST), (type(cfg), dir(cfg))
+            assert hasattr(cfg, MAX_IOU_DISTANCE), (type(cfg), dir(cfg))
+            assert hasattr(cfg, MAX_AGE), (type(cfg), dir(cfg))
+            assert hasattr(cfg, N_INIT), (type(cfg), dir(cfg))
+            assert hasattr(cfg, NN_BUDGET), (type(cfg), dir(cfg))
             deepsort = DeepSort(
                 model_type="osnet_x0_25",
                 device=device,
-                max_dist=getattr(cfgds, "MAX_DIST"),
-                max_iou_distance=getattr(cfgds, "MAX_IOU_DISTANCE"),
-                max_age=getattr(cfgds, "MAX_AGE"),
-                n_init=getattr(cfgds, "N_INIT"),
-                nn_budget=getattr(cfgds, "NN_BUDGET"),
+                max_dist=getattr(cfg, MAX_DIST),
+                max_iou_distance=getattr(cfg, MAX_IOU_DISTANCE),
+                max_age=getattr(cfg, MAX_AGE),
+                n_init=getattr(cfg, N_INIT),
+                nn_budget=getattr(cfg, NN_BUDGET),
             )
 
             saved_detections: list[dict[int, torch.Tensor] | None] = []
