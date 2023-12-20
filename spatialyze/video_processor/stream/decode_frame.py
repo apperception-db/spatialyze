@@ -15,3 +15,4 @@ class DecodeFrame(Stream[npt.NDArray]):
             yield frame
         cap.release()
         cv2.destroyAllWindows()
+        raise Exception("DecodeFrame: Video stream ended.")
