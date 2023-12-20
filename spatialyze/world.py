@@ -123,8 +123,8 @@ BATCH_SIZE = 2048
 
 def _execute(world: "World", optimization=True):
     database = world._database
-    detector, = world._detector
-    tracker, = world._tracker
+    (detector,) = world._detector
+    (tracker,) = world._tracker
 
     # add geographic constructs
     # drop_tables(database)
