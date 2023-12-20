@@ -3,10 +3,10 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (view_angle(o.trans@c.time, c.cam), 
-        "viewAngle(valueAtTimestamp(t0.translations,timestamp),cameraHeading,cameraTranslation)"),
-    (view_angle(o.trans@c.time, o.trans@c.time), 
-        "viewAngle(valueAtTimestamp(t0.translations,timestamp),(headingAtTimestamp(t0.itemHeadings,timestamp))::real,valueAtTimestamp(t0.translations,timestamp))")
+    (view_angle(o, c), 
+        "viewAngle(valueAtTimestamp(t0.trajCentroids,c0.timestamp),c0.cameraHeading,c0.cameraTranslation)"),
+    (view_angle(o, o), 
+        "viewAngle(valueAtTimestamp(t0.trajCentroids,c0.timestamp),valueAtTimestamp(t0.itemHeadings,c0.timestamp),valueAtTimestamp(t0.trajCentroids,c0.timestamp))")
 ])
 def test_view_angle(fn, sql):
     assert gen(fn) == sql

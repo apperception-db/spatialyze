@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 import cv2
 
-from ...cache import cache
 from .decode_frame import DecodeFrame
 
 if TYPE_CHECKING:
@@ -30,7 +29,7 @@ def decode(args: "tuple[str, int, int]"):
 
 
 class ParallelDecodeFrame(DecodeFrame):
-    @cache
+    # @cache
     def _run(self, payload: "Payload"):
         try:
             metadata: "list[npt.NDArray]" = []

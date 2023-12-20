@@ -1,6 +1,8 @@
 import os
+import random
 
 import pandas as pd
+from spatialyze.data_types.query_result import QueryResult
 
 from spatialyze.database import (
     BBOX_COLUMNS,
@@ -13,16 +15,55 @@ from spatialyze.database import (
 )
 
 
+random.seed(1234)
+
+
+def get_results(path: str = "./data/scenic/test-results"):
+    results: list[QueryResult] = []
+    for file in os.listdir(path):
+        if not file.endswith(".py"):
+            continue
+        with open(os.path.join(path, file), "r") as f:
+            _results = f.readlines()
+        results.extend(eval("\n".join(_results[1:])))
+    assert all(isinstance(result, QueryResult) for result in results)
+
+    results_set = set(results)
+
+    scenes: dict[str, list[QueryResult]] = {}
+    for result in results_set:
+        if result.camera_id not in scenes:
+            scenes[result.camera_id] = []
+        scenes[result.camera_id].append(result)
+
+    frame_range: dict[str, tuple[int, int]] = {
+        scene: (min(result.frame_number for result in results),
+                max(result.frame_number for result in results))
+        for scene, results in scenes.items()
+    }
+
+    _items: list[str] = []
+    for result in results_set:
+        _items.extend(result.item_ids)
+    items = set(_items)
+
+    return scenes, frame_range, items
+
+
 def import_tables(database: "Database", data_path: str):
+    scenes, frame_range, items = get_results()
+
     # Import CSV
     data_Cameras = pd.read_csv(os.path.join(data_path, "cameras.csv"))
     df_Cameras = pd.DataFrame(data_Cameras)
+    df_Cameras = df_Cameras[df_Cameras.apply(lambda x: (x['cameraid'] in frame_range and frame_range[x['cameraid']][0] - 10 < x['framenum'] and x['framenum'] < frame_range[x['cameraid']][1] + 10) or random.random() < 0.1, axis=1)]
 
     data_Item_General_Trajectory = pd.read_csv(
         os.path.join(data_path, "item_general_trajectory.csv")
     )
     df_Item_General_Trajectory = pd.DataFrame(data_Item_General_Trajectory)
     df_Item_General_Trajectory.drop(columns=["color", "largestbbox"], inplace=True)
+    df_Item_General_Trajectory = df_Item_General_Trajectory[df_Item_General_Trajectory.apply(lambda x: x['itemid'] in items or random.random() < 0.07, axis=1)]
 
     # data_General_Bbox = pd.read_csv(os.path.join(data_path, "general_bbox.csv"))
     # df_General_Bbox = pd.DataFrame(data_General_Bbox)

@@ -8,6 +8,7 @@
 \i geoContainedMargin.sql;
 \i headingAtTimestamp.sql;
 \i in_view.sql;
+\i leftTurn.sql;
 \i minDistance.sql;
 \i objectBBox.sql;
 \i operators.sql;

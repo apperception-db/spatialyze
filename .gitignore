@@ -29,3 +29,8 @@ outputs
 
 yolov5s.pt
 yolov8m.pt
+
+evaluation/eva/evadb_data
+evaluation/eva/eva-times.txt
+evaluation/nuscenes/devkit/*.txt
+data/skyquery/car-model/yolov3.best

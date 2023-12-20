@@ -5,6 +5,8 @@ from spatialyze.utils import import_tables, ingest_road
 
 # %%
 EXPERIMENT = False
+# SCENE_NUMBERS = "../data/evaluation/video-samples/boston-seaport.txt"
+SCENE_NUMBERS = "/work/apperception/shared/spatialyze-yousef/evaluation/eva/scene-names-mini.txt"
 
 # %%
 suffix = "_experiment" if EXPERIMENT else ""
@@ -14,6 +16,7 @@ if 'NUSCENES_PROCESSED_ROAD' in os.environ:
     road_data = os.environ['NUSCENES_PROCESSED_ROAD'] + "/boston-old"
 else:
     road_data = '/data/processed/road-network/boston-seaport'
+road_data = '/data/apperception-data/processed/road-network/boston-seaport'
 
 # %%
 road_data
@@ -40,7 +43,7 @@ if 'NUSCENES_PROCESSED_DATA' in os.environ:
     base_dir = os.environ['NUSCENES_PROCESSED_DATA']
 else:
     base_dir = '/data/processed/full-dataset/trainval/'
-#     base_dir = '/work/apperception/data/nuScenes/full-dataset-v1.0/Trainval'
+base_dir = '/data/apperception-data/processed/nuscenes/full-dataset-v1.0/Mini/'
 base_dir
 
 # %%
@@ -60,7 +63,7 @@ scenes = df_sample_data['scene_name'].drop_duplicates().values.tolist()
 from spatialyze.utils import df_to_camera_config
 from spatialyze.data_types import Camera
 
-with open("/home/youse/apperception/data/evaluation/video-samples/boston-seaport.txt", 'r') as f:
+with open(SCENE_NUMBERS, 'r') as f:
     sceneNumbers = f.readlines()
     sceneNumbers = [x.strip() for x in sceneNumbers]
     sceneNumbers = sceneNumbers[0:80]

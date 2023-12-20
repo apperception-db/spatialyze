@@ -153,15 +153,20 @@ class Database:
 
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute("CREATE INDEX ON Cameras (cameraId);")
+        # cursor.execute("CREATE INDEX ON Cameras (cameraId);")
+        cursor.execute("CREATE INDEX ON Cameras (cameraId, frameNum);")
         cursor.execute("CREATE INDEX ON Cameras (timestamp);")
         cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
         cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS traj_idx ON Item_General_Trajectory USING GiST(trajCentroids);"
+            "CREATE INDEX IF NOT EXISTS traj_idx "
+            "ON Item_General_Trajectory "
+            "USING GiST(trajCentroids);"
         )
         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS trans_idx ON Item_General_Trajectory USING GiST(translations);"
+            "CREATE INDEX IF NOT EXISTS trans_idx "
+            "ON Item_General_Trajectory "
+            "USING GiST(translations);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
         # cursor.execute(
@@ -271,20 +276,17 @@ class Database:
         t_outputs = ""
         for i in range(len(tables)):
             t_tables += (
-                "\n"
-                "JOIN Item_General_Trajectory "
-                f"AS t{i} "
-                f"ON  Cameras.timestamp <@ t{i}.trajCentroids::period "
-                f"AND Cameras.cameraId  =  t{i}.cameraId"
+                f"JOIN Item_General_Trajectory AS t{i} "
+                f"ON  c0.timestamp <@ t{i}.trajCentroids::period "
+                f"AND c0.cameraId  =  t{i}.cameraId\n"
             )
-            t_outputs += f", t{i}.itemId"
+            t_outputs += f",\n   t{i}.itemId"
 
-        sql_str = f"""
-            SELECT Cameras.frameNum, Cameras.cameraId, Cameras.filename{t_outputs}
-            FROM Cameras{t_tables}
-            WHERE
-            {GenSqlVisitor()(predicate)}
-        """
+        sql_str = (
+            f"SELECT c0.frameNum, c0.cameraId, c0.filename{t_outputs}\n"
+            f"FROM Cameras as c0\n{t_tables}"
+            f"WHERE {GenSqlVisitor()(predicate)}"
+        )
         return [
             QueryResult(frame_number, camera_id, filename, tuple(item_ids))
             for frame_number, camera_id, filename, *item_ids in self.execute(sql_str)

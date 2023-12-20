@@ -1,3 +1,5 @@
+from typing import Type
+
 import numpy as np
 
 from .data_types.camera import Camera
@@ -10,31 +12,25 @@ from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNo
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
-from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
-from .video_processor.payload import Payload
-from .video_processor.pipeline import Pipeline
-from .video_processor.stages.decode_frame.decode_frame import DecodeFrame
-from .video_processor.stages.depth_estimation import DepthEstimation
-from .video_processor.stages.detection_2d.object_type_filter import ObjectTypeFilter
-from .video_processor.stages.detection_2d.yolo_detection import YoloDetection
-from .video_processor.stages.detection_3d.from_detection_2d_and_depth import (
-    FromDetection2DAndDepth,
-)
-from .video_processor.stages.detection_3d.from_detection_2d_and_road import (
-    FromDetection2DAndRoad,
-)
-from .video_processor.stages.in_view.in_view import InView
-from .video_processor.stages.stage import Stage
-from .video_processor.stages.tracking_2d.strongsort import StrongSORT
-from .video_processor.stages.tracking_3d.from_tracking_2d_and_detection_3d import (
-    FromTracking2DAndDetection3D,
-)
-from .video_processor.stages.tracking_3d.tracking_3d import Metadatum as T3DMetadatum
-from .video_processor.stages.tracking_3d.tracking_3d import Tracking3D
-from .video_processor.utils.format_trajectory import format_trajectory
-from .video_processor.utils.get_tracks import get_tracks
+from .video_processor.stream.data_types import Detection2D, Skip
+from .video_processor.stream.decode_frame import DecodeFrame
+from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
+from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
+from .video_processor.stream.mono_depth_estimator import MonoDepthEstimator
+from .video_processor.stream.object_type_pruner import ObjectTypePruner
+from .video_processor.stream.prefilter import Prefilter
+from .video_processor.stream.prune_frames import PruneFrames
+from .video_processor.stream.road_visibility_pruner import RoadVisibilityPruner
+
+# stream
+from .video_processor.stream.stream import Stream
+
+# from .video_processor.stream.deepsort import DeepSORT, TrackingResult
+from .video_processor.stream.strongsort import StrongSORT, TrackingResult
+from .video_processor.stream.yolo import Yolo
 from .video_processor.utils.insert_trajectory import insert_trajectory
+from .video_processor.utils.prepare_trajectory import prepare_trajectory
 from .video_processor.video import Video
 
 
@@ -45,6 +41,8 @@ class World:
         predicates: "list[PredicateNode] | None" = None,
         videos: "list[GeospatialVideo] | None" = None,
         geogConstructs: "list[RoadNetwork] | None" = None,
+        detector: Type[Stream[Detection2D]] | None = None,
+        tracker: Type[Stream[list[TrackingResult]]] | None = None,
     ):
         self._database = database or default_database
         self._predicates = predicates or []
@@ -52,7 +50,9 @@ class World:
         self._geogConstructs = geogConstructs or []
         self._objectCounts = 0
         self._objects: "dict[str, list[QueryResult]] | None" = None
-        self._trackings: "dict[str, list[T3DMetadatum]] | None" = None
+        self._trackings: "dict[str, list[list[TrackingResult]]] | None" = None
+        self._detector: tuple[Type[Stream[Detection2D]]] = (detector or Yolo,)
+        self._tracker: tuple[Type[Stream[list[TrackingResult]]]] = (tracker or StrongSORT,)
         # self._cameraCounts = 0
 
     @property
@@ -87,7 +87,7 @@ class World:
         return node
 
     def camera(self) -> "CameraTableNode":
-        return CameraTableNode()
+        return CameraTableNode(0)
 
     def geogConstruct(self, type: "str"):
         return road_segment(type)
@@ -118,55 +118,59 @@ class World:
         return get_object_list(self._objects, self._trackings)
 
 
+BATCH_SIZE = 2048
+
+
 def _execute(world: "World", optimization=True):
     database = world._database
+    (detector,) = world._detector
+    (tracker,) = world._tracker
 
     # add geographic constructs
-    drop_tables(database)
-    create_tables(database)
-    for gc in world._geogConstructs:
-        gc.ingest(database)
-    # analyze predicates to generate pipeline
-    steps: "list[Stage]" = []
-    if optimization:
-        steps.append(InView(distance=50, predicate=world.predicates))
-    steps.append(DecodeFrame())
-    steps.append(YoloDetection())
-    if optimization:
-        objtypes_filter = ObjectTypeFilter(predicate=world.predicates)
-        steps.append(objtypes_filter)
-        steps.append(FromDetection2DAndRoad())
-        # if all(t in ["car", "truck"] for t in objtypes_filter.types):
-        #     steps.append(DetectionEstimation())
-    else:
-        steps.append(DepthEstimation())
-        steps.append(FromDetection2DAndDepth())
-    steps.append(StrongSORT())
-    steps.append(FromTracking2DAndDetection3D())
+    # drop_tables(database)
+    # create_tables(database)
+    # for gc in world._geogConstructs:
+    #     gc.ingest(database)
 
-    pipeline = Pipeline(steps)
-
-    qresults: "dict[str, list[QueryResult]]" = {}
-    vresults: "dict[str, list[T3DMetadatum]]" = {}
+    qresults: dict[str, list[QueryResult]] = {}
+    vresults: dict[str, list[list[TrackingResult]]] = {}
     for v in world._videos:
         # reset database
         database.reset()
 
+        decode = DecodeFrame()
+        if v.keep is not None:
+            prefilter = Prefilter(v.keep)
+            decode = PruneFrames(prefilter, decode)
+        if optimization:
+            inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
+            decode = PruneFrames(inview, decode)
+        d2ds = detector(decode)
+        if optimization:
+            d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
+            d3ds = FromDetection2DAndRoad(d2ds)
+            # if all(t in ["car", "truck"] for t in d2ds.types):
+            #     efs = ExitFrameSampler(d3ds)
+            #     d3ds = PruneFrames(efs, d3ds)
+        else:
+            depths = MonoDepthEstimator(decode)
+            d3ds = FromDetection2DAndDepth(d2ds, depths)
+        t3ds = tracker(d3ds, decode)
+
         # execute pipeline
         video = Video(v.video, v.camera)
-        keep = v.keep
-        output = pipeline.run(Payload(video, keep))
-        track_result = StrongSORT.get(output)
-        assert track_result is not None
-        tracking3d = Tracking3D.get(output)
-        assert tracking3d is not None
-        vresults[v.video] = tracking3d
-        tracks = get_tracks(tracking3d, v.camera)
+        output = t3ds.iterate(video)
 
-        for oid, track in tracks.items():
-            trajectory = format_trajectory("", oid, track)
+        vresults[v.video] = []
+        for track in output:
+            assert not isinstance(track, Skip)
+            vresults[v.video].append(track)
+
+            obj_id = track[0].object_id
+            trajectory = prepare_trajectory(video.videofile, obj_id, track, video.camera_configs)
             if trajectory:
-                insert_trajectory(database, *trajectory[0])
+                insert_trajectory(database, trajectory)
+        assert t3ds.ended()
 
         _camera_configs: "list[_CameraConfig]" = [
             _CameraConfig(

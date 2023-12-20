@@ -7,8 +7,8 @@ from postgis import MultiPoint
 from psycopg2 import sql
 from pyquaternion import Quaternion
 
-from spatialyze.database import database
-from spatialyze.predicate import (
+from ....database import database
+from ....predicate import (
     ArrayNode,
     BaseTransformer,
     BinOpNode,
@@ -26,9 +26,9 @@ from spatialyze.predicate import (
     Visitor,
     lit,
 )
-from spatialyze.utils import F
-
+from ....utils import F
 from ...payload import Payload
+from ...video.video import Video
 from ..stage import Stage
 
 OTHER_ROAD_TYPES = {
@@ -62,10 +62,10 @@ class InView(Stage):
             self.predicate = eval(str(self.predicate_str))
 
     def __repr__(self) -> str:
-        return f"InView(distance={self.distance}, roadtype={self.roadtypes}, predicate={self.predicate_str})"
+        return f"InView(distance={self.distance}, roadtype={self.roadtypes is not None and self.roadtypes}, predicate={hasattr(self, 'predicate_str') and self.predicate_str})"
 
     def _run(self, payload: "Payload") -> "tuple[bitarray, None]":
-        indices, view_areas = get_views(payload, self.distance)
+        indices, view_areas = get_views(payload.video, self.distance)
 
         keep = bitarray(len(payload.keep))
         keep.setall(1)
@@ -133,8 +133,8 @@ class InView(Stage):
         return keep, None
 
 
-def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
-    w, h = payload.video.dimension
+def get_views(video: "Video", distance: "float" = 100):
+    w, h = video.dimension
     Z = distance
     view_vertices_2d = np.array(
         [
@@ -149,7 +149,7 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
     ).T
     assert view_vertices_2d.shape == (3, 5), view_vertices_2d.shape
 
-    [[fx, s, x0], [_, fy, y0], [_, _, _]] = payload.video.interpolated_frames[0].camera_intrinsic
+    [[fx, s, x0], [_, fy, y0], [_, _, _]] = video.interpolated_frames[0].camera_intrinsic
 
     # 3x3 matrix to convert points from pixel-coordinate to camera-coordinate
     pixel2camera = Z * np.array(
@@ -166,10 +166,10 @@ def get_views(payload: "Payload", distance: "float" = 100, skip: "bool" = True):
 
     extrinsics: "list[npt.NDArray]" = []
     indices: "list[int]" = []
-    for i, (k, f) in enumerate(zip(payload.keep, payload.video.interpolated_frames)):
-        if not k and skip:
-            continue
-
+    # for i, (k, f) in enumerate(zip(keep, video.interpolated_frames)):
+    #     if not k and skip:
+    #         continue
+    for i, f in enumerate(video.interpolated_frames):
         rotation = Quaternion(f.camera_rotation)
         rotation_matrix = rotation.unit.rotation_matrix
         assert rotation_matrix.shape == (3, 3), rotation_matrix.shape
@@ -286,26 +286,26 @@ class KeepOnlyRoadTypePredicates(BaseTransformer):
 
     def visit_CallNode(self, node: CallNode):
         # print('call', node, node.fn, F.contained)
-        if node.fn == F.contains_all().fn:
+        if node.fn == F.contains().fn:
             # print('contains')
             assert len(node.params) == 2
             assert isinstance(node.params[0], LiteralNode), node.params[0]
             assert isinstance(node.params[0].value, str), node.params[0]
             return F.is_roadtype(node.params[0])
-        elif node.fn == F.contained().fn:
-            # print('contains')
-            assert len(node.params) == 2
-            segment = node.params[1]
-            if isinstance(segment, LiteralNode):
-                assert isinstance(segment.value, str), (segment, node.fn)
-                return F.is_roadtype(segment)
-            else:
-                assert isinstance(segment, CallNode), segment
-                assert segment == F.same_region().fn, segment
-                assert len(segment.params) == 1, segment.params
-                assert isinstance(segment.params[0], LiteralNode), segment.params[0]
-                assert isinstance(segment.params[0].value, str), segment.params[0]
-                return F.is_roadtype(segment.params[0])
+        # elif node.fn == F.contained().fn:
+        #     # print('contains')
+        #     assert len(node.params) == 2
+        #     segment = node.params[1]
+        #     if isinstance(segment, LiteralNode):
+        #         assert isinstance(segment.value, str), (segment, node.fn)
+        #         return F.is_roadtype(segment)
+        #     else:
+        #         assert isinstance(segment, CallNode), segment
+        #         assert segment == F.same_region().fn, segment
+        #         assert len(segment.params) == 1, segment.params
+        #         assert isinstance(segment.params[0], LiteralNode), segment.params[0]
+        #         assert isinstance(segment.params[0].value, str), segment.params[0]
+        #         return F.is_roadtype(segment.params[0])
         return F.ignore_roadtype()
 
     def visit_TableNode(self, node: TableNode):

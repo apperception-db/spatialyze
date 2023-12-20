@@ -3,8 +3,8 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (like(o.traj, c.time), 
-        "t0.trajCentroids LIKE timestamp"),
+    (like(o.type, 'human'), 
+        "t0.objectType LIKE 'human'"),
     (like(o.type, 'human%'), 
         "t0.objectType LIKE 'human%'"),
 ])
@@ -21,4 +21,4 @@ def test_like(fn, sql):
 def test_exception(fn, msg):
     with pytest.raises(Exception) as e_info:
         gen(fn)
-    str(e_info.value) == msg
+    assert str(e_info.value) == msg

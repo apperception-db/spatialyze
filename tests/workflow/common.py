@@ -8,13 +8,14 @@ from spatialyze.database import Database
 from spatialyze.geospatial_video import GeospatialVideo
 from spatialyze.road_network import RoadNetwork
 from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.video_processor.stream.deepsort import DeepSORT
 from spatialyze.world import World
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 ROAD_DIR = './data/scenic/road-network/boston-seaport'
 
-def build_filter_world(pkl: bool = False):
+def build_filter_world(pkl: bool = False, alt_tracker: bool = False):
     database = Database(
         psycopg2.connect(
             dbname=environ.get("AP_DB", "mobilitydb"),
@@ -28,7 +29,7 @@ def build_filter_world(pkl: bool = False):
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)
     
-    world = World(database)
+    world = World(database, tracker=DeepSORT if alt_tracker else None)
     world.addGeogConstructs(RoadNetwork('Boston-Seaport', ROAD_DIR))
     
     for video in videos.values():
