@@ -9,8 +9,8 @@ def test_stream_end():
     files = ListImages()
     images = LoadImages(files)
 
-    outputs = images.iterate(video)
+    images.iterate(video)
     assert not images.ended()
 
-    list(outputs)
+    images.execute(video)
     assert images.ended()

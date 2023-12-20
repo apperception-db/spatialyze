@@ -19,15 +19,11 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
     def _stream(self, video: Video):
         with torch.no_grad():
             for d2d, frame in zip(self.detection2ds.stream(video), iter(video), strict=True):
-                if isinstance(d2d, Skip):
+                if isinstance(d2d, Skip) or len(d2d[0]) == 0:
                     yield skip
                     continue
 
                 det, class_mapping, dids = d2d
-                if len(det) == 0:
-                    yield Detection3D(torch.tensor([], device=det.device), class_mapping, dids)
-                    continue
-
                 device = det.device
                 [[fx, s, x0], [_, fy, y0], [_, _, _]] = frame.camera_intrinsic
                 rotation = frame.camera_rotation
@@ -120,7 +116,3 @@ def rotate(vectors: npt.NDArray, rotation: Quaternion) -> npt.NDArray:
         The rotated vectors (3 x N).
     """
     return rotation.unit.rotation_matrix @ vectors
-
-
-def conj(q: npt.NDArray) -> npt.NDArray:
-    return np.concatenate([q[0:1, :], -q[1:, :]])

@@ -38,14 +38,14 @@ class Yolo(Stream[Detection2D]):
         classes=None,  # filter by class: --class 0, or --class 0 2 3
         agnostic_nms=False,  # class-agnostic NMS
         augment=False,  # augmented inference
+        force_reload=False,  # download model even if it exists
     ):
         self.device = select_device("")
-        try:
-            model = torch.hub.load(REPO, MODEL, verbose=False, _verbose=False)
-            self.model: "DetectMultiBackend" = model.model.to(self.device)
-        except BaseException:
-            model = torch.hub.load(REPO, MODEL, verbose=False, _verbose=False, force_reload=True)
-            self.model: "DetectMultiBackend" = model.model.to(self.device)
+        model = torch.hub.load(
+            REPO, MODEL, verbose=False, _verbose=False, force_reload=force_reload
+        )
+        self.model: "DetectMultiBackend" = model.model.to(self.device)
+
         stride, pt = self.model.stride, self.model.pt
         assert isinstance(stride, int), type(stride)
         assert isinstance(pt, bool), type(pt)

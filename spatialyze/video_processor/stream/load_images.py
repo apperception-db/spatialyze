@@ -12,9 +12,5 @@ class LoadImages(Stream[npt.NDArray]):
 
     def _stream(self, video: Video):
         for filename in self.frames.stream(video):
-            if isinstance(filename, Skip):
-                yield skip
-                continue
-
-            yield cv2.imread(filename)
+            yield (skip if isinstance(filename, Skip) else cv2.imread(filename))
         self.end()

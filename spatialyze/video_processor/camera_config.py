@@ -50,10 +50,6 @@ def camera_config(
     return _frame
 
 
-def has_config(config: "CameraConfig"):
-    return config.filename is not None
-
-
 class CameraConfig:
     camera_id: str
     # TODO: remove

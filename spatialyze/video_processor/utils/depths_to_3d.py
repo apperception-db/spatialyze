@@ -1,4 +1,3 @@
-import time
 from math import sqrt
 
 import numpy as np
@@ -67,19 +66,19 @@ def depths_to_3ds(
     return res / scale[:, :, :, na]
 
 
-if __name__ == "__main__":
-    np.random.seed(10)
-    depths = np.random.rand(20, 1000, 700)
-    intrinsic = np.array([[1000, 0, 800], [0, 1000, 400], [0, 0, 1]])
+# if __name__ == "__main__":
+#     np.random.seed(10)
+#     depths = np.random.rand(20, 1000, 700)
+#     intrinsic = np.array([[1000, 0, 800], [0, 1000, 400], [0, 0, 1]])
 
-    start = time.time()
-    d_numpy = depths_to_3ds(depths, intrinsic)
-    numpy_time = time.time() - start
-    print(numpy_time)
+#     start = time.time()
+#     d_numpy = depths_to_3ds(depths, intrinsic)
+#     numpy_time = time.time() - start
+#     print(numpy_time)
 
-    start = time.time()
-    d_naive = depths_to_3ds_naive(depths, intrinsic)
-    naive_time = time.time() - start
-    print(naive_time)
+#     start = time.time()
+#     d_naive = depths_to_3ds_naive(depths, intrinsic)
+#     naive_time = time.time() - start
+#     print(naive_time)
 
-    print(np.allclose(d_naive, d_numpy))
+#     print(np.allclose(d_naive, d_numpy))
