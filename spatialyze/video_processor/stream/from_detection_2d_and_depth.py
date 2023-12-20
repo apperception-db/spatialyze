@@ -16,7 +16,10 @@ class FromDetection2DAndDepth(Stream[Detection3D]):
     def _stream(self, video: Video):
         with torch.no_grad():
             for d2d, depth, frame in zip(
-                self.detection2ds.stream(video), self.depths.stream(video), iter(video), strict=True
+                self.detection2ds.stream(video),
+                self.depths.stream(video),
+                iter(video),
+                strict=True,
             ):
                 if isinstance(d2d, Skip) or isinstance(depth, Skip):
                     yield skip
