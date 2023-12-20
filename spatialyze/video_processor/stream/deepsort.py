@@ -101,7 +101,7 @@ class DeepSORT(Stream[list[TrackingResult]]):
 
     def _stream(self, video: Video):
         with torch.no_grad():
-            device = select_device("0")
+            device = select_device("")
             # initialize deepsort
             cfg = get_config()
             cfg.merge_from_file(str(DEEPSORT))

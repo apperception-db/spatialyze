@@ -155,8 +155,8 @@ jobs:
           name: video-processor-coverage
           path: ./coverage.xml
       
-      # - name: Commit formatted changes
-      #   run: ./scripts/commit-and-push.sh "[CI] update test"
+      - name: Commit formatted changes
+        run: ./scripts/commit-and-push.sh "[CI] update test"
 
   test-engine-and-interface:
     name: Test Engine and Interface
