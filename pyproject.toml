@@ -28,6 +28,11 @@ gdown = "^4.7.1"
 ultralytics = "^8.0.148"
 notebook = "^7.0.6"
 
+# DeepSORT
+tensorboard = "^2.15.1"
+easydict = "^1.11"
+cython = "^3.0.7"
+
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
 coverage = "^7.2.7"

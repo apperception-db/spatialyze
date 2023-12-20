@@ -78,6 +78,16 @@ mamba activate spatialyze
 poetry install
 ```
 
+### If using DeepSORT (Optional)
+Building `rank_cylib` will speed up DeepSORT.
+```bash
+cd ./spatialyze/video_processor/modules/yolo_deepsort/deep_sort/deep/reid/torchreid/metrics/rank_cylib
+make
+# If make does not work (use your current python interpreter)
+python setup.py build_ext --inplace
+rm -rf build
+```
+
 ## Spatialyze Demo
 ### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
 ```bash
