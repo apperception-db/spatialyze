@@ -1,9 +1,9 @@
 import cv2
 import numpy.typing as npt
 
-from spatialyze.video_processor.video import Video
-from spatialyze.video_processor.stream.data_types import Skip, skip
-from spatialyze.video_processor.stream.stream import Stream
+from ..video import Video
+from .data_types import Skip, skip
+from .stream import Stream
 
 
 class LoadImages(Stream[npt.NDArray]):
