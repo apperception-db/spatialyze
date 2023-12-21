@@ -141,28 +141,25 @@ def _execute(world: "World", optimization=True):
         # reset database
         database.reset()
 
-        if world._processor is None:
-            decode = DecodeFrame()
-            if v.keep is not None:
-                prefilter = Prefilter(v.keep)
-                decode = PruneFrames(prefilter, decode)
-            if optimization:
-                inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
-                decode = PruneFrames(inview, decode)
-            d2ds = detector(decode)
+        decode = DecodeFrame()
+        if v.keep is not None:
+            prefilter = Prefilter(v.keep)
+            decode = PruneFrames(prefilter, decode)
+        if optimization:
+            inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
+            decode = PruneFrames(inview, decode)
+        d2ds = detector(decode)
 
-            if optimization:
-                d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
-                d3ds = FromDetection2DAndRoad(d2ds)
-                # if all(t in ["car", "truck"] for t in d2ds.types):
-                #     efs = ExitFrameSampler(d3ds)
-                #     d3ds = PruneFrames(efs, d3ds)
-            else:
-                depths = MonoDepthEstimator(decode)
-                d3ds = FromDetection2DAndDepth(d2ds, depths)
-            t3ds = tracker(d3ds, decode)
+        if optimization:
+            d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
+            d3ds = FromDetection2DAndRoad(d2ds)
+            # if all(t in ["car", "truck"] for t in d2ds.types):
+            #     efs = ExitFrameSampler(d3ds)
+            #     d3ds = PruneFrames(efs, d3ds)
         else:
-            t3ds = world._processor
+            depths = MonoDepthEstimator(decode)
+            d3ds = FromDetection2DAndDepth(d2ds, depths)
+        t3ds = world._processor or tracker(d3ds, decode)
 
         # execute pipeline
         video = Video(v.video, v.camera)
