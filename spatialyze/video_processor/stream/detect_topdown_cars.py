@@ -118,7 +118,9 @@ try:
         free_image(im)
         free_detections(dets, num)
         return res
+
 except OSError:
+
     def load_net(cfg, weights, gpu):
         raise OSError("libdarknet.so not found")
 
