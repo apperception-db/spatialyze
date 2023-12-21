@@ -687,17 +687,8 @@ def ingest_road(database: "Database", directory: str):
     create_tables(database)
 
     filenames = os.listdir(directory)
-
-    if all(os.path.isdir(os.path.join(directory, f)) for f in filenames):
-        for d in filenames:
-            if d == "boston-old":
-                continue
-
-            # print(d)
-            ingest_location(database, os.path.join(directory, d), d)
-    else:
-        assert all(os.path.isfile(os.path.join(directory, f)) for f in filenames)
-        ingest_location(database, directory, "boston-seaport")
+    assert all(os.path.isfile(os.path.join(directory, f)) for f in filenames)
+    ingest_location(database, directory, "boston-seaport")
 
     # print("adding segment types")
     add_segment_type(database, ROAD_TYPES)
