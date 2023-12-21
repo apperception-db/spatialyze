@@ -1,5 +1,4 @@
-import os
-from typing import Type
+from typing import Any, Type
 
 import numpy as np
 
@@ -17,11 +16,8 @@ from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
 from .video_processor.stream.data_types import Detection2D, Skip
 from .video_processor.stream.decode_frame import DecodeFrame
-from .video_processor.stream.detect_topdown_cars import DetectTopDownCars
 from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
 from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
-from .video_processor.stream.from_topdown_detection_2d import FromTopDownDetection2D
-from .video_processor.stream.list_images import ListImages
 from .video_processor.stream.mono_depth_estimator import MonoDepthEstimator
 from .video_processor.stream.object_type_pruner import ObjectTypePruner
 from .video_processor.stream.prefilter import Prefilter
@@ -33,9 +29,6 @@ from .video_processor.stream.stream import Stream
 
 # from .video_processor.stream.deepsort import DeepSORT, TrackingResult
 from .video_processor.stream.strongsort import StrongSORT, TrackingResult
-from .video_processor.stream.topdown_road_visibility_pruner import (
-    TopDownRoadVisibilityPruner,
-)
 from .video_processor.stream.yolo import Yolo
 from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
@@ -51,6 +44,7 @@ class World:
         geogConstructs: "list[RoadNetwork] | None" = None,
         detector: Type[Stream[Detection2D]] | None = None,
         tracker: Type[Stream[list[TrackingResult]]] | None = None,
+        processor: Stream[Any] | None = None,
     ):
         self._database = database or default_database
         self._predicates = predicates or []
@@ -61,6 +55,7 @@ class World:
         self._trackings: "dict[str, list[list[TrackingResult]]] | None" = None
         self._detector: tuple[Type[Stream[Detection2D]]] = (detector or Yolo,)
         self._tracker: tuple[Type[Stream[list[TrackingResult]]]] = (tracker or StrongSORT,)
+        self._processor: Stream[Any] | None = processor
         # self._cameraCounts = 0
 
     @property
@@ -146,25 +141,13 @@ def _execute(world: "World", optimization=True):
         # reset database
         database.reset()
 
-        if detector is DetectTopDownCars:
-            assert os.path.isdir(v.video), v.video
-            files = ListImages()
-            if v.keep is not None:
-                prefilter = Prefilter(v.keep)
-                files = PruneFrames(prefilter, files)
-            d2ds = detector(files)
-            d3ds = FromTopDownDetection2D(d2ds)
-            t3ds = tracker(d3ds)
-        else:
+        if world._processor is None:
             decode = DecodeFrame()
             if v.keep is not None:
                 prefilter = Prefilter(v.keep)
                 decode = PruneFrames(prefilter, decode)
             if optimization:
-                if detector is DetectTopDownCars:
-                    inview = TopDownRoadVisibilityPruner()
-                else:
-                    inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
+                inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
                 decode = PruneFrames(inview, decode)
             d2ds = detector(decode)
 
@@ -178,6 +161,8 @@ def _execute(world: "World", optimization=True):
                 depths = MonoDepthEstimator(decode)
                 d3ds = FromDetection2DAndDepth(d2ds, depths)
             t3ds = tracker(d3ds, decode)
+        else:
+            t3ds = world._processor
 
         # execute pipeline
         video = Video(v.video, v.camera)

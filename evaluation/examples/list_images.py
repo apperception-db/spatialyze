@@ -1,7 +1,7 @@
 import os
 
-from ..video.video import Video
-from .stream import Stream
+from spatialyze.video_processor.video import Video
+from spatialyze.video_processor.stream.stream import Stream
 
 
 class ListImages(Stream[str]):

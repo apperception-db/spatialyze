@@ -4,16 +4,16 @@ import numpy as np
 from postgis import MultiPoint
 from psycopg2 import sql
 
-from ...database import database
-from ..camera_config import CameraConfig
-from ..video import Video
-from .data_types import Skip
-from .stream import Stream
+from spatialyze.database import database
+from spatialyze.video_processor.camera_config import CameraConfig
+from spatialyze.video_processor.video import Video
+from spatialyze.video_processor.stream.data_types import Skip
+from spatialyze.video_processor.stream.stream import Stream
 
 BATCH_SIZE = 1000
 
 
-class TopDownRoadVisibilityPruner(Stream[bool]):
+class TopDownVisibilityPruner(Stream[bool]):
     def _stream(self, video: Video) -> Iterable[bool | Skip]:
         i = 0
         # prev = 0

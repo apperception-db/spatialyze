@@ -15,11 +15,11 @@ from typing import NamedTuple
 import torch
 from tqdm.notebook import tqdm
 
-from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
-from ..types import DetectionId, Float4
-from ..video.video import Video
-from .data_types import Detection2D, Skip, skip
-from .stream import Stream
+from spatialyze.video_processor.modules.yolo_tracker.yolov5.utils.torch_utils import select_device
+from spatialyze.video_processor.types import DetectionId, Float4
+from spatialyze.video_processor.video.video import Video
+from spatialyze.video_processor.stream.data_types import Detection2D, Skip, skip
+from spatialyze.video_processor.stream.stream import Stream
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
@@ -52,64 +52,50 @@ class IMAGE(Structure):
     _fields_ = [("w", c_int), ("h", c_int), ("c", c_int), ("data", POINTER(c_float))]
 
 
-def os_error(*args):
-    raise OSError("libdarknet.so: cannot open shared object file: No such file or directory")
+lib = CDLL(str(LIBDARKNET), RTLD_GLOBAL)
+lib.network_width.argtypes = [c_void_p]
+lib.network_width.restype = c_int
+lib.network_height.argtypes = [c_void_p]
+lib.network_height.restype = c_int
 
+set_gpu = lib.cuda_set_device
+set_gpu.argtypes = [c_int]
 
-try:
-    lib = CDLL(str(LIBDARKNET), RTLD_GLOBAL)
-    lib.network_width.argtypes = [c_void_p]
-    lib.network_width.restype = c_int
-    lib.network_height.argtypes = [c_void_p]
-    lib.network_height.restype = c_int
+get_network_boxes = lib.get_network_boxes
+get_network_boxes.argtypes = [
+    c_void_p,
+    c_int,
+    c_int,
+    c_float,
+    c_float,
+    POINTER(c_int),
+    c_int,
+    POINTER(c_int),
+]
+get_network_boxes.restype = POINTER(DETECTION)
 
-    set_gpu = lib.cuda_set_device
-    set_gpu.argtypes = [c_int]
+free_detections = lib.free_detections
+free_detections.argtypes = [POINTER(DETECTION), c_int]
 
-    get_network_boxes = lib.get_network_boxes
-    get_network_boxes.argtypes = [
-        c_void_p,
-        c_int,
-        c_int,
-        c_float,
-        c_float,
-        POINTER(c_int),
-        c_int,
-        POINTER(c_int),
-    ]
-    get_network_boxes.restype = POINTER(DETECTION)
+load_net = lib.load_network
+load_net.argtypes = [c_char_p, c_char_p, c_int]
+load_net.restype = c_void_p
 
-    free_detections = lib.free_detections
-    free_detections.argtypes = [POINTER(DETECTION), c_int]
+do_nms_obj = lib.do_nms_obj
+do_nms_obj.argtypes = [POINTER(DETECTION), c_int, c_int, c_float]
 
-    load_net = lib.load_network
-    load_net.argtypes = [c_char_p, c_char_p, c_int]
-    load_net.restype = c_void_p
+free_image = lib.free_image
+free_image.argtypes = [IMAGE]
 
-    do_nms_obj = lib.do_nms_obj
-    do_nms_obj.argtypes = [POINTER(DETECTION), c_int, c_int, c_float]
+load_image = lib.load_image_color
+load_image.argtypes = [c_char_p, c_int, c_int]
+load_image.restype = IMAGE
 
-    free_image = lib.free_image
-    free_image.argtypes = [IMAGE]
+predict_image = lib.network_predict_image
+predict_image.argtypes = [c_void_p, IMAGE]
+predict_image.restype = POINTER(c_float)
 
-    load_image = lib.load_image_color
-    load_image.argtypes = [c_char_p, c_int, c_int]
-    load_image.restype = IMAGE
-
-    predict_image = lib.network_predict_image
-    predict_image.argtypes = [c_void_p, IMAGE]
-    predict_image.restype = POINTER(c_float)
-
-    set_gpu(0)
-
-except OSError:
-    load_net = os_error
-    load_image = os_error
-    predict_image = os_error
-    get_network_boxes = os_error
-    do_nms_obj = os_error
-    free_image = os_error
-    free_detections = os_error
+set_gpu(0)
 
 
 def detect(net, meta, image, thresh=0.5, hier_thresh=0.5, nms=0.45):

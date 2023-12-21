@@ -9,10 +9,10 @@ import torch
 from scipy.optimize import linear_sum_assignment
 from shapely.geometry import Polygon
 
-from ..types import DetectionId
-from ..video import Video
-from .data_types import Detection2D, Skip
-from .stream import Stream
+from spatialyze.video_processor.types import DetectionId
+from spatialyze.video_processor.video import Video
+from spatialyze.video_processor.stream.data_types import Detection2D, Skip
+from spatialyze.video_processor.stream.stream import Stream
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
