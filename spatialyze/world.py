@@ -1,3 +1,4 @@
+import os
 from typing import Type
 
 import numpy as np
@@ -12,11 +13,15 @@ from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNo
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
+from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
 from .video_processor.stream.data_types import Detection2D, Skip
 from .video_processor.stream.decode_frame import DecodeFrame
+from .video_processor.stream.detect_topdown_cars import DetectTopDownCars
 from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
 from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
+from .video_processor.stream.from_topdown_detection_2d import FromTopDownDetection2D
+from .video_processor.stream.list_images import ListImages
 from .video_processor.stream.mono_depth_estimator import MonoDepthEstimator
 from .video_processor.stream.object_type_pruner import ObjectTypePruner
 from .video_processor.stream.prefilter import Prefilter
@@ -28,6 +33,9 @@ from .video_processor.stream.stream import Stream
 
 # from .video_processor.stream.deepsort import DeepSORT, TrackingResult
 from .video_processor.stream.strongsort import StrongSORT, TrackingResult
+from .video_processor.stream.topdown_road_visibility_pruner import (
+    TopDownRoadVisibilityPruner,
+)
 from .video_processor.stream.yolo import Yolo
 from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
@@ -127,10 +135,10 @@ def _execute(world: "World", optimization=True):
     (tracker,) = world._tracker
 
     # add geographic constructs
-    # drop_tables(database)
-    # create_tables(database)
-    # for gc in world._geogConstructs:
-    #     gc.ingest(database)
+    drop_tables(database)
+    create_tables(database)
+    for gc in world._geogConstructs:
+        gc.ingest(database)
 
     qresults: dict[str, list[QueryResult]] = {}
     vresults: dict[str, list[list[TrackingResult]]] = {}
@@ -138,24 +146,38 @@ def _execute(world: "World", optimization=True):
         # reset database
         database.reset()
 
-        decode = DecodeFrame()
-        if v.keep is not None:
-            prefilter = Prefilter(v.keep)
-            decode = PruneFrames(prefilter, decode)
-        if optimization:
-            inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
-            decode = PruneFrames(inview, decode)
-        d2ds = detector(decode)
-        if optimization:
-            d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
-            d3ds = FromDetection2DAndRoad(d2ds)
-            # if all(t in ["car", "truck"] for t in d2ds.types):
-            #     efs = ExitFrameSampler(d3ds)
-            #     d3ds = PruneFrames(efs, d3ds)
+        if detector is DetectTopDownCars:
+            assert os.path.isdir(v.video), v.video
+            files = ListImages()
+            if v.keep is not None:
+                prefilter = Prefilter(v.keep)
+                files = PruneFrames(prefilter, files)
+            d2ds = detector(files)
+            d3ds = FromTopDownDetection2D(d2ds)
+            t3ds = tracker(d3ds)
         else:
-            depths = MonoDepthEstimator(decode)
-            d3ds = FromDetection2DAndDepth(d2ds, depths)
-        t3ds = tracker(d3ds, decode)
+            decode = DecodeFrame()
+            if v.keep is not None:
+                prefilter = Prefilter(v.keep)
+                decode = PruneFrames(prefilter, decode)
+            if optimization:
+                if detector is DetectTopDownCars:
+                    inview = TopDownRoadVisibilityPruner()
+                else:
+                    inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
+                decode = PruneFrames(inview, decode)
+            d2ds = detector(decode)
+
+            if optimization:
+                d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
+                d3ds = FromDetection2DAndRoad(d2ds)
+                # if all(t in ["car", "truck"] for t in d2ds.types):
+                #     efs = ExitFrameSampler(d3ds)
+                #     d3ds = PruneFrames(efs, d3ds)
+            else:
+                depths = MonoDepthEstimator(decode)
+                d3ds = FromDetection2DAndDepth(d2ds, depths)
+            t3ds = tracker(d3ds, decode)
 
         # execute pipeline
         video = Video(v.video, v.camera)

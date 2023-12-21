@@ -672,11 +672,14 @@ def ingest_location(database: "Database", directory: "str", location: "str"):
     )
 
     for d, fn in INSERT.items():
-        with open(os.path.join(directory, d + ".json"), "r") as f:
-            data = json.load(f)
+        try:
+            with open(os.path.join(directory, d + ".json"), "r") as f:
+                data = json.load(f)
 
-        # print("Ingesting", d)
-        fn(database, [{"location": location, **d} for d in data])
+            # print("Ingesting", d)
+            fn(database, [{"location": location, **d} for d in data])
+        except FileNotFoundError:
+            print("File not found:", d)
 
 
 def ingest_road(database: "Database", directory: str):
