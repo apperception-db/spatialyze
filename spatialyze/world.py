@@ -128,6 +128,7 @@ def _execute(world: "World", optimization=True):
     database = world._database
     (detector,) = world._detector
     (tracker,) = world._tracker
+    processor = world._processor
 
     # add geographic constructs
     drop_tables(database)
@@ -159,7 +160,7 @@ def _execute(world: "World", optimization=True):
         else:
             depths = MonoDepthEstimator(decode)
             d3ds = FromDetection2DAndDepth(d2ds, depths)
-        t3ds = world._processor or tracker(d3ds, decode)
+        t3ds = processor or tracker(d3ds, decode)
 
         # execute pipeline
         video = Video(v.video, v.camera)
