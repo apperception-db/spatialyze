@@ -47,14 +47,12 @@ def contains(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str
 
 def _region_to_str(region: PredicateNode) -> str:
     if isinstance(region, CallNode):
-        arg, = region.params
+        (arg,) = region.params
         assert isinstance(arg, LiteralNode)
         region = arg
 
     if not isinstance(region, LiteralNode):
-        raise Exception(
-            "Frist argument of contains should be a constant, recieved " + str(region)
-        )
+        raise Exception("Frist argument of contains should be a constant, recieved " + str(region))
 
     assert isinstance(region.value, str), region.value
     return region.value
