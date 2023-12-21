@@ -53,7 +53,7 @@ class IMAGE(Structure):
 
 
 def os_error(*args):
-    raise OSError('libdarknet.so: cannot open shared object file: No such file or directory')
+    raise OSError("libdarknet.so: cannot open shared object file: No such file or directory")
 
 
 try:
