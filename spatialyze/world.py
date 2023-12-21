@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Type
 
 import numpy as np
 
@@ -34,6 +34,8 @@ from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
 from .video_processor.video import Video
 
+TrackingResults = list[TrackingResult]
+
 
 class World:
     def __init__(
@@ -43,8 +45,8 @@ class World:
         videos: "list[GeospatialVideo] | None" = None,
         geogConstructs: "list[RoadNetwork] | None" = None,
         detector: Type[Stream[Detection2D]] | None = None,
-        tracker: Type[Stream[list[TrackingResult]]] | None = None,
-        processor: Stream[Any] | None = None,
+        tracker: Type[Stream[TrackingResults]] | None = None,
+        processor: Stream[TrackingResults] | None = None,
     ):
         self._database = database or default_database
         self._predicates = predicates or []
@@ -52,10 +54,10 @@ class World:
         self._geogConstructs = geogConstructs or []
         self._objectCounts = 0
         self._objects: "dict[str, list[QueryResult]] | None" = None
-        self._trackings: "dict[str, list[list[TrackingResult]]] | None" = None
+        self._trackings: "dict[str, list[TrackingResults]] | None" = None
         self._detector: tuple[Type[Stream[Detection2D]]] = (detector or Yolo,)
-        self._tracker: tuple[Type[Stream[list[TrackingResult]]]] = (tracker or StrongSORT,)
-        self._processor: Stream[Any] | None = processor
+        self._tracker: tuple[Type[Stream[TrackingResults]]] = (tracker or StrongSORT,)
+        self._processor: Stream[TrackingResults] | None = processor
         # self._cameraCounts = 0
 
     @property
@@ -137,7 +139,7 @@ def _execute(world: "World", optimization=True):
         gc.ingest(database)
 
     qresults: dict[str, list[QueryResult]] = {}
-    vresults: dict[str, list[list[TrackingResult]]] = {}
+    vresults: dict[str, list[TrackingResults]] = {}
     for v in world._videos:
         # reset database
         database.reset()

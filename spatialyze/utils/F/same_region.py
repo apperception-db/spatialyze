@@ -1,16 +1,14 @@
-from __future__ import annotations
-
 import ast
-from typing import List
 
-from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
-
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
 from .common import ROAD_TYPES
 
 
 @call_node
 def same_region(
-    visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
     type_, traj1, traj2 = args

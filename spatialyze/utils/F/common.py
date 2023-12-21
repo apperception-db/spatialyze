@@ -2,21 +2,12 @@ from typing import TypeGuard
 
 from ...predicate import (
     AtTimeNode,
-    BinOpNode,
     CameraTableNode,
-    CastNode,
     ObjectTableNode,
     PredicateNode,
     TableAttrNode,
     TableNode,
 )
-
-HEADINGS = {
-    "trajCentroids": "itemHeadings",
-    "translations": "itemHeadings",
-    "egoTranslation": "egoHeading",
-    "cameraTranslation": "cameraHeading",
-}
 
 ROAD_TYPES = {
     "road",
@@ -27,19 +18,6 @@ ROAD_TYPES = {
     "roadsection",
     "lanewithrightlane",
 }
-
-
-def get_heading(arg: "PredicateNode"):
-    if isinstance(arg, TableAttrNode) and arg.shorten:
-        arg = getattr(arg.table, HEADINGS[arg.name])
-
-    return arg
-
-
-def get_heading_at_time(arg: "PredicateNode"):
-    if isinstance(arg, BinOpNode) and arg.op == "matmul":
-        return CastNode("real", get_heading_at_time(arg.left) @ arg.right)
-    return get_heading(arg)
 
 
 def default_location(obj: TableNode | TableAttrNode):

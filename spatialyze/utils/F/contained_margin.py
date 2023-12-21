@@ -11,7 +11,9 @@ from ...predicate import (
 
 @call_node
 def contained_margin(
-    visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str, PredicateNode]
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
     point, geom, margin = args
