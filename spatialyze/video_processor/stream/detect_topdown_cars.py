@@ -105,7 +105,6 @@ try:
 except OSError:
     load_net = os_error
     load_image = os_error
-    pointer = os_error
     predict_image = os_error
     get_network_boxes = os_error
     do_nms_obj = os_error
