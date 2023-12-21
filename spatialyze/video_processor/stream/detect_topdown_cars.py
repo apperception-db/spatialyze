@@ -52,73 +52,75 @@ class IMAGE(Structure):
     _fields_ = [("w", c_int), ("h", c_int), ("c", c_int), ("data", POINTER(c_float))]
 
 
-lib = CDLL(str(LIBDARKNET), RTLD_GLOBAL)
-lib.network_width.argtypes = [c_void_p]
-lib.network_width.restype = c_int
-lib.network_height.argtypes = [c_void_p]
-lib.network_height.restype = c_int
+try:
+    lib = CDLL(str(LIBDARKNET), RTLD_GLOBAL)
+    lib.network_width.argtypes = [c_void_p]
+    lib.network_width.restype = c_int
+    lib.network_height.argtypes = [c_void_p]
+    lib.network_height.restype = c_int
 
-set_gpu = lib.cuda_set_device
-set_gpu.argtypes = [c_int]
+    set_gpu = lib.cuda_set_device
+    set_gpu.argtypes = [c_int]
 
-get_network_boxes = lib.get_network_boxes
-get_network_boxes.argtypes = [
-    c_void_p,
-    c_int,
-    c_int,
-    c_float,
-    c_float,
-    POINTER(c_int),
-    c_int,
-    POINTER(c_int),
-]
-get_network_boxes.restype = POINTER(DETECTION)
+    get_network_boxes = lib.get_network_boxes
+    get_network_boxes.argtypes = [
+        c_void_p,
+        c_int,
+        c_int,
+        c_float,
+        c_float,
+        POINTER(c_int),
+        c_int,
+        POINTER(c_int),
+    ]
+    get_network_boxes.restype = POINTER(DETECTION)
 
-free_detections = lib.free_detections
-free_detections.argtypes = [POINTER(DETECTION), c_int]
+    free_detections = lib.free_detections
+    free_detections.argtypes = [POINTER(DETECTION), c_int]
 
-load_net = lib.load_network
-load_net.argtypes = [c_char_p, c_char_p, c_int]
-load_net.restype = c_void_p
+    load_net = lib.load_network
+    load_net.argtypes = [c_char_p, c_char_p, c_int]
+    load_net.restype = c_void_p
 
-do_nms_obj = lib.do_nms_obj
-do_nms_obj.argtypes = [POINTER(DETECTION), c_int, c_int, c_float]
+    do_nms_obj = lib.do_nms_obj
+    do_nms_obj.argtypes = [POINTER(DETECTION), c_int, c_int, c_float]
 
-free_image = lib.free_image
-free_image.argtypes = [IMAGE]
+    free_image = lib.free_image
+    free_image.argtypes = [IMAGE]
 
-load_image = lib.load_image_color
-load_image.argtypes = [c_char_p, c_int, c_int]
-load_image.restype = IMAGE
+    load_image = lib.load_image_color
+    load_image.argtypes = [c_char_p, c_int, c_int]
+    load_image.restype = IMAGE
 
-predict_image = lib.network_predict_image
-predict_image.argtypes = [c_void_p, IMAGE]
-predict_image.restype = POINTER(c_float)
+    predict_image = lib.network_predict_image
+    predict_image.argtypes = [c_void_p, IMAGE]
+    predict_image.restype = POINTER(c_float)
 
+    set_gpu(0)
 
-set_gpu(0)
+    def detect(net, meta, image, thresh=0.5, hier_thresh=0.5, nms=0.45):
+        im = load_image(image, 0, 0)
+        num = c_int(0)
+        pnum = pointer(num)
+        predict_image(net, im)
+        dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, None, 0, pnum)
+        num = pnum[0]
+        if nms:
+            do_nms_obj(dets, num, meta.classes, nms)
 
-
-def detect(net, meta, image, thresh=0.5, hier_thresh=0.5, nms=0.45):
-    im = load_image(image, 0, 0)
-    num = c_int(0)
-    pnum = pointer(num)
-    predict_image(net, im)
-    dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, None, 0, pnum)
-    num = pnum[0]
-    if nms:
-        do_nms_obj(dets, num, meta.classes, nms)
-
-    res: list[tuple[str, float, Float4]] = []
-    for j in range(num):
-        for i in range(meta.classes):
-            if dets[j].prob[i] > 0:
-                b = dets[j].bbox
-                res.append((meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h)))
-    res = sorted(res, key=lambda x: -x[1])
-    free_image(im)
-    free_detections(dets, num)
-    return res
+        res: list[tuple[str, float, Float4]] = []
+        for j in range(num):
+            for i in range(meta.classes):
+                if dets[j].prob[i] > 0:
+                    b = dets[j].bbox
+                    res.append((meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h)))
+        res = sorted(res, key=lambda x: -x[1])
+        free_image(im)
+        free_detections(dets, num)
+        return res
+except OSError:
+    def load_net(cfg, weights, gpu):
+        raise OSError("libdarknet.so not found")
 
 
 class YoloMeta(NamedTuple):
