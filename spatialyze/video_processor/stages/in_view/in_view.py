@@ -28,7 +28,7 @@ from ....predicate import (
 )
 from ....utils import F
 from ...payload import Payload
-from ...video.video import Video
+from ...video import Video
 from ..stage import Stage
 
 OTHER_ROAD_TYPES = {

@@ -1,7 +1,7 @@
 import cv2
 import numpy.typing as npt
 
-from ..video.video import Video
+from ..video import Video
 from .stream import Stream
 
 

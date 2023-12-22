@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable, Iterator
 from typing import Generic, TypeVar
 
-from ..video.video import Video
+from ..video import Video
 from .data_types import Skip
 
 T = TypeVar("T")
