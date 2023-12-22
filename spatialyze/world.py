@@ -175,7 +175,9 @@ def _execute(world: "World", optimization=True):
                 insert_trajectory(database, trajectory)
         assert t3ds.ended()
 
-        assert all(idx == cc.frame_num for idx, cc in enumerate(v.camera)), [cc.frame_num for cc in v.camera]
+        assert all(idx == cc.frame_num for idx, cc in enumerate(v.camera)), [
+            cc.frame_num for cc in v.camera
+        ]
         database.insert_camera(v.camera)
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults

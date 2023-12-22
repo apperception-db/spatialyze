@@ -223,10 +223,14 @@ class Database:
 
     def insert_camera(self, camera: list[CameraConfig]):
         cursor = self.connection.cursor()
-        cursor.execute(psql.Composed([
-            psql.SQL("INSERT INTO Cameras VALUES "),
-            psql.Composed(map(_config, camera)).join(','),
-        ]))
+        cursor.execute(
+            psql.Composed(
+                [
+                    psql.SQL("INSERT INTO Cameras VALUES "),
+                    psql.Composed(map(_config, camera)).join(","),
+                ]
+            )
+        )
 
         # print("New camera inserted successfully.........")
         self.connection.commit()
@@ -316,7 +320,7 @@ def _config(config: CameraConfig) -> psql.Composable:
     assert isinstance(cc.egoRotation, list), cc.egoRotation
     assert len(cc.egoRotation) == 4, cc.egoRotation
     row = map(psql.Literal, cc)
-    return psql.SQL('({})').format(psql.SQL(',').join(row))
+    return psql.SQL("({})").format(psql.SQL(",").join(row))
 
 
 ### Do we still want to keep this??? Causes problems since if user uses a different port
