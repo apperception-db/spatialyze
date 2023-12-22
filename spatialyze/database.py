@@ -10,7 +10,7 @@ from mobilitydb.psycopg import register as mobilitydb_register
 from postgis import Point
 from postgis.psycopg import register as postgis_register
 
-from .data_types.camera_config import Float33
+from .data_types.camera_config import CameraConfig, Float33
 from .data_types.camera_key import CameraKey
 from .data_types.nuscenes_annotation import NuscenesAnnotation
 from .data_types.nuscenes_camera import NuscenesCamera
@@ -29,7 +29,6 @@ from .utils.ingest_road import (
     drop_tables,
     ingest_location,
 )
-from .video_processor.camera_config import CameraConfig
 
 if TYPE_CHECKING:
     from psycopg2 import connection as Connection

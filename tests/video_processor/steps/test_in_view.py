@@ -9,7 +9,7 @@ from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InV
 from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
-from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.data_types.camera_config import camera_config
 from spatialyze.video_processor.cache import disable_cache
 
 disable_cache()

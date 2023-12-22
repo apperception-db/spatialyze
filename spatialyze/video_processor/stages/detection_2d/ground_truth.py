@@ -4,7 +4,7 @@ import pandas as pd
 import torch
 from pyquaternion import Quaternion
 
-from ...camera_config import Float3, Float4, Float33
+from ....data_types.camera_config import Float3, Float4, Float33
 from ...payload import Payload
 from ...types import DetectionId
 from .detection_2d import Detection2D, Metadatum

@@ -3,7 +3,7 @@ from typing import Iterable
 
 import cv2
 
-from ..camera_config import CameraConfig
+from ...data_types.camera_config import CameraConfig
 
 
 class Video(Iterable["CameraConfig"]):

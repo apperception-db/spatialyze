@@ -21,8 +21,8 @@ import psycopg2.sql as sql
 import shapely.geometry as sg
 import shapely.wkb as swkb
 
+from ....data_types.camera_config import CameraConfig
 from ....database import database
-from ...camera_config import CameraConfig
 from ...types import DetectionId, Float22, obj_detection
 from .utils import ROAD_TYPES
 

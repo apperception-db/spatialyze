@@ -1,4 +1,4 @@
-from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.data_types.camera_config import camera_config
 
 
 def df_to_camera_config(scene_name: str, sample_data):

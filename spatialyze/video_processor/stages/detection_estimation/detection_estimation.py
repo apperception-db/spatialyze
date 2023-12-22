@@ -23,7 +23,7 @@ import postgis
 import shapely
 import shapely.geometry
 
-from ...camera_config import CameraConfig
+from ....data_types.camera_config import CameraConfig
 from ...types import DetectionId, Float2, Float3, Float22, obj_detection
 from ...video import Video
 from .sample_plan_algorithms import CAR_EXIT_SEGMENT, Action

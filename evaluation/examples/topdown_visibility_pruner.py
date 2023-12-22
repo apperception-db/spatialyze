@@ -5,7 +5,7 @@ from postgis import MultiPoint
 from psycopg2 import sql
 
 from spatialyze.database import database
-from spatialyze.video_processor.camera_config import CameraConfig
+from spatialyze.data_types.camera_config import CameraConfig
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.stream.data_types import Skip
 from spatialyze.video_processor.stream.stream import Stream
