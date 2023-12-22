@@ -5,9 +5,7 @@ from bitarray import bitarray
 
 from spatialyze.world import World
 from spatialyze.geospatial_video import GeospatialVideo
-from spatialyze.video_processor.cache import disable_cache
 
-disable_cache()
 
 VIDEO_DIR =  './data/pipeline/videos'
 SCENES = ['0655', '0757']
