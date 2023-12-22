@@ -4,7 +4,6 @@ from pathlib import Path
 
 import torch
 
-from ...cache import cache
 from ...payload import Payload
 from ...types import DetectionId
 from ...utils.xyxy2xywh import xyxy2xywh
@@ -49,7 +48,6 @@ class DeepSORT(Tracking):
         super().__init__()
         # self.ss_benchmark = []
 
-    @cache
     def _run(self, payload: "Payload"):
         # load_data_start = time.time()
         detections = Detection2D.get(payload)
