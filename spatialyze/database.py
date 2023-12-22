@@ -321,7 +321,7 @@ def _config(config: CameraConfig) -> Composable:
     assert isinstance(cc.egoRotation, list), cc.egoRotation
     assert len(cc.egoRotation) == 4, cc.egoRotation
     row = map(Literal, cc)
-    return SQL('({})').format(SQL(',').join(row))
+    return SQL("({})").format(SQL(",").join(row))
 
 
 ### Do we still want to keep this??? Causes problems since if user uses a different port

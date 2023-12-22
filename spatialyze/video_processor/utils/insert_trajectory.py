@@ -52,7 +52,7 @@ def insert_trajectory(
     tpoints = tgeoms(points)
     theadings = tfloats(headings) if len(headings) > 0 else None
     obj = item_id, camera_id, object_type, tpoints, tpoints, theadings
-    obj = SQL(',').join(map(Literal, obj))
+    obj = SQL(",").join(map(Literal, obj))
     insert = SQL("INSERT INTO Item_General_Trajectory VALUES ({})")
     database.execute(insert.format(obj))
     database._commit()
