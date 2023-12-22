@@ -3,7 +3,6 @@ import json
 import os
 import numpy as np
 
-from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
 from spatialyze.video_processor.stream.strongsort import TrackingResult
@@ -13,7 +12,6 @@ from common import build_filter_world
 
 
 OUTPUT_DIR = './data/pipeline/test-results'
-disable_cache()
 
 
 def trackid(track: list[TrackingResult]):

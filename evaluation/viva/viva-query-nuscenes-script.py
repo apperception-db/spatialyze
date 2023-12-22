@@ -39,7 +39,6 @@ from spatialyze.road_network import RoadNetwork
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
 from spatialyze.world import World, _execute
-from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 
 
@@ -53,9 +52,6 @@ files = os.listdir(VIDEO_DIR)
 with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
     videos = pickle.load(f)
 
-disable_cache()
-
-disable_cache()
 savert(starttime, 'setup')
 
 

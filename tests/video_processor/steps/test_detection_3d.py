@@ -11,7 +11,6 @@ from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.stages.detection_3d.ground_truth import GroundTruthDetection3D
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
-from spatialyze.video_processor.cache import disable_cache
 
 from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
 from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
@@ -19,7 +18,6 @@ from spatialyze.video_processor.stages.detection_3d.from_detection_2d_and_road i
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
-disable_cache()
 
 def test_detection_3d():
     files = os.listdir(VIDEO_DIR)

@@ -9,7 +9,6 @@ from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
-from spatialyze.video_processor.cache import disable_cache
 
 from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
 from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
@@ -17,7 +16,6 @@ from spatialyze.video_processor.stages.detection_2d.ground_truth import GroundTr
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
-disable_cache()
 
 def test_detection_2d():
     files = os.listdir(VIDEO_DIR)
