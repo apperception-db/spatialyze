@@ -1,14 +1,15 @@
 import datetime
+from collections.abc import Mapping, Sequence
 from os import environ
 from typing import TYPE_CHECKING, Callable, NamedTuple
 
 import pandas as pd
 import psycopg2
 import psycopg2.errors
-import psycopg2.sql as psql
 from mobilitydb.psycopg import register as mobilitydb_register
 from postgis import Point
 from postgis.psycopg import register as postgis_register
+from psycopg2.sql import SQL, Composable, Literal
 
 from .data_types.camera_key import CameraKey
 from .data_types.nuscenes_annotation import NuscenesAnnotation
@@ -28,7 +29,8 @@ from .utils.ingest_road import (
     drop_tables,
     ingest_location,
 )
-from .video_processor.camera_config import CameraConfig, Float33
+from .video_processor.camera_config import CameraConfig
+from .video_processor.types import Float33
 
 if TYPE_CHECKING:
     from psycopg2 import connection as Connection
@@ -185,7 +187,9 @@ class Database:
             self.connection.commit()
 
     def execute_and_cursor(
-        self, query: "str | psql.Composable", vars: "tuple | list | None" = None
+        self,
+        query: str | Composable,
+        vars: tuple | list | Sequence | Mapping | None = None,
     ) -> "tuple[list[tuple], Cursor]":
         cursor = self.connection.cursor()
         try:
@@ -202,13 +206,15 @@ class Database:
             raise error
 
     def execute(
-        self, query: "str | psql.Composable", vars: "tuple | list | None" = None
+        self,
+        query: str | Composable,
+        vars: tuple | list | Sequence | Mapping | None = None,
     ) -> "list[tuple]":
         results, cursor = self.execute_and_cursor(query, vars)
         cursor.close()
         return results
 
-    def update(self, query: "str | psql.Composable", commit: bool = True) -> None:
+    def update(self, query: str | Composable, commit: bool = True) -> None:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -223,9 +229,9 @@ class Database:
 
     def insert_camera(self, camera: list[CameraConfig]):
         cursor = self.connection.cursor()
-        cursor.execute(
-            psql.SQL("INSERT INTO Cameras VALUES ") + psql.SQL(",").join(map(_config, camera))
-        )
+        insert = SQL("INSERT INTO Cameras VALUES ")
+        values = SQL(",").join(map(_config, camera))
+        cursor.execute(insert + values)
 
         # print("New camera inserted successfully.........")
         self.connection.commit()
@@ -294,7 +300,7 @@ class _Config(NamedTuple):
     egoHeading: float
 
 
-def _config(config: CameraConfig) -> psql.Composable:
+def _config(config: CameraConfig) -> Composable:
     cc = _Config(
         config.camera_id,
         config.frame_id,
@@ -314,8 +320,8 @@ def _config(config: CameraConfig) -> psql.Composable:
     assert len(cc.cameraRotation) == 4, cc.cameraRotation
     assert isinstance(cc.egoRotation, list), cc.egoRotation
     assert len(cc.egoRotation) == 4, cc.egoRotation
-    row = map(psql.Literal, cc)
-    return psql.SQL("({})").format(psql.Composed(row).join(","))
+    row = map(Literal, cc)
+    return SQL('({})').format(SQL(',').join(row))
 
 
 ### Do we still want to keep this??? Causes problems since if user uses a different port

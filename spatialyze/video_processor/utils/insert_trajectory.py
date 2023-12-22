@@ -1,8 +1,8 @@
 import datetime
 
-import psycopg2.sql as psql
 from mobilitydb import TFloatInst, TFloatSeq, TGeomPointInst, TGeomPointSeq
 from postgis import Point
+from psycopg2.sql import SQL, Literal
 
 from ...database import Database
 from ..types import Float3
@@ -49,23 +49,12 @@ def insert_trajectory(
         prevTimestamp = timestamp
         prevPoint = current_point
 
-    database.execute(
-        psql.SQL("INSERT INTO Item_General_Trajectory VALUES (")
-        + psql.SQL(",").join(
-            map(
-                psql.Literal,
-                (
-                    item_id,
-                    camera_id,
-                    object_type,
-                    tgeoms(points),
-                    tgeoms(points),
-                    tfloats(headings) if len(headings) > 0 else None,
-                ),
-            )
-        )
-        + psql.SQL(");")
-    )
+    tpoints = tgeoms(points)
+    theadings = tfloats(headings) if len(headings) > 0 else None
+    obj = item_id, camera_id, object_type, tpoints, tpoints, theadings
+    obj = SQL(',').join(map(Literal, obj))
+    insert = SQL("INSERT INTO Item_General_Trajectory VALUES ({})")
+    database.execute(insert.format(obj))
     database._commit()
 
 
@@ -80,5 +69,8 @@ def tgeoms(points: list[tuple[Float3, datetime.datetime]]):
 
 def tfloats(floats: list[tuple[float, datetime.datetime]]):
     return TFloatSeq(
-        [TFloatInst(f, t) for f, t in floats], upper_inc=True, lower_inc=True, interp="Linear"
+        [TFloatInst(f, t) for f, t in floats],
+        upper_inc=True,
+        lower_inc=True,
+        interp="Linear",
     )
