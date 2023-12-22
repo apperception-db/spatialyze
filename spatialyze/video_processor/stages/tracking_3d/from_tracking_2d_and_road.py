@@ -4,16 +4,11 @@ from pyquaternion import Quaternion
 
 from ...payload import Payload
 from ..tracking_2d.tracking_2d import Tracking2D, Tracking2DResult
-from ..utils.is_annotated import is_annotated
 from .tracking_3d import Tracking3D, Tracking3DResult
 
 
 class FromTracking2DAndRoad(Tracking3D):
     def _run(self, payload: "Payload"):
-        if not is_annotated(Tracking2D, payload):
-            # payload = payload.filter(Tracking2D())
-            raise Exception()
-
         metadata: "list[dict[int, Tracking3DResult]]" = []
         trajectories: "dict[int, list[Tracking3DResult]]" = {}
         video = payload.video
