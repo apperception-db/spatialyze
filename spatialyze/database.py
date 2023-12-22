@@ -224,8 +224,7 @@ class Database:
     def insert_camera(self, camera: list[CameraConfig]):
         cursor = self.connection.cursor()
         cursor.execute(
-            psql.SQL("INSERT INTO Cameras VALUES ")
-            + psql.SQL(",").join(map(_config, camera))
+            psql.SQL("INSERT INTO Cameras VALUES ") + psql.SQL(",").join(map(_config, camera))
         )
 
         # print("New camera inserted successfully.........")

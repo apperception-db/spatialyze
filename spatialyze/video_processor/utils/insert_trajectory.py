@@ -51,14 +51,19 @@ def insert_trajectory(
 
     database.execute(
         psql.SQL("INSERT INTO Item_General_Trajectory VALUES (")
-        + psql.SQL(",").join(map(psql.Literal, (
-            item_id,
-            camera_id,
-            object_type,
-            tgeoms(points),
-            tgeoms(points),
-            tfloats(headings) if len(headings) > 0 else None,
-        )))
+        + psql.SQL(",").join(
+            map(
+                psql.Literal,
+                (
+                    item_id,
+                    camera_id,
+                    object_type,
+                    tgeoms(points),
+                    tgeoms(points),
+                    tfloats(headings) if len(headings) > 0 else None,
+                ),
+            )
+        )
         + psql.SQL(");")
     )
     database._commit()
@@ -69,14 +74,11 @@ def tgeoms(points: list[tuple[Float3, datetime.datetime]]):
         [TGeomPointInst(Point(*p), t) for p, t in points],
         upper_inc=True,
         lower_inc=True,
-        interp='Linear',
+        interp="Linear",
     )
 
 
 def tfloats(floats: list[tuple[float, datetime.datetime]]):
     return TFloatSeq(
-        [TFloatInst(f, t) for f, t in floats],
-        upper_inc=True,
-        lower_inc=True,
-        interp='Linear'
+        [TFloatInst(f, t) for f, t in floats], upper_inc=True, lower_inc=True, interp="Linear"
     )
