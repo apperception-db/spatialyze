@@ -1,9 +1,5 @@
 from typing import Type
 
-import numpy as np
-
-from .data_types.camera import Camera
-from .data_types.camera_config import CameraConfig as _CameraConfig
 from .data_types.query_result import QueryResult
 from .database import Database
 from .database import database as default_database
@@ -180,25 +176,6 @@ def _execute(world: "World", optimization=True):
         assert t3ds.ended()
 
         assert all(idx == cc.frame_num for idx, cc in enumerate(v.camera)), [cc.frame_num for cc in v.camera]
-        _camera_configs: "list[_CameraConfig]" = [
-            _CameraConfig(
-                frame_id=cc.frame_id or str(idx),
-                frame_num=idx,
-                filename=cc.filename or "",
-                camera_translation=np.array(cc.camera_translation),
-                camera_rotation=np.array(cc.camera_rotation.q),
-                camera_intrinsic=cc.camera_intrinsic,
-                ego_translation=cc.ego_translation,
-                ego_rotation=[*cc.ego_rotation.q],
-                timestamp=str(cc.timestamp),
-                cameraHeading=cc.camera_heading,
-                egoHeading=cc.ego_heading,
-            )
-            for idx, cc in enumerate(v.camera)
-        ]
-
-        camera = Camera(_camera_configs, v.camera[0].camera_id)
-        database.insert_camera(camera)
-
+        database.insert_camera(v.camera)
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults

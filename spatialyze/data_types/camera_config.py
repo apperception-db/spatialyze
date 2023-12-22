@@ -15,9 +15,9 @@ class CameraConfig:
     filename: str
     camera_translation: npt.NDArray  # float[3]
     camera_rotation: npt.NDArray  # float[4]
-    camera_intrinsic: "list[list[float]] | Float33"  # float[3][3]
-    ego_translation: "list[float] | Float3"  # float[3]
-    ego_rotation: "list[float] | Float4"  # float[4]
+    camera_intrinsic: Float33  # float[3][3]
+    ego_translation: Float3  # float[3]
+    ego_rotation: Float4  # float[4]
     timestamp: str
     cameraHeading: float
     egoHeading: float
