@@ -1,13 +1,16 @@
+import datetime
 from os import environ
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, NamedTuple
 
 import pandas as pd
 import psycopg2
 import psycopg2.errors
 import psycopg2.sql as psql
 from mobilitydb.psycopg import register as mobilitydb_register
+from postgis import Point
 from postgis.psycopg import register as postgis_register
 
+from .data_types.camera_config import Float4, Float33
 from .data_types.camera_key import CameraKey
 from .data_types.nuscenes_annotation import NuscenesAnnotation
 from .data_types.nuscenes_camera import NuscenesCamera
@@ -26,6 +29,7 @@ from .utils.ingest_road import (
     drop_tables,
     ingest_location,
 )
+from .utils.join import join
 
 if TYPE_CHECKING:
     from psycopg2 import connection as Connection
@@ -221,31 +225,43 @@ class Database:
 
     def insert_camera(self, camera: "Camera"):
         values = [
-            f"""(
-                '{camera.id}',
-                '{config.frame_id}',
-                {config.frame_num},
-                '{config.filename}',
-                'POINT Z ({' '.join(map(str, config.camera_translation))})',
-                ARRAY[{','.join(map(str, config.camera_rotation))}]::real[],
-                ARRAY{config.camera_intrinsic}::real[][],
-                'POINT Z ({' '.join(map(str, config.ego_translation))})',
-                ARRAY[{','.join(map(str, config.ego_rotation))}]::real[],
-                '{config.timestamp}',
-                {config.cameraHeading},
-                {config.egoHeading}
-            )"""
+            psql.SQL(f"({join(f'{{{col}}}' for col, _ in CAMERA_COLUMNS)})").format(
+                cameraId=psql.Literal(camera.id),
+                frameId=psql.Literal(config.frame_id),
+                frameNum=psql.Literal(config.frame_num),
+                fileName=psql.Literal(config.filename),
+                cameraTranslation=psql.Literal(Point(*config.camera_translation)),
+                cameraRotation=psql.Literal([*config.camera_rotation]),
+                cameraIntrinsic=psql.Literal(config.camera_intrinsic),
+                egoTranslation=psql.Literal(Point(*config.ego_translation)),
+                egoRotation=psql.Literal([*config.ego_rotation]),
+                timestamp=psql.Literal(datetime.datetime.fromisoformat(config.timestamp)),
+                cameraHeading=psql.Literal(config.cameraHeading),
+                egoHeading=psql.Literal(config.egoHeading),
+            )
+            # f"("
+            # f"'{camera.id}',"
+            # f"'{config.frame_id}',"
+            # f"{config.frame_num},"
+            # f"'{config.filename}',"
+            # f"'POINT Z ({' '.join(map(str, config.camera_translation))})',"
+            # f"ARRAY[{','.join(map(str, config.camera_rotation))}]::real[],"
+            # f"ARRAY{config.camera_intrinsic}::real[][],"
+            # f"'POINT Z ({' '.join(map(str, config.ego_translation))})',"
+            # f"ARRAY[{','.join(map(str, config.ego_rotation))}]::real[],"
+            # f"'{config.timestamp}',"
+            # f"{config.cameraHeading},"
+            # f"{config.egoHeading}"
+            # ")"
             # timestamp -> '{datetime.fromtimestamp(float(config.timestamp)/1000000.0)}', @yousefh409
             for config in camera.configs
         ]
 
         cursor = self.connection.cursor()
-        cursor.execute(
-            f"""
-            INSERT INTO Cameras ({",".join(col for col, _ in CAMERA_COLUMNS)})
-            VALUES {','.join(values)};
-            """
-        )
+        cursor.execute(psql.Composed([
+            psql.SQL("INSERT INTO Cameras VALUES "),
+            psql.Composed(values).join(','),
+        ]))
 
         # print("New camera inserted successfully.........")
         self.connection.commit()
@@ -297,6 +313,61 @@ class Database:
         description = cursor.description
         cursor.close()
         return pd.DataFrame(results, columns=[d.name for d in description])
+
+
+class CameraConfig(NamedTuple):
+    cameraId: str
+    frameId: str
+    frameNum: int
+    fileName: str
+    cameraTranslation: Point
+    cameraRotation: Float4
+    cameraIntrinsic: Float33
+    egoTranslation: Point
+    egoRotation: Float4
+    timestamp: datetime.datetime
+    cameraHeading: float
+    egoHeading: float
+
+
+# def camera_config(
+#     config: CameraConfigN | CameraConfigV,
+#     id: str | None = None,
+# ) -> psql.Composable:
+#     if isinstance(config, CameraConfigN):
+#         assert id is not None
+#         cc = CameraConfig(
+#             id,
+#             config.frame_id,
+#             config.frame_num,
+#             config.filename,
+#             Point(*config.camera_translation),
+#             tuple(float(r) for r in config.camera_rotation),
+#             config.camera_intrinsic,
+#             Point(*config.ego_translation),
+#             [*config.ego_rotation],
+#             datetime.datetime.fromisoformat(config.timestamp),
+#             config.cameraHeading,
+#             config.egoHeading,
+#         )
+#     else:
+#         cc = CameraConfig(
+#             config.camera_id,
+#             config.frame_id,
+#             config.frame_num,
+#             config.filename,
+#             Point(*config.camera_translation),
+#             [*config.camera_rotation.q],
+#             config.camera_intrinsic,
+#             Point(*config.ego_translation),
+#             [*config.ego_rotation.q],
+#             config.timestamp,
+#             config.camera_heading,
+#             config.ego_heading,
+#         )
+
+#     row = map(psql.Literal, cc)
+#     return psql.SQL('({})').format(psql.SQL(',').join(row))
 
 
 ### Do we still want to keep this??? Causes problems since if user uses a different port

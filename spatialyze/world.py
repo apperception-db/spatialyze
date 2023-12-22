@@ -179,6 +179,7 @@ def _execute(world: "World", optimization=True):
                 insert_trajectory(database, trajectory)
         assert t3ds.ended()
 
+        assert all(idx == cc.frame_num for idx, cc in enumerate(v.camera)), [cc.frame_num for cc in v.camera]
         _camera_configs: "list[_CameraConfig]" = [
             _CameraConfig(
                 frame_id=cc.frame_id or str(idx),
