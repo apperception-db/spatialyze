@@ -1,7 +1,7 @@
 import datetime
 from typing import NamedTuple
 
-from ...data_types.camera_config import CameraConfig
+from ..camera_config import CameraConfig
 from ..stream.strongsort import TrackingResult
 from ..types import Float3
 

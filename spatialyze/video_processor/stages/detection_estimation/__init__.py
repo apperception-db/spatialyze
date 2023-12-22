@@ -7,8 +7,8 @@ import torch
 from bitarray import bitarray
 from psycopg2 import sql
 
-from ....data_types.camera_config import CameraConfig
 from ....database import database
+from ...camera_config import CameraConfig
 from ...payload import Payload
 from ...types import DetectionId, obj_detection
 from ...video import Video

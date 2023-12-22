@@ -4,7 +4,7 @@ from typing import Any
 
 from bitarray import bitarray
 
-from .data_types.camera_config import CameraConfig, camera_config
+from .video_processor.camera_config import CameraConfig, camera_config
 
 
 class GeospatialVideo:

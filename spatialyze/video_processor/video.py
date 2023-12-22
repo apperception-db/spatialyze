@@ -3,10 +3,10 @@ from typing import Iterable
 
 import cv2
 
-from ...data_types.camera_config import CameraConfig
+from .camera_config import CameraConfig
 
 
-class Video(Iterable["CameraConfig"]):
+class Video(Iterable[CameraConfig]):
     videofile: str
 
     def __init__(

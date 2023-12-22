@@ -13,7 +13,7 @@ import numpy as np
 from spatialyze.database import database
 from spatialyze.geospatial_video import GeospatialVideo
 from spatialyze.road_network import RoadNetwork
-from spatialyze.data_types.camera_config import camera_config
+from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
 from spatialyze.world import World, _execute
 from spatialyze.video_processor.cache import disable_cache

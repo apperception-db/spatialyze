@@ -7,7 +7,7 @@ import numpy as np
 import numpy.typing as npt
 import torch
 
-from ...data_types.camera_config import CameraConfig
+from ..camera_config import CameraConfig
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT as _StrongSORT
 from ..modules.yolo_tracker.trackers.multi_tracker_zoo import create_tracker
 from ..modules.yolo_tracker.trackers.strong_sort.sort.track import Track

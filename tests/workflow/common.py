@@ -7,7 +7,7 @@ import psycopg2
 from spatialyze.database import Database
 from spatialyze.geospatial_video import GeospatialVideo
 from spatialyze.road_network import RoadNetwork
-from spatialyze.data_types.camera_config import camera_config
+from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stream.deepsort import DeepSORT
 from spatialyze.world import World
 

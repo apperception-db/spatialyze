@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy.typing as npt
 import torch
 
-from ...data_types.camera_config import CameraConfig
+from ..camera_config import CameraConfig
 from ..types import DetectionId
 from ..utils.xyxy2xywh import xyxy2xywh
 from ..video import Video

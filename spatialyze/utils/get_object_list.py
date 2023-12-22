@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
-from ..data_types.camera_config import Float3, Float4
 from ..data_types.query_result import QueryResult
+from ..video_processor.camera_config import Float3, Float4
 from ..video_processor.stream.strongsort import TrackingResult
 from ..video_processor.types import DetectionId
 
