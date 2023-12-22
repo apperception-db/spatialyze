@@ -1,6 +1,6 @@
 from spatialyze.video_processor.stream.list_images import ListImages
 from spatialyze.video_processor.stream.load_images import LoadImages
-from spatialyze.video_processor.video.video import Video
+from spatialyze.video_processor.video import Video
 
 
 def test_stream_end():

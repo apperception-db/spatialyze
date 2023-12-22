@@ -1,11 +1,13 @@
-from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
 
 ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection"}
 
 
 @call_node
 def ignore_roadtype(
-    visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
     return "ignore_roadtype()"

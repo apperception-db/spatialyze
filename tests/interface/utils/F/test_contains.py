@@ -4,17 +4,21 @@ from common import *
 
 @pytest.mark.parametrize("fn, sql", [
     (contains('lane', o),
-        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE     SegmentPolygon.__RoadType__lane__ AND\n"
+        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
+        "    ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.trajCentroids,c0.timestamp))\n"
+        "))"),
+    (contains(road_segment('lane'), o),
+        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
         "    ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.trajCentroids,c0.timestamp))\n"
         "))"),
     (contains('lane', [o, o1, o2]),
-        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE     SegmentPolygon.__RoadType__lane__ AND\n"
+        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
         "    ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.trajCentroids,c0.timestamp)) AND "
             "ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t1.trajCentroids,c0.timestamp)) AND "
             "ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t2.trajCentroids,c0.timestamp))\n"
         "))"),
     (contains('lane', [c, c.cam, c.ego]),
-        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE     SegmentPolygon.__RoadType__lane__ AND\n"
+        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
         "    ST_Covers(SegmentPolygon.elementPolygon, c0.cameraTranslation) AND "
             "ST_Covers(SegmentPolygon.elementPolygon, c0.cameraTranslation) AND "
             "ST_Covers(SegmentPolygon.elementPolygon, c0.egoTranslation)\n"
@@ -26,7 +30,7 @@ def test_contains(fn, sql):
 
 @pytest.mark.parametrize("fn, msg", [
     (contains(o, o), 
-        "Frist argument of contains_all should be a constant, recieved ObjectTableNode[0]"),
+        "Frist argument of contains should be a constant, recieved ObjectTableNode[0]"),
     (contains(1, o), 
         "1"),
     (contains('invalid', o), 

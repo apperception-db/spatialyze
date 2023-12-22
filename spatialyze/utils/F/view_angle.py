@@ -1,15 +1,12 @@
-from __future__ import annotations
-
-from typing import List
-
-from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
-
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
 from .common import default_heading, default_location, is_location_type
 
 
 @call_node
 def view_angle(
-    visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
     object, pov = args

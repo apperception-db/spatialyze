@@ -1,9 +1,5 @@
 from typing import Type
 
-import numpy as np
-
-from .data_types.camera import Camera
-from .data_types.camera_config import CameraConfig as _CameraConfig
 from .data_types.query_result import QueryResult
 from .database import Database
 from .database import database as default_database
@@ -12,6 +8,7 @@ from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNo
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
+from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
 from .video_processor.stream.data_types import Detection2D, Skip
 from .video_processor.stream.decode_frame import DecodeFrame
@@ -33,6 +30,8 @@ from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
 from .video_processor.video import Video
 
+TrackingResults = list[TrackingResult]
+
 
 class World:
     def __init__(
@@ -42,7 +41,8 @@ class World:
         videos: "list[GeospatialVideo] | None" = None,
         geogConstructs: "list[RoadNetwork] | None" = None,
         detector: Type[Stream[Detection2D]] | None = None,
-        tracker: Type[Stream[list[TrackingResult]]] | None = None,
+        tracker: Type[Stream[TrackingResults]] | None = None,
+        processor: Stream[TrackingResults] | None = None,
     ):
         self._database = database or default_database
         self._predicates = predicates or []
@@ -50,9 +50,10 @@ class World:
         self._geogConstructs = geogConstructs or []
         self._objectCounts = 0
         self._objects: "dict[str, list[QueryResult]] | None" = None
-        self._trackings: "dict[str, list[list[TrackingResult]]] | None" = None
+        self._trackings: "dict[str, list[TrackingResults]] | None" = None
         self._detector: tuple[Type[Stream[Detection2D]]] = (detector or Yolo,)
-        self._tracker: tuple[Type[Stream[list[TrackingResult]]]] = (tracker or StrongSORT,)
+        self._tracker: tuple[Type[Stream[TrackingResults]]] = (tracker or StrongSORT,)
+        self._processor: Stream[TrackingResults] | None = processor
         # self._cameraCounts = 0
 
     @property
@@ -125,15 +126,16 @@ def _execute(world: "World", optimization=True):
     database = world._database
     (detector,) = world._detector
     (tracker,) = world._tracker
+    processor = world._processor
 
     # add geographic constructs
-    # drop_tables(database)
-    # create_tables(database)
-    # for gc in world._geogConstructs:
-    #     gc.ingest(database)
+    drop_tables(database)
+    create_tables(database)
+    for gc in world._geogConstructs:
+        gc.ingest(database)
 
     qresults: dict[str, list[QueryResult]] = {}
-    vresults: dict[str, list[list[TrackingResult]]] = {}
+    vresults: dict[str, list[TrackingResults]] = {}
     for v in world._videos:
         # reset database
         database.reset()
@@ -146,6 +148,7 @@ def _execute(world: "World", optimization=True):
             inview = RoadVisibilityPruner(distance=50, predicate=world.predicates)
             decode = PruneFrames(inview, decode)
         d2ds = detector(decode)
+
         if optimization:
             d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
             d3ds = FromDetection2DAndRoad(d2ds)
@@ -155,7 +158,7 @@ def _execute(world: "World", optimization=True):
         else:
             depths = MonoDepthEstimator(decode)
             d3ds = FromDetection2DAndDepth(d2ds, depths)
-        t3ds = tracker(d3ds, decode)
+        t3ds = processor or tracker(d3ds, decode)
 
         # execute pipeline
         video = Video(v.video, v.camera)
@@ -172,25 +175,9 @@ def _execute(world: "World", optimization=True):
                 insert_trajectory(database, trajectory)
         assert t3ds.ended()
 
-        _camera_configs: "list[_CameraConfig]" = [
-            _CameraConfig(
-                frame_id=cc.frame_id or str(idx),
-                frame_num=idx,
-                filename=cc.filename or "",
-                camera_translation=np.array(cc.camera_translation),
-                camera_rotation=np.array(cc.camera_rotation.q),
-                camera_intrinsic=cc.camera_intrinsic,
-                ego_translation=cc.ego_translation,
-                ego_rotation=[*cc.ego_rotation.q],
-                timestamp=str(cc.timestamp),
-                cameraHeading=cc.camera_heading,
-                egoHeading=cc.ego_heading,
-            )
-            for idx, cc in enumerate(v.camera)
+        assert all(idx == cc.frame_num for idx, cc in enumerate(v.camera)), [
+            cc.frame_num for cc in v.camera
         ]
-
-        camera = Camera(_camera_configs, v.camera[0].camera_id)
-        database.insert_camera(camera)
-
+        database.insert_camera(v.camera)
         qresults[v.video] = database.predicate(world.predicates)
     return qresults, vresults

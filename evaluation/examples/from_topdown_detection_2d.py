@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 import torch
 
-from ..video import Video
-from .data_types import Detection2D, Detection3D, Skip, skip
-from .stream import Stream
+from spatialyze.video_processor.video import Video
+from spatialyze.video_processor.stream.data_types import Detection2D, Detection3D, Skip, skip
+from spatialyze.video_processor.stream.stream import Stream
 
 width = 1920
 height = 1080

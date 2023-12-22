@@ -1,11 +1,11 @@
-from typing import List
-
-from spatialyze.predicate import GenSqlVisitor, PredicateNode, call_node
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
 
 
 @call_node
 def like(
-    visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ) -> str:
     assert kwargs is None or len(kwargs) == 0, kwargs
     if len(args) != 2:

@@ -3,7 +3,9 @@ from ...predicate import GenSqlVisitor, ObjectTableNode, PredicateNode, call_nod
 
 @call_node
 def left_turn(
-    visitor: "GenSqlVisitor", args: "list[PredicateNode]", kwargs: "dict[str, PredicateNode]"
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
     object = args[0]

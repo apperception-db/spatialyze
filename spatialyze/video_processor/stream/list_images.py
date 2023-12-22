@@ -1,6 +1,6 @@
 import os
 
-from ..video.video import Video
+from ..video import Video
 from .stream import Stream
 
 

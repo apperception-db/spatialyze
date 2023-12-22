@@ -666,17 +666,20 @@ def ingest_location(database: "Database", directory: "str", location: "str"):
     # print("Location:", location)
     filenames = os.listdir(directory)
 
-    assert set(filenames) == set([k + ".json" for k in INSERT.keys()]), (
+    assert set(filenames) <= set([k + ".json" for k in INSERT.keys()]), (
         sorted(filenames),
         sorted([k + ".json" for k in INSERT.keys()]),
     )
 
     for d, fn in INSERT.items():
-        with open(os.path.join(directory, d + ".json"), "r") as f:
-            data = json.load(f)
+        try:
+            with open(os.path.join(directory, d + ".json"), "r") as f:
+                data = json.load(f)
 
-        # print("Ingesting", d)
-        fn(database, [{"location": location, **d} for d in data])
+            # print("Ingesting", d)
+            fn(database, [{"location": location, **d} for d in data])
+        except FileNotFoundError:
+            print("File not found:", d)
 
 
 def ingest_road(database: "Database", directory: str):
@@ -684,17 +687,8 @@ def ingest_road(database: "Database", directory: str):
     create_tables(database)
 
     filenames = os.listdir(directory)
-
-    if all(os.path.isdir(os.path.join(directory, f)) for f in filenames):
-        for d in filenames:
-            if d == "boston-old":
-                continue
-
-            # print(d)
-            ingest_location(database, os.path.join(directory, d), d)
-    else:
-        assert all(os.path.isfile(os.path.join(directory, f)) for f in filenames)
-        ingest_location(database, directory, "boston-seaport")
+    assert all(os.path.isfile(os.path.join(directory, f)) for f in filenames)
+    ingest_location(database, directory, "boston-seaport")
 
     # print("adding segment types")
     add_segment_type(database, ROAD_TYPES)

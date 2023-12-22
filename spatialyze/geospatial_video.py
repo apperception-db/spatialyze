@@ -26,10 +26,13 @@ class GeospatialVideo:
                 if isinstance(camera_configs, dict):
                     camera_configs = camera_configs["frames"]
             assert isinstance(camera_configs, list), camera_configs
-            self.camera = [_camera_config(c) for c in camera_configs]
+            self.camera = [*map(_camera_config, camera_configs)]
         else:
             self.camera = camera
         self.keep = keep
+
+        for idx, c in enumerate(self.camera):
+            c.frame_num = idx
 
 
 def _camera_config(c: "Any"):

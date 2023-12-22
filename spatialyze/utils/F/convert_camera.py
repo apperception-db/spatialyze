@@ -1,6 +1,4 @@
-from typing import List
-
-from spatialyze.predicate import (
+from ...predicate import (
     CameraTableNode,
     GenSqlVisitor,
     ObjectTableNode,
@@ -9,19 +7,20 @@ from spatialyze.predicate import (
     call_node,
     camera,
 )
-
-from .common import default_location, get_heading_at_time
+from .common import default_heading, default_location
 
 
 @call_node
 def convert_camera(
-    visitor: "GenSqlVisitor", args: "List[PredicateNode]", kwargs: dict[str, PredicateNode]
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
     object, _camera = args[:2]
     assert isinstance(object, ObjectTableNode), object
     assert isinstance(_camera, (CameraTableNode, TableAttrNode)), _camera
-    heading = get_heading_at_time(_camera)
+    heading = default_heading(_camera)
     if isinstance(_camera, CameraTableNode) or (
         isinstance(_camera, TableAttrNode) and _camera.name == "cameraTranslation"
     ):

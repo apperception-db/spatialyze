@@ -13,7 +13,6 @@ class Trajectory(NamedTuple):
     timestamps: list[datetime.datetime]
     pairs: list[Float3]
     itemHeadings: list[float | None]
-    translations: list[Float3]
 
 
 def prepare_trajectory(
@@ -50,5 +49,4 @@ def prepare_trajectory(
         timestamps,
         pairs,
         itemHeadings,
-        translations,
     )

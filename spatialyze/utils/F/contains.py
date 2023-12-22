@@ -1,5 +1,6 @@
 from ...predicate import (
     ArrayNode,
+    CallNode,
     CameraTableNode,
     GenSqlVisitor,
     LiteralNode,
@@ -15,16 +16,15 @@ ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection"}
 
 
 @call_node
-def contains(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str, PredicateNode]):
+def contains(
+    visitor: GenSqlVisitor,
+    args: list[PredicateNode],
+    kwargs: dict[str, PredicateNode],
+):
     assert kwargs is None or len(kwargs) == 0, kwargs
     region, points = args
-    if not isinstance(region, LiteralNode):
-        raise Exception(
-            "Frist argument of contains_all should " "be a constant, recieved " + str(region)
-        )
 
-    assert isinstance(region.value, str), region.value
-    region_str = region.value
+    region_str = _region_to_str(region)
 
     if region_str.lower() not in ROAD_TYPES:
         raise Exception("polygon should be either " + " or ".join(sorted(ROAD_TYPES)))
@@ -43,8 +43,20 @@ def contains(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str
         return f"ST_Covers(SegmentPolygon.elementPolygon, {visitor(p)})"
 
     return (
-        "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE "
-        f"    SegmentPolygon.__RoadType__{region_str}__ AND\n"
+        f"(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__{region_str}__ AND\n"
         f"    {' AND '.join(map(cover, points))}\n"
         "))"
     )
+
+
+def _region_to_str(region: PredicateNode) -> str:
+    if isinstance(region, CallNode):
+        (arg,) = region.params
+        assert isinstance(arg, LiteralNode)
+        region = arg
+
+    if not isinstance(region, LiteralNode):
+        raise Exception("Frist argument of contains should be a constant, recieved " + str(region))
+
+    assert isinstance(region.value, str), region.value
+    return region.value

@@ -14,7 +14,7 @@ from ..modules.yolo_tracker.yolov5.utils.general import (
 from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
 from ..stages.detection_2d.yolo_detection import class_mapping_to_list
 from ..types import DetectionId
-from ..video.video import Video
+from ..video import Video
 from .data_types import Detection2D, Skip, skip
 from .stream import Stream
 

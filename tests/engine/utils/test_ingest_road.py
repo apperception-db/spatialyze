@@ -12,17 +12,7 @@ d1 = Database(psycopg2.connect(
     port=os.environ["AP_PORT_ROAD_1"],
     password="docker",
 ))
-ingest_road(d1, "./data/scenic/road-network")
-
-d2 = Database(psycopg2.connect(
-    dbname="mobilitydb",
-    user="docker",
-    host="localhost",
-    port=os.environ["AP_PORT_ROAD_2"],
-    password="docker",
-))
-ingest_road(d2, "./data/scenic/road-network/boston-seaport")
-
+ingest_road(d1, "./data/scenic/road-network/boston-seaport")
 
 @pytest.mark.parametrize("table, count", [
     ("segmentpolygon", 3072),
@@ -40,11 +30,20 @@ ingest_road(d2, "./data/scenic/road-network/boston-seaport")
     ("roadsection_lanesection", 1180),
     ("intersection", 332),
 ])
-def test_simple_ops(table, count):
+def test_simple_ops(table: str, count: int):
     assert d1.execute(f"select count(*) from {table}") == [(count,)]
-    assert d2.execute(f"select count(*) from {table}") == [(count,)]
 
 
-@pytest.mark.parametrize("database", [d1, d2])
-def test_location(database):
-    assert database.execute("select location, count(*) from segmentpolygon group by location") == [('boston-seaport', 3072)]
+def test_incomplete_road_network():
+    d2 = Database(psycopg2.connect(
+        dbname="mobilitydb",
+        user="docker",
+        host="localhost",
+        port=os.environ["AP_PORT_ROAD_2"],
+        password="docker",
+    ))
+    ingest_road(d2, "./data/viva/road-network")
+
+    assert d2.execute("select count(*) from lane") == [(8,)]
+    assert d2.execute("select count(*) from intersection") == [(1,)]
+    assert d2.execute("select count(*) from segmentpolygon") == [(9,)]

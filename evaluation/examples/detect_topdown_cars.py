@@ -15,11 +15,11 @@ from typing import NamedTuple
 import torch
 from tqdm.notebook import tqdm
 
-from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
-from ..types import DetectionId, Float4
-from ..video.video import Video
-from .data_types import Detection2D, Skip, skip
-from .stream import Stream
+from spatialyze.video_processor.modules.yolo_tracker.yolov5.utils.torch_utils import select_device
+from spatialyze.video_processor.types import DetectionId, Float4
+from spatialyze.video_processor.video.video import Video
+from spatialyze.video_processor.stream.data_types import Detection2D, Skip, skip
+from spatialyze.video_processor.stream.stream import Stream
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
@@ -94,7 +94,6 @@ load_image.restype = IMAGE
 predict_image = lib.network_predict_image
 predict_image.argtypes = [c_void_p, IMAGE]
 predict_image.restype = POINTER(c_float)
-
 
 set_gpu(0)
 
