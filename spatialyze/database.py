@@ -39,8 +39,10 @@ if TYPE_CHECKING:
     from .predicate import PredicateNode
 
 CAMERA_TABLE = "Cameras"
-TRAJ_TABLE = "Item_Trajectory"
+TRAJECTORY_TABLE = "Item_Trajectory"
+DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
+TABLES = CAMERA_TABLE, TRAJECTORY_TABLE, DETECTION_TABLE, BBOX_TABLE
 
 CAMERA_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
@@ -114,6 +116,7 @@ class Database:
         self._drop_table(commit)
         self._create_camera_table(commit)
         self._create_item_trajectory_table(commit)
+        self._create_item_detection_table(commit)
         self._create_general_bbox_table(commit)
         self._create_index(commit)
 
@@ -124,9 +127,8 @@ class Database:
 
     def _drop_table(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
-        cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
-        cursor.execute("DROP TABLE IF EXISTS Item_Trajectory CASCADE;")
+        for table in TABLES:
+            cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE;")
         self._commit(commit)
         cursor.close()
 
@@ -145,7 +147,7 @@ class Database:
         cursor.execute(
             "CREATE TABLE General_Bbox ("
             f"{columns(_schema, BBOX_COLUMNS)},"
-            "FOREIGN KEY(itemId) REFERENCES Item_Trajectory(itemId),"
+            "FOREIGN KEY(itemId) REFERENCES Item_Trajectory (itemId),"
             "PRIMARY KEY (itemId, timestamp))"
         )
         self._commit(commit)

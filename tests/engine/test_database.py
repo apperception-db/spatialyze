@@ -1,6 +1,6 @@
 import pickle
 
-from spatialyze.database import Database, CAMERA_TABLE, TRAJ_TABLE
+from spatialyze.database import Database, CAMERA_TABLE, TRAJECTORY_TABLE
 import psycopg2
 import psycopg2.errors
 import os
@@ -9,7 +9,7 @@ import pytest
 TABLES = [
     (CAMERA_TABLE, 229),
     # "General_Bbox",
-    (TRAJ_TABLE, 67),
+    (TRAJECTORY_TABLE, 67),
 ]
 
 
