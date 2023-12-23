@@ -62,7 +62,7 @@ def import_tables(database: "Database", data_path: str):
         os.path.join(data_path, "item_trajectory.csv")
     )
     df_Item_Trajectory = pd.DataFrame(data_Item_Trajectory)
-    df_Item_Trajectory.drop(columns=["color", "largestbbox", "trajcentroids"], inplace=True)
+    df_Item_Trajectory.drop(columns=["color", "largestbbox", "translations"], inplace=True)
     df_Item_Trajectory = df_Item_Trajectory[df_Item_Trajectory.apply(lambda x: x['itemid'] in items or random.random() < 0.07, axis=1)]
 
     # data_General_Bbox = pd.read_csv(os.path.join(data_path, "general_bbox.csv"))
