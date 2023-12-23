@@ -77,7 +77,7 @@ DETECTION_COLUMNS: list[tuple[str, str]] = [
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
     ("frameNum", "Int"),
-    ("translation", "geompoint"),
+    ("translation", "geometry"),
     ("timestamp", "timestamptz"),
 ]
 
