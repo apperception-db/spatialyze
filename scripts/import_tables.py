@@ -62,7 +62,7 @@ def import_tables(database: "Database", data_path: str):
         os.path.join(data_path, "item_trajectory.csv")
     )
     df_Item_Trajectory = pd.DataFrame(data_Item_Trajectory)
-    df_Item_Trajectory.drop(columns=["color", "largestbbox"], inplace=True)
+    df_Item_Trajectory.drop(columns=["color", "largestbbox", "trajcentroids"], inplace=True)
     df_Item_Trajectory = df_Item_Trajectory[df_Item_Trajectory.apply(lambda x: x['itemid'] in items or random.random() < 0.07, axis=1)]
 
     # data_General_Bbox = pd.read_csv(os.path.join(data_path, "general_bbox.csv"))
@@ -76,9 +76,6 @@ def import_tables(database: "Database", data_path: str):
 
     for _, row in df_Item_Trajectory.iterrows():
         values = tuple(row.values)
-        if len(values) == 8:
-            values = values[:4] + values[5:]
-        assert len(values) == 7, values
         _insert_into_item_trajectory(database, values, False)
 
     # for _, row in df_General_Bbox.iterrows():
