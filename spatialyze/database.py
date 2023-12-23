@@ -71,6 +71,15 @@ TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     # ("period", "period") [today, nextweek]
 ]
 
+DETECTION_COLUMNS: list[tuple[str, str]] = [
+    ("itemId", "TEXT"),
+    ("cameraId", "TEXT"),
+    ("objectType", "TEXT"),
+    ("frameNum", "Int"),
+    ("translation", "geompoint"),
+    ("timestamp", "timestamptz"),
+]
+
 BBOX_COLUMNS: "list[tuple[str, str]]" = [
     ("itemId", "TEXT"),
     ("cameraId", "TEXT"),
@@ -124,20 +133,21 @@ class Database:
 
     def _create_camera_table(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
+        cursor.execute(
+            "CREATE TABLE Cameras ("
+            f"{columns(_schema, CAMERA_COLUMNS)},"
+            "PRIMARY KEY (cameraId, frameNum))"
+        )
         self._commit(commit)
         cursor.close()
 
     def _create_general_bbox_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            f"""
-            CREATE TABLE General_Bbox (
-                {columns(_schema, BBOX_COLUMNS)},
-                FOREIGN KEY(itemId) REFERENCES Item_General_Trajectory(itemId),
-                PRIMARY KEY (itemId, timestamp)
-            )
-            """
+            "CREATE TABLE General_Bbox ("
+            f"{columns(_schema, BBOX_COLUMNS)},"
+            "FOREIGN KEY(itemId) REFERENCES Item_General_Trajectory(itemId),"
+            "PRIMARY KEY (itemId, timestamp))"
         )
         self._commit(commit)
         cursor.close()
@@ -145,12 +155,20 @@ class Database:
     def _create_item_general_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            f"""
-            CREATE TABLE Item_General_Trajectory (
-                {columns(_schema, TRAJECTORY_COLUMNS)},
-                PRIMARY KEY (itemId)
-            )
-            """
+            "CREATE TABLE Item_General_Trajectory ("
+            f"{columns(_schema, TRAJECTORY_COLUMNS)},"
+            "PRIMARY KEY (itemId))"
+        )
+        self._commit(commit)
+        cursor.close()
+
+    def _create_item_detection_table(self, commit=True):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "CREATE TABLE Item_Detection ("
+            f"{columns(_schema, DETECTION_COLUMNS)},"
+            "PRIMARY KEY (itemId)"
+            "FOREIGN KEY (cameraId, frameNum) REFERENCES Cameras(cameraId, frameNum))"
         )
         self._commit(commit)
         cursor.close()
@@ -171,6 +189,19 @@ class Database:
             "CREATE INDEX IF NOT EXISTS trans_idx "
             "ON Item_General_Trajectory "
             "USING GiST(translations);"
+        )
+        cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
+        cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
+        cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
+            "ON Item_Detection "
+            "USING GiST(translation);"
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS item_detection_timestamp_idx "
+            "ON Item_Detection "
+            "USING GiST(timestamp);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
         # cursor.execute(
