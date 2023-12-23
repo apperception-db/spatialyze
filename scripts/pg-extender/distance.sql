@@ -44,5 +44,5 @@ $BODY$
 LANGUAGE 'plpgsql' ;
 
 /* test case
- select get_Y(trajcentroids, timestamptz '2021-06-08 07:10:29+00') from Item_Trajectory limit 1;
+ select get_Y(translations, timestamptz '2021-06-08 07:10:29+00') from Item_Trajectory limit 1;
 */

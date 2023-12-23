@@ -158,7 +158,7 @@ def _flush(
             query = psql.SQL(
                 "INSERT INTO Item_Trajectory ("
                 "ItemId, CameraId, "
-                "ObjectType, TrajCentroids, "
+                "ObjectType, translations, "
                 "Translations, ItemHeadings"
                 ") VALUES {}"
             ).format(psql.SQL(",").join(item_sqls))

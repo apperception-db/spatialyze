@@ -62,7 +62,6 @@ TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
     # ("roadTypes", "ttext"),
-    ("trajCentroids", "tgeompoint"),
     ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
     ("itemHeadings", "tfloat"),
     # ("color", "TEXT"),
@@ -181,11 +180,6 @@ class Database:
         cursor.execute("CREATE INDEX ON Item_Trajectory (itemId);")
         cursor.execute("CREATE INDEX ON Item_Trajectory (cameraId);")
         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS traj_idx "
-            "ON Item_Trajectory "
-            "USING GiST(trajCentroids);"
-        )
-        cursor.execute(
             "CREATE INDEX IF NOT EXISTS trans_idx "
             "ON Item_Trajectory "
             "USING GiST(translations);"
@@ -294,7 +288,7 @@ class Database:
         for i in range(len(tables)):
             t_tables += (
                 f"JOIN Item_Trajectory AS t{i} "
-                f"ON  c0.timestamp <@ t{i}.trajCentroids::period "
+                f"ON  c0.timestamp <@ t{i}.translations::period "
                 f"AND c0.cameraId  =  t{i}.cameraId\n"
             )
             t_outputs += f",\n   t{i}.itemId"

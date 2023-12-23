@@ -193,7 +193,7 @@ class ObjectTableNode(TableNode):
 
     def __init__(self, index: int):
         self.index = index
-        self.traj = TableAttrNode("trajCentroids", self, True)
+        self.traj = TableAttrNode("translations", self, True)
         self.trans = TableAttrNode("translations", self, True)
         self.id = TableAttrNode("itemId", self, True)
         self.type = TableAttrNode("objectType", self, True)
@@ -576,7 +576,7 @@ IS_TEMPORAL: "dict[str, bool]" = {
     "itemId": False,
     "cameraId": False,
     "objectType": False,
-    "trajCentroids": True,
+    "translations": True,
     "translations": True,
     "itemHeadings": True,
     "bbox": True,
@@ -588,7 +588,7 @@ TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
     # ("roadTypes", "ttext"),
-    ("trajCentroids", "tgeompoint"),
+    ("translations", "tgeompoint"),
     ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
     ("itemHeadings", "tfloat"),
     # ("color", "TEXT"),
