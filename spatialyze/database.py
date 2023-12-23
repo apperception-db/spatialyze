@@ -189,15 +189,11 @@ class Database:
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
         cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX ON Item_Detection (timestamp);")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
             "ON Item_Detection "
             "USING GiST(translation);"
-        )
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS item_detection_timestamp_idx "
-            "ON Item_Detection "
-            "USING GiST(timestamp);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
         # cursor.execute(
