@@ -143,7 +143,7 @@ def _flush(
     if threshold is None or len(camera_sqls) + len(item_sqls) >= threshold:
         if len(camera_sqls) != 0:
             query = psql.SQL(
-                "INSERT INTO Cameras ("
+                "INSERT INTO Camera ("
                 "cameraId, frameId, "
                 "frameNum, fileName, "
                 "cameraTranslation, cameraRotation, "

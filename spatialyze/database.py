@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
     from .predicate import PredicateNode
 
-CAMERA_TABLE = "Cameras"
+CAMERA_TABLE = "Camera"
 TRAJECTORY_TABLE = "Item_Trajectory"
 DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
@@ -135,7 +135,7 @@ class Database:
     def _create_camera_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            "CREATE TABLE Cameras ("
+            "CREATE TABLE Camera ("
             f"{columns(_schema, CAMERA_COLUMNS)},"
             "PRIMARY KEY (cameraId, frameNum))"
         )
@@ -169,16 +169,16 @@ class Database:
             "CREATE TABLE Item_Detection ("
             f"{columns(_schema, DETECTION_COLUMNS)},"
             "PRIMARY KEY (itemId),"
-            "FOREIGN KEY (cameraId, frameNum) REFERENCES Cameras(cameraId, frameNum))"
+            "FOREIGN KEY (cameraId, frameNum) REFERENCES Camera(cameraId, frameNum))"
         )
         self._commit(commit)
         cursor.close()
 
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
-        # cursor.execute("CREATE INDEX ON Cameras (cameraId);")
-        cursor.execute("CREATE INDEX ON Cameras (cameraId, frameNum);")
-        cursor.execute("CREATE INDEX ON Cameras (timestamp);")
+        # cursor.execute("CREATE INDEX ON Camera (cameraId);")
+        cursor.execute("CREATE INDEX ON Camera (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX ON Camera (timestamp);")
         cursor.execute("CREATE INDEX ON Item_Trajectory (itemId);")
         cursor.execute("CREATE INDEX ON Item_Trajectory (cameraId);")
         cursor.execute(
@@ -256,7 +256,7 @@ class Database:
 
     def insert_camera(self, camera: list[CameraConfig]):
         cursor = self.connection.cursor()
-        insert = SQL("INSERT INTO Cameras VALUES ")
+        insert = SQL("INSERT INTO Camera VALUES ")
         values = SQL(",").join(map(_config, camera))
         cursor.execute(insert + values)
 
@@ -297,7 +297,7 @@ class Database:
 
         sql_str = (
             f"SELECT c0.frameNum, c0.cameraId, c0.filename{t_outputs}\n"
-            f"FROM Cameras as c0\n{t_tables}"
+            f"FROM Camera as c0\n{t_tables}"
             f"WHERE {GenSqlVisitor()(predicate)}"
         )
         return [

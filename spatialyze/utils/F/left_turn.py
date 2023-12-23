@@ -12,4 +12,4 @@ def left_turn(
     assert isinstance(
         object, ObjectTableNode
     ), f"leftTurn accepts ObjectTableNode, got {object.__class__.__name__}"
-    return f"leftTurn({visitor(object.translations)}, {visitor(object.itemHeadings)}, Cameras.frameNum, Cameras.cameraId)"
+    return f"leftTurn({visitor(object.translations)}, {visitor(object.itemHeadings)}, Camera.frameNum, Camera.cameraId)"

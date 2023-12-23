@@ -8,7 +8,7 @@ def export_tables(conn: Connection, data_path: str):
     s = "SELECT * FROM "
     s_trajectory = f"SELECT {','.join([c for c, _ in TRAJECTORY_COLUMNS])} FROM Item_Trajectory"
     s_bbox = s + "General_Bbox"
-    s_camera = f"SELECT {','.join([c for c, _ in CAMERA_COLUMNS])} FROM Cameras"
+    s_camera = f"SELECT {','.join([c for c, _ in CAMERA_COLUMNS])} FROM Camera"
 
     # set up our database connection.
     db_cursor = conn.cursor()

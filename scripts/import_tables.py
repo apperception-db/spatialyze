@@ -91,7 +91,7 @@ def _name(column: "tuple[str, str]") -> str:
 def _insert_into_camera(database: "Database", value: tuple, commit=True):
     cursor = database.connection.cursor()
     cursor.execute(
-        f"INSERT INTO Cameras ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
+        f"INSERT INTO Camera ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
         tuple(value),
     )
     database._commit(commit)
