@@ -156,7 +156,7 @@ def _flush(
 
         if len(item_sqls) != 0:
             query = psql.SQL(
-                "INSERT INTO Item_General_Trajectory ("
+                "INSERT INTO Item_Trajectory ("
                 "ItemId, CameraId, "
                 "ObjectType, TrajCentroids, "
                 "Translations, ItemHeadings"

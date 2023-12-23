@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from .predicate import PredicateNode
 
 CAMERA_TABLE = "Cameras"
-TRAJ_TABLE = "Item_General_Trajectory"
+TRAJ_TABLE = "Item_Trajectory"
 BBOX_TABLE = "General_Bbox"
 
 CAMERA_COLUMNS: "list[tuple[str, str]]" = [
@@ -114,7 +114,7 @@ class Database:
         self.reset_cursor()
         self._drop_table(commit)
         self._create_camera_table(commit)
-        self._create_item_general_trajectory_table(commit)
+        self._create_item_trajectory_table(commit)
         self._create_general_bbox_table(commit)
         self._create_index(commit)
 
@@ -127,7 +127,7 @@ class Database:
         cursor = self.connection.cursor()
         cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
         cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
-        cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
+        cursor.execute("DROP TABLE IF EXISTS Item_Trajectory CASCADE;")
         self._commit(commit)
         cursor.close()
 
@@ -146,16 +146,16 @@ class Database:
         cursor.execute(
             "CREATE TABLE General_Bbox ("
             f"{columns(_schema, BBOX_COLUMNS)},"
-            "FOREIGN KEY(itemId) REFERENCES Item_General_Trajectory(itemId),"
+            "FOREIGN KEY(itemId) REFERENCES Item_Trajectory(itemId),"
             "PRIMARY KEY (itemId, timestamp))"
         )
         self._commit(commit)
         cursor.close()
 
-    def _create_item_general_trajectory_table(self, commit=True):
+    def _create_item_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            "CREATE TABLE Item_General_Trajectory ("
+            "CREATE TABLE Item_Trajectory ("
             f"{columns(_schema, TRAJECTORY_COLUMNS)},"
             "PRIMARY KEY (itemId))"
         )
@@ -178,16 +178,16 @@ class Database:
         # cursor.execute("CREATE INDEX ON Cameras (cameraId);")
         cursor.execute("CREATE INDEX ON Cameras (cameraId, frameNum);")
         cursor.execute("CREATE INDEX ON Cameras (timestamp);")
-        cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
-        cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
+        cursor.execute("CREATE INDEX ON Item_Trajectory (itemId);")
+        cursor.execute("CREATE INDEX ON Item_Trajectory (cameraId);")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS traj_idx "
-            "ON Item_General_Trajectory "
+            "ON Item_Trajectory "
             "USING GiST(trajCentroids);"
         )
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS trans_idx "
-            "ON Item_General_Trajectory "
+            "ON Item_Trajectory "
             "USING GiST(translations);"
         )
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
@@ -293,7 +293,7 @@ class Database:
         t_outputs = ""
         for i in range(len(tables)):
             t_tables += (
-                f"JOIN Item_General_Trajectory AS t{i} "
+                f"JOIN Item_Trajectory AS t{i} "
                 f"ON  c0.timestamp <@ t{i}.trajCentroids::period "
                 f"AND c0.cameraId  =  t{i}.cameraId\n"
             )
