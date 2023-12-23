@@ -168,7 +168,7 @@ class Database:
         cursor.execute(
             "CREATE TABLE Item_Detection ("
             f"{columns(_schema, DETECTION_COLUMNS)},"
-            "PRIMARY KEY (itemId)"
+            "PRIMARY KEY (itemId),"
             "FOREIGN KEY (cameraId, frameNum) REFERENCES Cameras(cameraId, frameNum))"
         )
         self._commit(commit)
