@@ -76,6 +76,9 @@ def import_tables(database: "Database", data_path: str):
 
     for _, row in df_Item_Trajectory.iterrows():
         values = tuple(row.values)
+        if len(values) == 8:
+            values = values[:4] + values[5:]
+        assert len(values) == 7, values
         _insert_into_item_trajectory(database, values, False)
 
     # for _, row in df_General_Bbox.iterrows():
