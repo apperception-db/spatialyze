@@ -13,7 +13,7 @@ gen = GenSqlVisitor()
 @pytest.mark.parametrize("fn, sql", [
     (o, "valueAtTimestamp(t0.translations,c0.timestamp)"),
     (o.trans, "valueAtTimestamp(t0.translations,c0.timestamp)"),
-    (o.traj, "valueAtTimestamp(t0.translations,c0.timestamp)"),
+    (o.trans, "valueAtTimestamp(t0.translations,c0.timestamp)"),
     (o.id, "t0.itemId"),
     (o.type, "t0.objectType"),
     (o.heading, "valueAtTimestamp(t0.itemHeadings,c0.timestamp)"),
@@ -76,7 +76,7 @@ def test_unnormalized_node_exception(fn, msg):
 
 
 @pytest.mark.parametrize("fn, msg", [
-    (AtTimeNode(o.traj), "AtTimeNode is illegal prior NormalizeDefaultValue: AtTimeNode(attr=TableAttrNode(name='translations', table=ObjectTableNode[0], shorten=True))"),
+    (AtTimeNode(o.trans), "AtTimeNode is illegal prior NormalizeDefaultValue: AtTimeNode(attr=TableAttrNode(name='translations', table=ObjectTableNode[0], shorten=True))"),
 ])
 def test_normalize_exception(fn, msg):
     with pytest.raises(Exception) as e_info:
@@ -117,8 +117,8 @@ def test_expand_bool(fn, sql):
 
 @pytest.mark.parametrize("fn, tables, camera", [
     (o.trans & o1.trans & c.cam, {0, 1}, True),
-    ((o.trans + c) - c.ego + o.traj * c.heading / o.heading, {0}, True),
-    ((o.type) + o1.traj / o.heading, {0, 1}, False),
+    ((o.trans + c) - c.ego + o.trans * c.heading / o.heading, {0}, True),
+    ((o.type) + o1.trans / o.heading, {0, 1}, False),
     ((o.type) + c.egoheading / o.heading, {0}, True),
 ])
 def test_find_all_tables(fn, tables, camera):
@@ -126,7 +126,7 @@ def test_find_all_tables(fn, tables, camera):
 
 
 @pytest.mark.parametrize("fn, mapping, sql", [
-    (o.trans & o1.traj & c.ego, {0:1, 1:2}, '(valueAtTimestamp(t1.translations,c0.timestamp) AND valueAtTimestamp(t2.translations,c0.timestamp) AND c0.egoTranslation)'),
+    (o.trans & o1.trans & c.ego, {0:1, 1:2}, '(valueAtTimestamp(t1.translations,c0.timestamp) AND valueAtTimestamp(t2.translations,c0.timestamp) AND c0.egoTranslation)'),
     ((o.trans + c) - c.ego + o.type * c.heading / o1.heading, {0:1, 1:0}, '(((valueAtTimestamp(t1.translations,c0.timestamp)+c0.cameraTranslation)-c0.egoTranslation)+((t1.objectType*c0.cameraHeading)/valueAtTimestamp(t0.itemHeadings,c0.timestamp)))'),
 ])
 def test_map_tables(fn, mapping, sql):

@@ -12,9 +12,9 @@ pred1 = (
     (o.type == 'human.pedestrian.adult') &
     # F.contained(c.ego, 'intersection') &
     F.contained(o.trans@c.time, 'intersection') &
-    F.angle_excluding(F.facing_relative(o.traj@c.time, c.cam), lit(-70), lit(70)) &
+    F.angle_excluding(F.facing_relative(o.trans@c.time, c.cam), lit(-70), lit(70)) &
     # F.angle_between(F.facing_relative(c.cam, F.road_direction(c.ego)), lit(-15), lit(15)) &
-    (F.distance(c.ego, o.traj@c.time) < lit(50)) & # &
+    (F.distance(c.ego, o.trans@c.time) < lit(50)) & # &
     (F.view_angle(o.trans@c.time, c.cam) < lit(35))
 )
 

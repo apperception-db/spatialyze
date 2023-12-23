@@ -14,7 +14,7 @@ pred3 = (
     F.angle_between(F.facing_relative(cam.cam, F.road_direction(cam.ego, cam.ego)), 135, 225) &
     F.contained(cam.cam, F.road_segment('lane')) &
     F.contained(obj1.trans@cam.time, F.road_segment('lane')) &
-    F.angle_between(F.facing_relative(obj1.trans@cam.time, F.road_direction(obj1.traj@cam.time, cam.ego)), -15, 15) &
+    F.angle_between(F.facing_relative(obj1.trans@cam.time, F.road_direction(obj1.trans@cam.time, cam.ego)), -15, 15) &
     # F.angle_between(F.facing_relative(obj1.trans@cam.time, cam.ego), 135, 225) &
     (F.distance(cam.ego, obj1.trans@cam.time) < 10)
 )

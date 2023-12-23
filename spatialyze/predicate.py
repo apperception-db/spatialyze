@@ -193,7 +193,6 @@ class ObjectTableNode(TableNode):
 
     def __init__(self, index: int):
         self.index = index
-        self.traj = TableAttrNode("translations", self, True)
         self.trans = TableAttrNode("translations", self, True)
         self.id = TableAttrNode("itemId", self, True)
         self.type = TableAttrNode("objectType", self, True)
@@ -456,7 +455,7 @@ class NormalizeDefaultValue(BaseTransformer):
         return node.cam
 
     def visit_ObjectTableNode(self, node: ObjectTableNode) -> PredicateNode:
-        return AtTimeNode(node.traj)
+        return AtTimeNode(node.trans)
 
     def visit_AtTimeNode(self, node: AtTimeNode) -> PredicateNode:
         raise Exception(f"AtTimeNode is illegal prior NormalizeDefaultValue: {node}")
@@ -588,7 +587,6 @@ TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
     # ("roadTypes", "ttext"),
-    ("translations", "tgeompoint"),
     ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
     ("itemHeadings", "tfloat"),
     # ("color", "TEXT"),

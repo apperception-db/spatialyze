@@ -23,7 +23,7 @@ ROAD_TYPES = {
 def default_location(obj: TableNode | TableAttrNode):
     assert isinstance(obj, (ObjectTableNode, CameraTableNode, TableAttrNode)), type(obj)
     if isinstance(obj, ObjectTableNode):
-        return AtTimeNode(obj.traj)
+        return AtTimeNode(obj.trans)
     elif isinstance(obj, CameraTableNode):
         return obj.cam
     assert isinstance(obj.table, CameraTableNode), type(obj.table)
