@@ -275,7 +275,7 @@ class Database:
         ingest_processed_nuscenes(annotations, cameras, self)
 
     def predicate(self, predicate: "PredicateNode", temporal: bool = True):
-        tables, camera = FindAllTablesVisitor()(predicate)
+        tables, _ = FindAllTablesVisitor()(predicate)
         tables = sorted(tables)
         mapping = {t: i for i, t in enumerate(tables)}
         predicate = normalize(predicate, temporal)
