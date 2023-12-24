@@ -11,16 +11,16 @@ TEXT_PADDING = 5
 
 
 def save_video_util(
-    objects: "dict[str, list[QueryResult]]",
-    trackings: "dict[str, list[list[TrackingResult]]]",
-    outputDir: "str",
-    addBoundingBoxes: "bool" = False,
-) -> "list[tuple[str, int]]":
+    objects: dict[str, list[QueryResult]],
+    trackings: dict[str, list[list[TrackingResult]]],
+    outputDir: str,
+    addBoundingBoxes: bool = False,
+) -> list[tuple[str, int]]:
     objList = get_object_list(objects=objects, trackings=trackings)
     camera_to_video, video_to_camera = _get_video_names(objects=objects)
     bboxes = _get_bboxes(objList=objList, cameraVideoNames=camera_to_video)
 
-    result: "list[tuple[str, int]]" = []
+    result: list[tuple[str, int]] = []
 
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
@@ -95,19 +95,19 @@ def save_video_util(
 
 
 class BboxWithIdAndType(NamedTuple):
-    id: "int"
-    type: "str"
-    left: "float"
-    top: "float"
-    width: "float"
-    height: "float"
+    id: str
+    type: str
+    left: float
+    top: float
+    width: float
+    height: float
 
 
-def _get_bboxes(objList: "list[MovableObject]", cameraVideoNames: "dict[str, str]"):
+def _get_bboxes(objList: list[MovableObject], cameraVideoNames: dict[str, str]):
     """
     Indexes objects based on frame ID
     """
-    result: "dict[str, dict[int, list[BboxWithIdAndType]]]" = {}
+    result: dict[str, dict[int, list[BboxWithIdAndType]]] = {}
     for obj in objList:
         videoName = cameraVideoNames[obj.camera_id]
         for frameId, bbox in zip(obj.frame_ids, obj.bboxes):
@@ -120,12 +120,12 @@ def _get_bboxes(objList: "list[MovableObject]", cameraVideoNames: "dict[str, str
     return result
 
 
-def _get_video_names(objects: "dict[str, list[QueryResult]]"):
+def _get_video_names(objects: dict[str, list[QueryResult]]):
     """
     Returns mappings from videoName to cameraId and vice versa
     """
-    camera_to_video: "dict[str, str]" = {}
-    video_to_camera: "dict[str, str]" = {}
+    camera_to_video: dict[str, str] = {}
+    video_to_camera: dict[str, str] = {}
     for video, obj in filter(lambda x: len(x[1]) > 0, objects.items()):
         _, cameraId, _, _ = obj[0]
         camera_to_video[cameraId] = video
