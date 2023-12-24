@@ -4,6 +4,7 @@ import pickle
 from bitarray import bitarray
 
 from spatialyze.world import World
+from spatialyze.utils.F import heading_diff
 from spatialyze.geospatial_video import GeospatialVideo
 
 
@@ -25,4 +26,5 @@ for scene in SCENES:
     ))
 obj = world.object()
 world.filter((obj.type == 'bus') | (obj.type == 'car'))
+world.filter((heading_diff(obj, obj) != -400) | True)
 objects = world.saveVideos('./evaluation/examples/videos/', addBoundingBoxes=True)
