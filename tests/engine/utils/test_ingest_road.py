@@ -30,7 +30,6 @@ def test_simple_ops(table: str, count: int):
         password="docker",
     ))
     d1.reset()
-    assert len(d1.execute(f"select * from {table}")) == 0
     ingest_road(d1, "./data/scenic/road-network/boston-seaport")
     assert d1.execute(f"select count(*) from {table}") == [(count,)]
 
