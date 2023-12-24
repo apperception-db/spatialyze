@@ -48,7 +48,9 @@ def test_simple_workflow():
                 assert p.object_type == g.object_type, (p.object_type, g.object_type)
                 assert p.timestamp == g.timestamp, (p.timestamp, g.timestamp)
                 assert np.allclose([p.confidence], [g.confidence], atol=0.001, rtol=0), (p.confidence, g.confidence)
-                assert np.allclose(p.bbox.detach().cpu().numpy(), g.bbox.detach().cpu().numpy(), atol=0.001, rtol=0), (p.bbox, g.bbox)
+                for pbbox, gbbox in zip(p.bbox.detach().cpu().numpy(), g.bbox.detach().cpu().numpy()):
+                    assert np.allclose(pbbox, gbbox, atol=0.001, rtol=0), (pbbox, gbbox)
+                # assert np.allclose(p.bbox.detach().cpu().numpy(), g.bbox.detach().cpu().numpy(), atol=0.001, rtol=0), (p.bbox, g.bbox)
     
     # with open(os.path.join(OUTPUT_DIR, 'simple-workflow-objects.json'), 'w') as f:
     #     json.dump(objects, f, indent=1)

@@ -274,21 +274,18 @@ class Database:
     ):
         ingest_processed_nuscenes(annotations, cameras, self)
 
-    def predicate(self, predicate: "PredicateNode"):
+    def predicate(self, predicate: "PredicateNode", temporal: bool = True):
         tables, camera = FindAllTablesVisitor()(predicate)
         tables = sorted(tables)
         mapping = {t: i for i, t in enumerate(tables)}
-        predicate = normalize(predicate)
+        predicate = normalize(predicate, temporal)
         predicate = MapTablesTransformer(mapping)(predicate)
+        join_table = _join_table(temporal)
 
         t_tables = ""
         t_outputs = ""
         for i in range(len(tables)):
-            t_tables += (
-                f"JOIN Item_Trajectory AS t{i} "
-                f"ON  c0.timestamp <@ t{i}.translations::period "
-                f"AND c0.cameraId  =  t{i}.cameraId\n"
-            )
+            t_tables += join_table(i)
             t_outputs += f",\n   t{i}.itemId"
 
         sql_str = (
@@ -306,6 +303,24 @@ class Database:
         description = cursor.description
         cursor.close()
         return pd.DataFrame(results, columns=[d.name for d in description])
+
+
+def _join_table(temporal: bool):
+    if temporal:
+
+        def join_table(i: int) -> str:
+            return (
+                f"JOIN Item_Trajectory AS t{i} "
+                f"ON  c0.timestamp <@ t{i}.translations::period "
+                f"AND c0.cameraId  =  t{i}.cameraId\n"
+            )
+
+    else:
+
+        def join_table(i: int) -> str:
+            return f"JOIN Item_Detection AS t{i}" " USING (frameNum, cameraId)\n"
+
+    return join_table
 
 
 class _Config(NamedTuple):

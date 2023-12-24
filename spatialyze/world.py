@@ -1,16 +1,26 @@
+import datetime
 from typing import Type
+
+import torch
 
 from .data_types.query_result import QueryResult
 from .database import Database
 from .database import database as default_database
 from .geospatial_video import GeospatialVideo
-from .predicate import BoolOpNode, CameraTableNode, ObjectTableNode, PredicateNode, lit
+from .predicate import (
+    BoolOpNode,
+    CameraTableNode,
+    ObjectTableNode,
+    PredicateNode,
+    is_detection_only,
+    lit,
+)
 from .road_network import RoadNetwork
 from .utils.F.road_segment import road_segment
 from .utils.get_object_list import get_object_list
 from .utils.ingest_road import create_tables, drop_tables
 from .utils.save_video_util import save_video_util
-from .video_processor.stream.data_types import Detection2D, Skip
+from .video_processor.stream.data_types import Detection2D, Detection3D, Skip
 from .video_processor.stream.decode_frame import DecodeFrame
 from .video_processor.stream.from_detection_2d_and_depth import FromDetection2DAndDepth
 from .video_processor.stream.from_detection_2d_and_road import FromDetection2DAndRoad
@@ -22,10 +32,10 @@ from .video_processor.stream.road_visibility_pruner import RoadVisibilityPruner
 
 # stream
 from .video_processor.stream.stream import Stream
-
-# from .video_processor.stream.deepsort import DeepSORT, TrackingResult
 from .video_processor.stream.strongsort import StrongSORT, TrackingResult
 from .video_processor.stream.yolo import Yolo
+from .video_processor.types import DetectionId
+from .video_processor.utils.insert_detections import insert_detections
 from .video_processor.utils.insert_trajectory import insert_trajectory
 from .video_processor.utils.prepare_trajectory import prepare_trajectory
 from .video_processor.video import Video
@@ -134,11 +144,14 @@ def _execute(world: "World", optimization=True):
     for gc in world._geogConstructs:
         gc.ingest(database)
 
+    temporal = not is_detection_only(world.predicates)
+
     qresults: dict[str, list[QueryResult]] = {}
     vresults: dict[str, list[TrackingResults]] = {}
     for v in world._videos:
         # reset database
         database.reset()
+        database.insert_camera(v.camera)
 
         decode = DecodeFrame()
         if v.keep is not None:
@@ -152,7 +165,7 @@ def _execute(world: "World", optimization=True):
         if optimization:
             d2ds = ObjectTypePruner(d2ds, predicate=world.predicates)
             d3ds = FromDetection2DAndRoad(d2ds)
-            # if all(t in ["car", "truck"] for t in d2ds.types):
+            # if temporal and all(t in ["car", "truck"] for t in d2ds.types):
             #     efs = ExitFrameSampler(d3ds)
             #     d3ds = PruneFrames(efs, d3ds)
         else:
@@ -162,22 +175,67 @@ def _execute(world: "World", optimization=True):
 
         # execute pipeline
         video = Video(v.video, v.camera)
-        output = t3ds.iterate(video)
-
-        vresults[v.video] = []
-        for track in output:
-            assert not isinstance(track, Skip)
-            vresults[v.video].append(track)
-
-            obj_id = track[0].object_id
-            trajectory = prepare_trajectory(video.videofile, obj_id, track, video.camera_configs)
-            if trajectory:
-                insert_trajectory(database, trajectory)
-        assert t3ds.ended()
+        process = _track(t3ds) if temporal else _detect(d3ds)
+        vresults[v.video] = process(video, database)
 
         assert all(idx == cc.frame_num for idx, cc in enumerate(v.camera)), [
             cc.frame_num for cc in v.camera
         ]
-        database.insert_camera(v.camera)
-        qresults[v.video] = database.predicate(world.predicates)
+        qresults[v.video] = database.predicate(world.predicates, temporal)
     return qresults, vresults
+
+
+def _track(processor: Stream[TrackingResults]):
+    def _(video: Video, database: Database):
+        vresults: list[TrackingResults] = []
+        for track in processor.iterate(video):
+            assert not isinstance(track, Skip)
+            vresults.append(track)
+
+            obj_id = track[0].object_id
+            trajectory = prepare_trajectory(obj_id, track, video.camera_configs)
+            if trajectory:
+                insert_trajectory(database, trajectory)
+        assert processor.ended()
+        return vresults
+
+    return _
+
+
+def _detect(processor: Stream[Detection3D]):
+    def _(video: Video, database: Database):
+        camera_id = video[0].camera_id
+        clss: list[str] | None = None
+        vresults: list[TrackingResults] = []
+        for idx, detections in enumerate(processor.iterate(video)):
+            if isinstance(detections, Skip):
+                continue
+
+            timestamp = video[idx].timestamp
+            insert_detections(database, detections, camera_id, idx, timestamp)
+
+            if clss is None:
+                clss = detections[1]
+                assert isinstance(clss, list)
+
+            vresults.extend(
+                tracking_result(det, did, clss, timestamp) for det, _, did in zip(*detections)
+            )
+
+        assert processor.ended()
+        return vresults
+
+    return _
+
+
+def tracking_result(
+    det: torch.Tensor,
+    did: DetectionId,
+    clss: list[str],
+    timestamp: datetime.datetime,
+) -> TrackingResults:
+    oid = f"{did.frame_idx}__{did.obj_order}"
+    conf = float(det[4])
+    cls = clss[int(det[5])]
+    tr = TrackingResult(did, oid, conf, det, cls, timestamp)
+    return [tr]

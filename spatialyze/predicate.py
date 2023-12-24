@@ -1,3 +1,4 @@
+from inspect import signature
 from typing import Any, Callable, Generic, Literal, TypeVar
 
 BinOp = Literal["add", "sub", "mul", "div", "matmul", "mod"]
@@ -285,6 +286,9 @@ T = TypeVar("T")
 
 
 class Visitor(Generic[T]):
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+
     def __call__(self, node: "PredicateNode") -> T:
         attr = f"visit_{node.__class__.__name__}"
         assert hasattr(self, attr), "Unknown node type: " + node.__class__.__name__
@@ -416,6 +420,42 @@ class FindAllTablesVisitor(Visitor["tuple[set[int], bool]"]):
         self.camera = False
 
 
+def _is_object(node: "PredicateNode"):
+    return isinstance(
+        node.table if isinstance(node, TableAttrNode) else node,
+        ObjectTableNode,
+    )
+
+
+class IsDetectionOnly(Visitor[bool]):
+    _is_detection_only: bool
+
+    def __init__(self):
+        self._is_detection_only = True
+
+    def __call__(self, node: "PredicateNode"):
+        super().__call__(node)
+        return self._is_detection_only
+
+    def visit_TableAttrNode(self, node: TableAttrNode) -> Any:
+        if isinstance(node.table, ObjectTableNode) and node.name == "itemHeadings":
+            self._is_detection_only = False
+        return super().visit_TableAttrNode(node)
+
+    def visit_CallNode(self, node: CallNode) -> Any:
+        name = node.name
+        if name == "heading_diff":
+            if any(map(_is_object, node.params)):
+                self._is_detection_only = False
+        elif name in ("stopped", "turn_left"):
+            self._is_detection_only = False
+        return super().visit_CallNode(node)
+
+
+def is_detection_only(node: "PredicateNode") -> bool:
+    return IsDetectionOnly()(node)
+
+
 class MapTablesTransformer(BaseTransformer):
     mapping: "dict[int, int]"
 
@@ -427,18 +467,11 @@ class MapTablesTransformer(BaseTransformer):
         return objects[self.mapping[node.index]]
 
 
-# class NormalizeArrayAtTime(BaseTransformer):
-#     def visit_BinOpNode(self, node: "BinOpNode"):
-#         if node.op == "matmul":
-#             left = node.left
-#             if isinstance(left, ArrayNode):
-#                 return self(
-#                     ArrayNode([BinOpNode(expr, node.op, node.right) for expr in left.exprs])
-#                 )
-#         return node
-
-
 class NormalizeDefaultValue(BaseTransformer):
+    def __init__(self, temporal: bool = True) -> None:
+        super().__init__()
+        self._temporal = temporal
+
     def visit_CallNode(self, node: CallNode) -> PredicateNode:
         # let the function handle the normalization
         return node
@@ -447,7 +480,7 @@ class NormalizeDefaultValue(BaseTransformer):
         table = node.table
         if isinstance(table, ObjectTableNode):
             name = node.name
-            if IS_TEMPORAL[name]:
+            if IS_TEMPORAL[name] and self._temporal:
                 return AtTimeNode(node)
         return node
 
@@ -455,17 +488,23 @@ class NormalizeDefaultValue(BaseTransformer):
         return node.cam
 
     def visit_ObjectTableNode(self, node: ObjectTableNode) -> PredicateNode:
+        if not self._temporal:
+            return node.trans
         return AtTimeNode(node.trans)
 
     def visit_AtTimeNode(self, node: AtTimeNode) -> PredicateNode:
         raise Exception(f"AtTimeNode is illegal prior NormalizeDefaultValue: {node}")
 
 
-normalizers: "list[BaseTransformer]" = [ExpandBoolOpTransformer(), NormalizeDefaultValue()]
+normalizers: "list[type[BaseTransformer]]" = [ExpandBoolOpTransformer, NormalizeDefaultValue]
 
 
-def normalize(predicate: "PredicateNode") -> "PredicateNode":
+def normalize(predicate: PredicateNode, temporal: bool = True) -> PredicateNode:
     for normalizer in normalizers:
+        params = {}
+        if any(p.name == "temporal" for p in signature(normalizer).parameters.values()):
+            params = {"temporal": temporal}
+        normalizer = normalizer(**params)
         normalizer.reset()
         predicate = normalizer(predicate)
     return predicate

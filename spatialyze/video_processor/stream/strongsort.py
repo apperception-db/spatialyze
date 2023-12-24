@@ -30,7 +30,7 @@ if not os.path.exists(WEIGHTS):
 @dataclass
 class TrackingResult:
     detection_id: DetectionId
-    object_id: int
+    object_id: int | str
     confidence: float | np.float32
     bbox: torch.Tensor
     object_type: str

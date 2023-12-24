@@ -10,12 +10,13 @@ from spatialyze.road_network import RoadNetwork
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stream.deepsort import DeepSORT
 from spatialyze.world import World
+from spatialyze.utils.F import heading_diff
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 ROAD_DIR = './data/scenic/road-network/boston-seaport'
 
-def build_filter_world(pkl: bool = False, alt_tracker: bool = False):
+def build_filter_world(pkl: bool = False, alt_tracker: bool = False, track: bool = True):
     database = Database(
         psycopg2.connect(
             dbname=environ.get("AP_DB", "mobilitydb"),
@@ -47,6 +48,9 @@ def build_filter_world(pkl: bool = False, alt_tracker: bool = False):
         world.addVideo(GeospatialVideo(videofile, camera, keep))
     
     o = world.object()
+    c = world.camera()
     world.filter(o.type == 'car')
+    if track:
+        world.filter(heading_diff(o, c) != -1)
 
     return world
