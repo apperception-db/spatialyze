@@ -1,6 +1,9 @@
 import pickle
 import os
 from os import environ
+import json
+import datetime
+import torch
 
 from bitarray import bitarray
 import psycopg2
@@ -112,7 +115,16 @@ def compare_objects2(
     for o2, og in zip(sorted(objects2_prediction), sorted(objects2_groundtruth)):
         assert o2.id == og.id, (o2.id, og.id)
         assert o2.type == og.type, (o2.type, og.type)
-        assert np.allclose(o2.track, og.track, atol=0.001, rtol=0), (o2.track, og.track)
-        assert np.allclose(o2.bboxes, og.bboxes, atol=2, rtol=0), (o2.bboxes, og.bboxes)
-        assert np.allclose(o2.frame_ids, og.frame_ids), (o2.frame_ids, og.frame_ids)
+        assert np.allclose(np.array(o2.track), np.array(og.track), atol=0.001, rtol=0), (o2.track, og.track)
+        assert np.allclose(np.array(o2.bboxes), np.array(og.bboxes), atol=2, rtol=0), (o2.bboxes, og.bboxes)
+        assert np.allclose(np.array(o2.frame_ids), np.array(og.frame_ids)), (o2.frame_ids, og.frame_ids)
         assert o2.camera_id == og.camera_id, (o2.camera_id, og.camera_id)
+
+
+class ResultsEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return str(obj)
+        if isinstance(obj, torch.Tensor):
+            return obj.detach().tolist()
+        return json.JSONEncoder.default(self, obj)
