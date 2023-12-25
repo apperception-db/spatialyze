@@ -338,9 +338,6 @@ class Visitor(Generic[T]):
     def visit_AtTimeNode(self, node: "AtTimeNode") -> Any:
         self(node.attr)
 
-    def reset(self):
-        pass
-
 
 class BaseTransformer(Visitor[PredicateNode]):
     def visit_ArrayNode(self, node: "ArrayNode") -> PredicateNode:
@@ -414,10 +411,6 @@ class FindAllTablesVisitor(Visitor["tuple[set[int], bool]"]):
 
     def visit_CameraTableNode(self, node: "CameraTableNode"):
         self.camera = True
-
-    def reset(self):
-        self.tables = set()
-        self.camera = False
 
 
 def _is_object(node: "PredicateNode"):
@@ -505,7 +498,6 @@ def normalize(predicate: PredicateNode, temporal: bool = True) -> PredicateNode:
         if any(p.name == "temporal" for p in signature(normalizer).parameters.values()):
             params = {"temporal": temporal}
         normalizer = normalizer(**params)
-        normalizer.reset()
         predicate = normalizer(predicate)
     return predicate
 
