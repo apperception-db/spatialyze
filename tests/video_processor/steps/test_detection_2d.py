@@ -17,6 +17,22 @@ from spatialyze.video_processor.stages.detection_2d.ground_truth import GroundTr
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 
+
+def compare_detections(det_result: list, det_groundtruth: list):
+    for (det0, _, did0), (det1, _, did1) in zip(det_result, det_groundtruth):
+        assert len(det0) == len(det1)
+        if len(det1) == 0:
+            continue
+        det0 = det0.cpu().numpy()
+        det1 = np.array(det1)
+        for d0, d1 in zip(det0, det1):
+            assert np.allclose(d0[:4], d1[:4], atol=2)
+            assert np.allclose(d0[4], d1[4], atol=0.05)
+            assert np.allclose(d0[5], d1[5])
+
+        assert all(tuple(d0) == tuple(d1) for d0, d1 in zip(did0, did1))
+
+
 def test_detection_2d():
     files = os.listdir(VIDEO_DIR)
 
@@ -50,18 +66,7 @@ def test_detection_2d():
 
         with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'r') as f:
             det_groundtruth = json.load(f)
-        
-        for (det0, _, did0), (det1, _, did1) in zip(det_result, det_groundtruth):
-            assert len(det0) == len(det1)
-            if len(det1) == 0:
-                continue
-            det0 = det0.cpu().numpy()
-            det1 = np.array(det1)
-            assert np.allclose(det0[:,:4], det1[:,:4], atol=2)
-            assert np.allclose(det0[:,4], det1[:,4], atol=0.05)
-            assert np.allclose(det0[:,5], det1[:,5])
-
-            assert all(tuple(d0) == tuple(d1) for d0, d1 in zip(did0, did1))
+        compare_detections(det_result, det_groundtruth)
 
 
 def test_groundtruth():
@@ -100,15 +105,4 @@ def test_groundtruth():
 
         with open(os.path.join(OUTPUT_DIR, f'GroundTruthDetection--{name}.json'), 'r') as f:
             det_groundtruth = json.load(f)
-        
-        for (det0, _, did0), (det1, _, did1) in zip(det_result, det_groundtruth):
-            assert len(det0) == len(det1)
-            if len(det1) == 0:
-                continue
-            det0 = det0.cpu().numpy()
-            det1 = np.array(det1)
-            assert np.allclose(det0[:,:4], det1[:,:4], atol=2)
-            assert np.allclose(det0[:,4], det1[:,4], atol=0.05)
-            assert np.allclose(det0[:,5], det1[:,5])
-
-            assert all(tuple(d0) == tuple(d1) for d0, d1 in zip(did0, did1))
+        compare_detections(det_result, det_groundtruth)

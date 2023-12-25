@@ -20,6 +20,23 @@ OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 Stage.enable_progress()
 
+
+def compare_trackings(track_result: list, track_groundtruth: list):
+    for tr, tg in zip(track_result, track_groundtruth):
+        for oid, detr in tr.items():
+            detg = tg[str(oid)]
+
+            assert detr.frame_idx == detg['frame_idx']
+            assert detr.object_id == detg['object_id']
+            assert tuple(detr.detection_id) == tuple(detg['detection_id'])
+            assert abs(detr.bbox_left - detg['bbox_left']) <= 1
+            assert abs(detr.bbox_top - detg['bbox_top']) <= 1
+            assert abs(detr.bbox_w - detg['bbox_w']) <= 1
+            assert abs(detr.bbox_h - detg['bbox_h']) <= 1
+            assert detr.object_type == detg['object_type']
+            assert abs(float(detr.confidence) - detg['confidence']) <= 0.05
+
+
 def test_strongsort():
     files = os.listdir(VIDEO_DIR)
 
@@ -55,20 +72,7 @@ def test_strongsort():
 
         with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'r') as f:
             track_groundtruth = json.load(f)
-        
-        for tr, tg in zip(track_result, track_groundtruth):
-            for oid, detr in tr.items():
-                detg = tg[str(oid)]
-
-                assert detr.frame_idx == detg['frame_idx']
-                assert detr.object_id == detg['object_id']
-                assert tuple(detr.detection_id) == tuple(detg['detection_id'])
-                assert abs(detr.bbox_left - detg['bbox_left']) <= 1
-                assert abs(detr.bbox_top - detg['bbox_top']) <= 1
-                assert abs(detr.bbox_w - detg['bbox_w']) <= 1
-                assert abs(detr.bbox_h - detg['bbox_h']) <= 1
-                assert detr.object_type == detg['object_type']
-                assert abs(float(detr.confidence) - detg['confidence']) <= 0.05
+        compare_trackings(track_result, track_groundtruth)
 
 
 def test_deepsort():
@@ -106,17 +110,4 @@ def test_deepsort():
 
         with open(os.path.join(OUTPUT_DIR, f'DeepSORT--{name}.json'), 'r') as f:
             track_groundtruth = json.load(f)
-        
-        for tr, tg in zip(track_result, track_groundtruth):
-            for oid, detr in tr.items():
-                detg = tg[str(oid)]
-
-                assert detr.frame_idx == detg['frame_idx']
-                assert detr.object_id == detg['object_id']
-                assert tuple(detr.detection_id) == tuple(detg['detection_id'])
-                assert abs(detr.bbox_left - detg['bbox_left']) <= 1
-                assert abs(detr.bbox_top - detg['bbox_top']) <= 1
-                assert abs(detr.bbox_w - detg['bbox_w']) <= 1
-                assert abs(detr.bbox_h - detg['bbox_h']) <= 1
-                assert detr.object_type == detg['object_type']
-                assert abs(float(detr.confidence) - detg['confidence']) <= 0.05
+        compare_trackings(track_result, track_groundtruth)
