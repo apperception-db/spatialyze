@@ -447,7 +447,7 @@ class IsDetectionOnly(Visitor[bool]):
         if name == "heading_diff":
             if any(map(_is_object, node.params)):
                 self._is_detection_only = False
-        elif name in ("stopped", "turn_left"):
+        elif name in ("stopped", "left_turn"):
             self._is_detection_only = False
         return super().visit_CallNode(node)
 

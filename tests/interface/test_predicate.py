@@ -1,5 +1,6 @@
 import pytest
 from spatialyze.predicate import *
+from spatialyze.utils.F import *
 
 
 o = objects[0]
@@ -151,3 +152,15 @@ def test_array(fn, sql):
 ])
 def test_resolve_attr(resolve, out):
     assert resolve == out
+
+
+@pytest.mark.parametrize("predicate, result", [
+    (1 + stopped(o), False),
+    (1 + heading_diff(o, o1), False),
+    (1 + heading_diff(c, c), True),
+    (1 + left_turn(o), False),
+    (o.heading == 1, False),
+    (c.heading == 1, True)
+])
+def test_is_detection_only(predicate, result):
+    assert is_detection_only(predicate) == result
