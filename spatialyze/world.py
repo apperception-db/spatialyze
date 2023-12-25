@@ -208,7 +208,7 @@ def _detect(processor: Stream[Detection3D]):
         clss: list[str] | None = None
         vresults: list[TrackingResults] = []
         for idx, detections in enumerate(processor.iterate(video)):
-            if isinstance(detections, Skip):
+            if isinstance(detections, Skip) or len(detections[0]) == 0:
                 continue
 
             timestamp = video[idx].timestamp
