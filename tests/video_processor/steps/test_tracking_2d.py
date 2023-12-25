@@ -49,8 +49,9 @@ def test_strongsort():
         track_result = output['Tracking2D.StrongSORT']
         assert track_result is not None
 
-        # with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
-        #     json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
+        if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
+            with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'w') as f:
+                json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
 
         with open(os.path.join(OUTPUT_DIR, f'StrongSORT--{name}.json'), 'r') as f:
             track_groundtruth = json.load(f)
@@ -99,8 +100,9 @@ def test_deepsort():
         track_result = output['Tracking2D.DeepSORT']
         assert track_result is not None
 
-        # with open(os.path.join(OUTPUT_DIR, f'DeepSORT--{name}.json'), 'w') as f:
-        #     json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
+        if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
+            with open(os.path.join(OUTPUT_DIR, f'DeepSORT--{name}.json'), 'w') as f:
+                json.dump(track_result, f, indent=1, cls=MetadataJSONEncoder)
 
         with open(os.path.join(OUTPUT_DIR, f'DeepSORT--{name}.json'), 'r') as f:
             track_groundtruth = json.load(f)

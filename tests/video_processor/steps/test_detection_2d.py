@@ -44,8 +44,9 @@ def test_detection_2d():
         det_result = output['Detection2D']
         assert det_result is not None
 
-        # with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'w') as f:
-        #     json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
+        if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
+            with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'w') as f:
+                json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
 
         with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'r') as f:
             det_groundtruth = json.load(f)
@@ -93,8 +94,9 @@ def test_groundtruth():
         det_result = output['Detection2D']
         assert det_result is not None
 
-        # with open(os.path.join(OUTPUT_DIR, f'GroundTruthDetection--{name}.json'), 'w') as f:
-        #     json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
+        if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
+            with open(os.path.join(OUTPUT_DIR, f'GroundTruthDetection--{name}.json'), 'w') as f:
+                json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
 
         with open(os.path.join(OUTPUT_DIR, f'GroundTruthDetection--{name}.json'), 'r') as f:
             det_groundtruth = json.load(f)

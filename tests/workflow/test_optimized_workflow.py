@@ -21,19 +21,21 @@ def test_optimized_workflow(alt_tracker: bool, detect_only: bool, suffix: str):
     for t in trackings.values(): t.sort()
     for o in objects.values(): o.sort()
 
-    with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-trackings{suffix}.json'), 'w') as f:
-        json.dump(trackings, f, indent=1, cls=ResultsEncoder)
-    # with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-trackings{suffix}.pkl'), 'wb') as f:
-    #     pickle.dump(trackings, f)
+    if os.environ.get('GENERATE_WORKFLOW_TEST_RESULTS', 'false') == 'true':
+        with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-trackings{suffix}.json'), 'w') as f:
+            json.dump(trackings, f, indent=1, cls=ResultsEncoder)
+        with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-trackings{suffix}.pkl'), 'wb') as f:
+            pickle.dump(trackings, f)
     
     with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-trackings{suffix}.pkl'), 'rb') as f:
         trackings_groundtruth = pickle.load(f)
     compare_trackings(trackings, trackings_groundtruth)
     
-    with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects{suffix}.json'), 'w') as f:
-        json.dump(objects, f, indent=1, cls=ResultsEncoder)
-    # with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects{suffix}.pkl'), 'wb') as f:
-    #     pickle.dump(objects, f)
+    if os.environ.get('GENERATE_WORKFLOW_TEST_RESULTS', 'false') == 'true':
+        with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects{suffix}.json'), 'w') as f:
+            json.dump(objects, f, indent=1, cls=ResultsEncoder)
+        with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects{suffix}.pkl'), 'wb') as f:
+            pickle.dump(objects, f)
     
     with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects{suffix}.pkl'), 'rb') as f:
         objects_groundtruth = pickle.load(f)
@@ -43,10 +45,11 @@ def test_optimized_workflow(alt_tracker: bool, detect_only: bool, suffix: str):
     objects2 = world.getObjects()
     objects2.sort(key=lambda x: (x.id, x.type, x.camera_id, x.frame_ids, x.track, x.bboxes))
 
-    with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects2{suffix}.json'), 'w') as f:
-        json.dump(objects2, f, indent=1, cls=ResultsEncoder)
-    # with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects2{suffix}.pkl'), 'wb') as f:
-    #     pickle.dump(objects2, f)
+    if os.environ.get('GENERATE_WORKFLOW_TEST_RESULTS', 'false') == 'true':
+        with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects2{suffix}.json'), 'w') as f:
+            json.dump(objects2, f, indent=1, cls=ResultsEncoder)
+        with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects2{suffix}.pkl'), 'wb') as f:
+            pickle.dump(objects2, f)
     
     with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects2{suffix}.pkl'), 'rb') as f:
         objects2_groundtruth = pickle.load(f)

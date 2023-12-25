@@ -2,6 +2,10 @@ name: Test
 on:
   push:
 
+env:
+  GENERATE_WORKFLOW_TEST_RESULTS: true
+  GENERATE_PROCESSOR_TEST_RESULTS: false
+
 jobs:
   test-workflow:
     name: Test Workflow
@@ -78,7 +82,8 @@ jobs:
           path: ./coverage.xml
       
       - name: Commit generated test inputs
-        run: ./scripts/commit-and-push.sh "[CI] update test"
+        if: ${{ env.GENERATE_WORKFLOW_TEST_RESULTS == 'true' }}
+        run: ./scripts/commit-and-push.sh "[CI] update workflow test"
 
   test-video-processor:
     name: Test Video Processor
@@ -155,8 +160,9 @@ jobs:
           name: video-processor-coverage
           path: ./coverage.xml
       
-      # - name: Commit formatted changes
-      #   run: ./scripts/commit-and-push.sh "[CI] update test"
+      - name: Commit formatted changes
+        if: ${{ env.GENERATE_PROCESSOR_TEST_RESULTS == 'true' }}
+        run: ./scripts/commit-and-push.sh "[CI] update video processor test"
 
   test-engine-and-interface:
     name: Test Engine and Interface
