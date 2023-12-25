@@ -3,7 +3,7 @@ on:
   push:
 
 env:
-  GENERATE_WORKFLOW_TEST_RESULTS: true
+  GENERATE_WORKFLOW_TEST_RESULTS: false
   GENERATE_PROCESSOR_TEST_RESULTS: false
 
 jobs:
@@ -83,7 +83,7 @@ jobs:
       
       - name: Commit generated test inputs
         if: ${{ env.GENERATE_WORKFLOW_TEST_RESULTS == 'true' }}
-        run: ./scripts/commit-and-push.sh "[CI] update workflow test"
+        run: ./scripts/commit-and-push.sh "[CI] update workflow tests"
 
   test-video-processor:
     name: Test Video Processor
@@ -162,7 +162,7 @@ jobs:
       
       - name: Commit formatted changes
         if: ${{ env.GENERATE_PROCESSOR_TEST_RESULTS == 'true' }}
-        run: ./scripts/commit-and-push.sh "[CI] update video processor test"
+        run: ./scripts/commit-and-push.sh "[CI] update video processor tests"
 
   test-engine-and-interface:
     name: Test Engine and Interface
