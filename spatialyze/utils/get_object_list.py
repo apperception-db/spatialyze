@@ -9,7 +9,7 @@ from ..video_processor.types import DetectionId
 def interpolate_track(
     trackings: dict[int, TrackingResult],
     frameNum: int,
-) -> "TrackingResult":
+) -> TrackingResult:
     left, right = None, None
     leftNum, rightNum = frameNum, frameNum
 
@@ -43,27 +43,27 @@ def interpolate_track(
 
 
 class MovableObject(NamedTuple):
-    id: "int"
-    type: "str"
-    track: "list[Float3]"
-    bboxes: "list[Float4]"
-    frame_ids: "list[int]"
-    camera_id: "str"
+    id: str
+    type: str
+    track: list[Float3]
+    bboxes: list[Float4]
+    frame_ids: list[int]
+    camera_id: str
 
 
 class ObjectListKey(NamedTuple):
-    cameraId: "str"
-    objectId: "int"
+    cameraId: str
+    objectId: str
 
 
 def get_object_list(
-    objects: "dict[str, list[QueryResult]]",
-    trackings: "dict[str, list[list[TrackingResult]]]",
-) -> "list[MovableObject]":
-    tracks: "dict[ObjectListKey, list[Float3]]" = {}
-    bboxes: "dict[ObjectListKey, list[Float4]]" = {}
-    frameIds: "dict[ObjectListKey, list[int]]" = {}
-    objectTypes: "dict[ObjectListKey, str]" = {}
+    objects: dict[str, list[QueryResult]],
+    trackings: dict[str, list[list[TrackingResult]]],
+) -> list[MovableObject]:
+    tracks: dict[ObjectListKey, list[Float3]] = {}
+    bboxes: dict[ObjectListKey, list[Float4]] = {}
+    frameIds: dict[ObjectListKey, list[int]] = {}
+    objectTypes: dict[ObjectListKey, str] = {}
 
     for video in objects:
         _trackings = trackings[video]
@@ -72,7 +72,7 @@ def get_object_list(
         }
         for obj in objects[video]:
             frameId, cameraId, _, objectIds = obj
-            for objectId in map(int, objectIds):
+            for objectId in objectIds:
                 key = ObjectListKey(cameraId, objectId)
                 __trackings = _trackings[objectId]
 

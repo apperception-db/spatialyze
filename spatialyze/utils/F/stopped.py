@@ -28,4 +28,4 @@ def stopped(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str,
 
     point1 = dl(point)
 
-    return f"(ST_Distance({visitor(point1)},valueAtTimestamp({visitor(point.traj)},{visitor(camera.time)}+interval '{duration} secs'))<{distance})"
+    return f"(ST_Distance({visitor(point1)},valueAtTimestamp({visitor(point.trans)},{visitor(camera.time)}+interval '{duration} secs'))<{distance})"

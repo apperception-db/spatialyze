@@ -7,7 +7,7 @@ from ..types import Float3
 
 
 class Trajectory(NamedTuple):
-    obj_id: int
+    obj_id: int | str
     camera_id: str
     object_type: str
     timestamps: list[datetime.datetime]
@@ -16,9 +16,8 @@ class Trajectory(NamedTuple):
 
 
 def prepare_trajectory(
-    video_name: "str",
-    obj_id: "int",
-    track: "list[TrackingResult]",
+    obj_id: int | str,
+    track: list[TrackingResult],
     configs: list[CameraConfig],
 ) -> Trajectory | None:
     timestamps: "list[datetime.datetime]" = []

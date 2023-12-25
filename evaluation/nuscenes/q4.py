@@ -26,17 +26,17 @@ pred4 = (
     F.contained(opposite_car_2.trans@cam.time, F.road_segment('lane')) &
     F.angle_between(F.facing_relative(cam.cam, F.road_direction(cam.cam, cam.cam)), -15, 15) &
     (F.view_angle(car1.trans@cam.time, cam.cam) < lit(35)) &
-    (F.distance(cam.cam, car1.traj@cam.time) < 40) &
-    F.angle_between(F.facing_relative(car1.traj@cam.time, cam.ego), -15, 15) &
-    # F.angle_between(F.facing_relative(car1.traj@cam.time, F.road_direction(car1.traj@cam.time, cam.ego)), -15, 15) &
-    F.ahead(car1.traj@cam.time, cam.cam) &
-    # (F.convert_camera(opposite_car.traj@cam.time, cam.ego) > [-10, 0]) &
-    # (F.convert_camera(opposite_car.traj@cam.time, cam.ego) < [-1, 50]) &
-    F.angle_between(F.facing_relative(opposite_car_1.traj@cam.time, cam.ego), 135, 225) &
+    (F.distance(cam.cam, car1.trans@cam.time) < 40) &
+    F.angle_between(F.facing_relative(car1.trans@cam.time, cam.ego), -15, 15) &
+    # F.angle_between(F.facing_relative(car1.trans@cam.time, F.road_direction(car1.trans@cam.time, cam.ego)), -15, 15) &
+    F.ahead(car1.trans@cam.time, cam.cam) &
+    # (F.convert_camera(opposite_car.trans@cam.time, cam.ego) > [-10, 0]) &
+    # (F.convert_camera(opposite_car.trans@cam.time, cam.ego) < [-1, 50]) &
+    F.angle_between(F.facing_relative(opposite_car_1.trans@cam.time, cam.ego), 135, 225) &
     # (F.distance(opposite_car@cam.time, car2@cam.time) < 40)# &
-    F.angle_between(F.facing_relative(opposite_car_2.traj@cam.time, opposite_car_1.traj@cam.time), -15, 15) &
-    F.angle_between(F.facing_relative(opposite_car_2.traj@cam.time, F.road_direction(opposite_car_2.traj@cam.time, cam.ego)), -15, 15) &
-    F.ahead(opposite_car_2.traj@cam.time, opposite_car_1.traj@cam.time)
+    F.angle_between(F.facing_relative(opposite_car_2.trans@cam.time, opposite_car_1.trans@cam.time), -15, 15) &
+    F.angle_between(F.facing_relative(opposite_car_2.trans@cam.time, F.road_direction(opposite_car_2.trans@cam.time, cam.ego)), -15, 15) &
+    F.ahead(opposite_car_2.trans@cam.time, opposite_car_1.trans@cam.time)
     )
 
 start = time.time()

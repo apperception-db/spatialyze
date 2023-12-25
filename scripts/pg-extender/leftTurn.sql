@@ -60,7 +60,7 @@ DROP FUNCTION IF EXISTS getTimestamp(int, text);
 CREATE OR REPLACE FUNCTION getTimestamp(frame int, camId text) RETURNS timestamptz AS
 $BODY$
 BEGIN
-    return (SELECT timestamp FROM Cameras AS c 
+    return (SELECT timestamp FROM Camera AS c 
            WHERE c.cameraId = camId AND c.frameNum = frame);  
 END
 $BODY$

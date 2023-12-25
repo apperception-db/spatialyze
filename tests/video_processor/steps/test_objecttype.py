@@ -3,10 +3,7 @@ import pytest
 from spatialyze.predicate import *
 from spatialyze.utils import F
 
-from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.stages.detection_2d.object_type_filter import FindType, ObjectTypeFilter
-
-disable_cache()
 
 # Test Strategies
 # - Real use case -- simple predicates from the query

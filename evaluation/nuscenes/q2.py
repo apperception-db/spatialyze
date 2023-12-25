@@ -22,7 +22,7 @@ pred2 =(
     F.contained(obj2.trans@cam.time, 'intersection') &
     # F.angle_between(F.facing_relative(obj1.trans@cam.time, cam.cam), 40, 135) &
     # F.angle_between(F.facing_relative(obj2.trans@cam.time, cam.cam), -135, -50) &
-    F.angle_between(F.facing_relative(obj1.traj@cam.time, obj2.traj@cam.time), -180, -90)
+    F.angle_between(F.facing_relative(obj1.trans@cam.time, obj2.trans@cam.time), -180, -90)
     # (F.min_distance(cam.ego, 'intersection') < 10) &
     # F.angle_between(F.facing_relative(obj1.trans@cam.time, obj2.trans@cam.time), 100, -100)
 )

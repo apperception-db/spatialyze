@@ -10,8 +10,8 @@ def test_contained_margin(fn, sql):
 
 
 @pytest.mark.parametrize("fn, msg", [
-    (contained_margin(o.traj, road_segment('intersection'), o), "ObjectTableNode"),
-    (contained_margin(o.traj,o,3), "ObjectTableNode"),
+    (contained_margin(o.trans, road_segment('intersection'), o), "ObjectTableNode"),
+    (contained_margin(o.trans,o,3), "ObjectTableNode"),
     (contained_margin(1, road_segment('intersection'), 3), "LiteralNode"),
 ])
 def test_exception(fn, msg):

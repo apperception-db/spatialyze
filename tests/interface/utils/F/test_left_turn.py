@@ -4,7 +4,7 @@ from common import *
 
 @pytest.mark.parametrize("fn, sql", [
     (left_turn(o), 
-        "leftTurn(t0.translations, t0.itemHeadings, Cameras.frameNum, Cameras.cameraId)"),
+        "leftTurn(t0.translations, t0.itemHeadings, Camera.frameNum, Camera.cameraId)"),
 ])
 def test_left_turn(fn, sql):
     assert gen(fn) == sql

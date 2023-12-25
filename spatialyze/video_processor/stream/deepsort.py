@@ -156,15 +156,15 @@ def _process_track(
         if len(detection) == 0:
             detection = None
         cls = int(bbox[5])
-        return TrackingResult(did, tid, conf, bbox, clss[cls], camera_configs[fid].timestamp)
+        return TrackingResult(
+            did,
+            str(tid),
+            conf,
+            bbox,
+            clss[cls],
+            camera_configs[fid].timestamp,
+        )
 
     # Sort track by frame idx
     _track = map(tracking_result, zip(track.detection_ids, track.confs))
-    _track = sorted(_track, key=lambda d: d.detection_id.frame_idx)
-
-    # Link track
-    for before, after in zip(_track[:-1], _track[1:]):
-        before.next = after
-        after.prev = before
-
-    return _track
+    return sorted(_track, key=lambda d: d.detection_id.frame_idx)

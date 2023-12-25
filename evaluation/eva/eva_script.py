@@ -91,7 +91,7 @@ def load_data(sceneNumbers):
         cursor.load(file_regex=VIDEO_PATH + video_name, format="VIDEO", table_name='ObjectDetectionVideos').df()
 
         # Add camera configs
-        result = database.execute(f"SELECT cameraId, ROW_NUMBER() OVER (Order by frameNum) AS RowNumber, cameraTranslation, cameraRotation, cameraIntrinsic, egoHeading, filename FROM Cameras WHERE cameraId = '{scene}'")
+        result = database.execute(f"SELECT cameraId, ROW_NUMBER() OVER (Order by frameNum) AS RowNumber, cameraTranslation, cameraRotation, cameraIntrinsic, egoHeading, filename FROM Camera WHERE cameraId = '{scene}'")
         with open(os.path.join(VIDEO_PATH, camera_name), 'rb') as f:
             result = pickle.load(f)['frames']
         df = pd.DataFrame()

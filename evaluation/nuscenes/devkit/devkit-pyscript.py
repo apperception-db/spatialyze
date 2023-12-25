@@ -121,9 +121,9 @@ with open("../../../data/evaluation/video-samples/boston-seaport.txt", 'r') as f
 #     F.like(o.type, lit('human.pedestrian%')) &
 #     F.contained(c.ego, 'road') &
 #     (F.contained_margin(o.bbox@c.time, F.road_segment('road'), lit(0.50)) | F.contained(o.trans@c.time, 'road')) &
-#     F.angle_excluding(F.facing_relative(o.traj@c.time, c.ego), lit(-70), lit(70)) &
+#     F.angle_excluding(F.facing_relative(o.trans@c.time, c.ego), lit(-70), lit(70)) &
 #     F.angle_between(F.facing_relative(c.ego, c.roadDirection), lit(-15), lit(15)) &
-#     (F.distance(c.camAbs, o.traj@c.time) < lit(50)) &
+#     (F.distance(c.camAbs, o.trans@c.time) < lit(50)) &
 #     (F.view_angle(o.trans@c.time, c.camAbs) < lit(35))
 # )
 
@@ -460,8 +460,8 @@ with open('fig13_results.txt', 'w') as f:
 #         "F.view_angle(obj1, cam.ego, cam.timestamp) < 70 / 2 and " +
 #         "F.angle_between(F.facing_relative(cam.ego, F.road_direction(cam.ego, cam.timestamp, cam.ego), cam.timestamp), -180, -90) and " +
 #         "F.contained(cam.ego, F.road_segment('road')) and " +
-#         "F.contained(obj1.traj, F.road_segment('road'), cam.timestamp) and " +
-#         "F.angle_between(F.facing_relative(obj1, F.road_direction(obj1.traj, cam.timestamp, cam.ego), cam.timestamp), -15, 15) and " +
+#         "F.contained(obj1.trans, F.road_segment('road'), cam.timestamp) and " +
+#         "F.angle_between(F.facing_relative(obj1, F.road_direction(obj1.trans, cam.timestamp, cam.ego), cam.timestamp), -15, 15) and " +
 #         "F.distance(cam.ego, obj1, cam.timestamp) < 10"
 # )
 
@@ -608,18 +608,18 @@ with open('fig14_results.txt', 'w') as f:
 #     (car1.id != opposite_car.id) &
 
 #     F.angle_between(F.facing_relative(cam.ego, F.road_direction(cam.ego, cam.ego)), -15, 15) &
-#     (F.view_angle(car1.traj@cam.time, cam.ego) < 70 / 2) &
-#     (F.distance(cam.ego, car1.traj@cam.time) < 50) &
-# #     F.angle_between(F.facing_relative(car1.traj@cam.time, cam.ego), -15, 15) &
-# #     F.angle_between(F.facing_relative(car1.traj@cam.time, F.road_direction(car1.traj@cam.time, cam.ego)), -15, 15) &
-#     F.ahead(car1.traj@cam.time, cam.ego) &
+#     (F.view_angle(car1.trans@cam.time, cam.ego) < 70 / 2) &
+#     (F.distance(cam.ego, car1.trans@cam.time) < 50) &
+# #     F.angle_between(F.facing_relative(car1.trans@cam.time, cam.ego), -15, 15) &
+# #     F.angle_between(F.facing_relative(car1.trans@cam.time, F.road_direction(car1.trans@cam.time, cam.ego)), -15, 15) &
+#     F.ahead(car1.trans@cam.time, cam.ego) &
 #     F.angle_between(F.facing_relative(cam.ego, F.road_direction(cam.ego, cam.ego)), -15, 15) &
-#     (F.convert_camera(opposite_car.traj@cam.time, cam.ego) > [-10, 0]) &
-#     (F.convert_camera(opposite_car.traj@cam.time, cam.ego) < [-1, 50]) &
-#     F.angle_between(F.facing_relative(opposite_car.traj@cam.time, cam.ego), 140, 180) &
+#     (F.convert_camera(opposite_car.trans@cam.time, cam.ego) > [-10, 0]) &
+#     (F.convert_camera(opposite_car.trans@cam.time, cam.ego) < [-1, 50]) &
+#     F.angle_between(F.facing_relative(opposite_car.trans@cam.time, cam.ego), 140, 180) &
 #     (F.distance(opposite_car@cam.time, car2@cam.time) < 40) &
-# #     F.angle_between(F.facing_relative(car2.traj@cam.time, F.road_direction(car2.traj@cam.time, cam.ego)), -15, 15) &
-#     F.ahead(car2.traj@cam.time, opposite_car.traj@cam.time)
+# #     F.angle_between(F.facing_relative(car2.trans@cam.time, F.road_direction(car2.trans@cam.time, cam.ego)), -15, 15) &
+#     F.ahead(car2.trans@cam.time, opposite_car.trans@cam.time)
 # )
 
 

@@ -24,5 +24,5 @@ class MetadataJSONEncoder(json.JSONEncoder):
         return super().default(o)
 
 
-def _get_all_subclasses(cls: "Type[Stage]") -> "list[Type[Stage]]":
+def _get_all_subclasses(cls: Type[Stage]) -> list[Type[Stage]]:
     return [cls, *sum([_get_all_subclasses(subcls) for subcls in cls.__subclasses__()], [])]

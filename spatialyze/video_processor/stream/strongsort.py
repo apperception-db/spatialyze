@@ -1,7 +1,7 @@
 import datetime
 import os
-from dataclasses import dataclass, field
 from pathlib import Path
+from typing import NamedTuple
 
 import numpy as np
 import numpy.typing as npt
@@ -27,16 +27,13 @@ if not os.path.exists(WEIGHTS):
     os.makedirs(WEIGHTS)
 
 
-@dataclass
-class TrackingResult:
+class TrackingResult(NamedTuple):
     detection_id: DetectionId
-    object_id: int
+    object_id: str
     confidence: float | np.float32
     bbox: torch.Tensor
     object_type: str
     timestamp: datetime.datetime
-    next: "TrackingResult | None" = field(default=None, compare=False, repr=False)
-    prev: "TrackingResult | None" = field(default=None, compare=False, repr=False)
 
 
 class StrongSORT(Stream[list[TrackingResult]]):
@@ -143,16 +140,14 @@ def _process_track(
         bbox = detections[fid][oid]
         cls = int(bbox[5])
         return TrackingResult(
-            did, tid, conf, detections[fid][oid], clss[cls], camera_configs[fid].timestamp
+            did,
+            str(tid),
+            conf,
+            detections[fid][oid],
+            clss[cls],
+            camera_configs[fid].timestamp,
         )
 
     # Sort track by frame idx
     _track = map(tracking_result, zip(track.detection_ids, track.confs))
-    _track = sorted(_track, key=lambda d: d.detection_id.frame_idx)
-
-    # Link track
-    for before, after in zip(_track[:-1], _track[1:]):
-        before.next = after
-        after.prev = before
-
-    return _track
+    return sorted(_track, key=lambda d: d.detection_id.frame_idx)

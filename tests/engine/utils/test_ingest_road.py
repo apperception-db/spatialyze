@@ -5,15 +5,6 @@ import os
 import pytest
 
 
-d1 = Database(psycopg2.connect(
-    dbname="mobilitydb",
-    user="docker",
-    host="localhost",
-    port=os.environ["AP_PORT_ROAD_1"],
-    password="docker",
-))
-ingest_road(d1, "./data/scenic/road-network/boston-seaport")
-
 @pytest.mark.parametrize("table, count", [
     ("segmentpolygon", 3072),
     ("segment", 11410),
@@ -31,6 +22,15 @@ ingest_road(d1, "./data/scenic/road-network/boston-seaport")
     ("intersection", 332),
 ])
 def test_simple_ops(table: str, count: int):
+    d1 = Database(psycopg2.connect(
+        dbname="mobilitydb",
+        user="docker",
+        host="localhost",
+        port=os.environ["AP_PORT_ROAD_1"],
+        password="docker",
+    ))
+    d1.reset()
+    ingest_road(d1, "./data/scenic/road-network/boston-seaport")
     assert d1.execute(f"select count(*) from {table}") == [(count,)]
 
 

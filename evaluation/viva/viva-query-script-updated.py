@@ -43,7 +43,6 @@ from spatialyze.road_network import RoadNetwork
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stages.tracking_3d.tracking_3d import Tracking3DResult
 from spatialyze.world import World, _execute
-from spatialyze.video_processor.cache import disable_cache
 from spatialyze.video_processor.metadata_json_encoder import MetadataJSONEncoder
 from spatialyze.utils import F
 
@@ -57,7 +56,6 @@ VIDEO_DIR = '/home/youse/viva-data'
 
 VIDEO_NAME = 'output-small.mp4'
 
-disable_cache()
 savert(starttime, 'setup')
 
 files = []

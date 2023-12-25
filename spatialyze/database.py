@@ -38,9 +38,11 @@ if TYPE_CHECKING:
 
     from .predicate import PredicateNode
 
-CAMERA_TABLE = "Cameras"
-TRAJ_TABLE = "Item_General_Trajectory"
+CAMERA_TABLE = "Camera"
+TRAJECTORY_TABLE = "Item_Trajectory"
+DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
+TABLES = CAMERA_TABLE, TRAJECTORY_TABLE, DETECTION_TABLE, BBOX_TABLE
 
 CAMERA_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
@@ -62,13 +64,21 @@ TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
     # ("roadTypes", "ttext"),
-    ("trajCentroids", "tgeompoint"),
     ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
     ("itemHeadings", "tfloat"),
     # ("color", "TEXT"),
     # ("largestBbox", "STBOX")
     # ("roadPolygons", "tgeompoint"),
     # ("period", "period") [today, nextweek]
+]
+
+DETECTION_COLUMNS: list[tuple[str, str]] = [
+    ("itemId", "TEXT"),
+    ("cameraId", "TEXT"),
+    ("objectType", "TEXT"),
+    ("frameNum", "Int"),
+    ("translation", "geometry"),
+    ("timestamp", "timestamptz"),
 ]
 
 BBOX_COLUMNS: "list[tuple[str, str]]" = [
@@ -105,7 +115,8 @@ class Database:
         self.reset_cursor()
         self._drop_table(commit)
         self._create_camera_table(commit)
-        self._create_item_general_trajectory_table(commit)
+        self._create_item_trajectory_table(commit)
+        self._create_item_detection_table(commit)
         self._create_general_bbox_table(commit)
         self._create_index(commit)
 
@@ -116,61 +127,73 @@ class Database:
 
     def _drop_table(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute("DROP TABLE IF EXISTS Cameras CASCADE;")
-        cursor.execute("DROP TABLE IF EXISTS General_Bbox CASCADE;")
-        cursor.execute("DROP TABLE IF EXISTS Item_General_Trajectory CASCADE;")
+        for table in TABLES:
+            cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE;")
         self._commit(commit)
         cursor.close()
 
     def _create_camera_table(self, commit=True):
         cursor = self.connection.cursor()
-        cursor.execute(f"CREATE TABLE Cameras ({columns(_schema, CAMERA_COLUMNS)})")
+        cursor.execute(
+            "CREATE TABLE Camera ("
+            f"{columns(_schema, CAMERA_COLUMNS)},"
+            "PRIMARY KEY (cameraId, frameNum))"
+        )
         self._commit(commit)
         cursor.close()
 
     def _create_general_bbox_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            f"""
-            CREATE TABLE General_Bbox (
-                {columns(_schema, BBOX_COLUMNS)},
-                FOREIGN KEY(itemId) REFERENCES Item_General_Trajectory(itemId),
-                PRIMARY KEY (itemId, timestamp)
-            )
-            """
+            "CREATE TABLE General_Bbox ("
+            f"{columns(_schema, BBOX_COLUMNS)},"
+            "FOREIGN KEY(itemId) REFERENCES Item_Trajectory (itemId),"
+            "PRIMARY KEY (itemId, timestamp))"
         )
         self._commit(commit)
         cursor.close()
 
-    def _create_item_general_trajectory_table(self, commit=True):
+    def _create_item_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            f"""
-            CREATE TABLE Item_General_Trajectory (
-                {columns(_schema, TRAJECTORY_COLUMNS)},
-                PRIMARY KEY (itemId)
-            )
-            """
+            "CREATE TABLE Item_Trajectory ("
+            f"{columns(_schema, TRAJECTORY_COLUMNS)},"
+            "PRIMARY KEY (itemId))"
+        )
+        self._commit(commit)
+        cursor.close()
+
+    def _create_item_detection_table(self, commit=True):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "CREATE TABLE Item_Detection ("
+            f"{columns(_schema, DETECTION_COLUMNS)},"
+            "PRIMARY KEY (itemId),"
+            "FOREIGN KEY (cameraId, frameNum) REFERENCES Camera(cameraId, frameNum))"
         )
         self._commit(commit)
         cursor.close()
 
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
-        # cursor.execute("CREATE INDEX ON Cameras (cameraId);")
-        cursor.execute("CREATE INDEX ON Cameras (cameraId, frameNum);")
-        cursor.execute("CREATE INDEX ON Cameras (timestamp);")
-        cursor.execute("CREATE INDEX ON Item_General_Trajectory (itemId);")
-        cursor.execute("CREATE INDEX ON Item_General_Trajectory (cameraId);")
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS traj_idx "
-            "ON Item_General_Trajectory "
-            "USING GiST(trajCentroids);"
-        )
+        # cursor.execute("CREATE INDEX ON Camera (cameraId);")
+        cursor.execute("CREATE INDEX ON Camera (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX ON Camera (timestamp);")
+        cursor.execute("CREATE INDEX ON Item_Trajectory (itemId);")
+        cursor.execute("CREATE INDEX ON Item_Trajectory (cameraId);")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS trans_idx "
-            "ON Item_General_Trajectory "
+            "ON Item_Trajectory "
             "USING GiST(translations);"
+        )
+        cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
+        cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
+        cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX ON Item_Detection (timestamp);")
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
+            "ON Item_Detection "
+            "USING GiST(translation);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
         # cursor.execute(
@@ -229,7 +252,7 @@ class Database:
 
     def insert_camera(self, camera: list[CameraConfig]):
         cursor = self.connection.cursor()
-        insert = SQL("INSERT INTO Cameras VALUES ")
+        insert = SQL("INSERT INTO Camera VALUES ")
         values = SQL(",").join(map(_config, camera))
         cursor.execute(insert + values)
 
@@ -251,26 +274,23 @@ class Database:
     ):
         ingest_processed_nuscenes(annotations, cameras, self)
 
-    def predicate(self, predicate: "PredicateNode"):
-        tables, camera = FindAllTablesVisitor()(predicate)
+    def predicate(self, predicate: "PredicateNode", temporal: bool = True):
+        tables, _ = FindAllTablesVisitor()(predicate)
         tables = sorted(tables)
         mapping = {t: i for i, t in enumerate(tables)}
-        predicate = normalize(predicate)
+        predicate = normalize(predicate, temporal)
         predicate = MapTablesTransformer(mapping)(predicate)
+        join_table = _join_table(temporal)
 
         t_tables = ""
         t_outputs = ""
         for i in range(len(tables)):
-            t_tables += (
-                f"JOIN Item_General_Trajectory AS t{i} "
-                f"ON  c0.timestamp <@ t{i}.trajCentroids::period "
-                f"AND c0.cameraId  =  t{i}.cameraId\n"
-            )
+            t_tables += join_table(i)
             t_outputs += f",\n   t{i}.itemId"
 
         sql_str = (
             f"SELECT c0.frameNum, c0.cameraId, c0.filename{t_outputs}\n"
-            f"FROM Cameras as c0\n{t_tables}"
+            f"FROM Camera as c0\n{t_tables}"
             f"WHERE {GenSqlVisitor()(predicate)}"
         )
         return [
@@ -283,6 +303,24 @@ class Database:
         description = cursor.description
         cursor.close()
         return pd.DataFrame(results, columns=[d.name for d in description])
+
+
+def _join_table(temporal: bool):
+    if temporal:
+
+        def join_table(i: int) -> str:
+            return (
+                f"JOIN Item_Trajectory AS t{i} "
+                f"ON  c0.timestamp <@ t{i}.translations::period "
+                f"AND c0.cameraId  =  t{i}.cameraId\n"
+            )
+
+    else:
+
+        def join_table(i: int) -> str:
+            return f"JOIN Item_Detection AS t{i}" " USING (frameNum, cameraId)\n"
+
+    return join_table
 
 
 class _Config(NamedTuple):

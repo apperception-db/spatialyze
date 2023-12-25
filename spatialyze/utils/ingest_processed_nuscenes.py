@@ -116,16 +116,14 @@ def ingest_processed_nuscenes(
             headings = [TFloatInst(f, t) for f, t in zip(itemHeadings, timestamps)]
             item_sqls.append(
                 psql.SQL(
-                    """(
-                {item_id},      {camera_id},
-                {object_type},  {traj_centroids},
-                {translations}, {item_headings}
-            )"""
+                    "({item_id},      {camera_id}, {object_type}, "
+                    # " {object_type},  {traj_centroids},"
+                    " {translations}, {item_headings})"
                 ).format(
                     item_id=L(item_id),
                     camera_id=L(str(k)),
                     object_type=L(obj.object_type),
-                    traj_centroids=L(TGeomPointSeq(trajectory, upper_inc=True)),
+                    # traj_centroids=L(TGeomPointSeq(trajectory, upper_inc=True)),
                     translations=L(TGeomPointSeq(trajectory, upper_inc=True)),
                     item_headings=L(TFloatSeq(headings, upper_inc=True)),
                 )
@@ -143,7 +141,7 @@ def _flush(
     if threshold is None or len(camera_sqls) + len(item_sqls) >= threshold:
         if len(camera_sqls) != 0:
             query = psql.SQL(
-                "INSERT INTO Cameras ("
+                "INSERT INTO Camera ("
                 "cameraId, frameId, "
                 "frameNum, fileName, "
                 "cameraTranslation, cameraRotation, "
@@ -156,9 +154,9 @@ def _flush(
 
         if len(item_sqls) != 0:
             query = psql.SQL(
-                "INSERT INTO Item_General_Trajectory ("
-                "ItemId, CameraId, "
-                "ObjectType, TrajCentroids, "
+                "INSERT INTO Item_Trajectory ("
+                "ItemId, CameraId, ObjectType, "
+                # "ObjectType, translations, "
                 "Translations, ItemHeadings"
                 ") VALUES {}"
             ).format(psql.SQL(",").join(item_sqls))
