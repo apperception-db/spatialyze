@@ -15,8 +15,7 @@ def insert_detections(
     timestamp: datetime.datetime,
 ):
     dets, clss, dids = detections
-    if len(dets) == 0:
-        return
+    assert len(dets) > 0, dets
     rows: list[Composed] = []
     for did, det in zip(dids, dets):
         fid, oid = did

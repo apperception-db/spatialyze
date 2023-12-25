@@ -481,9 +481,10 @@ class NormalizeDefaultValue(BaseTransformer):
         return node.cam
 
     def visit_ObjectTableNode(self, node: ObjectTableNode) -> PredicateNode:
-        if not self._temporal:
-            return node.trans
-        return AtTimeNode(node.trans)
+        translation = node.trans
+        if self._temporal:
+            translation = AtTimeNode(translation)
+        return translation
 
     def visit_AtTimeNode(self, node: AtTimeNode) -> PredicateNode:
         raise Exception(f"AtTimeNode is illegal prior NormalizeDefaultValue: {node}")
