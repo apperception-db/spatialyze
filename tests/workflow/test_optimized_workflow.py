@@ -41,6 +41,7 @@ def test_optimized_workflow(alt_tracker: bool, detect_only: bool, suffix: str):
 
     world._objects, world._trackings = objects, trackings
     objects2 = world.getObjects()
+    objects2.sort(key=lambda x: (x.id, x.type, x.camera_id, x.frame_ids, x.track, x.bboxes))
 
     with open(os.path.join(OUTPUT_DIR, f'optimized-workflow-objects2{suffix}.json'), 'w') as f:
         json.dump(objects2, f, indent=1, cls=ResultsEncoder)
