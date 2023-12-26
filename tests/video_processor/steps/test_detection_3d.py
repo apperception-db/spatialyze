@@ -13,8 +13,12 @@ from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
 
 from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
-from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
+from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection, Metadatum as D2DMetadatum
 from spatialyze.video_processor.stages.detection_3d.from_detection_2d_and_road import FromDetection2DAndRoad
+from spatialyze.video_processor.stages.detection_3d.from_detection_2d_and_depth import FromDetection2DAndDepth
+from spatialyze.video_processor.stages.depth_estimation import DepthEstimation
+
+from common import yolo_output
 
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
@@ -44,9 +48,12 @@ def test_detection_3d():
         videos = pickle.load(f)
     
     pipeline = Pipeline([
+        # Manually ingest processed detections from YoloDetection
         DecodeFrame(),
-        YoloDetection(),
+        # YoloDetection(),
         FromDetection2DAndRoad(),
+        DepthEstimation(),
+        FromDetection2DAndDepth(),
     ])
 
     for name, video in videos.items():
@@ -61,11 +68,9 @@ def test_detection_3d():
         keep.setall(0)
         keep[(len(frames) * 7) // 8:] = 1
 
-        output = pipeline.run(Payload(frames, keep))
-        # det_result = FromDetection2DAndRoad.get(output)
+        output = pipeline.run(Payload(frames, keep, metadata=yolo_output(name)))
         det_result = output[FromDetection2DAndRoad]
         assert det_result is not None
-
         if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
             with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.json'), 'w') as f:
                 json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
@@ -73,6 +78,19 @@ def test_detection_3d():
                 pickle.dump([(d[0].cpu(), d[1], d[2]) for d in det_result], f)
 
         with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndRoad--{name}.pkl'), 'rb') as f:
+            det_groundtruth = pickle.load(f)
+        compare_detections(det_result, det_groundtruth)
+
+
+        det_result = FromDetection2DAndDepth.get(output)
+        assert det_result is not None
+        # if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
+        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndDepth--{name}.json'), 'w') as f:
+            json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
+        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndDepth--{name}.pkl'), 'wb') as f:
+            pickle.dump([(d[0].cpu(), d[1], d[2]) for d in det_result], f)
+
+        with open(os.path.join(OUTPUT_DIR, f'FromDetection2DAndDepth--{name}.pkl'), 'rb') as f:
             det_groundtruth = pickle.load(f)
         compare_detections(det_result, det_groundtruth)
 
