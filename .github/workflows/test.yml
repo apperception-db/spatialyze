@@ -161,7 +161,7 @@ jobs:
           path: ./coverage.xml
       
       - name: Commit formatted changes
-        # if: ${{ env.GENERATE_PROCESSOR_TEST_RESULTS == 'true' }}
+        if: ${{ env.GENERATE_PROCESSOR_TEST_RESULTS == 'true' }}
         run: ./scripts/commit-and-push.sh "[CI] update video processor tests"
 
   test-engine-and-interface:

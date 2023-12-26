@@ -139,7 +139,3 @@ def rotate(vectors: "npt.NDArray", rotation: "Quaternion") -> "npt.NDArray":
         The rotated vectors (3 x N).
     """
     return rotation.unit.rotation_matrix @ vectors
-
-
-def conj(q: "npt.NDArray") -> "npt.NDArray":
-    return np.concatenate([q[0:1, :], -q[1:, :]])
