@@ -86,11 +86,7 @@ def test_groundtruth():
     with open('./data/nuscenes/processed/annotation-mini.pkl', 'rb') as f:
         annotations = pd.DataFrame.from_records(pickle.load(f))
     
-    pipeline = Pipeline([
-        DecodeFrame(),
-        YoloDetection(),
-        GroundTruthDetection3D(annotations),
-    ])
+    pipeline = Pipeline([GroundTruthDetection3D(annotations)])
 
     for name, video in videos.items():
         if video['filename'] not in files:

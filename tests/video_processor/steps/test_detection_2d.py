@@ -12,6 +12,7 @@ from spatialyze.video_processor.camera_config import camera_config
 
 from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
 from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection
+from spatialyze.video_processor.stages.detection_2d.detection_2d import Metadatum as D2DMetadatum
 from spatialyze.video_processor.stages.detection_2d.ground_truth import GroundTruthDetection
 
 OUTPUT_DIR = './data/pipeline/test-results'
@@ -63,6 +64,8 @@ def test_detection_2d():
         if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
             with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'w') as f:
                 json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
+        with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'wb') as f:
+            pickle.dump([D2DMetadatum(det.detach().cpu(), clss, did) for det, clss, did in det_result], f)
 
         with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'r') as f:
             det_groundtruth = json.load(f)
@@ -79,7 +82,6 @@ def test_groundtruth():
         annotations = pd.DataFrame.from_records(pickle.load(f))
 
     pipeline = Pipeline()
-    pipeline.add_filter(DecodeFrame())
     pipeline.add_filter(GroundTruthDetection(annotations))
 
     for name, video in videos.items():
