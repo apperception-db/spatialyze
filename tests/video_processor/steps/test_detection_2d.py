@@ -64,7 +64,7 @@ def test_detection_2d():
         if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
             with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'w') as f:
                 json.dump([(d[0].cpu().numpy().tolist(), d[1], d[2]) for d in det_result], f, indent=1)
-        with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'wb') as f:
+        with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.pkl'), 'wb') as f:
             pickle.dump([D2DMetadatum(det.detach().cpu(), clss, did) for det, clss, did in det_result], f)
 
         with open(os.path.join(OUTPUT_DIR, f'YoloDetection--{name}.json'), 'r') as f:
