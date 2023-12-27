@@ -22,8 +22,7 @@ get_points = np.array(gp, dtype=np.int8)
 
 
 def rotate(
-    vectors: npt.NDArray[np.floating[Any]],
-    rotation: Quaternion
+    vectors: npt.NDArray[np.floating[Any]], rotation: Quaternion
 ) -> npt.NDArray[np.floating[Any]]:
     """Rotate 3D Vector by rotation quaternion.
     Params:
@@ -46,7 +45,7 @@ def _3d_to_2d(
     _camera_intrinsics: Float33,
 ) -> Float4:
     translation = np.array(_translation, dtype=np.float64)
-    size = np.array((_size[1], _size[0], _size[2]), dtype=np.float64) / 2.
+    size = np.array((_size[1], _size[0], _size[2]), dtype=np.float64) / 2.0
     rotation = Quaternion(_rotation)
     camera_translation = np.array(_camera_translation, dtype=np.float64)
     camera_rotation = _camera_rotation
