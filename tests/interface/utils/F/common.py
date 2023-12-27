@@ -1,5 +1,6 @@
 from spatialyze.predicate import GenSqlVisitor, objects, camera
 from spatialyze.utils.F import *
+from spatialyze.utils.F.custom_fn import custom_fn
 
 
 o = objects[0]

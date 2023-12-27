@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, NamedTuple
+from typing import NamedTuple
 
 import numpy as np
 import numpy.typing as npt
@@ -11,9 +11,7 @@ from tqdm import tqdm
 from ..data_types.camera_key import CameraKey
 from ..data_types.nuscenes_annotation import NuscenesAnnotation
 from ..data_types.nuscenes_camera import NuscenesCamera
-
-if TYPE_CHECKING:
-    from ..database import Database
+from ..database import Database
 
 
 class _MovableObject(NamedTuple):
@@ -32,7 +30,7 @@ def ingest_processed_nuscenes(
     camera_map: "dict[CameraKey, list[NuscenesCamera]]",
     database: "Database",
 ):
-    keys = list(camera_map.keys())
+    keys = [k for k in camera_map.keys() if camera_map[k][0].location == "boston-seaport"]
     # print(len(keys))
     # ks = [k for k in keys if camera_map[k][0].location == 'boston-seaport']
     # print(len(ks))
@@ -44,8 +42,6 @@ def ingest_processed_nuscenes(
     print("Ingesting Cameras and Annotations")
     for k in tqdm(ks, total=len(ks)):
         camera = camera_map[k]
-        if camera[0].location != "boston-seaport":
-            continue
         annotations = annotations_map[k]
 
         objects: "dict[str, _MovableObject]" = {}

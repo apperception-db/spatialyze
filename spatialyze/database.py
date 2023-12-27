@@ -97,10 +97,6 @@ def _schema(column: "tuple[str, str]") -> str:
     return " ".join(column)
 
 
-def place_holder(num: int):
-    return ",".join(["%s"] * num)
-
-
 class Database:
     connection: "Connection"
     cursor: "Cursor"

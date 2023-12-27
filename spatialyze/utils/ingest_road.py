@@ -694,11 +694,3 @@ def ingest_road(database: "Database", directory: str):
     add_segment_type(database, ROAD_TYPES)
 
     database.reset()
-
-
-if __name__ == "__main__":
-    import sys
-
-    from spatialyze.database import database
-
-    ingest_road(database, sys.argv[1])
