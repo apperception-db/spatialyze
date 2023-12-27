@@ -1,3 +1,4 @@
 ignore:
   - "spatialyze/video_processor/modules"
+  - "spatialyze/video_processor/stages/detection_estimation/*"
   - "**/__init__.py"
