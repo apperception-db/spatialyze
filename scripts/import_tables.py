@@ -11,7 +11,6 @@ from spatialyze.database import (
     Database,
     database,
     columns,
-    place_holder,
 )
 
 
@@ -86,6 +85,10 @@ def import_tables(database: "Database", data_path: str):
 
 def _name(column: "tuple[str, str]") -> str:
     return column[0]
+
+
+def place_holder(num: int):
+    return ",".join(["%s"] * num)
 
 
 def _insert_into_camera(database: "Database", value: tuple, commit=True):
