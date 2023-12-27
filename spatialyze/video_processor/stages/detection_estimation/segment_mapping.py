@@ -223,7 +223,9 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
 
         p = swkb.loads(roadpolygon.to_ewkb(), hex=True)
         assert isinstance(p, sg.Polygon)
-        XYs: "Tuple[array.array[float], array.array[float]]" = p.exterior.xy
+        exterior = p.exterior
+        assert hasattr(exterior, "xy")
+        XYs: "Tuple[array.array[float], array.array[float]]" = getattr(exterior, "xy")
         assert isinstance(XYs, tuple)
         assert isinstance(XYs[0], array.array), type(XYs[0])
         assert isinstance(XYs[1], array.array), type(XYs[1])

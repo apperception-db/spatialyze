@@ -9,8 +9,9 @@ import shapely
 import shapely.geometry
 import shapely.wkb
 
+from ...types import Float2, Float3, Float22
+
 if TYPE_CHECKING:
-    from ...types import Float2, Float3, Float22
     from .detection_estimation import DetectionInfo
     from .segment_mapping import RoadPolygonInfo
 
@@ -51,12 +52,8 @@ MAX_CAR_SPEED = {
 MAX_CAR_SPEED.update({k: mph_to_mps(v) for k, v in MAX_CAR_SPEED.items()})
 
 
-def time_elapse(current_time, elapsed_time):
+def time_elapse(current_time: datetime.datetime, elapsed_time: float):
     return current_time + datetime.timedelta(seconds=elapsed_time)
-
-
-def compute_area(polygon) -> float:
-    return shapely.geometry.box(*polygon).area
 
 
 def compute_distance(loc1, loc2) -> float:
@@ -78,8 +75,9 @@ def car_move(car_loc, car_heading, car_speed, duration):
 
 
 def project_point_onto_linestring(
-    point: "shapely.geometry.Point", line: "shapely.geometry.LineString"
-) -> "shapely.geometry.Point":
+    point: "shapely.geometry.Point",
+    line: "shapely.geometry.LineString",
+) -> "shapely.geometry.Point | None":
     x: "npt.NDArray[np.float64]" = np.array(point.coords[0])
     assert x.dtype == np.dtype(np.float64)
 
@@ -100,7 +98,8 @@ def project_point_onto_linestring(
 
 
 def _construct_extended_line(
-    polygon: "shapely.geometry.Polygon | list[Float2] | list[Float3]", line: "Float22"
+    polygon: "shapely.geometry.Polygon | list[Float2] | list[Float3]",
+    line: "Float22",
 ):
     """
     line: represented by 2 points
@@ -108,32 +107,30 @@ def _construct_extended_line(
     """
     try:
         polygon = shapely.geometry.Polygon(polygon)
-        minx, miny, maxx, maxy = polygon.bounds
+        minx, miny, maxx, maxy = list(polygon.bounds)
     except BaseException:
         assert isinstance(polygon, tuple) or isinstance(polygon, list)
         assert len(polygon) <= 2
         if len(polygon) == 2:
             try:
-                a, b = shapely.geometry.LineString(polygon).boundary.geoms
-                minx = min(a.x, b.x)
-                maxx = max(a.x, b.x)
-                miny = min(a.y, b.y)
-                maxy = max(a.y, b.y)
+                boundary = shapely.geometry.LineString(polygon).boundary
+                assert hasattr(boundary, "geoms")
+                a, b = getattr(boundary, "geoms")
+                minx, maxx = sorted([a.x, b.x])
+                miny, maxy = sorted([a.y, b.y])
             except BaseException:
                 assert polygon[0] == polygon[1]
-                minx = polygon[0][0]
-                maxx = polygon[0][0]
-                miny = polygon[0][1]
-                maxy = polygon[0][1]
+                minx, miny = polygon[0][0], polygon[0][1]
+                maxx, maxy = minx, miny
         else:
-            minx = polygon[0][0]
-            maxx = polygon[0][0]
-            miny = polygon[0][1]
-            maxy = polygon[0][1]
+            minx, miny = polygon[0][0], polygon[0][1]
+            maxx, maxy = minx, miny
 
-    line = shapely.geometry.LineString(line)
+    _line = shapely.geometry.LineString(line)
     bounding_box = shapely.geometry.box(minx, miny, maxx, maxy)
-    a, b = line.boundary.geoms
+    _boundary = _line.boundary
+    assert hasattr(_boundary, "geoms")
+    a, b = getattr(_boundary, "geoms")
     if a.x == b.x:  # vertical line
         extended_line = shapely.geometry.LineString([(a.x, miny), (a.x, maxy)])
     elif a.y == b.y:  # horizonthal line
@@ -159,7 +156,8 @@ def _construct_extended_line(
 
 
 def line_to_polygon_intersection(
-    polygon: "shapely.geometry.Polygon", line: "Float22"
+    polygon: "shapely.geometry.Polygon",
+    line: "Float22",
 ) -> "list[Float2]":
     """Find the intersection between a line and a polygon."""
     try:
@@ -239,7 +237,11 @@ def get_segment_line(road_segment_info: "RoadPolygonInfo", car_loc3d: "Float3"):
 
 
 def time_to_exit_current_segment(
-    detection_info: "DetectionInfo", current_time, car_loc, car_trajectory=None, is_ego=False
+    detection_info: "DetectionInfo",
+    current_time: datetime.datetime,
+    car_loc: Float3,
+    # car_trajectory=None,
+    # is_ego=False,
 ):
     """Return the time that the car exit the current segment
 
@@ -247,37 +249,36 @@ def time_to_exit_current_segment(
     car heading is the same as road heading
     car drives at max speed if no trajectory is given
     """
-    if is_ego:
-        current_polygon_info = detection_info.ego_road_polygon_info
-        polygon = current_polygon_info.polygon
-    else:
-        current_polygon_info = detection_info.road_polygon_info
-        polygon = current_polygon_info.polygon
+    # if is_ego:
+    #     current_polygon_info = detection_info.ego_road_polygon_info
+    #     polygon = current_polygon_info.polygon
+    # else:
+    current_polygon_info = detection_info.road_polygon_info
+    polygon = current_polygon_info.polygon
 
-    if car_trajectory:
-        for point in car_trajectory:
-            if point.timestamp > current_time and not shapely.geometry.Polygon(polygon).contains(
-                shapely.geometry.Point(point.coordinates[:2])
-            ):
-                return point.timestamp, point.coordinates[:2]
-        return None, None
-    if detection_info.road_type == "intersection":
-        return None, None
-    if detection_info.segment_heading is None and detection_info.road_type != "intersection":
+    # if car_trajectory:
+    #     for point in car_trajectory:
+    #         if point.timestamp > current_time and not shapely.geometry.Polygon(polygon).contains(
+    #             shapely.geometry.Point(point.coordinates[:2])
+    #         ):
+    #             return point.timestamp, point.coordinates[:2]
+    #     return None, None
+    if detection_info.road_type == "intersection" or (detection_info.segment_heading is None and detection_info.road_type != "intersection"):
         return None, None
     segmentheading = detection_info.segment_heading + 90
-    car_loc = shapely.geometry.Point(car_loc[:2])
+    _car_loc = shapely.geometry.Point(car_loc[:2])
     car_vector = (math.cos(math.radians(segmentheading)), math.sin(math.radians(segmentheading)))
-    car_heading_point = (car_loc.x + car_vector[0], car_loc.y + car_vector[1])
-    car_heading_line = shapely.geometry.LineString([car_loc, car_heading_point])
+    car_heading_point = (_car_loc.x + car_vector[0], _car_loc.y + car_vector[1])
+    # car_heading_line = shapely.geometry.LineString([_car_loc, car_heading_point])
+    car_heading_line = ((float(_car_loc.x), float(_car_loc.y)), (float(car_heading_point[0]), float(car_heading_point[1])))
     intersection = line_to_polygon_intersection(polygon, car_heading_line)
     if len(intersection) == 2:
-        intersection_1_vector = (intersection[0][0] - car_loc.x, intersection[0][1] - car_loc.y)
+        intersection_1_vector = (intersection[0][0] - _car_loc.x, intersection[0][1] - _car_loc.y)
         relative_direction_1 = relative_direction(car_vector, intersection_1_vector)
-        intersection_2_vector = (intersection[1][0] - car_loc.x, intersection[1][1] - car_loc.y)
+        intersection_2_vector = (intersection[1][0] - _car_loc.x, intersection[1][1] - _car_loc.y)
         relative_direction_2 = relative_direction(car_vector, intersection_2_vector)
-        distance1 = compute_distance(car_loc, intersection[0])
-        distance2 = compute_distance(car_loc, intersection[1])
+        distance1 = compute_distance(_car_loc, intersection[0])
+        distance2 = compute_distance(_car_loc, intersection[1])
         if relative_direction_1:
             # logger.info(f'relative_dierction_1 {distance1} {current_time} {max_car_speed(current_polygon_info.road_type)}')
             return (
@@ -304,7 +305,7 @@ def get_car_exits_view_frame_num(
     detection_info: "DetectionInfo",
     ego_views: "list[postgis.Polygon]",
     max_frame_num: int,
-    fps=20,
+    fps: int | float = 20,
 ):
     car_heading = detection_info.segment_heading
     road_type = detection_info.road_type

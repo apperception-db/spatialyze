@@ -49,7 +49,7 @@ class DetectionInfo:
     car_bbox2d: "Float22"
     ego_trajectory: "list[trajectory_3d]"
     ego_config: "CameraConfig"
-    ego_road_polygon_info: "RoadPolygonInfo"
+    ego_road_polygon_info: "RoadPolygonInfo | None"
     timestamp: "datetime.datetime" = field(init=False)
     road_type: str = field(init=False)
     # distance: float = field(init=False)
@@ -70,11 +70,11 @@ class DetectionInfo:
         # self.compute_geo_info()
         # self.compute_priority()
 
-    @property
-    def segment_line(self):
-        if self._to_compute_geo_info:
-            self.compute_geo_info()
-        return self._segment_line
+    # @property
+    # def segment_line(self):
+    #     if self._to_compute_geo_info:
+    #         self.compute_geo_info()
+    #     return self._segment_line
 
     @property
     def segment_heading(self):
@@ -167,9 +167,10 @@ class SamplePlan:
             if car_exit_segment_action.invalid:
                 return
 
-            car_exit_segment_frame_num = self.find_closest_frame_num(
-                car_exit_segment_action.finish_time
-            )
+            finish_time = car_exit_segment_action.finish_time
+            assert finish_time is not None
+            car_exit_segment_frame_num = self.find_closest_frame_num(finish_time)
+            assert car_exit_segment_frame_num is not None
             next_sample_frame_num = min(next_sample_frame_num, car_exit_segment_frame_num)
             if next_sample_frame_num <= self.next_frame_num:
                 return
@@ -178,50 +179,48 @@ class SamplePlan:
             car_exit_view_frame_num = get_car_exits_view_frame_num(
                 detection_info, self.ego_views, next_sample_frame_num, self.fps
             )
+            assert car_exit_view_frame_num is not None
             next_sample_frame_num = min(next_sample_frame_num, car_exit_view_frame_num)
         self.next_frame_num = next_sample_frame_num
 
-    def generate_sample_plan(self, view_distance: float = 50.0):
-        assert self.all_detection_info is not None
-        for detection_info in self.all_detection_info:
-            priority, sample_action = detection_info.generate_single_sample_action(view_distance)
-            if sample_action is not None:
-                self.add(priority, sample_action)
-        if self.action and not self.action.invalid:
-            self.next_frame_num = min(
-                self.next_frame_num, self.find_closest_frame_num(self.action.finish_time)
-            )
+    # def generate_sample_plan(self, view_distance: float = 50.0):
+    #     assert self.all_detection_info is not None
+    #     for detection_info in self.all_detection_info:
+    #         priority, sample_action = detection_info.generate_single_sample_action(view_distance)
+    #         if sample_action is not None:
+    #             self.add(priority, sample_action)
+    #     if self.action and not self.action.invalid:
+    #         self.next_frame_num = min(
+    #             self.next_frame_num, self.find_closest_frame_num(self.action.finish_time)
+    #         )
 
-    def add(self, priority: float, sample_action: "Action", time_threshold: float = 0.5):
-        assert sample_action is not None
-        if sample_action.invalid:
-            return
-        # assert not sample_action.invalid
+    # def add(self, priority: float, sample_action: "Action", time_threshold: float = 0.5):
+    #     assert sample_action is not None
+    #     if sample_action.invalid:
+    #         return
+    #     # assert not sample_action.invalid
 
-        assert (self.action is None) == (self.current_priority is None)
-        if self.action is None or self.current_priority is None:
-            self.current_priority = priority
-            self.action = sample_action
-        else:
-            if sample_action.estimated_time < self.action.estimated_time:
-                if (
-                    priority >= self.current_priority
-                    or sample_action.estimated_time / self.action.estimated_time < time_threshold
-                ):
-                    self.current_priority = priority
-                    self.action = sample_action
+    #     assert (self.action is None) == (self.current_priority is None)
+    #     if self.action is None or self.current_priority is None:
+    #         self.current_priority = priority
+    #         self.action = sample_action
+    #     else:
+    #         if sample_action.estimated_time < self.action.estimated_time:
+    #             if (
+    #                 priority >= self.current_priority
+    #                 or sample_action.estimated_time / self.action.estimated_time < time_threshold
+    #             ):
+    #                 self.current_priority = priority
+    #                 self.action = sample_action
 
-    def get_action(self):
-        return self.action
+    # def get_action(self):
+    #     return self.action
 
     def get_action_type(self):
-        if self.action is None:
-            return None
-        return self.action.action_type
+        return self.action and self.action.action_type
 
     def find_closest_frame_num(self, finish_time: "datetime.datetime"):
-        if finish_time is None:
-            return None
+        assert finish_time is not None
 
         nearest_index = None
         min_diff = None
