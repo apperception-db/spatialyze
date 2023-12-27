@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass, field
 from typing import Literal
 
-from ...types import Float2, Float3
+from ...types import DetectionId, Float2, Float3, Float22
 
 """
 Action:
@@ -18,18 +18,18 @@ EGO_EXIT_SEGMENT: "ActionType" = "ego_exit_segment"
 CAR_EXIT_SEGMENT: "ActionType" = "car_exit_segment"
 EXIT_VIEW: "ActionType" = "exit_view"
 MEET_UP: "ActionType" = "meet_up"
-OBJ_BASED_ACTION: "tuple[ActionType, ActionType]" = (CAR_EXIT_SEGMENT, EXIT_VIEW, MEET_UP)
+OBJ_BASED_ACTION: "list[ActionType]" = [CAR_EXIT_SEGMENT, EXIT_VIEW, MEET_UP]
 
 
 @dataclass
 class Action:
     start_time: "datetime.datetime"
-    finish_time: "datetime.datetime"
+    finish_time: "datetime.datetime | None"
     start_loc: "Float2 | Float3"  # TODO: should either be Float2 or Float3
-    end_loc: "Float2 | Float3"  # TODO: should either be Float2 or Float3
+    end_loc: "Float2 | Float3 | None"  # TODO: should either be Float2 or Float3
     action_type: "ActionType"
-    target_obj_id: "str | None" = None
-    target_obj_bbox: "Float2 | None" = None
+    target_obj_id: "DetectionId | None" = None
+    target_obj_bbox: "Float22 | None" = None
     invalid: bool = field(init=False)
     estimated_time: "datetime.timedelta" = field(init=False)
 

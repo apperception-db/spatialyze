@@ -99,6 +99,8 @@ RT = '__ROADTYPES__'
 def test_predicates(fn, sqls):
     node = KeepOnlyRoadTypePredicates()(fn)
     assert gen(node) == sqls[0], node
+    node1 = None
+    node2 = None
     
     if len(sqls) > 1:
         sql = sqls[1]
@@ -107,12 +109,14 @@ def test_predicates(fn, sqls):
     
     if len(sqls) > 2:
         sql = sqls[2]
+        assert node1 is not None
         node2 = NormalizeInversionAndFlattenRoadTypePredicates()(node1)
         assert gen(node2) == (gen(node1) if sql is None else sql), node2
     
     if len(sqls) > 3:
         assert isinstance(sqls[3], str), sqls[3]
         assert isinstance(sqls[4], set), sqls[4]
+        assert node2 is not None
 
         predicate_str = InViewPredicate(RT)(node2)
         assert predicate_str == sqls[3], predicate_str
@@ -196,7 +200,7 @@ def test_detection_2d():
             
             frames = Video(
                 os.path.join(VIDEO_DIR, video["filename"]),
-                [camera_config(*f, 0) for f in video["frames"]],
+                [camera_config(*f) for f in video["frames"]],
             )
 
             output1 = pipeline1.run(Payload(frames))

@@ -32,7 +32,7 @@ def ingest_processed_nuscenes(
     camera_map: "dict[CameraKey, list[NuscenesCamera]]",
     database: "Database",
 ):
-    keys = list(camera_map.keys())
+    keys = [k for k in camera_map.keys() if camera_map[k][0].location == "boston-seaport"]
     # print(len(keys))
     # ks = [k for k in keys if camera_map[k][0].location == 'boston-seaport']
     # print(len(ks))
@@ -44,8 +44,6 @@ def ingest_processed_nuscenes(
     print("Ingesting Cameras and Annotations")
     for k in tqdm(ks, total=len(ks)):
         camera = camera_map[k]
-        if camera[0].location != "boston-seaport":
-            continue
         annotations = annotations_map[k]
 
         objects: "dict[str, _MovableObject]" = {}

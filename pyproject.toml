@@ -107,6 +107,4 @@ exclude = 'spatialyze/video_processor/modules'
 pythonVersion = '3.10'
 ignore = [
   'spatialyze/video_processor/modules',
-  'spatialyze/video_processor/stages/detection_2d/ground_truth.py',
-  'spatialyze/video_processor/stages/detection_estimation',
 ]

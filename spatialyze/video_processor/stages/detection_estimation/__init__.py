@@ -13,8 +13,8 @@ from ...payload import Payload
 from ...types import DetectionId, obj_detection
 from ...video import Video
 from ..detection_2d.detection_2d import Detection2D
-from ..detection_2d.detection_2d import Metadatum as D2DMetadatum
 from ..detection_3d import Detection3D
+from ..detection_3d import Metadatum as D3DMetadatum
 from ..in_view.in_view import get_views
 from ..stage import Stage
 from .detection_estimation import (
@@ -161,7 +161,7 @@ class DetectionEstimation(Stage[DetectionEstimationMetadatum]):
         return keep, {DetectionEstimation.classname(): metadata}
 
 
-def new_car(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
+def new_car(dets: "list[D3DMetadatum]", cur: "int", nxt: "int"):
     len_det = len(dets[cur][0])
     for j in range(cur + 1, min(nxt + 1, len(dets))):
         future_det = dets[j][0]
@@ -170,7 +170,7 @@ def new_car(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
     return min(nxt, len(dets) - 1)
 
 
-def objects_count_change(dets: "list[D2DMetadatum]", cur: "int", nxt: "int"):
+def objects_count_change(dets: "list[D3DMetadatum]", cur: "int", nxt: "int"):
     det, _, _ = dets[cur]
     for j in range(cur + 1, min(nxt + 1, len(dets))):
         future_det, _, _ = dets[j]
@@ -243,7 +243,7 @@ def construct_estimated_all_detection_info(
     detection_ids: "list[DetectionId]",
     ego_config: "CameraConfig",
     ego_trajectory: "list[trajectory_3d]",
-) -> "tuple[list[DetectionInfo], float]":
+) -> "tuple[list[DetectionInfo], list[float]]":
     _times = time.time()
     all_detections = []
     for det, did in zip(detections, detection_ids):
@@ -260,7 +260,9 @@ def construct_estimated_all_detection_info(
         left3d, right3d = bbox3d[:3], bbox3d[3:]
         car_loc3d = tuple(map(float, (left3d + right3d) / 2))
         assert len(car_loc3d) == 3
-        car_bbox3d = (tuple(map(float, left3d)), tuple(map(float, right3d)))
+        lx, ly, lz = map(float, left3d)
+        rx, ry, rz = map(float, right3d)
+        car_bbox3d = ((lx, ly, lz), (rx, ry, rz))
         all_detections.append(obj_detection(did, car_loc3d, car_loc2d, car_bbox3d, car_bbox2d))
     all_detection_info, times = construct_all_detection_info(
         ego_config, ego_trajectory, all_detections

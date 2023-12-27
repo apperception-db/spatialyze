@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
@@ -10,16 +12,18 @@ from ...types import DetectionId
 from .detection_2d import Detection2D, Metadatum
 
 signs = [-1, 1]
-gp = []
+gp: list[tuple[int, int, int]] = []
 for x in signs:
     for y in signs:
         for z in signs:
-            gp.append([x, y, z])
+            gp.append((x, y, z))
 
-get_points = np.array(gp)
+get_points = np.array(gp, dtype=np.int8)
 
 
-def rotate(vectors: "npt.NDArray", rotation: "Quaternion") -> "npt.NDArray":
+def rotate(
+    vectors: npt.NDArray[np.floating[Any]], rotation: Quaternion
+) -> npt.NDArray[np.floating[Any]]:
     """Rotate 3D Vector by rotation quaternion.
     Params:
         vectors: (3 x N) 3-vectors each specified as any ordered
@@ -33,19 +37,19 @@ def rotate(vectors: "npt.NDArray", rotation: "Quaternion") -> "npt.NDArray":
 
 
 def _3d_to_2d(
-    _translation: "Float3",
-    _size: "Float3",
-    _rotation: "Float4",
-    _camera_translation: "Float3",
-    _camera_rotation: "Quaternion",
-    _camera_intrinsics: "Float33",
-) -> "Float4":
-    translation = np.array(_translation)
-    size = np.array((_size[1], _size[0], _size[2])) / 2.0
+    _translation: Float3,
+    _size: Float3,
+    _rotation: Float4,
+    _camera_translation: Float3,
+    _camera_rotation: Quaternion,
+    _camera_intrinsics: Float33,
+) -> Float4:
+    translation = np.array(_translation, dtype=np.float64)
+    size = np.array((_size[1], _size[0], _size[2]), dtype=np.float64) / 2.0
     rotation = Quaternion(_rotation)
-    camera_translation = np.array(_camera_translation)
+    camera_translation = np.array(_camera_translation, dtype=np.float64)
     camera_rotation = _camera_rotation
-    camera_intrinsics = np.array(_camera_intrinsics)
+    camera_intrinsics = np.array(_camera_intrinsics, dtype=np.float64)
 
     points = size * get_points
 
@@ -56,8 +60,8 @@ def _3d_to_2d(
     pixels = camera_intrinsics @ points_from_camera
     pixels /= pixels[2:3]
 
-    xs = pixels[0].tolist()
-    ys = pixels[1].tolist()
+    xs: list[float] = pixels[0].tolist()
+    ys: list[float] = pixels[1].tolist()
 
     left = min(xs)
     top = min(ys)

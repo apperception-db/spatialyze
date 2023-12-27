@@ -50,7 +50,7 @@ def test_detection_2d():
         
         frames = Video(
             os.path.join(VIDEO_DIR, video["filename"]),
-            [camera_config(*f, 0) for f in video["frames"]],
+            [camera_config(*f) for f in video["frames"]],
         )
         keep = bitarray(len(frames))
         keep.setall(0)
@@ -90,7 +90,7 @@ def test_groundtruth():
         
         frames = Video(
             os.path.join(VIDEO_DIR, video["filename"]),
-            [camera_config(*f, 0) for f in video["frames"]],
+            [camera_config(*f) for f in video["frames"]],
         )
         keep = bitarray(len(frames))
         keep.setall(0)
