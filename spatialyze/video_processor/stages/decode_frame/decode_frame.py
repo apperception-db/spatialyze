@@ -2,12 +2,11 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
+import numpy.typing as npt
 
 from ..stage import Stage
 
 if TYPE_CHECKING:
-    import numpy.typing as npt
-
     from ...payload import Payload
 
 
@@ -18,8 +17,7 @@ class DecodeFrame(Stage[np.ndarray]):
         video = cv2.VideoCapture(payload.video.videofile)
         n_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
         for _ in DecodeFrame.tqdm(range(n_frames)):
-            if not video.isOpened():
-                break
+            assert video.isOpened()
             frame = video.read()[1]
             metadata.append(frame)
         assert len(metadata) == len(payload.video)

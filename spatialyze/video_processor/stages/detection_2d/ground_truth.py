@@ -32,10 +32,6 @@ def rotate(vectors: "npt.NDArray", rotation: "Quaternion") -> "npt.NDArray":
     return rotation.unit.rotation_matrix @ vectors
 
 
-def conj(q: "npt.NDArray") -> "npt.NDArray":
-    return np.concatenate([q[0:1, :], -q[1:, :]])
-
-
 def _3d_to_2d(
     _translation: "Float3",
     _size: "Float3",

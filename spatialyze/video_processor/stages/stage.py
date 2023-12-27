@@ -3,30 +3,7 @@ from typing import TYPE_CHECKING, Any, Generic, Iterable, Type, TypeVar
 
 from bitarray import bitarray
 
-
-def is_notebook() -> bool:
-    if TYPE_CHECKING:
-        return False
-    try:
-        shell = get_ipython().__class__.__name__
-        if shell == "ZMQInteractiveShell":
-            # Jupyter notebook or qtconsole
-            return True
-        elif shell == "TerminalInteractiveShell":
-            # Terminal running IPython
-            return False
-        else:
-            # Other type (?)
-            return False
-    except NameError:
-        # Probably standard Python interpreter
-        return False
-
-
-if is_notebook():
-    from tqdm.notebook import tqdm
-else:
-    from tqdm import tqdm
+from ...utils.tqdm import tqdm
 
 if TYPE_CHECKING:
     from ..payload import Payload
@@ -88,7 +65,6 @@ class Stage(Generic[T]):
         for k, v in reversed(d.items()):
             if k.startswith(classname):
                 return v
-        return None
 
     @classmethod
     def encode_json(cls, o: "Any") -> "Any":

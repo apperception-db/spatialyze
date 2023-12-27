@@ -16,6 +16,8 @@ from spatialyze.video_processor.stages.tracking_2d.deepsort import DeepSORT
 from spatialyze.video_processor.stages.tracking_2d.strongsort import StrongSORT
 from spatialyze.video_processor.stages.stage import Stage
 
+from common import yolo_output
+
 OUTPUT_DIR = './data/pipeline/test-results'
 VIDEO_DIR =  './data/pipeline/videos'
 Stage.enable_progress()
@@ -44,8 +46,9 @@ def test_strongsort():
         videos = pickle.load(f)
     
     pipeline = Pipeline([
+        # Manually ingest processed detections from YoloDetection
         DecodeFrame(),
-        YoloDetection(),
+        # YoloDetection(),
         StrongSORT(),
     ])
 
@@ -61,7 +64,7 @@ def test_strongsort():
         keep.setall(0)
         keep[(len(frames) * 7) // 8:] = 1
 
-        output = pipeline.run(Payload(frames, keep))
+        output = pipeline.run(Payload(frames, keep, metadata=yolo_output(name)))
         # track_result = StrongSORT.get(output)
         track_result = output['Tracking2D.StrongSORT']
         assert track_result is not None
@@ -82,8 +85,9 @@ def test_deepsort():
         videos = pickle.load(f)
     
     pipeline = Pipeline([
+        # Manually ingest processed detections from YoloDetection
         DecodeFrame(),
-        YoloDetection(),
+        # YoloDetection(),
         DeepSORT(),
     ])
 
@@ -99,7 +103,7 @@ def test_deepsort():
         keep.setall(0)
         keep[(len(frames) * 7) // 8:] = 1
 
-        output = pipeline.run(Payload(frames, keep))
+        output = pipeline.run(Payload(frames, keep, metadata=yolo_output(name)))
         # track_result = DeepSORT.get(output)
         track_result = output['Tracking2D.DeepSORT']
         assert track_result is not None
