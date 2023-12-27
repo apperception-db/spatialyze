@@ -263,14 +263,19 @@ def time_to_exit_current_segment(
     #         ):
     #             return point.timestamp, point.coordinates[:2]
     #     return None, None
-    if detection_info.road_type == "intersection" or (detection_info.segment_heading is None and detection_info.road_type != "intersection"):
+    if detection_info.road_type == "intersection" or (
+        detection_info.segment_heading is None and detection_info.road_type != "intersection"
+    ):
         return None, None
     segmentheading = detection_info.segment_heading + 90
     _car_loc = shapely.geometry.Point(car_loc[:2])
     car_vector = (math.cos(math.radians(segmentheading)), math.sin(math.radians(segmentheading)))
     car_heading_point = (_car_loc.x + car_vector[0], _car_loc.y + car_vector[1])
     # car_heading_line = shapely.geometry.LineString([_car_loc, car_heading_point])
-    car_heading_line = ((float(_car_loc.x), float(_car_loc.y)), (float(car_heading_point[0]), float(car_heading_point[1])))
+    car_heading_line = (
+        (float(_car_loc.x), float(_car_loc.y)),
+        (float(car_heading_point[0]), float(car_heading_point[1])),
+    )
     intersection = line_to_polygon_intersection(polygon, car_heading_line)
     if len(intersection) == 2:
         intersection_1_vector = (intersection[0][0] - _car_loc.x, intersection[0][1] - _car_loc.y)
