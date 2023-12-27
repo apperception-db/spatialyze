@@ -5,13 +5,13 @@ from typing import Literal
 import numpy.typing as npt
 import torch
 
-from ..modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT, create_tracker
-from ..modules.yolo_tracker.yolov5.utils.torch_utils import select_device
-from ..payload import Payload
-from ..types import DetectionId
-from .decode_frame.decode_frame import DecodeFrame
-from .detection_2d.detection_2d import Detection2D, Metadatum
-from .stage import Stage
+from spatialyze.video_processor.modules.yolo_tracker.trackers.multi_tracker_zoo import StrongSORT, create_tracker
+from spatialyze.video_processor.modules.yolo_tracker.yolov5.utils.torch_utils import select_device
+from spatialyze.video_processor.payload import Payload
+from spatialyze.video_processor.types import DetectionId
+from spatialyze.video_processor.stages.decode_frame.decode_frame import DecodeFrame
+from spatialyze.video_processor.stages.detection_2d.detection_2d import Detection2D, Metadatum
+from spatialyze.video_processor.stages.stage import Stage
 
 FILE = Path(__file__).resolve()
 SPATIALYZE = FILE.parent.parent.parent.parent
