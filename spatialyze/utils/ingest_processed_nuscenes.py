@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
@@ -11,7 +11,9 @@ from tqdm import tqdm
 from ..data_types.camera_key import CameraKey
 from ..data_types.nuscenes_annotation import NuscenesAnnotation
 from ..data_types.nuscenes_camera import NuscenesCamera
-from ..database import Database
+
+if TYPE_CHECKING:
+    from ..database import Database
 
 
 class _MovableObject(NamedTuple):
