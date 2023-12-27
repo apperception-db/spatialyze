@@ -1,8 +1,8 @@
 
 
 # %%
-from spatialyze.database import Database, database
-from spatialyze.utils import import_tables, ingest_road, import_pickle
+from import_pickle import import_pickle
+from spatialyze.database import database
 
 # %%
 CSV_DATA_PATH = 'data/scenic/database'

@@ -45,9 +45,9 @@ def test_detection_estimation():
 
         output = pipeline.run(Payload(frames, keep, metadata=yolo_output(name)))
         keep_result = [*output.keep]
-        if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
-            with open(os.path.join(OUTPUT_DIR, f'DetectionEstimationKeep--{name}.json'), 'w') as f:
-                json.dump(keep_result, f, indent=1)
+        # if os.environ.get('GENERATE_PROCESSOR_TEST_RESULTS', 'false') == 'true':
+        with open(os.path.join(OUTPUT_DIR, f'DetectionEstimationKeep--{name}.json'), 'w') as f:
+            json.dump(keep_result, f, indent=1)
 
         with open(os.path.join(OUTPUT_DIR, f'DetectionEstimationKeep--{name}.json'), 'r') as f:
             keep_groundtruth = json.load(f)
