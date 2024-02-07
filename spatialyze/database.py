@@ -234,7 +234,18 @@ class Database:
         return results
 
     def update(self, query: str | Composable, commit: bool = True) -> None:
-        cursor = self.connection.cursor()
+        try:
+            cursor = self.connection.cursor()
+        except psycopg2.InterfaceError as e:
+            print(e)
+            connect = psycopg2.connect(
+                dbname=environ.get("AP_DB", "mobilitydb"),
+                user=environ.get("AP_USER", "docker"),
+                host=environ.get("AP_HOST", "localhost"),
+                port=environ.get("AP_PORT", "25432"),
+                password=environ.get("AP_PASSWORD", "docker"),
+                )
+            cursor = connect.cursor()
         try:
             cursor.execute(query)
             self._commit(commit)
