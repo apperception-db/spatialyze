@@ -194,10 +194,10 @@ class ObjectTableNode(TableNode):
 
     def __init__(self, index: int):
         self.index = index
-        self.trans = TableAttrNode("translations", self, True)
+        self.trans = TableAttrNode("translation", self, True)
         self.id = TableAttrNode("itemId", self, True)
         self.type = TableAttrNode("objectType", self, True)
-        self.heading = TableAttrNode("itemHeadings", self, True)
+        self.heading = TableAttrNode("itemHeading", self, True)
 
 
 class CameraTableNode(TableNode):

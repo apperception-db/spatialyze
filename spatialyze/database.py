@@ -175,8 +175,8 @@ class Database:
         cursor.execute(
             "CREATE TABLE Item_Trajectory2 ("
             f"{columns(_schema, TRAJECTORY2_COLUMNS)},"
-            "PRIMARY KEY (itemId, frameNum) "
-            "REFERENCES Camera(cameraId, frameNum))"
+            "PRIMARY KEY (itemId, frameNum), "
+            "FOREIGN KEY (cameraId, frameNum) REFERENCES Camera(cameraId, frameNum))"
         )
         self._commit(commit)
         cursor.close()
