@@ -584,7 +584,7 @@ class GenSqlVisitor(Visitor[str]):
     def visit_AtTimeNode(self, node: AtTimeNode) -> Any:
         if isinstance(node.attr.table, ObjectTableNode) and node.attr.name == "bbox":
             return f"objectBBox({self(node.attr.table.id)},{self(camera.time)})"
-        return f"valueAtTimestamp({self(node.attr)},{self(camera.time)})"
+        return f"{self(node.attr)}"
 
 
 def resolve_object_attr(attr: str, num: "int | None" = None):

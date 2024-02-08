@@ -29,13 +29,16 @@ def insert_trajectory(
     headings: list[tuple[float, datetime.datetime]] = []
     prevTimestamp: datetime.datetime | None = None
     prevPoint: Float3 | None = None
-    for timestamp, current_point, curItemHeading in zip(
+    tuples: list[tuple[Literal, Literal, Literal, Literal, Point, Literal, Literal]] = []
+    for idx, timestamp, current_point, curItemHeading in zip(
+        range(len(postgres_timestamps)),
         postgres_timestamps,
         pairs,
         itemHeading_list,
     ):
-        if prevTimestamp == timestamp:
-            continue
+        # if prevTimestamp == timestamp:
+        #     continue
+        assert prevTimestamp != timestamp, (prevTimestamp, timestamp)
 
         # Construct trajectory
         points.append((current_point, timestamp))
@@ -46,6 +49,15 @@ def insert_trajectory(
         # polygon_point = ', '.join(join(cur_point, ' ') for cur_point in list(
         #     zip(*cur_roadpolygon.exterior.coords.xy)))
         # roadPolygons.append(f"Polygon (({polygon_point}))@{timestamp}")
+        tuples.append((
+            Literal(item_id),
+            Literal(camera_id),
+            Literal(object_type),
+            Literal(idx),
+            Point(*current_point),
+            Literal(timestamp), 
+            Literal(curItemHeading),
+        ))
         prevTimestamp = timestamp
         prevPoint = current_point
 
@@ -54,6 +66,11 @@ def insert_trajectory(
     obj = item_id, camera_id, object_type, tpoints, theadings
     obj = SQL(",").join(map(Literal, obj))
     insert = SQL("INSERT INTO Item_Trajectory VALUES ({})")
+    database.execute(insert.format(obj))
+    database._commit()
+
+    obj = SQL(",").join(map(lambda t: SQL("({})").format(SQL(",").join(t)), tuples))
+    insert = SQL("INSERT INTO Item_Trajectory2 VALUES {}")
     database.execute(insert.format(obj))
     database._commit()
 

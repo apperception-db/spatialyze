@@ -79,6 +79,16 @@ DETECTION_COLUMNS: list[tuple[str, str]] = [
     ("frameNum", "Int"),
     ("translation", "geometry"),
     ("timestamp", "timestamptz"),
+    ("itemHeading", "Float"),
+]
+
+TRAJECTORY2_COLUMNS: list[tuple[str, str]] = [
+    ("itemId", "TEXT"),
+    ("cameraId", "TEXT"),
+    ("objectType", "TEXT"),
+    ("frameNum", "Int"),
+    ("translation", "geometry"),
+    ("itemHeading", "Float"),
 ]
 
 BBOX_COLUMNS: "list[tuple[str, str]]" = [
@@ -159,6 +169,17 @@ class Database:
         self._commit(commit)
         cursor.close()
 
+    def _create_item_trajectory2_table(self, commit=True):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "CREATE TABLE Item_Trajectory2 ("
+            f"{columns(_schema, TRAJECTORY2_COLUMNS)},"
+            "PRIMARY KEY (itemId, frameNum)) "
+            "REFERENCES Camera(cameraId, frameNum)"
+        )
+        self._commit(commit)
+        cursor.close()
+
     def _create_item_detection_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
@@ -189,6 +210,14 @@ class Database:
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
             "ON Item_Detection "
+            "USING GiST(translation);"
+        )
+        cursor.execute("CREATE INDEX ON Item_Trajectory2 (cameraId);")
+        cursor.execute("CREATE INDEX ON Item_Trajectory2 (frameNum);")
+        cursor.execute("CREATE INDEX ON Item_Trajectory2 (cameraId, frameNum);")
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS Item_Trajectory2_translation_idx "
+            "ON Item_Trajectory2 "
             "USING GiST(translation);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
@@ -306,9 +335,9 @@ def _join_table(temporal: bool):
 
         def join_table(i: int) -> str:
             return (
-                f"JOIN Item_Trajectory AS t{i} "
-                f"ON  c0.timestamp <@ t{i}.translations::period "
-                f"AND c0.cameraId  =  t{i}.cameraId\n"
+                f"JOIN Item_Trajectory2 AS t{i} "
+                f"ON  c0.frameNum = t{i}.frameNum "
+                f"AND c0.cameraId = t{i}.cameraId\n"
             )
 
     else:
