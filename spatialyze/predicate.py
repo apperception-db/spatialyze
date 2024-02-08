@@ -313,8 +313,7 @@ class Visitor(Generic[T]):
     def visit_UnaryOpNode(self, node: "UnaryOpNode") -> Any:
         self(node.expr)
 
-    def visit_LiteralNode(self, node: "LiteralNode") -> Any:
-        ...
+    def visit_LiteralNode(self, node: "LiteralNode") -> Any: ...
 
     def visit_TableAttrNode(self, node: "TableAttrNode") -> Any:
         self(node.table)
@@ -323,14 +322,11 @@ class Visitor(Generic[T]):
         for p in node.params:
             self(p)
 
-    def visit_TableNode(self, node: "TableNode") -> Any:
-        ...
+    def visit_TableNode(self, node: "TableNode") -> Any: ...
 
-    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> Any:
-        ...
+    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> Any: ...
 
-    def visit_CameraTableNode(self, node: "CameraTableNode") -> Any:
-        ...
+    def visit_CameraTableNode(self, node: "CameraTableNode") -> Any: ...
 
     def visit_CastNode(self, node: "CastNode") -> Any:
         self(node.expr)
