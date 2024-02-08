@@ -49,15 +49,17 @@ def insert_trajectory(
         # polygon_point = ', '.join(join(cur_point, ' ') for cur_point in list(
         #     zip(*cur_roadpolygon.exterior.coords.xy)))
         # roadPolygons.append(f"Polygon (({polygon_point}))@{timestamp}")
-        tuples.append((
-            Literal(item_id),
-            Literal(camera_id),
-            Literal(object_type),
-            Literal(idx),
-            Point(*current_point),
-            Literal(timestamp), 
-            Literal(curItemHeading),
-        ))
+        tuples.append(
+            (
+                Literal(item_id),
+                Literal(camera_id),
+                Literal(object_type),
+                Literal(idx),
+                Point(*current_point),
+                Literal(timestamp),
+                Literal(curItemHeading),
+            )
+        )
         prevTimestamp = timestamp
         prevPoint = current_point
 
