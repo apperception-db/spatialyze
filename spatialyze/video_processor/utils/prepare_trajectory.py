@@ -11,7 +11,6 @@ class Trajectory(NamedTuple):
     ids: list[int]
     camera_id: str
     object_type: str
-    timestamps: list[datetime.datetime]
     pairs: list[Float3]
     itemHeadings: list[float | None]
 
@@ -50,7 +49,6 @@ def prepare_trajectory(
         ids,
         camera_id,
         object_type,
-        timestamps,
         pairs,
         itemHeadings,
     )

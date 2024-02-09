@@ -80,6 +80,9 @@ def import_tables(database: "Database", data_path: str):
     # for _, row in df_General_Bbox.iterrows():
     #     database._insert_into_general_bbox(row, False)
 
+    with open('./data/scenic/database/item_trajectory2.csv', 'r') as f:
+        database.cursor.copy_expert("copy item_trajectory2 from stdin DELIMITER ',' CSV header", f)
+
     database._commit()
 
 

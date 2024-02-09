@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Callable, NamedTuple
 import pandas as pd
 import psycopg2
 import psycopg2.errors
-from mobilitydb.psycopg import register as mobilitydb_register
 from postgis import Point
 from postgis.psycopg import register as postgis_register
 from psycopg2.sql import SQL, Composable, Literal
@@ -115,7 +114,6 @@ class Database:
     def __init__(self, connection: "Connection"):
         self.connection = connection
         postgis_register(self.connection)
-        mobilitydb_register(self.connection)
         self.cursor = self.connection.cursor()
 
     def reset(self, commit=True):

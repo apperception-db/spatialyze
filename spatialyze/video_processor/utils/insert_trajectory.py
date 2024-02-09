@@ -1,9 +1,7 @@
-import datetime
 from typing import TypeVar
 
 import numpy as np
 import numpy.typing as npt
-from mobilitydb import TFloatInst, TFloatSeq, TGeomPointInst, TGeomPointSeq
 from postgis import Point
 from psycopg2.sql import SQL, Literal
 
@@ -16,15 +14,12 @@ from .infer_heading import infer_heading
 def insert_trajectory(
     database: "Database",
     trajectory: Trajectory,
-    # road_types: "list[str]",
-    # roadpolygon_list: "list[list[tuple[float, float]]]"
 ):
     (
         item_id,
         ids,
         camera_id,
         object_type,
-        postgres_timestamps,
         pairs,
         itemHeading_list,
     ) = trajectory
@@ -102,21 +97,3 @@ def insert_trajectory(
 
 def value(t: tuple[int | str, str, str, int, Point, float | None]):
     return SQL("(") + SQL(",").join(map(Literal, t)) + SQL(")")
-
-
-def tgeoms(points: list[tuple[Float3, datetime.datetime]]):
-    return TGeomPointSeq(
-        [TGeomPointInst(Point(*p), t) for p, t in points],
-        upper_inc=True,
-        lower_inc=True,
-        interp="Linear",
-    )
-
-
-def tfloats(floats: list[tuple[float, datetime.datetime]]):
-    return TFloatSeq(
-        [TFloatInst(f, t) for f, t in floats],
-        upper_inc=True,
-        lower_inc=True,
-        interp="Linear",
-    )
