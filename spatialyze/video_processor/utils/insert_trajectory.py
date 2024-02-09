@@ -1,11 +1,11 @@
 import datetime
 from typing import TypeVar
 
+import numpy as np
+import numpy.typing as npt
 from mobilitydb import TFloatInst, TFloatSeq, TGeomPointInst, TGeomPointSeq
 from postgis import Point
 from psycopg2.sql import SQL, Literal
-import numpy as np
-import numpy.typing as npt
 
 from ...database import Database
 from ..types import Float3
@@ -31,9 +31,12 @@ def insert_trajectory(
 
     prevPoint: Float3 | None = None
     st, en = ids[0], ids[-1]
-    tuples: list[tuple[int | str, str, str, int, Float3, float | None] | None] = [None for _ in range(st, en + 1)]
+    tuples: list[tuple[int | str, str, str, int, Float3, float | None] | None] = [
+        None for _ in range(st, en + 1)
+    ]
 
-    P = TypeVar('P', Float3, Point)
+    P = TypeVar("P", Float3, Point)
+
     def point(idx: int, p: P, h: float | None) -> tuple[int | str, str, str, int, P, float | None]:
         return (item_id, camera_id, object_type, idx, p, h)
 
@@ -46,7 +49,7 @@ def insert_trajectory(
         heading = infer_heading(curItemHeading, prevPoint, current_point)
         tuples[idx - st] = point(idx, current_point, heading)
         prevPoint = current_point
-    
+
     prevHeading: float | None = None
     prevPoint = None
     _tuples: list[tuple[int | str, str, str, int, Point, float | None]] = []
