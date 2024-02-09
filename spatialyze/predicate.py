@@ -427,7 +427,7 @@ class IsDetectionOnly(Visitor[bool]):
         return self._is_detection_only
 
     def visit_TableAttrNode(self, node: TableAttrNode) -> Any:
-        if isinstance(node.table, ObjectTableNode) and node.name == "itemHeadings":
+        if isinstance(node.table, ObjectTableNode) and node.name == "itemHeading":
             self._is_detection_only = False
         return super().visit_TableAttrNode(node)
 
@@ -603,9 +603,8 @@ IS_TEMPORAL: "dict[str, bool]" = {
     "itemId": False,
     "cameraId": False,
     "objectType": False,
-    "translations": True,
-    "translations": True,
-    "itemHeadings": True,
+    "translation": True,
+    "itemHeading": True,
     "bbox": True,
 }
 

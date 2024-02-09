@@ -10,4 +10,6 @@ ignore =
   # multiple '#' leading a line comment is ok
   E266,
   # module-level import not on top of file is ok
-  E402
+  E402,
+  # multiple statements on one line (def)
+  E704
