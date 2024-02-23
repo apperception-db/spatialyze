@@ -16,12 +16,3 @@ BEGIN
 END
 $BODY$
 LANGUAGE 'plpgsql';
-
-DROP FUNCTION IF EXISTS ConvertCamera(tgeompoint, geometry, real, timestamptz);
-CREATE OR REPLACE FUNCTION ConvertCamera(traj tgeompoint, camPoint geometry, camHeading real, t timestamptz) RETURNS geometry AS
-$BODY$
-BEGIN
-  RETURN ConvertCamera(valueAtTimestamp(traj, t), camPoint, camHeading);
-END
-$BODY$
-LANGUAGE 'plpgsql';

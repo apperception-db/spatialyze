@@ -27,15 +27,6 @@ END
 $BODY$
 LANGUAGE 'plpgsql' ;
 
-DROP FUNCTION IF EXISTS contained(tgeompoint, geometry[], timestamptz);
-CREATE OR REPLACE FUNCTION contained(contPoint tgeompoint, geoms geometry[], t timestamptz) RETURNS boolean AS
-$BODY$
-BEGIN
-  RETURN contained(valueAtTimestamp(contPoint, t), geoms);
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
-
 ------------ USED FOR STBOX TYPES (BOUNDING BOXES) ------------
 DROP FUNCTION IF EXISTS contained(stbox, geometry); 
 CREATE OR REPLACE FUNCTION contained(contPoint stbox, geom geometry) RETURNS boolean AS
