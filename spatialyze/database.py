@@ -180,7 +180,7 @@ class Database:
     def _create_metadata_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            "CREATE TABLE Spatialyze_Metadata (" f"{columns(_schema, METADATA_COLUMNS)})"
+            f"CREATE TABLE Spatialyze_Metadata ({columns(_schema, METADATA_COLUMNS)})"
         )
         self._commit(commit)
         cursor.close()
