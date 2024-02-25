@@ -57,12 +57,12 @@ def import_tables(database: "Database", data_path: str):
     df_Cameras = pd.DataFrame(data_Cameras)
     df_Cameras = df_Cameras[df_Cameras.apply(lambda x: (x['cameraid'] in frame_range and frame_range[x['cameraid']][0] - 10 < x['framenum'] and x['framenum'] < frame_range[x['cameraid']][1] + 10) or random.random() < 0.1, axis=1)]
 
-    data_Item_Trajectory = pd.read_csv(
-        os.path.join(data_path, "item_trajectory.csv")
-    )
-    df_Item_Trajectory = pd.DataFrame(data_Item_Trajectory)
-    df_Item_Trajectory.drop(columns=["color", "largestbbox", "translations"], inplace=True)
-    df_Item_Trajectory = df_Item_Trajectory[df_Item_Trajectory.apply(lambda x: x['itemid'] in items or random.random() < 0.07, axis=1)]
+    # data_Item_Trajectory = pd.read_csv(
+    #     os.path.join(data_path, "item_trajectory.csv")
+    # )
+    # df_Item_Trajectory = pd.DataFrame(data_Item_Trajectory)
+    # df_Item_Trajectory.drop(columns=["color", "largestbbox", "translations"], inplace=True)
+    # df_Item_Trajectory = df_Item_Trajectory[df_Item_Trajectory.apply(lambda x: x['itemid'] in items or random.random() < 0.07, axis=1)]
 
     # data_General_Bbox = pd.read_csv(os.path.join(data_path, "general_bbox.csv"))
     # df_General_Bbox = pd.DataFrame(data_General_Bbox)
@@ -73,15 +73,15 @@ def import_tables(database: "Database", data_path: str):
         values = tuple(row.values)
         _insert_into_camera(database, values, False)
 
-    for _, row in df_Item_Trajectory.iterrows():
-        values = tuple(row.values)
-        _insert_into_item_trajectory(database, values, False)
+    # for _, row in df_Item_Trajectory.iterrows():
+    #     values = tuple(row.values)
+    #     _insert_into_item_trajectory(database, values, False)
 
     # for _, row in df_General_Bbox.iterrows():
     #     database._insert_into_general_bbox(row, False)
 
-    with open('./data/scenic/database/item_trajectory2.csv', 'r') as f:
-        database.cursor.copy_expert("copy item_trajectory2 from stdin DELIMITER ',' CSV header", f)
+    with open('./data/scenic/database/item_trajectory.csv', 'r') as f:
+        database.cursor.copy_expert("copy item_trajectory from stdin DELIMITER ',' CSV header", f)
 
     database._commit()
 
@@ -104,14 +104,14 @@ def _insert_into_camera(database: "Database", value: tuple, commit=True):
     cursor.close()
 
 
-def _insert_into_item_trajectory(database: "Database", value: tuple, commit=True):
-    cursor = database.connection.cursor()
-    cursor.execute(
-        f"INSERT INTO Item_Trajectory ({columns(_name, TRAJECTORY_COLUMNS)}) VALUES ({place_holder(len(TRAJECTORY_COLUMNS))})",
-        tuple(value),
-    )
-    database._commit(commit)
-    cursor.close()
+# def _insert_into_item_trajectory(database: "Database", value: tuple, commit=True):
+#     cursor = database.connection.cursor()
+#     cursor.execute(
+#         f"INSERT INTO Item_Trajectory ({columns(_name, TRAJECTORY_COLUMNS)}) VALUES ({place_holder(len(TRAJECTORY_COLUMNS))})",
+#         tuple(value),
+#     )
+#     database._commit(commit)
+#     cursor.close()
 
 
 def _insert_into_general_bbox(database: "Database", value: tuple, commit=True):

@@ -28,5 +28,5 @@ def stopped(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str,
     assert isinstance(point, ObjectTableNode), point
     point1 = dl(point)
 
-    nextPoint = f"(SELECT translation FROM Item_Trajectory2 WHERE itemId = {visitor(point.id)} AND {visitor(point.frameNum)} + ROUND({duration} * (SELECT fps FROM Spatialyze_Metadata)) = frameNum)"
+    nextPoint = f"(SELECT translation FROM Item_Trajectory WHERE itemId = {visitor(point.id)} AND {visitor(point.frameNum)} + ROUND({duration} * (SELECT fps FROM Spatialyze_Metadata)) = frameNum)"
     return f"(EXIT {nextPoint} AND ST_Distance({visitor(point1)},{nextPoint})<{distance})"

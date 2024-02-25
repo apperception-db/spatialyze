@@ -126,12 +126,12 @@ BEGIN
     prevFrame := frameNum - 1;
     
     currentAngle := itemHeading::real;
-    nextAngle = (SELECT itemHeading from Item_Trajectory2 AS t WHERE obj_Id = t.itemId AND t.frameNum = nextFrame);
-    prevAngle = (SELECT itemHeading from Item_Trajectory2 AS t WHERE obj_Id = t.itemId AND t.frameNum = prevFrame);
+    nextAngle = (SELECT itemHeading from Item_Trajectory AS t WHERE obj_Id = t.itemId AND t.frameNum = nextFrame);
+    prevAngle = (SELECT itemHeading from Item_Trajectory AS t WHERE obj_Id = t.itemId AND t.frameNum = prevFrame);
 
     currentPoint := translation;
-    nextPoint = (SELECT translation from Item_Trajectory2 AS t WHERE obj_Id = t.itemId AND t.frameNum = nextFrame);
-    prevPoint = (SELECT translation from Item_Trajectory2 AS t WHERE obj_Id = t.itemId AND t.frameNum = prevFrame);
+    nextPoint = (SELECT translation from Item_Trajectory AS t WHERE obj_Id = t.itemId AND t.frameNum = nextFrame);
+    prevPoint = (SELECT translation from Item_Trajectory AS t WHERE obj_Id = t.itemId AND t.frameNum = prevFrame);
 
     if ST_X(ConvertCamera(nextPoint, currentPoint, currentAngle)) < -1 THEN
         RETURN true;

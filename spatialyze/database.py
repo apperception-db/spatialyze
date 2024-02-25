@@ -38,16 +38,14 @@ if TYPE_CHECKING:
     from .predicate import PredicateNode
 
 CAMERA_TABLE = "Camera"
-# TRAJECTORY_TABLE = "Item_Trajectory"
-TRAJECTORY2_TABLE = "Item_Trajectory2"
+TRAJECTORY_TABLE = "Item_Trajectory"
 DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
 METADATA_TABLE = "Spatialyze_Metadata"
 TABLES = (
     CAMERA_TABLE,
-    # TRAJECTORY_TABLE,
     DETECTION_TABLE,
-    TRAJECTORY2_TABLE,
+    TRAJECTORY_TABLE,
     BBOX_TABLE,
     METADATA_TABLE,
 )
@@ -132,8 +130,7 @@ class Database:
         self.reset_cursor()
         self._drop_table(commit)
         self._create_camera_table(commit)
-        # self._create_item_trajectory_table(commit)
-        self._create_item_trajectory2_table(commit)
+        self._create_item_trajectory_table(commit)
         self._create_item_detection_table(commit)
         self._create_general_bbox_table(commit)
         self._create_index(commit)
@@ -165,26 +162,16 @@ class Database:
         cursor.execute(
             "CREATE TABLE General_Bbox ("
             f"{columns(_schema, BBOX_COLUMNS)},"
-            "FOREIGN KEY(itemId) REFERENCES Item_Trajectory2 (itemId),"
+            f"FOREIGN KEY(itemId) REFERENCES {TRAJECTORY_TABLE} (itemId),"
             "PRIMARY KEY (itemId, timestamp))"
         )
         self._commit(commit)
         cursor.close()
 
-    # def _create_item_trajectory_table(self, commit=True):
-    #     cursor = self.connection.cursor()
-    #     cursor.execute(
-    #         "CREATE TABLE Item_Trajectory ("
-    #         f"{columns(_schema, TRAJECTORY_COLUMNS)},"
-    #         "PRIMARY KEY (itemId))"
-    #     )
-    #     self._commit(commit)
-    #     cursor.close()
-
-    def _create_item_trajectory2_table(self, commit=True):
+    def _create_item_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            "CREATE TABLE Item_Trajectory2 ("
+            f"CREATE TABLE {TRAJECTORY_TABLE} ("
             f"{columns(_schema, TRAJECTORY2_COLUMNS)},"
             "PRIMARY KEY (itemId, frameNum), "
             "FOREIGN KEY (cameraId, frameNum) REFERENCES Camera(cameraId, frameNum))"
@@ -217,13 +204,7 @@ class Database:
         # cursor.execute("CREATE INDEX ON Camera (cameraId);")
         cursor.execute("CREATE INDEX ON Camera (cameraId, frameNum);")
         cursor.execute("CREATE INDEX ON Camera (timestamp);")
-        # cursor.execute("CREATE INDEX ON Item_Trajectory (itemId);")
-        # cursor.execute("CREATE INDEX ON Item_Trajectory (cameraId);")
-        # cursor.execute(
-        #     "CREATE INDEX IF NOT EXISTS trans_idx "
-        #     "ON Item_Trajectory "
-        #     "USING GiST(translations);"
-        # )
+
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
         cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
@@ -233,12 +214,12 @@ class Database:
             "ON Item_Detection "
             "USING GiST(translation);"
         )
-        cursor.execute("CREATE INDEX ON Item_Trajectory2 (cameraId);")
-        cursor.execute("CREATE INDEX ON Item_Trajectory2 (frameNum);")
-        cursor.execute("CREATE INDEX ON Item_Trajectory2 (cameraId, frameNum);")
+        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId);")
+        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (frameNum);")
+        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId, frameNum);")
         cursor.execute(
-            "CREATE INDEX IF NOT EXISTS Item_Trajectory2_translation_idx "
-            "ON Item_Trajectory2 "
+            "CREATE INDEX IF NOT EXISTS Item_Trajectory_translation_idx "
+            f"ON {TRAJECTORY_TABLE} "
             "USING GiST(translation);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
@@ -356,7 +337,7 @@ def _join_table(temporal: bool):
 
         def join_table(i: int) -> str:
             return (
-                f"JOIN Item_Trajectory2 AS t{i} "
+                f"JOIN {TRAJECTORY_TABLE} AS t{i} "
                 f"ON  c0.frameNum = t{i}.frameNum "
                 f"AND c0.cameraId = t{i}.cameraId\n"
             )

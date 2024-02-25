@@ -1,14 +1,16 @@
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
 import numpy.typing as npt
 from postgis import Point
 from psycopg2.sql import SQL, Literal
 
-from ...database import Database
 from ..types import Float3
 from ..utils.prepare_trajectory import Trajectory
 from .infer_heading import infer_heading
+
+if TYPE_CHECKING:
+    from ...database import Database
 
 
 def insert_trajectory(
@@ -90,7 +92,7 @@ def insert_trajectory(
         prevHeading = h
 
     obj = SQL(",").join(map(value, __tuples))
-    insert = SQL("INSERT INTO Item_Trajectory2 VALUES {}")
+    insert = SQL("INSERT INTO Item_Trajectory VALUES {}")
     database.execute(insert.format(obj))
     database._commit()
 
