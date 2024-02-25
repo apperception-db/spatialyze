@@ -30,7 +30,7 @@ def insert_trajectory(
     ) = trajectory
 
     prevPoint: Float3 | None = None
-    st, en = ids[0], ids[-1]
+    st, en = min(ids), max(ids)
     tuples: list[PointTuple[Float3] | None] = [
         None for _ in range(st, en + 1)
     ]
