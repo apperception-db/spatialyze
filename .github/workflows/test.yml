@@ -435,29 +435,29 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: video-processor-count
-          path: ./video-processor-count
+          path: ./video-processor-test-count
 
       - name: Download Count
         uses: actions/download-artifact@v3
         with:
           name: engine-and-interface-count
-          path: ./engine-and-interface-count
+          path: ./engine-and-interface-test-count
 
       - name: Download Count
         uses: actions/download-artifact@v3
         with:
           name: workflow-count
-          path: ./workflow-count
+          path: ./workflow-test-count
       
       - name: Combine Counts
         run: |
-          cat ./video-processor-count ./engine-and-interface-count ./workflow-count | awk '{s+=$1} END {print s}' &> test-count
+          cat ./video-processor-test-count/* ./engine-and-interface-test-count/* ./workflow-test-count/* | awk '{s+=$1} END {print s}' &> test-count
           echo "Total tests: $(cat test-count)"
 
       - name: Download Count Badge
         run: |
           curl -o ./data/assets/test-count-badge.svg https://img.shields.io/badge/$(cat test-count | tr -d " \t\n\r")-4572a1.svg?label=Test%20Count\&style=for-the-badge
-          rm ./video-processor-count ./engine-and-interface-count ./workflow-count ./test-count
+          rm -rf ./*test-count
       
       - name: Commit test count badge
         run: ./scripts/commit-and-push.sh "[CI] update test count badge"
