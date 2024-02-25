@@ -12,6 +12,8 @@ jobs:
     services:
       db:
         image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25432:5432
         options: >-
@@ -58,10 +60,10 @@ jobs:
           pushd scripts/pg-extender
           python ../generate_pg_extender.py
           cat install.sql
-          psql -h localhost -p 25432 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25432 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          PGPASSWORD: docker
+          POSTGRES_PASSWORD: postgres
       
       - name: Ingest Road
         shell: micromamba-shell {0}

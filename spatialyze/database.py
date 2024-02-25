@@ -378,10 +378,10 @@ def _config(config: CameraConfig) -> Composable:
 # will need to come in here to change
 database = Database(
     psycopg2.connect(
-        dbname=environ.get("AP_DB", "mobilitydb"),
-        user=environ.get("AP_USER", "docker"),
+        dbname=environ.get("AP_DB", "postgres"),
+        user=environ.get("AP_USER", "postgres"),
         host=environ.get("AP_HOST", "store"),
         port=environ.get("AP_PORT", "5432"),
-        password=environ.get("AP_PASSWORD", "docker"),
+        password=environ.get("AP_PASSWORD", "postgres"),
     )
 )
