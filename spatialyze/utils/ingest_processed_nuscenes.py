@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING, NamedTuple
 import numpy as np
 import numpy.typing as npt
 import psycopg2.sql as psql
-from mobilitydb import TFloatInst, TFloatSeq, TGeomPointInst, TGeomPointSeq
 from postgis import Point
 from tqdm import tqdm
 
 from ..data_types.camera_key import CameraKey
 from ..data_types.nuscenes_annotation import NuscenesAnnotation
 from ..data_types.nuscenes_camera import NuscenesCamera
+from ..video_processor.utils.insert_trajectory import Trajectory, insert_trajectory
 
 if TYPE_CHECKING:
     from ..database import Database
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 class _MovableObject(NamedTuple):
     object_type: "str"
+    frame_num: list[int]
     bboxes: "list[npt.NDArray]"
     timestamps: "list[int]"
     itemHeading: "list[float]"
@@ -47,10 +48,10 @@ def ingest_processed_nuscenes(
         annotations = annotations_map[k]
 
         objects: "dict[str, _MovableObject]" = {}
-        cc_map: "dict[str, NuscenesCamera]" = {}
+        cc_map: "dict[str, tuple[int, NuscenesCamera]]" = {}
         for idx, cc in enumerate(camera):
             assert cc.token not in cc_map
-            cc_map[cc.token] = cc
+            cc_map[cc.token] = (idx, cc)
             fields: "list[tuple[str, psql.Composable]]" = [
                 ("camera_id", L(str(k))),
                 ("frame_id", L(cc.token)),
@@ -69,12 +70,13 @@ def ingest_processed_nuscenes(
             camera_sqls.append(psql.SQL(f"({brackets})").format(*(v for _, v in fields)))
 
         for a in annotations:
-            cc = cc_map[a.sample_data_token]
+            cc_idx, cc = cc_map[a.sample_data_token]
             timestamp = cc.timestamp
             item_id = f"{cc.channel}_{a.instance_token}"
             if item_id not in objects:
                 objects[item_id] = _MovableObject(
                     object_type=a.category,
+                    frame_num=[],
                     bboxes=[],
                     timestamps=[],
                     itemHeading=[],
@@ -88,12 +90,14 @@ def ingest_processed_nuscenes(
             objects[item_id].timestamps.append(timestamp)
             objects[item_id].itemHeading.append(a.heading)
             objects[item_id].translations.append(a.translation)
+            objects[item_id].frame_num.append(cc_idx)
 
         for item_id, obj in objects.items():
             timestamps = np.array(obj.timestamps)
             # bboxes = np.array(obj.bboxes)
             itemHeadings = np.array(obj.itemHeading)
             translations = np.array(obj.translations)
+            frame_nums = np.array(obj.frame_num)
 
             index = timestamps.argsort()
 
@@ -101,63 +105,16 @@ def ingest_processed_nuscenes(
             # obj.bboxes = [bboxes[i, :, :] for i in index]
             itemHeadings = itemHeadings[index]
             translations = translations[index]
+            frame_nums = frame_nums[index]
+            assert any(p < n for p, n in zip(frame_nums[:-1], frame_nums[1:])), frame_nums
 
-            # bboxes = np.array(obj.bboxes)
-            # converted_bboxes = [bbox_to_data3d(bbox) for bbox in bboxes]
-
-            # pairs = []
-            # deltas = []
-            # for meta_box in converted_bboxes:
-            #     pairs.append(meta_box[0])
-            #     deltas.append(meta_box[1:])
-            trajectory = [TGeomPointInst(Point(*p), t) for p, t in zip(translations, timestamps)]
-            headings = [TFloatInst(f, t) for f, t in zip(itemHeadings, timestamps)]
-            item_sqls.append(
-                psql.SQL(
-                    "({item_id},      {camera_id}, {object_type}, "
-                    # " {object_type},  {traj_centroids},"
-                    " {translations}, {item_headings})"
-                ).format(
-                    item_id=L(item_id),
-                    camera_id=L(str(k)),
-                    object_type=L(obj.object_type),
-                    # traj_centroids=L(TGeomPointSeq(trajectory, upper_inc=True)),
-                    translations=L(TGeomPointSeq(trajectory, upper_inc=True)),
-                    item_headings=L(TFloatSeq(headings, upper_inc=True)),
-                )
+            traj = Trajectory(
+                item_id,
+                frame_nums.tolist(),
+                k.scene + '-' + k.channel,
+                obj.object_type,
+                translations.tolist(),
+                itemHeadings.tolist(),
             )
-        camera_sqls, item_sqls = _flush(camera_sqls, item_sqls, database, 1000)
-    _flush(camera_sqls, item_sqls, database)
 
-
-def _flush(
-    camera_sqls: "list[psql.Composable]",
-    item_sqls: "list[psql.Composable]",
-    database: "Database",
-    threshold: "int | None" = None,
-) -> "tuple[list[psql.Composable], list[psql.Composable]]":
-    if threshold is None or len(camera_sqls) + len(item_sqls) >= threshold:
-        if len(camera_sqls) != 0:
-            query = psql.SQL(
-                "INSERT INTO Camera ("
-                "cameraId, frameId, "
-                "frameNum, fileName, "
-                "cameraTranslation, cameraRotation, "
-                "cameraIntrinsic, egoTranslation, "
-                "egoRotation, timestamp, "
-                "cameraHeading, egoHeading"
-                ") VALUES {}"
-            ).format(psql.SQL(",").join(camera_sqls))
-            database.update(query)
-
-        if len(item_sqls) != 0:
-            query = psql.SQL(
-                "INSERT INTO Item_Trajectory ("
-                "ItemId, CameraId, ObjectType, "
-                # "ObjectType, translations, "
-                "Translations, ItemHeadings"
-                ") VALUES {}"
-            ).format(psql.SQL(",").join(item_sqls))
-            database.update(query)
-        return [], []
-    return camera_sqls, item_sqls
+            insert_trajectory(database, traj)
