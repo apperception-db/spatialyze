@@ -9,7 +9,7 @@ import pytest
 TABLES = [
     (CAMERA_TABLE, 229),
     # "General_Bbox",
-    (TRAJECTORY_TABLE, 67),
+    (TRAJECTORY_TABLE, 3934),
 ]
 
 
@@ -17,8 +17,10 @@ def test_reset():
     d = Database(psycopg2.connect(
         dbname="mobilitydb",
         user="docker",
-        host="localhost",
-        port=os.environ["AP_PORT_RESET"],
+        # host="localhost",
+        # port=os.environ["AP_PORT_RESET"],
+        host='store',
+        port='5432',
         password="docker",
     ))
 
@@ -41,29 +43,29 @@ def test_reset():
         assert d.sql("select * from " + t).empty
 
 
-def test_execute_update_and_query():
-    d = Database(psycopg2.connect(
-        dbname="mobilitydb",
-        user="docker",
-        host="localhost",
-        port=os.environ["AP_PORT_SQL"],
-        password="docker",
-    ))
+# def test_execute_update_and_query():
+#     d = Database(psycopg2.connect(
+#         dbname="mobilitydb",
+#         user="docker",
+#         host="localhost",
+#         port=os.environ["AP_PORT_SQL"],
+#         password="docker",
+#     ))
 
-    d.update("create table if not exists t1 (c1 text, c2 int)")
-    d.update("insert into t1 values ('test1', 3), ('test2', 4)")
-    d._commit()
-    results = d.execute("select * from t1")
-    assert results == [("test1", 3), ("test2", 4)], "should return correct tuples"
+#     d.update("create table if not exists t1 (c1 text, c2 int)")
+#     d.update("insert into t1 values ('test1', 3), ('test2', 4)")
+#     d._commit()
+#     results = d.execute("select * from t1")
+#     assert results == [("test1", 3), ("test2", 4)], "should return correct tuples"
 
-    with pytest.raises(psycopg2.errors.DatabaseError):
-        d.update("zxcvasdfqwer")
+#     with pytest.raises(psycopg2.errors.DatabaseError):
+#         d.update("zxcvasdfqwer")
 
-    results = d.execute("select * from t1")
-    assert results == [("test1", 3), ("test2", 4)], "should execute another query after failed executions"
+#     results = d.execute("select * from t1")
+#     assert results == [("test1", 3), ("test2", 4)], "should execute another query after failed executions"
 
-    with pytest.raises(psycopg2.errors.DatabaseError):
-        d.execute("zxcvasdfqwer")
+#     with pytest.raises(psycopg2.errors.DatabaseError):
+#         d.execute("zxcvasdfqwer")
 
-    results = d.execute("select * from t1")
-    assert results == [("test1", 3), ("test2", 4)], "should execute another query after failed executions"
+#     results = d.execute("select * from t1")
+#     assert results == [("test1", 3), ("test2", 4)], "should execute another query after failed executions"

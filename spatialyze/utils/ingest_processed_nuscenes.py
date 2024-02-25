@@ -70,6 +70,18 @@ def ingest_processed_nuscenes(
             brackets = ",".join(["{}"] * len(fields))
             camera_sqls.append(psql.SQL(f"({brackets})").format(*(v for _, v in fields)))
 
+        query = psql.SQL(
+            "INSERT INTO Camera ("
+            "cameraId, frameId, "
+            "frameNum, fileName, "
+            "cameraTranslation, cameraRotation, "
+            "cameraIntrinsic, egoTranslation, "
+            "egoRotation, timestamp, "
+            "cameraHeading, egoHeading"
+            ") VALUES {}"
+        ).format(psql.SQL(",").join(camera_sqls))
+        database.update(query)
+
         for a in annotations:
             cc_idx, cc = cc_map[a.sample_data_token]
             timestamp = cc.timestamp
@@ -107,12 +119,12 @@ def ingest_processed_nuscenes(
             itemHeadings = itemHeadings[index]
             translations = translations[index]
             frame_nums = frame_nums[index]
-            assert any(p < n for p, n in zip(frame_nums[:-1], frame_nums[1:])), frame_nums
+            assert len(frame_nums) == 0 or all(p < n for p, n in zip(frame_nums[:-1], frame_nums[1:])), frame_nums
 
             traj = Trajectory(
                 item_id,
                 frame_nums.tolist(),
-                k.scene + "-" + k.channel,
+                str(k),
                 obj.object_type,
                 translations.tolist(),
                 itemHeadings.tolist(),
