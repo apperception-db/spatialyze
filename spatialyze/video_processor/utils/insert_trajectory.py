@@ -12,6 +12,9 @@ if TYPE_CHECKING:
     from ...database import Database
     from .types import Trajectory
 
+P1 = TypeVar("P1", Float3, Point)
+PointTuple = tuple[int | str, str, str, int, P1, float | None]
+
 
 def insert_trajectory(
     database: "Database",
@@ -22,80 +25,73 @@ def insert_trajectory(
         ids,
         camera_id,
         object_type,
-        pairs,
-        itemHeading_list,
+        points,
+        headings,
     ) = trajectory
 
     prevPoint: Float3 | None = None
     st, en = ids[0], ids[-1]
-    tuples: list[tuple[int | str, str, str, int, Float3, float | None] | None] = [
+    tuples: list[PointTuple[Float3] | None] = [
         None for _ in range(st, en + 1)
     ]
 
     P = TypeVar("P", Float3, Point)
 
-    def point(idx: int, p: P, h: float | None) -> tuple[int | str, str, str, int, P, float | None]:
+    def point(idx: int, p: P, h: float | None):
         return (item_id, camera_id, object_type, idx, p, h)
 
-    for idx, current_point, curItemHeading in zip(
-        ids,
-        pairs,
-        itemHeading_list,
-    ):
-        # Construct trajectory
-        heading = infer_heading(curItemHeading, prevPoint, current_point)
-        tuples[idx - st] = point(idx, current_point, heading)
-        prevPoint = current_point
+    for i, p, h in zip(ids, points, headings):
+        h = infer_heading(h, prevPoint, p)
+        tuples[i - st] = point(i, p, h)
+        prevPoint = p
 
     prevHeading: float | None = None
     prevPoint = None
-    _tuples: list[tuple[int | str, str, str, int, Point, float | None]] = []
-    for idx in range(st, en + 1):
-        i = idx - st
+    tuplesWithPoints: list[PointTuple[Point]] = []
+    for i in range(st, en + 1):
+        i = i - st
         t = tuples[i]
         if t is None:
             assert prevPoint is not None
-            nppp = np.array(prevPoint)
-            npcp: None | npt.NDArray = None
-            for j in range(st, en + 1):
-                j -= st
-                if j <= i:
-                    continue
+            npPrevPoint = np.array(prevPoint)
+            npCurrPoint: None | npt.NDArray = None
+            for jdx in range(i, en + 1):
+                j = jdx - st
                 nt = tuples[j]
                 if nt is None:
                     continue
                 cp = nt[4]
                 assert cp is not None
                 npnp = np.array(cp)
-                npcp = nppp + ((npnp - nppp) * (i - (i - 1)) / (j - (i - 1)))
+                npCurrPoint = npPrevPoint + ((npnp - npPrevPoint) * (i - (i - 1)) / (j - (i - 1)))
                 break
-            assert isinstance(npcp, np.ndarray)
-            x, y, z = np.array(npcp)
-            t = point(idx, (float(x), float(y), float(z)), None)
+            assert isinstance(npCurrPoint, np.ndarray)
+            x, y, z = np.array(npCurrPoint)
+            t = point(i, (float(x), float(y), float(z)), None)
             prevPoint = float(x), float(y), float(z)
         else:
             prevPoint = t[4]
-        _tuples.append(point(idx, Point(prevPoint), None))
+        tuplesWithPoints.append(point(i, Point(prevPoint), t[5]))
 
-    __tuples: list[tuple[int | str, str, str, int, Point, float | None]] = []
-    for i, t in enumerate(_tuples):
+    tuplesWithPointsHeadings: list[PointTuple[Point]] = []
+    for i, t in enumerate(tuplesWithPoints):
         h = t[5]
         if h is None and prevHeading is not None:
-            for j, nt in enumerate(_tuples):
+            for j, nt in enumerate(tuplesWithPoints):
                 nh = nt[5]
                 if j <= i:
                     continue
                 if nh is not None:
                     h = prevHeading + ((nh - prevHeading) * (i - (i - 1)) / (j - (i - 1)))
                     break
-        __tuples.append(t[:5] + (h,))
+        tuplesWithPointsHeadings.append((*t[:5], h))
         prevHeading = h
 
-    obj = SQL(",").join(map(value, __tuples))
+    obj = SQL(",").join(map(value, tuplesWithPointsHeadings))
     insert = SQL("INSERT INTO Item_Trajectory VALUES {}")
     database.execute(insert.format(obj))
     database._commit()
 
 
-def value(t: tuple[int | str, str, str, int, Point, float | None]):
+def value(t: PointTuple[Point]):
     return SQL("(") + SQL(",").join(map(Literal, t)) + SQL(")")
