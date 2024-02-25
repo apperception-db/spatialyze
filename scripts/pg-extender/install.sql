@@ -1,12 +1,9 @@
 \i ahead.sql;
-\i angleBetween.sql;
-\i angleExcluding.sql;
 \i convertCamera.sql;
 \i distance.sql;
 \i facingRelative.sql;
 \i geoContained.sql;
 \i geoContainedMargin.sql;
-\i headingAtTimestamp.sql;
 \i in_view.sql;
 \i leftTurn.sql;
 \i minDistance.sql;
