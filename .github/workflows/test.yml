@@ -64,7 +64,7 @@ jobs:
           psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
@@ -146,7 +146,7 @@ jobs:
           psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
@@ -280,14 +280,14 @@ jobs:
           pushd scripts/pg-extender
           python ../generate_pg_extender.py
           cat install.sql
-          psql -h localhost -p 25440 -d postgres -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25441 -d postgres -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25442 -d postgres -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25443 -d postgres -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25444 -d postgres -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25441 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25442 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25443 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25444 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}

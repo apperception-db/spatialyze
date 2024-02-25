@@ -63,7 +63,7 @@ jobs:
           psql -h localhost -p 25432 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
       
       - name: Ingest Road
         shell: micromamba-shell {0}
