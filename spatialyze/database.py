@@ -120,6 +120,7 @@ class Database:
         self._create_item_trajectory_table(commit)
         self._create_item_detection_table(commit)
         self._create_general_bbox_table(commit)
+        self._create_metadata_table(commit)
         self._create_index(commit)
 
     def reset_cursor(self):
