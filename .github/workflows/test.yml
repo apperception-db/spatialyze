@@ -387,36 +387,6 @@ jobs:
         with:
           verbose: true
 
-      - name: Download Count
-        uses: actions/download-artifact@v3
-        with:
-          name: video-processor-count
-          path: ./video-processor-count
-
-      - name: Download Count
-        uses: actions/download-artifact@v3
-        with:
-          name: engine-and-interface-count
-          path: ./engine-and-interface-count
-
-      - name: Download Count
-        uses: actions/download-artifact@v3
-        with:
-          name: workflow-count
-          path: ./workflow-count
-      
-      - name: Combine Counts
-        run: |
-          cat ./video-processor-count ./engine-and-interface-count ./workflow-count | awk '{s+=$1} END {print s}' &> test-count
-          cat test-count
-          echo "Total tests: $(cat test-count)"
-
-      - name: Upload Count
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-count
-          path: ./test-count
-
       # - name: Download Coverage
       #   uses: actions/download-artifact@v3
       #   with:
@@ -450,3 +420,44 @@ jobs:
       #   with:
       #     name: coverage-badge
       #     path: ./coverage.svg
+
+  test-count:
+    name: Test Count
+    needs: [test-video-processor, test-engine-and-interface, test-workflow]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: video-processor-count
+          path: ./video-processor-count
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: engine-and-interface-count
+          path: ./engine-and-interface-count
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: workflow-count
+          path: ./workflow-count
+      
+      - name: Combine Counts
+        run: |
+          cat ./video-processor-count ./engine-and-interface-count ./workflow-count | awk '{s+=$1} END {print s}' &> test-count
+          echo "Total tests: $(cat test-count)"
+
+      - name: Download Count Badge
+        run: |
+          curl -o ./data/assets/test-count-badge.svg https://img.shields.io/badge/$(cat test-count | tr -d " \t\n\r")-4572a1.svg?label=Test%20Count\&style=for-the-badge
+          rm ./video-processor-count ./engine-and-interface-count ./workflow-count ./test-count
+      
+      - name: Commit test count badge
+        run: ./scripts/commit-and-push.sh "[CI] update test count badge"

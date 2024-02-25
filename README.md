@@ -28,6 +28,10 @@
     alt="ArXiv Paper"
     src="https://img.shields.io/badge/2308.03276-b31b1b.svg?label=arXiv&style=for-the-badge"
   ></a>
+  <img
+    alt="Test Count"
+    src="./data/assets/test-count-badge.svg"
+  >
 </p>
 
 ## Absract
