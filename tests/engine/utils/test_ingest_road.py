@@ -23,11 +23,11 @@ import pytest
 ])
 def test_simple_ops(table: str, count: int):
     d1 = Database(psycopg2.connect(
-        dbname="mobilitydb",
-        user="docker",
+        dbname="postgres",
+        user="postgres",
         host="localhost",
         port=os.environ["AP_PORT_ROAD_1"],
-        password="docker",
+        password="postgres",
     ))
     d1.reset()
     ingest_road(d1, "./data/scenic/road-network/boston-seaport")
@@ -36,11 +36,11 @@ def test_simple_ops(table: str, count: int):
 
 def test_incomplete_road_network():
     d2 = Database(psycopg2.connect(
-        dbname="mobilitydb",
-        user="docker",
+        dbname="postgres",
+        user="postgres",
         host="localhost",
         port=os.environ["AP_PORT_ROAD_2"],
-        password="docker",
+        password="postgres",
     ))
     ingest_road(d2, "./data/viva/road-network")
 
