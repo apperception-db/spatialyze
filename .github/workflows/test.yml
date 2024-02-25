@@ -73,6 +73,15 @@ jobs:
           AP_PORT: 25440
           AP_HOST: localhost
       
+      - name: Count Tests
+        shell: micromamba-shell {0}
+        run: |
+          pytest --collect-only -qq tests/workflow
+          pytest --collect-only -q tests/workflow | head -n -2 | wc -l
+        env:
+          AP_PORT: 25440
+          AP_HOST: localhost
+      
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/workflow
@@ -152,6 +161,15 @@ jobs:
         shell: micromamba-shell {0}
         run: |
           python ./scripts/ingest_road.py
+        env:
+          AP_PORT: 25440
+          AP_HOST: localhost
+      
+      - name: Count Tests
+        shell: micromamba-shell {0}
+        run: |
+          pytest --collect-only -qq tests/video_processor
+          pytest --collect-only -q tests/video_processor | head -n -2 | wc -l
         env:
           AP_PORT: 25440
           AP_HOST: localhost
@@ -301,6 +319,20 @@ jobs:
       - name: Generate Image data
         shell: micromamba-shell {0}
         run: python scripts/fake-images.py
+      
+      - name: Count Tests
+        shell: micromamba-shell {0}
+        run: |
+          pytest --collect-only -qq tests/engine tests/interface
+          pytest --collect-only -q tests/engine tests/interface | head -n -2 | wc -l
+        env:
+          AP_PORT: 25440
+          AP_PORT_ROAD_1: 25441
+          AP_PORT_ROAD_2: 25442
+          AP_PORT_RESET: 25443
+          AP_PORT_IMPORT: 25444
+          AP_PORT_SQL: 25445
+          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
