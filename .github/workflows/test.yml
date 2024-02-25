@@ -77,7 +77,7 @@ jobs:
         shell: micromamba-shell {0}
         run: |
           pytest --collect-only -qq tests/workflow
-          pytest --collect-only -q tests/workflow | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l
         env:
           AP_PORT: 25440
           AP_HOST: localhost
@@ -169,7 +169,7 @@ jobs:
         shell: micromamba-shell {0}
         run: |
           pytest --collect-only -qq tests/video_processor
-          pytest --collect-only -q tests/video_processor | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l
         env:
           AP_PORT: 25440
           AP_HOST: localhost
@@ -324,7 +324,7 @@ jobs:
         shell: micromamba-shell {0}
         run: |
           pytest --collect-only -qq tests/engine tests/interface
-          pytest --collect-only -q tests/engine tests/interface | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l
         env:
           AP_PORT: 25440
           AP_PORT_ROAD_1: 25441
