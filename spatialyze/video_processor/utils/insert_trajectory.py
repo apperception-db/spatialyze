@@ -31,9 +31,7 @@ def insert_trajectory(
 
     prevPoint: Float3 | None = None
     st, en = ids[0], ids[-1]
-    tuples: list[PointTuple[Float3] | None] = [
-        None for _ in range(st, en + 1)
-    ]
+    tuples: list[PointTuple[Float3] | None] = [None for _ in range(st, en + 1)]
 
     P = TypeVar("P", Float3, Point)
 
