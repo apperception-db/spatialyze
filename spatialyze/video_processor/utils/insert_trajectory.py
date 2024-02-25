@@ -46,14 +46,14 @@ def insert_trajectory(
     prevHeading: float | None = None
     prevPoint = None
     tuplesWithPoints: list[PointTuple[Point]] = []
-    for i in range(st, en + 1):
-        i = i - st
+    for idx in range(st, en + 1):
+        i = idx - st
         t = tuples[i]
         if t is None:
             assert prevPoint is not None
             npPrevPoint = np.array(prevPoint)
             npCurrPoint: None | npt.NDArray = None
-            for jdx in range(i, en + 1):
+            for jdx in range(idx, en + 1):
                 j = jdx - st
                 nt = tuples[j]
                 if nt is None:
@@ -65,11 +65,11 @@ def insert_trajectory(
                 break
             assert isinstance(npCurrPoint, np.ndarray)
             x, y, z = np.array(npCurrPoint)
-            t = point(i, (float(x), float(y), float(z)), None)
+            t = point(idx, (float(x), float(y), float(z)), None)
             prevPoint = float(x), float(y), float(z)
         else:
             prevPoint = t[4]
-        tuplesWithPoints.append(point(i, Point(prevPoint), t[5]))
+        tuplesWithPoints.append(point(idx, Point(prevPoint), t[5]))
 
     tuplesWithPointsHeadings: list[PointTuple[Point]] = []
     for i, t in enumerate(tuplesWithPoints):
