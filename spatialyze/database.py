@@ -149,7 +149,7 @@ class Database:
         cursor.execute(
             "CREATE TABLE General_Bbox ("
             f"{columns(_schema, BBOX_COLUMNS)},"
-            f"FOREIGN KEY(itemId) REFERENCES {TRAJECTORY_TABLE} (itemId),"
+            # f"FOREIGN KEY(itemId) REFERENCES {TRAJECTORY_TABLE} (itemId),"
             "PRIMARY KEY (itemId, timestamp))"
         )
         self._commit(commit)
