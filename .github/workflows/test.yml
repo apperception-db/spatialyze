@@ -78,6 +78,7 @@ jobs:
         run: |
           pytest --collect-only -qq tests/workflow
           pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l &> test-count
         env:
           AP_PORT: 25440
           AP_HOST: localhost
@@ -93,6 +94,11 @@ jobs:
         with:
           name: workflow-coverage
           path: ./coverage.xml
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: workflow-count
+          path: ./test-count
       
       - name: Commit generated test inputs
         if: ${{ env.GENERATE_WORKFLOW_TEST_RESULTS == 'true' }}
@@ -170,6 +176,7 @@ jobs:
         run: |
           pytest --collect-only -qq tests/video_processor
           pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l &> test-count
         env:
           AP_PORT: 25440
           AP_HOST: localhost
@@ -185,6 +192,11 @@ jobs:
         with:
           name: video-processor-coverage
           path: ./coverage.xml
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: video-processor-count
+          path: ./test-count
       
       - name: Commit formatted changes
         if: ${{ env.GENERATE_PROCESSOR_TEST_RESULTS == 'true' }}
@@ -325,6 +337,7 @@ jobs:
         run: |
           pytest --collect-only -qq tests/engine tests/interface
           pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l &> test-count
         env:
           AP_PORT: 25440
           AP_PORT_ROAD_1: 25441
@@ -351,6 +364,11 @@ jobs:
           name: engine-and-interface-coverage
           path: ./coverage.xml
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: engine-and-interface-count
+          path: ./test-count
+
   upload-coverage:
     name: Upload Coverage
     needs: [test-video-processor, test-engine-and-interface, test-workflow]
@@ -368,6 +386,30 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           verbose: true
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: video-processor-count
+          path: ./video-processor-count
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: engine-and-interface-count
+          path: ./engine-and-interface-count
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: workflow-count
+          path: ./workflow-count
+      
+      - name: Combine Counts
+        run: |
+          cat ./video-processor-count ./engine-and-interface-count ./workflow-count | awk '{s+=$1} END {print s}' &> test-count
+          cat test-count
+          echo "Total tests: $(cat test-count)"
 
       # - name: Download Coverage
       #   uses: actions/download-artifact@v3
