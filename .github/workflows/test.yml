@@ -69,12 +69,14 @@ jobs:
         run: python ./scripts/ingest_road.py
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/workflow
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v3
         with:
@@ -148,12 +150,14 @@ jobs:
           python ./scripts/ingest_road.py
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/video_processor
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v3
         with:
@@ -276,6 +280,7 @@ jobs:
           python ./scripts/import_tables.py
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
       
       - name: Generate Image data
         shell: micromamba-shell {0}
@@ -291,6 +296,7 @@ jobs:
           AP_PORT_RESET: 25443
           AP_PORT_IMPORT: 25444
           AP_PORT_SQL: 25445
+          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v3
         with:
