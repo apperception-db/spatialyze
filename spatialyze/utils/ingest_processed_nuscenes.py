@@ -119,7 +119,9 @@ def ingest_processed_nuscenes(
             itemHeadings = itemHeadings[index]
             translations = translations[index]
             frame_nums = frame_nums[index]
-            assert len(frame_nums) == 0 or all(p < n for p, n in zip(frame_nums[:-1], frame_nums[1:])), frame_nums
+            assert len(frame_nums) == 0 or all(
+                p < n for p, n in zip(frame_nums[:-1], frame_nums[1:])
+            ), frame_nums
 
             traj = Trajectory(
                 item_id,
