@@ -68,6 +68,7 @@ jobs:
         run: python ./scripts/ingest_road.py
         env:
           AP_PORT: 25432
+          AP_HOST: localhost
       
       - name: Generate Video Examples
         shell: micromamba-shell {0}
