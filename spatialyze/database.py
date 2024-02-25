@@ -65,19 +65,6 @@ CAMERA_COLUMNS: "list[tuple[str, str]]" = [
     ("egoHeading", "real"),
 ]
 
-# TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
-#     ("itemId", "TEXT"),
-#     ("cameraId", "TEXT"),
-#     ("objectType", "TEXT"),
-#     # ("roadTypes", "ttext"),
-#     ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
-#     ("itemHeadings", "tfloat"),
-#     # ("color", "TEXT"),
-#     # ("largestBbox", "STBOX")
-#     # ("roadPolygons", "tgeompoint"),
-#     # ("period", "period") [today, nextweek]
-# ]
-
 DETECTION_COLUMNS: list[tuple[str, str]] = [
     ("itemId", "TEXT"),
     ("cameraId", "TEXT"),
@@ -88,7 +75,7 @@ DETECTION_COLUMNS: list[tuple[str, str]] = [
     ("itemHeading", "Float"),
 ]
 
-TRAJECTORY2_COLUMNS: list[tuple[str, str]] = [
+TRAJECTORY_COLUMNS: list[tuple[str, str]] = [
     ("itemId", "TEXT"),
     ("cameraId", "TEXT"),
     ("objectType", "TEXT"),
@@ -172,7 +159,7 @@ class Database:
         cursor = self.connection.cursor()
         cursor.execute(
             f"CREATE TABLE {TRAJECTORY_TABLE} ("
-            f"{columns(_schema, TRAJECTORY2_COLUMNS)},"
+            f"{columns(_schema, TRAJECTORY_COLUMNS)},"
             "PRIMARY KEY (itemId, frameNum), "
             "FOREIGN KEY (cameraId, frameNum) REFERENCES Camera(cameraId, frameNum))"
         )
