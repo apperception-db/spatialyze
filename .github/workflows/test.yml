@@ -411,6 +411,12 @@ jobs:
           cat test-count
           echo "Total tests: $(cat test-count)"
 
+      - name: Upload Count
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-count
+          path: ./test-count
+
       # - name: Download Coverage
       #   uses: actions/download-artifact@v3
       #   with:
