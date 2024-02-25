@@ -73,6 +73,9 @@ jobs:
       - name: Generate Video Examples
         shell: micromamba-shell {0}
         run: python evaluation/examples/inference_pipeline.py
+        env:
+          AP_PORT: 25432
+          AP_HOST: localhost
 
       - name: Commit generated examples
         run: ./scripts/commit-and-push-if-latest.sh "[CI] generate video examples"
