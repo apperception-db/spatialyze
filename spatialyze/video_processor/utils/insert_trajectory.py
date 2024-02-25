@@ -6,16 +6,16 @@ from postgis import Point
 from psycopg2.sql import SQL, Literal
 
 from ..types import Float3
-from ..utils.prepare_trajectory import Trajectory
 from .infer_heading import infer_heading
 
 if TYPE_CHECKING:
     from ...database import Database
+    from .types import Trajectory
 
 
 def insert_trajectory(
     database: "Database",
-    trajectory: Trajectory,
+    trajectory: "Trajectory",
 ):
     (
         item_id,
