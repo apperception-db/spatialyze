@@ -10,7 +10,8 @@ from tqdm import tqdm
 from ..data_types.camera_key import CameraKey
 from ..data_types.nuscenes_annotation import NuscenesAnnotation
 from ..data_types.nuscenes_camera import NuscenesCamera
-from ..video_processor.utils.insert_trajectory import Trajectory, insert_trajectory
+from ..video_processor.utils.insert_trajectory import insert_trajectory
+from ..video_processor.utils.types import Trajectory
 
 if TYPE_CHECKING:
     from ..database import Database
@@ -41,7 +42,7 @@ def ingest_processed_nuscenes(
     # print(len(ks))
     ks = keys
     camera_sqls: "list[psql.Composable]" = []
-    item_sqls: "list[psql.Composable]" = []
+    # item_sqls: "list[psql.Composable]" = []
     print("Ingesting Cameras and Annotations")
     for k in tqdm(ks, total=len(ks)):
         camera = camera_map[k]
