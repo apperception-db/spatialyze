@@ -3,7 +3,7 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (contained_margin(o.bbox, road_segment('intersection'), 3), "containedMargin(objectBBox(t0.itemId,c0.timestamp),roadSegment('intersection'),3)"),
+    (contained_margin(o, road_segment('intersection'), 3), "containedMargin(t0.translation,roadSegment('intersection'),3)"),
 ])
 def test_contained_margin(fn, sql):
     assert gen(fn) == sql

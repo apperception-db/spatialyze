@@ -11,7 +11,7 @@ def test_fig_12():
     results = database.predicate(
         F.like(o.type, 'human.pedestrian%') &
         F.contains('road', c.ego) &
-        (F.contained_margin(o.bbox, F.road_segment('road'), 0.50) | F.contains('road', o)) &
+        (F.contained_margin(o, F.road_segment('road'), 0.50) | F.contains('road', o)) &
         F.heading_diff(o, c.ego, excluding=[-70, 70]) &
         F.heading_diff(c.ego, F.road_direction(c.ego, c.ego), between=[-15, 15]) &
         (F.distance(c, o) < 50) &
@@ -91,7 +91,7 @@ def test_fig_12_new():
     results = database.predicate(
         F.like(o.type, 'human.pedestrian%') &
         F.contains('road', c.ego) &
-        (F.contained_margin(o.bbox, F.road_segment('road'), 0.50) | F.contains('road', o)) &
+        (F.contained_margin(o, F.road_segment('road'), 0.50) | F.contains('road', o)) &
         F.heading_diff(o, c.ego, between=[-70, 70]) &
         F.heading_diff(c.ego, F.road_direction(c.ego, c.ego), between=[-15, 15]) &
         (F.distance(c, o) < 50) &

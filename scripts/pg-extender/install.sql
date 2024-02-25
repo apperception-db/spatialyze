@@ -7,9 +7,7 @@
 \i in_view.sql;
 \i leftTurn.sql;
 \i minDistance.sql;
-\i objectBBox.sql;
 \i operators.sql;
-\i overlap.sql;
 \i roadCoords.sql;
 \i roadDirection.sql;
 \i roadSegment.sql;

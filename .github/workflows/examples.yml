@@ -10,8 +10,8 @@ jobs:
     name: Generate Videos
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db:
+        image: postgis/postgis:16-3.4
         ports:
           - 25432:5432
         options: >-
