@@ -89,22 +89,22 @@ rm -rf build
 ```
 
 ## Spatialyze Demo
-### Start Spatialyze Geospatial Metadata Store [MobilityDB](https://github.com/MobilityDB/MobilityDB)
+### Start Spatialyze Geospatial Metadata Store [PostGIS](https://postgis.net/)
 ```bash
 docker volume create spatialyze-gsstore-data
 docker run --name     "spatialyze-gsstore"                        \
            --detach                                               \
            --publish  25432:5432                                  \
            --volume   spatialyze-gsstore-data:/var/lib/postgresql \
-                      mobilitydb/mobilitydb
+                      postgis/postgis
 ```
-Setup the MobilityDB with customized functions
+Setup the PostGIS with customized functions
 ```bash
 docker exec -it spatialyze-gsstore rm -rf /pg_extender
 docker cp scripts/pg-extender spatialyze-gsstore:/pg_extender
 docker exec -it -w /pg_extender spatialyze-gsstore python3 install.py
 ```
-To run MobilityDB every system restart
+To run PostGIS every system restart
 ```bash
 docker update --restart unless-stopped spatialyze-gsstore
 ```

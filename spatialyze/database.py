@@ -145,16 +145,16 @@ class Database:
         self._commit(commit)
         cursor.close()
 
-    def _create_general_bbox_table(self, commit=True):
-        cursor = self.connection.cursor()
-        cursor.execute(
-            "CREATE TABLE General_Bbox ("
-            f"{columns(_schema, BBOX_COLUMNS)},"
-            # f"FOREIGN KEY(itemId) REFERENCES {TRAJECTORY_TABLE} (itemId),"
-            "PRIMARY KEY (itemId, timestamp))"
-        )
-        self._commit(commit)
-        cursor.close()
+    # def _create_general_bbox_table(self, commit=True):
+    #     cursor = self.connection.cursor()
+    #     cursor.execute(
+    #         "CREATE TABLE General_Bbox ("
+    #         f"{columns(_schema, BBOX_COLUMNS)},"
+    #         # f"FOREIGN KEY(itemId) REFERENCES {TRAJECTORY_TABLE} (itemId),"
+    #         "PRIMARY KEY (itemId, timestamp))"
+    #     )
+    #     self._commit(commit)
+    #     cursor.close()
 
     def _create_item_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()

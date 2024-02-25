@@ -11,7 +11,7 @@ jobs:
     name: Test Workflow
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
+      db:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -93,7 +93,7 @@ jobs:
     name: Test Video Processor
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
+      db:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -176,7 +176,7 @@ jobs:
     name: Test Engine and Interface
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
+      db:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -187,7 +187,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-road-1:
+      db-road-1:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -198,7 +198,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-road-2:
+      db-road-2:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -209,7 +209,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-reset:
+      db-reset:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -220,7 +220,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-import:
+      db-import:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
@@ -231,7 +231,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-sql:
+      db-sql:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_PASSWORD: postgres
