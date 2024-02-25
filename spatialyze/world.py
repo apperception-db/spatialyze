@@ -175,7 +175,7 @@ def _execute(world: "World", optimization=True):
 
         # execute pipeline
         video = Video(v.video, v.camera)
-        database.update(f'INSERT INTO {METADATA_TABLE} (fps) VALUES ({video.fps})')
+        database.update(f"INSERT INTO {METADATA_TABLE} (fps) VALUES ({video.fps})")
         process = _track(t3ds) if temporal else _detect(d3ds)
         vresults[v.video] = process(video, database)
 

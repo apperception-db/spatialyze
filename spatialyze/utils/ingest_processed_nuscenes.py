@@ -111,7 +111,7 @@ def ingest_processed_nuscenes(
             traj = Trajectory(
                 item_id,
                 frame_nums.tolist(),
-                k.scene + '-' + k.channel,
+                k.scene + "-" + k.channel,
                 obj.object_type,
                 translations.tolist(),
                 itemHeadings.tolist(),
