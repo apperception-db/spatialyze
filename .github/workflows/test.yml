@@ -456,8 +456,13 @@ jobs:
 
       - name: Download Count Badge
         run: |
-          curl -o ./data/assets/test-count-badge.svg https://img.shields.io/badge/$(cat test-count | tr -d " \t\n\r")-4572a1.svg?label=Test%20Count\&style=for-the-badge
+          curl -o ./test-count-badge.svg https://img.shields.io/badge/$(cat test-count | tr -d " \t\n\r")-4572a1.svg?label=Test%20Count\&style=for-the-badge
           rm -rf ./*test-count
-      
-      - name: Commit test count badge
-        run: ./scripts/commit-and-push.sh "[CI] update test count badge"
+
+      - name: Deploy
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.GIST_PAT }}
+          gist_id: b32bb8bf89a237c0f13da5e17abc1cd9
+          file_path: test-count-badge.svg
+          file_type: text
