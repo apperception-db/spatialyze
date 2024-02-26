@@ -30,7 +30,7 @@
   ></a>
   <img
     alt="Test Count"
-    src="./data/assets/test-count-badge.svg"
+    src="https://gist.githubusercontent.com/chanwutk/b32bb8bf89a237c0f13da5e17abc1cd9/raw/test-count-badge.svg"
   >
 </p>
 
