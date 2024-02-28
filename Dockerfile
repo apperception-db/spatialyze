@@ -5,7 +5,7 @@ USER root
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update --yes --quiet
+RUN apt-get  update --yes --quiet
 RUN apt-get install --yes --quiet --no-install-recommends \
     curl ffmpeg git
 
@@ -21,7 +21,7 @@ RUN mv $HOME/.profile.tmp $HOME/.profile
 ENV PYTHONUNBUFFERED=1
 
 RUN micromamba install --yes --name base python=3.10 poetry=1.7 --channel conda-forge
-RUN micromamba clean --all --yes
+RUN micromamba   clean --yes --all
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
 
 ENV POETRY_VIRTUALENVS_CREATE=false
