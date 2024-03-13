@@ -3,7 +3,12 @@ from typing import NamedTuple
 
 import numpy as np
 
-from ..types import Float2, Float3, Float33
+from spatialyze.video_processor.types import Float2, Float3, Float33
+from spatialyze.video_processor.camera_config import camera_config
+from pyquaternion import Quaternion
+import cv2
+import os
+import tqdm
 
 
 start_date = datetime.datetime(
@@ -79,7 +84,7 @@ CAMERA_TRANSLATION = np.array([0, 0, 5])
 CAMERA_ROTATION = Quaternion((0.430, -0.561, 0.561, -0.430))
 
 
-def vv_config(idx: int):
+def vv_config(idx: int, videofile: str):
     timestamp = start_date + datetime.timedelta(seconds=idx)
     return camera_config(
         camera_id='camera-1',
