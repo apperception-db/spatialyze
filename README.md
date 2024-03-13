@@ -30,7 +30,7 @@
   ></a>
 </p>
 
-## Absract
+## Abstract
 Videos that are shot using commodity hardware such as phones and surveillance cameras record various metadata such as time and location.
 We encounter such geospatial videos on a daily basis and such videos have been growing in volume significantly.
 Yet, we do not have data management systems that allow users to interact with such data effectively.
@@ -96,7 +96,7 @@ docker run --name     "spatialyze-gsstore"                        \
            --detach                                               \
            --publish  25432:5432                                  \
            --volume   spatialyze-gsstore-data:/var/lib/postgresql \
-                      mobilitydb/mobilitydb
+                      mobilitydb/mobilitydb:14-3.2-1
 ```
 Setup the MobilityDB with customized functions
 ```bash
