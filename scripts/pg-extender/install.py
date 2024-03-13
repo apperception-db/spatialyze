@@ -22,7 +22,7 @@ for file in sorted(files):
                     line = line[:-len('as')]
                 print(line)
     print()
-    process = subprocess.Popen(" ".join(["psql", "-h", "localhost", "-p", "5432", "-d", "mobilitydb", "-U", "docker", "--command", "'SET client_min_messages TO WARNING;'", "--command", f"'\i {file};'"]), shell=True) 
+    process = subprocess.Popen(" ".join(["psql", "-h", "localhost", "-p", "5432", "-d", "postgres", "-U", "postgres", "--command", "'SET client_min_messages TO WARNING;'", "--command", f"'\i {file};'"]), shell=True) 
     process.wait()
     print()
     print()

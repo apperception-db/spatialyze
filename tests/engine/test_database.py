@@ -9,17 +9,17 @@ import pytest
 TABLES = [
     (CAMERA_TABLE, 229),
     # "General_Bbox",
-    (TRAJECTORY_TABLE, 67),
+    (TRAJECTORY_TABLE, 3934),
 ]
 
 
 def test_reset():
     d = Database(psycopg2.connect(
-        dbname="mobilitydb",
-        user="docker",
+        dbname="postgres",
+        user="postgres",
         host="localhost",
         port=os.environ["AP_PORT_RESET"],
-        password="docker",
+        password="postgres",
     ))
 
     with open('./data/nuscenes/processed/cameras.pkl', 'rb') as f:
@@ -43,11 +43,11 @@ def test_reset():
 
 def test_execute_update_and_query():
     d = Database(psycopg2.connect(
-        dbname="mobilitydb",
-        user="docker",
+        dbname="postgres",
+        user="postgres",
         host="localhost",
         port=os.environ["AP_PORT_SQL"],
-        password="docker",
+        password="postgres",
     ))
 
     d.update("create table if not exists t1 (c1 text, c2 int)")

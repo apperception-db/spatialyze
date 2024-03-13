@@ -32,11 +32,11 @@ END
 $BODY$
 LANGUAGE 'plpgsql' ;
 
-DROP FUNCTION IF EXISTS roadCoords(trajectory tgeompoint, _time timestamptz);
-CREATE OR REPLACE FUNCTION roadCoords(trajectory tgeompoint, _time timestamptz) RETURNS real[] AS
-$BODY$
-BEGIN
-  RETURN roadCoords(valueAtTimestamp(trajectory, _time));
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
+-- DROP FUNCTION IF EXISTS roadCoords(trajectory tgeompoint, _time timestamptz);
+-- CREATE OR REPLACE FUNCTION roadCoords(trajectory tgeompoint, _time timestamptz) RETURNS real[] AS
+-- $BODY$
+-- BEGIN
+--   RETURN roadCoords(valueAtTimestamp(trajectory, _time));
+-- END
+-- $BODY$
+-- LANGUAGE 'plpgsql' ;

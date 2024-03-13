@@ -693,4 +693,4 @@ def ingest_road(database: "Database", directory: str):
     # print("adding segment types")
     add_segment_type(database, ROAD_TYPES)
 
-    database.reset()
+    # database.reset()

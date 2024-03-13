@@ -1,76 +1,95 @@
-import datetime
+from typing import TYPE_CHECKING, TypeVar
 
-from mobilitydb import TFloatInst, TFloatSeq, TGeomPointInst, TGeomPointSeq
+import numpy as np
+import numpy.typing as npt
 from postgis import Point
 from psycopg2.sql import SQL, Literal
 
-from ...database import Database
 from ..types import Float3
-from ..utils.prepare_trajectory import Trajectory
 from .infer_heading import infer_heading
+
+if TYPE_CHECKING:
+    from ...database import Database
+    from .types import Trajectory
+
+P1 = TypeVar("P1", Float3, Point)
+PointTuple = tuple[int | str, str, str, int, P1, float | None]
 
 
 def insert_trajectory(
     database: "Database",
-    trajectory: Trajectory,
-    # road_types: "list[str]",
-    # roadpolygon_list: "list[list[tuple[float, float]]]"
+    trajectory: "Trajectory",
 ):
     (
         item_id,
+        ids,
         camera_id,
         object_type,
-        postgres_timestamps,
-        pairs,
-        itemHeading_list,
+        points,
+        headings,
     ) = trajectory
 
-    points: list[tuple[Float3, datetime.datetime]] = []
-    headings: list[tuple[float, datetime.datetime]] = []
-    prevTimestamp: datetime.datetime | None = None
     prevPoint: Float3 | None = None
-    for timestamp, current_point, curItemHeading in zip(
-        postgres_timestamps,
-        pairs,
-        itemHeading_list,
-    ):
-        if prevTimestamp == timestamp:
-            continue
+    st, en = ids[0], ids[-1]
+    tuples: list[PointTuple[Float3] | None] = [None for _ in range(st, en + 1)]
 
-        # Construct trajectory
-        points.append((current_point, timestamp))
-        curItemHeading = infer_heading(curItemHeading, prevPoint, current_point)
-        if curItemHeading is not None:
-            headings.append((curItemHeading, timestamp))
-        # roadTypes.append(f"{cur_road_type}@{timestamp}")
-        # polygon_point = ', '.join(join(cur_point, ' ') for cur_point in list(
-        #     zip(*cur_roadpolygon.exterior.coords.xy)))
-        # roadPolygons.append(f"Polygon (({polygon_point}))@{timestamp}")
-        prevTimestamp = timestamp
-        prevPoint = current_point
+    P = TypeVar("P", Float3, Point)
 
-    tpoints = tgeoms(points)
-    theadings = tfloats(headings) if len(headings) > 0 else None
-    obj = item_id, camera_id, object_type, tpoints, theadings
-    obj = SQL(",").join(map(Literal, obj))
-    insert = SQL("INSERT INTO Item_Trajectory VALUES ({})")
+    def point(idx: int, p: P, h: float | None):
+        return (item_id, camera_id, object_type, idx, p, h)
+
+    for i, p, h in zip(ids, points, headings):
+        h = infer_heading(h, prevPoint, p)
+        tuples[i - st] = point(i, p, h)
+        prevPoint = p
+
+    prevHeading: float | None = None
+    prevPoint = None
+    tuplesWithPoints: list[PointTuple[Point]] = []
+    for idx in range(st, en + 1):
+        i = idx - st
+        t = tuples[i]
+        if t is None:
+            assert prevPoint is not None
+            npPrevPoint = np.array(prevPoint)
+            npCurrPoint: None | npt.NDArray = None
+            for jdx in range(idx, en + 1):
+                j = jdx - st
+                nt = tuples[j]
+                if nt is None:
+                    continue
+                cp = nt[4]
+                assert cp is not None
+                npnp = np.array(cp)
+                npCurrPoint = npPrevPoint + ((npnp - npPrevPoint) * (i - (i - 1)) / (j - (i - 1)))
+                break
+            assert isinstance(npCurrPoint, np.ndarray)
+            x, y, z = np.array(npCurrPoint)
+            t = point(idx, (float(x), float(y), float(z)), None)
+            prevPoint = float(x), float(y), float(z)
+        else:
+            prevPoint = t[4]
+        tuplesWithPoints.append(point(idx, Point(prevPoint), t[5]))
+
+    tuplesWithPointsHeadings: list[PointTuple[Point]] = []
+    for i, t in enumerate(tuplesWithPoints):
+        h = t[5]
+        if h is None and prevHeading is not None:
+            for j, nt in enumerate(tuplesWithPoints):
+                nh = nt[5]
+                if j <= i:
+                    continue
+                if nh is not None:
+                    h = prevHeading + ((nh - prevHeading) * (i - (i - 1)) / (j - (i - 1)))
+                    break
+        tuplesWithPointsHeadings.append((*t[:5], h))
+        prevHeading = h
+
+    obj = SQL(",").join(map(value, tuplesWithPointsHeadings))
+    insert = SQL("INSERT INTO Item_Trajectory VALUES {}")
     database.execute(insert.format(obj))
     database._commit()
 
 
-def tgeoms(points: list[tuple[Float3, datetime.datetime]]):
-    return TGeomPointSeq(
-        [TGeomPointInst(Point(*p), t) for p, t in points],
-        upper_inc=True,
-        lower_inc=True,
-        interp="Linear",
-    )
-
-
-def tfloats(floats: list[tuple[float, datetime.datetime]]):
-    return TFloatSeq(
-        [TFloatInst(f, t) for f, t in floats],
-        upper_inc=True,
-        lower_inc=True,
-        interp="Linear",
-    )
+def value(t: PointTuple[Point]):
+    return SQL("(") + SQL(",").join(map(Literal, t)) + SQL(")")

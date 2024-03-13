@@ -20,29 +20,29 @@ END
 $BODY$
 LANGUAGE 'plpgsql' ;
 
-DROP FUNCTION IF EXISTS sameRegion(text, tgeompoint, geometry, timestamptz);
-CREATE OR REPLACE FUNCTION sameRegion(segment_type text, traj1 tgeompoint, traj2 geometry, t timestamptz) RETURNS boolean AS
-$BODY$
-BEGIN
-  RETURN sameRegion(segment_type, valueAtTimestamp(traj1, t), traj2);
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
+-- DROP FUNCTION IF EXISTS sameRegion(text, tgeompoint, geometry, timestamptz);
+-- CREATE OR REPLACE FUNCTION sameRegion(segment_type text, traj1 tgeompoint, traj2 geometry, t timestamptz) RETURNS boolean AS
+-- $BODY$
+-- BEGIN
+--   RETURN sameRegion(segment_type, valueAtTimestamp(traj1, t), traj2);
+-- END
+-- $BODY$
+-- LANGUAGE 'plpgsql' ;
 
-DROP FUNCTION IF EXISTS sameRegion(text, geometry, tgeompoint, timestamptz);
-CREATE OR REPLACE FUNCTION sameRegion(segment_type text, traj1 geometry, traj2 tgeompoint, t timestamptz) RETURNS boolean AS
-$BODY$
-BEGIN
-  RETURN sameRegion(segment_type, traj1, valueAtTimestamp(traj2, t));
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
+-- DROP FUNCTION IF EXISTS sameRegion(text, geometry, tgeompoint, timestamptz);
+-- CREATE OR REPLACE FUNCTION sameRegion(segment_type text, traj1 geometry, traj2 tgeompoint, t timestamptz) RETURNS boolean AS
+-- $BODY$
+-- BEGIN
+--   RETURN sameRegion(segment_type, traj1, valueAtTimestamp(traj2, t));
+-- END
+-- $BODY$
+-- LANGUAGE 'plpgsql' ;
 
-DROP FUNCTION IF EXISTS sameRegion(text, tgeompoint, tgeompoint, timestamptz);
-CREATE OR REPLACE FUNCTION sameRegion(segment_type text, traj1 tgeompoint, traj2 tgeompoint, t timestamptz) RETURNS boolean AS
-$BODY$
-BEGIN
-  RETURN sameRegion(segment_type, valueAtTimestamp(traj1, t), valueAtTimestamp(traj2, t));
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
+-- DROP FUNCTION IF EXISTS sameRegion(text, tgeompoint, tgeompoint, timestamptz);
+-- CREATE OR REPLACE FUNCTION sameRegion(segment_type text, traj1 tgeompoint, traj2 tgeompoint, t timestamptz) RETURNS boolean AS
+-- $BODY$
+-- BEGIN
+--   RETURN sameRegion(segment_type, valueAtTimestamp(traj1, t), valueAtTimestamp(traj2, t));
+-- END
+-- $BODY$
+-- LANGUAGE 'plpgsql' ;

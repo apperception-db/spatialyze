@@ -7,7 +7,7 @@ c = camera
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (same_region('intersection', o, c), "sameRegion('intersection',valueAtTimestamp(t0.translations,c0.timestamp),c0.cameraTranslation)"),
+    (same_region('intersection', o, c), "sameRegion('intersection',t0.translation,c0.cameraTranslation)"),
 ])
 def test_same_retion(fn, sql):
     assert gen(fn) == sql

@@ -1,18 +1,9 @@
 import datetime
-from typing import NamedTuple
 
 from ..camera_config import CameraConfig
 from ..stream.strongsort import TrackingResult
 from ..types import Float3
-
-
-class Trajectory(NamedTuple):
-    obj_id: int | str
-    camera_id: str
-    object_type: str
-    timestamps: list[datetime.datetime]
-    pairs: list[Float3]
-    itemHeadings: list[float | None]
+from .types import Trajectory
 
 
 def prepare_trajectory(
@@ -24,10 +15,13 @@ def prepare_trajectory(
     pairs: "list[Float3]" = []
     itemHeadings: "list[float | None]" = [None] * len(track)
     translations: "list[Float3]" = []
+    ids: list[int] = []
     camera_id = None
     object_type = None
     for tracking_result in track:
-        config = configs[tracking_result.detection_id.frame_idx]
+        idx = tracking_result.detection_id.frame_idx
+        ids.append(idx)
+        config = configs[idx]
         camera_id = config.camera_id
         object_type = tracking_result.object_type
         timestamps.append(config.timestamp)
@@ -43,9 +37,9 @@ def prepare_trajectory(
     return Trajectory(
         # video_name + "_obj_" + str(obj_id),
         obj_id,
+        ids,
         camera_id,
         object_type,
-        timestamps,
         pairs,
         itemHeadings,
     )

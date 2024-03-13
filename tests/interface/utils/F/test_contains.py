@@ -5,17 +5,17 @@ from common import *
 @pytest.mark.parametrize("fn, sql", [
     (contains('lane', o),
         "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
-        "    ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.translations,c0.timestamp))\n"
+        "    ST_Covers(SegmentPolygon.elementPolygon, t0.translation)\n"
         "))"),
     (contains(road_segment('lane'), o),
         "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
-        "    ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.translations,c0.timestamp))\n"
+        "    ST_Covers(SegmentPolygon.elementPolygon, t0.translation)\n"
         "))"),
     (contains('lane', [o, o1, o2]),
         "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"
-        "    ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t0.translations,c0.timestamp)) AND "
-            "ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t1.translations,c0.timestamp)) AND "
-            "ST_Covers(SegmentPolygon.elementPolygon, valueAtTimestamp(t2.translations,c0.timestamp))\n"
+        "    ST_Covers(SegmentPolygon.elementPolygon, t0.translation) AND "
+            "ST_Covers(SegmentPolygon.elementPolygon, t1.translation) AND "
+            "ST_Covers(SegmentPolygon.elementPolygon, t2.translation)\n"
         "))"),
     (contains('lane', [c, c.cam, c.ego]),
         "(EXISTS(SELECT 1 FROM SegmentPolygon WHERE SegmentPolygon.__RoadType__lane__ AND\n"

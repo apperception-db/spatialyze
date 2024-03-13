@@ -3,18 +3,18 @@ from common import *
 
 
 @pytest.mark.parametrize("fn, sql", [
-    (heading_diff(o, o1), "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)"),
-    (heading_diff(o, c),         "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.cameraHeading))::numeric%360)+360)%360)"),
-    (heading_diff(o, c.cam),     "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.cameraHeading))::numeric%360)+360)%360)"),
-    (heading_diff(o, c.heading), "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.cameraHeading))::numeric%360)+360)%360)"),
-    (heading_diff(o, c.ego),        "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.egoHeading))::numeric%360)+360)%360)"),
-    (heading_diff(o, c.egoheading), "(((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-c0.egoHeading))::numeric%360)+360)%360)"),
-    (heading_diff(o, o1, between=[40, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50))"),
-    (heading_diff(o, o1, between=[40+360, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50))"),
-    (heading_diff(o, o1, between=[40-360, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50))"),
-    (heading_diff(o, o1, between=[50, 40]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<50) OR ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>40))"),
-    (heading_diff(o, o1, excluding=[40, 50]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<40) OR ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>50))"),
-    (heading_diff(o, o1, excluding=[50, 40]), "(((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)>50) AND ((((((valueAtTimestamp(t0.itemHeadings,c0.timestamp)-valueAtTimestamp(t1.itemHeadings,c0.timestamp)))::numeric%360)+360)%360)<40))"),
+    (heading_diff(o, o1), "(((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, c),         "(((((t0.itemHeading-c0.cameraHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, c.cam),     "(((((t0.itemHeading-c0.cameraHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, c.heading), "(((((t0.itemHeading-c0.cameraHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, c.ego),        "(((((t0.itemHeading-c0.egoHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, c.egoheading), "(((((t0.itemHeading-c0.egoHeading))::numeric%360)+360)%360)"),
+    (heading_diff(o, o1, between=[40, 50]), "(((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)>40) AND ((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)<50))"),
+    (heading_diff(o, o1, between=[40+360, 50]), "(((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)>40) AND ((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)<50))"),
+    (heading_diff(o, o1, between=[40-360, 50]), "(((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)>40) AND ((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)<50))"),
+    (heading_diff(o, o1, between=[50, 40]), "(((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)<50) OR ((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)>40))"),
+    (heading_diff(o, o1, excluding=[40, 50]), "(((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)<40) OR ((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)>50))"),
+    (heading_diff(o, o1, excluding=[50, 40]), "(((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)>50) AND ((((((t0.itemHeading-t1.itemHeading))::numeric%360)+360)%360)<40))"),
 ])
 def test_heading_diff(fn, sql):
     assert gen(fn) == sql

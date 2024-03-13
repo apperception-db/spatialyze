@@ -28,11 +28,11 @@ ROAD_DIR = './data/scenic/road-network/boston-seaport'
 def build_filter_world(pkl: bool = False, alt_tracker: bool = False, track: bool = True):
     database = Database(
         psycopg2.connect(
-            dbname=environ.get("AP_DB", "mobilitydb"),
-            user=environ.get("AP_USER", "docker"),
+            dbname=environ.get("AP_DB", "postgres"),
+            user=environ.get("AP_USER", "postgres"),
             host=environ.get("AP_HOST", "localhost"),
             port=environ.get("AP_PORT", "25432"),
-            password=environ.get("AP_PASSWORD", "docker"),
+            password=environ.get("AP_PASSWORD", "postgres"),
         )
     )
     files = os.listdir(VIDEO_DIR)

@@ -4,7 +4,6 @@ from ...predicate import (
     ObjectTableNode,
     PredicateNode,
     call_node,
-    camera,
     lit,
 )
 from .common import default_location as dl
@@ -19,13 +18,15 @@ def stopped(visitor: GenSqlVisitor, args: list[PredicateNode], kwargs: dict[str,
     distance = kwargs.get("distance", lit(5))
     duration = kwargs.get("duration", lit(5))
 
-    assert isinstance(point, ObjectTableNode), point
     assert isinstance(distance, LiteralNode) and isinstance(distance.value, (float, int)), distance
     assert isinstance(duration, LiteralNode) and isinstance(duration.value, (float, int)), duration
 
     distance = distance.value
     duration = duration.value
 
+    # TODO: support camera stop
+    assert isinstance(point, ObjectTableNode), point
     point1 = dl(point)
 
-    return f"(ST_Distance({visitor(point1)},valueAtTimestamp({visitor(point.trans)},{visitor(camera.time)}+interval '{duration} secs'))<{distance})"
+    nextPoint = f"(SELECT translation FROM Item_Trajectory WHERE itemId = {visitor(point.id)} AND {visitor(point.frameNum)} + ROUND({duration} * (SELECT fps FROM Spatialyze_Metadata)) = frameNum)"
+    return f"(EXIT {nextPoint} AND ST_Distance({visitor(point1)},{nextPoint})<{distance})"

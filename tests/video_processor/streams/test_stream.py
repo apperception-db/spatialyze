@@ -4,7 +4,7 @@ from spatialyze.video_processor.video import Video
 
 
 def test_stream_end():
-    video = Video('./data/assets', [])
+    video = Video('./data/scenic/images', [])
 
     files = ListImages()
     images = LoadImages(files)
