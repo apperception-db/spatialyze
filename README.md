@@ -34,7 +34,7 @@
   >
 </p>
 
-## Absract
+## Abstract
 Videos that are shot using commodity hardware such as phones and surveillance cameras record various metadata such as time and location.
 We encounter such geospatial videos on a daily basis and such videos have been growing in volume significantly.
 Yet, we do not have data management systems that allow users to interact with such data effectively.
