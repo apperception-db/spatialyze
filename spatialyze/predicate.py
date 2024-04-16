@@ -91,11 +91,11 @@ class PredicateNode:
             ],
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # pyright: ignore [reportIncompatibleMethodOverride]
         other = wrap_literal(other)
         return CompOpNode(self, "eq", other)
 
-    def __ne__(self, other):
+    def __ne__(self, other):  # pyright: ignore [reportIncompatibleMethodOverride]
         other = wrap_literal(other)
         return CompOpNode(self, "ne", other)
 

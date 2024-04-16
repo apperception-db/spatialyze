@@ -113,7 +113,7 @@ class monodepth:
                 # Load image and preprocess
                 input_image = pil.fromarray(im[:, :, [2, 1, 0]])
                 original_width, original_height = input_image.size
-                input_image = input_image.resize((self.feed_width, self.feed_height), pil.LANCZOS)
+                input_image = input_image.resize((self.feed_width, self.feed_height), pil.Resampling.LANCZOS)
                 input_image = transforms.ToTensor()(input_image).unsqueeze(0)
 
                 # PREDICTION

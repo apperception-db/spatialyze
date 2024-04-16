@@ -189,7 +189,7 @@ class GroundTruthDetection(Detection2D):
         self.class_to_id = {c: i for i, c in enumerate(self.id_to_classes)}
 
     def _run(self, payload: "Payload"):
-        metadata: "list[Metadatum | None]" = []
+        metadata: list[Metadatum] = []
         dimension = payload.video.dimension
         for i, cc in enumerate(payload.video._camera_configs):
             fid = cc.frame_id
@@ -222,10 +222,10 @@ class GroundTruthDetection(Detection2D):
             if len(tensor) == 0:
                 metadata.append(Metadatum(torch.Tensor([]), yolo_classes, []))
             else:
-                metadata.append(
-                    Metadatum(
-                        torch.Tensor(tensor), yolo_classes, [DetectionId(i, _id) for _id in ids]
-                    )
-                )
+                metadata.append(Metadatum(
+                    torch.Tensor(tensor),
+                    yolo_classes,
+                    [DetectionId(i, _id) for _id in ids],
+                ))
 
         return None, {self.classname(): metadata}

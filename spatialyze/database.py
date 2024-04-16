@@ -32,8 +32,8 @@ from .video_processor.camera_config import CameraConfig
 from .video_processor.types import Float33
 
 if TYPE_CHECKING:
-    from psycopg2 import connection as Connection
-    from psycopg2 import cursor as Cursor
+    from psycopg2._psycopg import connection as Connection
+    from psycopg2._psycopg import cursor as Cursor
 
     from .predicate import PredicateNode
 
@@ -313,6 +313,7 @@ class Database:
     def sql(self, query: str) -> pd.DataFrame:
         results, cursor = self.execute_and_cursor(query)
         description = cursor.description
+        assert description is not None
         cursor.close()
         return pd.DataFrame(results, columns=[d.name for d in description])
 

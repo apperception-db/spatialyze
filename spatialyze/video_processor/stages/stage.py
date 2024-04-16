@@ -90,4 +90,6 @@ class Stage(Generic[T]):
 def _get_classnames(cls: "type") -> "list[str]":
     if cls == Stage:
         return []
-    return [*_get_classnames(cls.__base__), cls.__name__]
+    base = cls.__base__
+    assert base is not None
+    return [*_get_classnames(base), cls.__name__]
