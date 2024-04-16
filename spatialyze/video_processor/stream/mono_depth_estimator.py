@@ -25,7 +25,7 @@ class MonoDepthEstimator(Stream[npt.NDArray]):
                 # Load image and preprocess
                 input_image = Image.fromarray(img[:, :, [2, 1, 0]])
                 original_width, original_height = input_image.size
-                input_image = input_image.resize((md.feed_width, md.feed_height), Image.LANCZOS)
+                input_image = input_image.resize((md.feed_width, md.feed_height), Image.Resampling.LANCZOS)
                 input_image = transforms.ToTensor()(input_image).unsqueeze(0)
 
                 # PREDICTION
