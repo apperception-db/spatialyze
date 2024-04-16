@@ -122,7 +122,7 @@ jupyter-lab
 The demo notebook first constructs the world. Then it queries for the trajectory of the cars that appeared once in an area of interests within some time interval.
 
 ## Citing Spatialyze
-This paper is currently under review for [VLDB](https://vldb.org/2024/).
+This paper will be presented at [VLDB](https://vldb.org/2024/).
 ```bib
 @misc{kittivorawong2023spatialyze,
     title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
