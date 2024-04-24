@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Callable, NamedTuple
 import pandas as pd
 import psycopg2
 import psycopg2.errors
-from mobilitydb.psycopg import register as mobilitydb_register
 from postgis import Point
 from postgis.psycopg import register as postgis_register
 from psycopg2.sql import SQL, Composable, Literal
@@ -33,8 +32,8 @@ from .video_processor.camera_config import CameraConfig
 from .video_processor.types import Float33
 
 if TYPE_CHECKING:
-    from psycopg2 import connection as Connection
-    from psycopg2 import cursor as Cursor
+    from psycopg2._psycopg import connection as Connection
+    from psycopg2._psycopg import cursor as Cursor
 
     from .predicate import PredicateNode
 
@@ -42,7 +41,14 @@ CAMERA_TABLE = "Camera"
 TRAJECTORY_TABLE = "Item_Trajectory"
 DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
-TABLES = CAMERA_TABLE, TRAJECTORY_TABLE, DETECTION_TABLE, BBOX_TABLE
+METADATA_TABLE = "Spatialyze_Metadata"
+TABLES = (
+    CAMERA_TABLE,
+    DETECTION_TABLE,
+    TRAJECTORY_TABLE,
+    BBOX_TABLE,
+    METADATA_TABLE,
+)
 
 CAMERA_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
@@ -59,19 +65,6 @@ CAMERA_COLUMNS: "list[tuple[str, str]]" = [
     ("egoHeading", "real"),
 ]
 
-TRAJECTORY_COLUMNS: "list[tuple[str, str]]" = [
-    ("itemId", "TEXT"),
-    ("cameraId", "TEXT"),
-    ("objectType", "TEXT"),
-    # ("roadTypes", "ttext"),
-    ("translations", "tgeompoint"),  # [(x,y,z)@today, (x2, y2,z2)@tomorrow, (x2, y2,z2)@nextweek]
-    ("itemHeadings", "tfloat"),
-    # ("color", "TEXT"),
-    # ("largestBbox", "STBOX")
-    # ("roadPolygons", "tgeompoint"),
-    # ("period", "period") [today, nextweek]
-]
-
 DETECTION_COLUMNS: list[tuple[str, str]] = [
     ("itemId", "TEXT"),
     ("cameraId", "TEXT"),
@@ -79,6 +72,16 @@ DETECTION_COLUMNS: list[tuple[str, str]] = [
     ("frameNum", "Int"),
     ("translation", "geometry"),
     ("timestamp", "timestamptz"),
+    ("itemHeading", "Float"),
+]
+
+TRAJECTORY_COLUMNS: list[tuple[str, str]] = [
+    ("itemId", "TEXT"),
+    ("cameraId", "TEXT"),
+    ("objectType", "TEXT"),
+    ("frameNum", "Int"),
+    ("translation", "geometry"),
+    ("itemHeading", "Float"),
 ]
 
 BBOX_COLUMNS: "list[tuple[str, str]]" = [
@@ -86,6 +89,10 @@ BBOX_COLUMNS: "list[tuple[str, str]]" = [
     ("cameraId", "TEXT"),
     ("trajBbox", "stbox"),
     ("timestamp", "timestamptz"),
+]
+
+METADATA_COLUMNS: "list[tuple[str, str]]" = [
+    ("fps", "Int"),
 ]
 
 
@@ -104,7 +111,6 @@ class Database:
     def __init__(self, connection: "Connection"):
         self.connection = connection
         postgis_register(self.connection)
-        mobilitydb_register(self.connection)
         self.cursor = self.connection.cursor()
 
     def reset(self, commit=True):
@@ -113,7 +119,8 @@ class Database:
         self._create_camera_table(commit)
         self._create_item_trajectory_table(commit)
         self._create_item_detection_table(commit)
-        self._create_general_bbox_table(commit)
+        # self._create_general_bbox_table(commit)
+        self._create_metadata_table(commit)
         self._create_index(commit)
 
     def reset_cursor(self):
@@ -138,23 +145,24 @@ class Database:
         self._commit(commit)
         cursor.close()
 
-    def _create_general_bbox_table(self, commit=True):
-        cursor = self.connection.cursor()
-        cursor.execute(
-            "CREATE TABLE General_Bbox ("
-            f"{columns(_schema, BBOX_COLUMNS)},"
-            "FOREIGN KEY(itemId) REFERENCES Item_Trajectory (itemId),"
-            "PRIMARY KEY (itemId, timestamp))"
-        )
-        self._commit(commit)
-        cursor.close()
+    # def _create_general_bbox_table(self, commit=True):
+    #     cursor = self.connection.cursor()
+    #     cursor.execute(
+    #         "CREATE TABLE General_Bbox ("
+    #         f"{columns(_schema, BBOX_COLUMNS)},"
+    #         # f"FOREIGN KEY(itemId) REFERENCES {TRAJECTORY_TABLE} (itemId),"
+    #         "PRIMARY KEY (itemId, timestamp))"
+    #     )
+    #     self._commit(commit)
+    #     cursor.close()
 
     def _create_item_trajectory_table(self, commit=True):
         cursor = self.connection.cursor()
         cursor.execute(
-            "CREATE TABLE Item_Trajectory ("
+            f"CREATE TABLE {TRAJECTORY_TABLE} ("
             f"{columns(_schema, TRAJECTORY_COLUMNS)},"
-            "PRIMARY KEY (itemId))"
+            "PRIMARY KEY (itemId, frameNum), "
+            "FOREIGN KEY (cameraId, frameNum) REFERENCES Camera(cameraId, frameNum))"
         )
         self._commit(commit)
         cursor.close()
@@ -170,18 +178,18 @@ class Database:
         self._commit(commit)
         cursor.close()
 
+    def _create_metadata_table(self, commit=True):
+        cursor = self.connection.cursor()
+        cursor.execute(f"CREATE TABLE Spatialyze_Metadata ({columns(_schema, METADATA_COLUMNS)})")
+        self._commit(commit)
+        cursor.close()
+
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
         # cursor.execute("CREATE INDEX ON Camera (cameraId);")
         cursor.execute("CREATE INDEX ON Camera (cameraId, frameNum);")
         cursor.execute("CREATE INDEX ON Camera (timestamp);")
-        cursor.execute("CREATE INDEX ON Item_Trajectory (itemId);")
-        cursor.execute("CREATE INDEX ON Item_Trajectory (cameraId);")
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS trans_idx "
-            "ON Item_Trajectory "
-            "USING GiST(translations);"
-        )
+
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
         cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
         cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
@@ -189,6 +197,14 @@ class Database:
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
             "ON Item_Detection "
+            "USING GiST(translation);"
+        )
+        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId);")
+        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (frameNum);")
+        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId, frameNum);")
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS Item_Trajectory_translation_idx "
+            f"ON {TRAJECTORY_TABLE} "
             "USING GiST(translation);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
@@ -297,6 +313,7 @@ class Database:
     def sql(self, query: str) -> pd.DataFrame:
         results, cursor = self.execute_and_cursor(query)
         description = cursor.description
+        assert description is not None
         cursor.close()
         return pd.DataFrame(results, columns=[d.name for d in description])
 
@@ -306,9 +323,9 @@ def _join_table(temporal: bool):
 
         def join_table(i: int) -> str:
             return (
-                f"JOIN Item_Trajectory AS t{i} "
-                f"ON  c0.timestamp <@ t{i}.translations::period "
-                f"AND c0.cameraId  =  t{i}.cameraId\n"
+                f"JOIN {TRAJECTORY_TABLE} AS t{i} "
+                f"ON  c0.frameNum = t{i}.frameNum "
+                f"AND c0.cameraId = t{i}.cameraId\n"
             )
 
     else:
@@ -362,10 +379,10 @@ def _config(config: CameraConfig) -> Composable:
 # will need to come in here to change
 database = Database(
     psycopg2.connect(
-        dbname=environ.get("AP_DB", "mobilitydb"),
-        user=environ.get("AP_USER", "docker"),
-        host=environ.get("AP_HOST", "localhost"),
-        port=environ.get("AP_PORT", "25432"),
-        password=environ.get("AP_PASSWORD", "docker"),
+        dbname=environ.get("AP_DB", "postgres"),
+        user=environ.get("AP_USER", "postgres"),
+        host=environ.get("AP_HOST", "store"),
+        port=environ.get("AP_PORT", "5432"),
+        password=environ.get("AP_PASSWORD", "postgres"),
     )
 )

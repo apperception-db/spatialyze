@@ -4,7 +4,9 @@ from ..types import Float3
 
 
 def infer_heading(
-    curItemHeading: "float | None", prevPoint: "Float3 | None", current_point: "Float3"
+    curItemHeading: float | None,
+    prevPoint: Float3 | None,
+    current_point: Float3,
 ):
     if curItemHeading is not None:
         return math.degrees(curItemHeading)

@@ -63,4 +63,6 @@ class ParallelDecodeFrame(DecodeFrame):
             return None, {self.classname(): metadata}
         except BaseException:
             _, output = DecodeFrame()._run(payload)
-            return None, {self.classname(): DecodeFrame.get(output)}
+            images = DecodeFrame.get(output)
+            assert images is not None
+            return None, {self.classname(): images}

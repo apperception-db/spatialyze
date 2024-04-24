@@ -10,8 +10,10 @@ jobs:
     name: Generate Videos
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25432:5432
         options: >-
@@ -58,20 +60,24 @@ jobs:
           pushd scripts/pg-extender
           python ../generate_pg_extender.py
           cat install.sql
-          psql -h localhost -p 25432 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25432 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          PGPASSWORD: docker
+          PGPASSWORD: postgres
       
       - name: Ingest Road
         shell: micromamba-shell {0}
         run: python ./scripts/ingest_road.py
         env:
           AP_PORT: 25432
+          AP_HOST: localhost
       
       - name: Generate Video Examples
         shell: micromamba-shell {0}
         run: python evaluation/examples/inference_pipeline.py
+        env:
+          AP_PORT: 25432
+          AP_HOST: localhost
 
       - name: Commit generated examples
         run: ./scripts/commit-and-push-if-latest.sh "[CI] generate video examples"

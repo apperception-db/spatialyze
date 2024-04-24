@@ -44,11 +44,11 @@ END
 $BODY$
 LANGUAGE 'plpgsql' ;
 
-DROP FUNCTION IF EXISTS roadDirection(trajectory tgeompoint, _time timestamptz, default_dir real);
-CREATE OR REPLACE FUNCTION roadDirection(trajectory tgeompoint, _time timestamptz, default_dir real) RETURNS real AS
-$BODY$
-BEGIN
-  RETURN roadDirection(valueAtTimestamp(trajectory, _time), default_dir);
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
+-- DROP FUNCTION IF EXISTS roadDirection(trajectory tgeompoint, _time timestamptz, default_dir real);
+-- CREATE OR REPLACE FUNCTION roadDirection(trajectory tgeompoint, _time timestamptz, default_dir real) RETURNS real AS
+-- $BODY$
+-- BEGIN
+--   RETURN roadDirection(valueAtTimestamp(trajectory, _time), default_dir);
+-- END
+-- $BODY$
+-- LANGUAGE 'plpgsql' ;

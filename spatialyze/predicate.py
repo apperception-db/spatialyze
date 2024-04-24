@@ -91,11 +91,11 @@ class PredicateNode:
             ],
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # pyright: ignore [reportIncompatibleMethodOverride]
         other = wrap_literal(other)
         return CompOpNode(self, "eq", other)
 
-    def __ne__(self, other):
+    def __ne__(self, other):  # pyright: ignore [reportIncompatibleMethodOverride]
         other = wrap_literal(other)
         return CompOpNode(self, "ne", other)
 
@@ -194,10 +194,10 @@ class ObjectTableNode(TableNode):
 
     def __init__(self, index: int):
         self.index = index
-        self.trans = TableAttrNode("translations", self, True)
+        self.trans = TableAttrNode("translation", self, True)
         self.id = TableAttrNode("itemId", self, True)
         self.type = TableAttrNode("objectType", self, True)
-        self.heading = TableAttrNode("itemHeadings", self, True)
+        self.heading = TableAttrNode("itemHeading", self, True)
 
 
 class CameraTableNode(TableNode):
@@ -313,8 +313,7 @@ class Visitor(Generic[T]):
     def visit_UnaryOpNode(self, node: "UnaryOpNode") -> Any:
         self(node.expr)
 
-    def visit_LiteralNode(self, node: "LiteralNode") -> Any:
-        ...
+    def visit_LiteralNode(self, node: "LiteralNode") -> Any: ...
 
     def visit_TableAttrNode(self, node: "TableAttrNode") -> Any:
         self(node.table)
@@ -323,14 +322,11 @@ class Visitor(Generic[T]):
         for p in node.params:
             self(p)
 
-    def visit_TableNode(self, node: "TableNode") -> Any:
-        ...
+    def visit_TableNode(self, node: "TableNode") -> Any: ...
 
-    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> Any:
-        ...
+    def visit_ObjectTableNode(self, node: "ObjectTableNode") -> Any: ...
 
-    def visit_CameraTableNode(self, node: "CameraTableNode") -> Any:
-        ...
+    def visit_CameraTableNode(self, node: "CameraTableNode") -> Any: ...
 
     def visit_CastNode(self, node: "CastNode") -> Any:
         self(node.expr)
@@ -431,7 +427,7 @@ class IsDetectionOnly(Visitor[bool]):
         return self._is_detection_only
 
     def visit_TableAttrNode(self, node: TableAttrNode) -> Any:
-        if isinstance(node.table, ObjectTableNode) and node.name == "itemHeadings":
+        if isinstance(node.table, ObjectTableNode) and node.name == "itemHeading":
             self._is_detection_only = False
         return super().visit_TableAttrNode(node)
 
@@ -588,7 +584,7 @@ class GenSqlVisitor(Visitor[str]):
     def visit_AtTimeNode(self, node: AtTimeNode) -> Any:
         if isinstance(node.attr.table, ObjectTableNode) and node.attr.name == "bbox":
             return f"objectBBox({self(node.attr.table.id)},{self(camera.time)})"
-        return f"valueAtTimestamp({self(node.attr)},{self(camera.time)})"
+        return f"{self(node.attr)}"
 
 
 def resolve_object_attr(attr: str, num: "int | None" = None):
@@ -607,9 +603,8 @@ IS_TEMPORAL: "dict[str, bool]" = {
     "itemId": False,
     "cameraId": False,
     "objectType": False,
-    "translations": True,
-    "translations": True,
-    "itemHeadings": True,
+    "translation": True,
+    "itemHeading": True,
     "bbox": True,
 }
 

@@ -11,8 +11,10 @@ jobs:
     name: Test Workflow
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25440:5432
         options: >-
@@ -59,27 +61,44 @@ jobs:
           pushd scripts/pg-extender
           python ../generate_pg_extender.py
           cat install.sql
-          psql -h localhost -p 25440 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          PGPASSWORD: docker
+          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
         run: python ./scripts/ingest_road.py
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
+      
+      - name: Count Tests
+        shell: micromamba-shell {0}
+        run: |
+          pytest --collect-only -qq tests/workflow
+          pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l &> test-count
+        env:
+          AP_PORT: 25440
+          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/workflow
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v3
         with:
           name: workflow-coverage
           path: ./coverage.xml
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: workflow-count
+          path: ./test-count
       
       - name: Commit generated test inputs
         if: ${{ env.GENERATE_WORKFLOW_TEST_RESULTS == 'true' }}
@@ -89,8 +108,10 @@ jobs:
     name: Test Video Processor
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25440:5432
         options: >-
@@ -137,10 +158,10 @@ jobs:
           pushd scripts/pg-extender
           python ../generate_pg_extender.py
           cat install.sql
-          psql -h localhost -p 25440 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          PGPASSWORD: docker
+          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
@@ -148,17 +169,34 @@ jobs:
           python ./scripts/ingest_road.py
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
+      
+      - name: Count Tests
+        shell: micromamba-shell {0}
+        run: |
+          pytest --collect-only -qq tests/video_processor
+          pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l &> test-count
+        env:
+          AP_PORT: 25440
+          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/video_processor
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v3
         with:
           name: video-processor-coverage
           path: ./coverage.xml
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: video-processor-count
+          path: ./test-count
       
       - name: Commit formatted changes
         if: ${{ env.GENERATE_PROCESSOR_TEST_RESULTS == 'true' }}
@@ -168,8 +206,10 @@ jobs:
     name: Test Engine and Interface
     runs-on: ubuntu-latest
     services:
-      mobilitydb:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25440:5432
         options: >-
@@ -177,8 +217,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-road-1:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db-road-1:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25441:5432
         options: >-
@@ -186,8 +228,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-road-2:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db-road-2:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25442:5432
         options: >-
@@ -195,8 +239,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-reset:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db-reset:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25443:5432
         options: >-
@@ -204,8 +250,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-import:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db-import:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25444:5432
         options: >-
@@ -213,8 +261,10 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mobilitydb-sql:
-        image: mobilitydb/mobilitydb:14-3.2-1
+      db-sql:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
           - 25445:5432
         options: >-
@@ -260,14 +310,14 @@ jobs:
           pushd scripts/pg-extender
           python ../generate_pg_extender.py
           cat install.sql
-          psql -h localhost -p 25440 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25441 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25442 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25443 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25444 -d mobilitydb -U docker -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25441 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25442 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25443 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
+          psql -h localhost -p 25444 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
           popd
         env:
-          PGPASSWORD: docker
+          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
@@ -276,10 +326,26 @@ jobs:
           python ./scripts/import_tables.py
         env:
           AP_PORT: 25440
+          AP_HOST: localhost
       
       - name: Generate Image data
         shell: micromamba-shell {0}
         run: python scripts/fake-images.py
+      
+      - name: Count Tests
+        shell: micromamba-shell {0}
+        run: |
+          pytest --collect-only -qq tests/engine tests/interface
+          pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l
+          pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l &> test-count
+        env:
+          AP_PORT: 25440
+          AP_PORT_ROAD_1: 25441
+          AP_PORT_ROAD_2: 25442
+          AP_PORT_RESET: 25443
+          AP_PORT_IMPORT: 25444
+          AP_PORT_SQL: 25445
+          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
@@ -291,11 +357,17 @@ jobs:
           AP_PORT_RESET: 25443
           AP_PORT_IMPORT: 25444
           AP_PORT_SQL: 25445
+          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v3
         with:
           name: engine-and-interface-coverage
           path: ./coverage.xml
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: engine-and-interface-count
+          path: ./test-count
 
   upload-coverage:
     name: Upload Coverage
@@ -313,6 +385,7 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
       # - name: Download Coverage
@@ -348,3 +421,49 @@ jobs:
       #   with:
       #     name: coverage-badge
       #     path: ./coverage.svg
+
+  test-count:
+    name: Test Count
+    needs: [test-video-processor, test-engine-and-interface, test-workflow]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: video-processor-count
+          path: ./video-processor-test-count
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: engine-and-interface-count
+          path: ./engine-and-interface-test-count
+
+      - name: Download Count
+        uses: actions/download-artifact@v3
+        with:
+          name: workflow-count
+          path: ./workflow-test-count
+      
+      - name: Combine Counts
+        run: |
+          cat ./video-processor-test-count/* ./engine-and-interface-test-count/* ./workflow-test-count/* | awk '{s+=$1} END {print s}' &> test-count
+          echo "Total tests: $(cat test-count)"
+
+      - name: Download Count Badge
+        run: |
+          curl -o ./test-count-badge.svg https://img.shields.io/badge/$(cat test-count | tr -d " \t\n\r")-4572a1.svg?label=Test%20Count\&style=for-the-badge
+          rm -rf ./*test-count
+
+      - name: Deploy
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.GIST_PAT }}
+          gist_id: b32bb8bf89a237c0f13da5e17abc1cd9
+          file_path: test-count-badge.svg
+          file_type: text

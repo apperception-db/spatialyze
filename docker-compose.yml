@@ -1,0 +1,30 @@
+services:
+  dev:
+    build: .
+    container_name: spatialyze
+    tty: true
+    environment:
+      - TERM=xterm-256color
+    volumes:
+      - .:/workspace
+      - /data/apperception-data:/data/apperception-data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - "8080-8099"
+    depends_on:
+      - store
+  store:
+    build:
+      context: .
+      dockerfile: store.Dockerfile
+    container_name: spatialyze-gsstore
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    expose:
+      - 5432
