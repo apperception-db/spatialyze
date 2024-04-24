@@ -32,7 +32,11 @@ jobs:
       - name: Setup Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
-          environment-file: environment.yml
+          environment-name: spatialyze
+          create-args: >-
+            -c conda-forge
+            python=3.10
+            poetry=1.5.1
           init-shell: none
           cache-downloads: false
 
@@ -129,7 +133,11 @@ jobs:
       - name: Setup Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
-          environment-file: environment.yml
+          environment-name: spatialyze
+          create-args: >-
+            -c conda-forge
+            python=3.10
+            poetry=1.5.1
           init-shell: none
           cache-downloads: false
 
@@ -281,7 +289,11 @@ jobs:
       - name: Setup Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
-          environment-file: environment.yml
+          environment-name: spatialyze
+          create-args: >-
+            -c conda-forge
+            python=3.10
+            poetry=1.5.1
           init-shell: none
           cache-downloads: false
 
