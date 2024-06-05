@@ -1,6 +1,6 @@
 name: spatialyze
 
-channel:
+channels:
   - conda-forge
 
 dependencies:
