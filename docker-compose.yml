@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/workspace
       - /data/apperception-data:/data/apperception-data
+    command: jupyter-lab --allow-root
     deploy:
       resources:
         reservations:
