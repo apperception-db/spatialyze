@@ -18,8 +18,8 @@ RUN micromamba   clean --yes --all
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
 
 ENV POETRY_VIRTUALENVS_CREATE=false
-# COPY pyproject.toml poetry.lock* ./
-# RUN poetry install --no-root
+COPY pyproject.toml poetry.lock* ./
+RUN poetry install --no-root
 
 # ARG PINECONE_API
 # ENV PINECONE_API=$PINECONE_API
