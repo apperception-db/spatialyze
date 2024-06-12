@@ -49,27 +49,27 @@ while maintaining up to 97.1% accuracy compared to unoptimized execution.
 
 ## Requirement
 ```
-- python >= 3.10 (Prefer Conda/Mamba)
 - docker
 - cuda >= 11.7 (If using GPU)
 ```
 
-## How to Setup Spatialyze Repo
+## Setup Spatialyze
 ### Clone the Spatialyze repo
 ```bash
 git clone --recurse-submodules git@github.com:apperception-db/spatialyze.git
 cd spatialyze
-```
 
-### We use Conda/Mamba to manage our python environment
-Install [Mamba](https://mamba.readthedocs.io/en/latest/installation.html)
-or install [Conda](https://docs.conda.io/en/latest/miniconda.html)
-
-### Setup Environment and Dependencies
-```bash
 # clone submodules
 git submodule update --init --recursive
+```
 
+### Using Docker Compose
+```base
+docker compose up --build --detach
+```
+
+### Using [Conda](https://docs.conda.io/en/latest/miniconda.html)/[Mamba](https://mamba.readthedocs.io/en/latest/installation.html) Environment
+```bash
 # setup virtual environment
 # with conda
 conda env create -f environment.yml
