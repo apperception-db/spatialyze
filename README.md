@@ -124,13 +124,21 @@ The demo notebook first constructs the world. Then it queries for the trajectory
 ## Citing Spatialyze
 This paper will be presented at [VLDB](https://vldb.org/2024/).
 ```bib
-@misc{kittivorawong2023spatialyze,
-    title={Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations}, 
-    author={Chanwut Kittivorawong and Yongming Ge and Yousef Helal and Alvin Cheung},
-    year={2023},
-    eprint={2308.03276},
-    archivePrefix={arXiv},
-    primaryClass={cs.DB}
+@article{10.14778/3665844.3665846,
+    author = {Kittivorawong, Chanwut and Ge, Yongming and Helal, Yousef and Cheung, Alvin},
+    title = {Spatialyze: A Geospatial Video Analytics System with Spatial-Aware Optimizations},
+    year = {2024},
+    issue_date = {May 2024},
+    publisher = {VLDB Endowment},
+    volume = {17},
+    number = {9},
+    issn = {2150-8097},
+    url = {https://doi.org/10.14778/3665844.3665846},
+    doi = {10.14778/3665844.3665846},
+    journal = {Proc. VLDB Endow.},
+    month = {june},
+    pages = {2136-2148},
+    numpages = {13}
 }
 ```
 
