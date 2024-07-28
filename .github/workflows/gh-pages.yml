@@ -81,6 +81,10 @@ jobs:
                    --privacy="HIDDEN:spatialyze.video_processor.modules" \
                    --privacy="HIDDEN:spatialyze.video_processor.stages" \
                    ./spatialyze || true
+      - name: Copy Assets
+        run: |
+          mkdir -p docs/data
+          cp -r data/assets docs/data
       - name: Build with Jekyll
         if: always()
         # Outputs to the './_site' directory by default
