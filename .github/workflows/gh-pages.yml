@@ -68,19 +68,19 @@ jobs:
         run: pip list
       - name: API Doc
         run: |
-          pip install pdoc
-          pdoc ./spatialyze -o ./docs/api
           pip install pydoctor
-          # pydoctor --project-name=Spatialyze \
-          #          --project-version=0.1.0 \
-          #          --project-url=https://apperception-db.github.io/spatialyze \
-          #          --html-viewsource-base=https://github.com/apperception-db/spatialyze/tree/main \
-          #          --make-html \
-          #          --html-output=docs/api \
-          #          --project-base-dir="." \
-          #          --docformat=epytext \
-          #          --intersphinx=https://docs.python.org/3/objects.inv \
-          #          ./spatialyze || true
+          pydoctor --project-name=Spatialyze \
+                   --project-version=0.1.0 \
+                   --project-url=https://apperception-db.github.io/spatialyze \
+                   --html-viewsource-base=https://github.com/apperception-db/spatialyze/tree/main \
+                   --make-html \
+                   --html-output=docs/api \
+                   --project-base-dir="." \
+                   --docformat=epytext \
+                   --intersphinx=https://docs.python.org/3/objects.inv \
+                   --privacy="HIDDEN:spatialyze.video_processor.modules" \
+                   --privacy="HIDDEN:spatialyze.video_processor.stages" \
+                   ./spatialyze || true
       - name: Build with Jekyll
         if: always()
         # Outputs to the './_site' directory by default

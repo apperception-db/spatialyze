@@ -27,13 +27,12 @@ def depths_to_3ds(
 ) -> npt.NDArray:
     """
     Parameters:
-        depths: (N x X x Y) depth maps
-        intrinsic: (3 x 3) camera intrinsic
-        true_depth: True if depths is the z-axis distance from the camera.
-            False if depths is the distance from the camera.
+    depths: (N x X x Y) depth maps
+    intrinsic: (3 x 3) camera intrinsic
+    true_depth: True if depths is the z-axis distance from the camera. False if depths is the distance from the camera.
 
     Returns:
-        d3 location of each pixel (N x X x Y x 3)
+    d3 location of each pixel (N x X x Y x 3)
     """
     n, lenx, leny = depths.shape
 
