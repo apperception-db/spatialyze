@@ -55,7 +55,7 @@ jobs:
                    --intersphinx=https://docs.python.org/3/objects.inv \
                    --privacy="HIDDEN:spatialyze.video_processor.modules" \
                    --privacy="HIDDEN:spatialyze.video_processor.stages" \
-                   ./spatialyze
+                   ./spatialyze || true
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
