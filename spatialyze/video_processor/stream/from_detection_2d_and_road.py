@@ -108,11 +108,10 @@ class FromDetection2DAndRoad(Stream[Detection3D]):
 def rotate(vectors: npt.NDArray, rotation: Quaternion) -> npt.NDArray:
     """Rotate 3D Vector by rotation quaternion.
     Params:
-        vectors: (3 x N) 3-vectors each specified as any ordered
-            sequence of 3 real numbers corresponding to x, y, and z values.
-        rotation: A rotation quaternion.
+    vectors: (3 x N) 3-vectors each specified as any ordered sequence of 3 real numbers corresponding to x, y, and z values.
+    rotation: A rotation quaternion.
 
     Returns:
-        The rotated vectors (3 x N).
+    The rotated vectors (3 x N).
     """
     return rotation.unit.rotation_matrix @ vectors
