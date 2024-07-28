@@ -40,32 +40,9 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-      - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v1
+      - uses: actions/setup-python@v5
         with:
-          environment-name: spatialyze
-          create-args: >-
-            -c conda-forge
-            python=3.10
-            poetry=1.5.1
-          init-shell: none
-          cache-downloads: false
-      - name: Check Python Versions
-        shell: micromamba-shell {0}
-        run: |
-          python --version
-          python3 --version
-          which python
-          which python3
-          which pip
-          which pip3
-          which poetry
-      - name: Install Dependencies
-        shell: micromamba-shell {0}
-        run: poetry install --no-interaction --without dev --with test
-      - name: Check Installed Packages
-        shell: micromamba-shell {0}
-        run: pip list
+          python-version: '3.12'
       - name: API Doc
         run: |
           pip install pydoctor
