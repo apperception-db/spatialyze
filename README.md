@@ -113,6 +113,9 @@ To run PostGIS every system restart
 docker update --restart unless-stopped spatialyze-gsstore
 ```
 
+## API References
+Please visit https://apperception-db.github.io/spatialyze for API References.
+
 ### Try the demo (WIP 🚧)
 In spatialyze repo:
 ```sh
