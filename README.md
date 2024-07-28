@@ -121,8 +121,8 @@ jupyter-lab
 
 The demo notebook first constructs the world. Then it queries for the trajectory of the cars that appeared once in an area of interests within some time interval.
 
-## API References
-Please visit https://apperception-db.github.io/spatialyze for API References.
+## API Reference
+Please visit https://apperception-db.github.io/spatialyze for API Reference.
 
 ## Citing Spatialyze
 This paper will be presented at [VLDB](https://vldb.org/2024/).
