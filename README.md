@@ -1,5 +1,5 @@
 <br/>
-<p align="center"><img width=60% src="./data/assets/spatialyze.png"></p>
+<p align="center"><img width=60% src="./data/assets/spatialyze.png" /></p>
 
 <h2 align="center">A Geospatial Video Analytic System with Spatial-Aware Optimizations</h2>
 <p align="center">
@@ -143,4 +143,4 @@ This paper will be presented at [VLDB](https://vldb.org/2024/).
 ```
 
 ## Codecov
-<img width=100% src="https://codecov.io/gh/apperception-db/spatialyze/graphs/icicle.svg?token=A4FHKVI1Ua">
+<img width=100% src="https://codecov.io/gh/apperception-db/spatialyze/graphs/icicle.svg?token=A4FHKVI1Ua" />
