@@ -37,6 +37,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Ignore modules
+        run: |
+          rm -rf spatialyze/video_processor/modules
+          rm -rf spatialyze/video_processor/stages
       - name: API Doc
         run: |
           pip install pydoctor
