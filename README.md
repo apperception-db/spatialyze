@@ -113,9 +113,6 @@ To run PostGIS every system restart
 docker update --restart unless-stopped spatialyze-gsstore
 ```
 
-## API References
-Please visit https://apperception-db.github.io/spatialyze for API References.
-
 ### Try the demo (WIP 🚧)
 In spatialyze repo:
 ```sh
@@ -123,6 +120,9 @@ jupyter-lab
 ```
 
 The demo notebook first constructs the world. Then it queries for the trajectory of the cars that appeared once in an area of interests within some time interval.
+
+## API References
+Please visit https://apperception-db.github.io/spatialyze for API References.
 
 ## Citing Spatialyze
 This paper will be presented at [VLDB](https://vldb.org/2024/).
