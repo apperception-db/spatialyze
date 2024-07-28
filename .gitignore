@@ -36,4 +36,4 @@ evaluation/eva/eva-times.txt
 evaluation/nuscenes/devkit/*.txt
 data/skyquery/car-model/yolov3.best
 
-docs/api
+_site
