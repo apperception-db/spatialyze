@@ -1,13 +1,15 @@
-""" Goal to map the road segment to the frame segment
-    Now only get the segment of type lane and intersection
-    except for the segment that contains the ego camera
+"""
+Goal to map the road segment to the frame segment
+Now only get the segment of type lane and intersection
+except for the segment that contains the ego camera
 
 Usage example:
-    from optimization_playground.segment_mapping import map_imgsegment_roadsegment
-    from spatialyze.utils import fetch_camera_config
+==============
+from optimization_playground.segment_mapping import map_imgsegment_roadsegment
+from spatialyze.utils import fetch_camera_config
 
-    test_config = fetch_camera_config(test_img, database)
-    mapping = map_imgsegment_roadsegment(test_config)
+test_config = fetch_camera_config(test_img, database)
+mapping = map_imgsegment_roadsegment(test_config)
 """
 
 import array

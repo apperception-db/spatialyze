@@ -1,12 +1,15 @@
-"""Detection Estimation Module
+"""
+Detection Estimation Module
+===========================
 
 This module is responsible for estimating the object detection throughout the whole video.
 The sampling algorithm skips frames based on the current frame geo information.
 We estimate objects' metadata only based on the sampled frames.
 
 Usage example:
-    from detection_estimation import detection_estimation
-    detection_estimation(sorted_ego_config, video, start_frame_num, view_distance=50, img_base_dir='')
+==============
+from detection_estimation import detection_estimation
+detection_estimation(sorted_ego_config, video, start_frame_num, view_distance=50, img_base_dir='')
 
 TODO:
     1. incoporate yolo detection, either merge this module to the tracking pipeline
