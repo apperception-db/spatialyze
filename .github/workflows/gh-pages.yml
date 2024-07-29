@@ -1,10 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
-name: Deploy Jekyll site to Pages
+name: Generate and Deploy Spatialyze Documentations
 
 on:
   push:
@@ -31,29 +25,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: API Doc
         run: |
           pip install pydoctor
-          pydoctor --project-name=Spatialyze \
-                   --project-version=0.1.0 \
-                   --project-url=https://apperception-db.github.io/spatialyze \
-                   --html-viewsource-base=https://github.com/apperception-db/spatialyze/tree/main \
-                   --make-html \
-                   --html-output=_site \
-                   --project-base-dir="." \
-                   --docformat=epytext \
-                   --intersphinx=https://docs.python.org/3/objects.inv \
-                   --privacy="HIDDEN:spatialyze.video_processor.modules" \
-                   --privacy="HIDDEN:spatialyze.video_processor.stages" \
-                   ./spatialyze
+          pydoctor ./spatialyze
+
       - name: Upload artifact
-        # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
 
   # Deployment job
@@ -61,6 +47,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
     needs: build
     steps:

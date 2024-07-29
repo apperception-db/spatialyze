@@ -107,3 +107,16 @@ pythonVersion = '3.10'
 ignore = [
   'spatialyze/video_processor/modules',
 ]
+
+[tool.pydoctor]
+project-name = "Spatialyze"
+project-version = "0.1.0"
+project-url = "https://apperception-db.github.io/spatialyze"
+html-viewsource = "https://github.com/apperception-db/spatialyze/tree/main"
+make-html = true
+html-output = "_site"
+project-base-dir = "."
+docformat = "epytext"
+intersphinx = "https://docs.python.org/3/objects.inv"
+privacy = ["HIDDEN:spatialyze.video_processor.modules",
+           "HIDDEN:spatialyze.video_processor.stages",]
