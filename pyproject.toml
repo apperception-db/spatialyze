@@ -120,3 +120,5 @@ docformat = "epytext"
 intersphinx = "https://docs.python.org/3/objects.inv"
 privacy = ["HIDDEN:spatialyze.video_processor.modules",
            "HIDDEN:spatialyze.video_processor.stages",]
+sidebar-expand-depth = 1000
+sidebar-toc-depth = 1000
