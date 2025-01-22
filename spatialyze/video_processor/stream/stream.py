@@ -96,5 +96,4 @@ class Stream(Generic[T], ABC):
             self._front += 1
 
     @abstractmethod
-    def _stream(self, video: Video) -> Iterable[T | Skip]:
-        ...
+    def _stream(self, video: Video) -> Iterable[T | Skip]: ...
