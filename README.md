@@ -68,24 +68,15 @@ git submodule update --init --recursive
 docker compose up --build --detach
 ```
 
-### Using [Conda](https://docs.conda.io/en/latest/miniconda.html)/[Mamba](https://mamba.readthedocs.io/en/latest/installation.html) Environment
-```bash
-# setup virtual environment
-# with conda
-conda env create -f environment.yml
-conda activate spatialyze
-# OR with mamba
-mamba env create -f environment.yml
-mamba activate spatialyze
-
-# install python dependencies
-poetry install
-```
+### Development
+You can then find the project root in `spatialyze` container inside `/workspace`.
+You can then use VSCode's Remote Explorer (Dev Containers) to connect to the running `spatialyze` container.
+Once connected, run `cd /workspace && code .` to open VSCode in the project root.
 
 ### If using DeepSORT (Optional)
 Building `rank_cylib` will speed up DeepSORT.
 ```bash
-cd ./spatialyze/video_processor/modules/yolo_deepsort/deep_sort/deep/reid/torchreid/metrics/rank_cylib
+cd /workspace/spatialyze/video_processor/modules/yolo_deepsort/deep_sort/deep/reid/torchreid/metrics/rank_cylib
 make
 # If make does not work (use your current python interpreter)
 python setup.py build_ext --inplace
@@ -93,33 +84,16 @@ rm -rf build
 ```
 
 ## Spatialyze Demo
-### Start Spatialyze Geospatial Metadata Store [PostGIS](https://postgis.net/)
-```bash
-docker volume create spatialyze-gsstore-data
-docker run --name     "spatialyze-gsstore"                        \
-           --detach                                               \
-           --publish  25432:5432                                  \
-           --volume   spatialyze-gsstore-data:/var/lib/postgresql \
-                      postgis/postgis
-```
-Setup the PostGIS with customized functions
-```bash
-docker exec -it spatialyze-gsstore rm -rf /pg_extender
-docker cp scripts/pg-extender spatialyze-gsstore:/pg_extender
-docker exec -it -w /pg_extender spatialyze-gsstore python3 install.py
-```
-To run PostGIS every system restart
-```bash
-docker update --restart unless-stopped spatialyze-gsstore
-```
 
-### Try the demo (WIP 🚧)
-In spatialyze repo:
+Run the following command inside the `spatialyze` container.
 ```sh
-jupyter-lab
+poetry run jupyter-lab
 ```
 
 The demo notebook first constructs the world. Then it queries for the trajectory of the cars that appeared once in an area of interests within some time interval.
+### Example demos
+- [evaluation/examples/example-query.ipynb](./evaluation/examples/example-query.ipynb)
+- [evaluation/examples/evaluation-queries.ipynb](./evaluation/examples/evaluation-queries.ipynb)
 
 ## API Reference
 Please visit https://apperception-db.github.io/spatialyze for API Reference.
