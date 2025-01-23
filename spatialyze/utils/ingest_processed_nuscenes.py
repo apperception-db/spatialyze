@@ -41,7 +41,7 @@ def ingest_processed_nuscenes(
     # ks = ks[:len(ks) // 5]
     # print(len(ks))
     ks = keys
-    camera_sqls: "list[psql.Composable]" = []
+    # camera_sqls: "list[psql.Composable]" = []
     # item_sqls: "list[psql.Composable]" = []
     print("Ingesting Cameras and Annotations")
     for k in tqdm(ks, total=len(ks)):
@@ -50,6 +50,7 @@ def ingest_processed_nuscenes(
 
         objects: "dict[str, _MovableObject]" = {}
         cc_map: "dict[str, tuple[int, NuscenesCamera]]" = {}
+        camera_sqls: "list[psql.Composable]" = []
         for idx, cc in enumerate(camera):
             assert cc.token not in cc_map
             cc_map[cc.token] = (idx, cc)

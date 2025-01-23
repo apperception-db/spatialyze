@@ -2,8 +2,12 @@ import datetime
 from typing import NamedTuple
 
 import numpy as np
+from pyquaternion import Quaternion
 
-from ..types import Float2, Float3, Float33
+
+Float2 = tuple[float, float]
+Float3 = tuple[float, float, float]
+Float33 = tuple[Float3, Float3, Float3]
 
 
 start_date = datetime.datetime(
