@@ -94,12 +94,12 @@ jobs:
           AP_PORT: 25440
           AP_HOST: localhost
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact
         with:
           name: workflow-coverage
           path: ./coverage.xml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact
         with:
           name: workflow-count
           path: ./test-count
@@ -196,12 +196,12 @@ jobs:
           AP_PORT: 25440
           AP_HOST: localhost
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact
         with:
           name: video-processor-coverage
           path: ./coverage.xml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact
         with:
           name: video-processor-count
           path: ./test-count
@@ -371,12 +371,12 @@ jobs:
           AP_PORT_SQL: 25445
           AP_HOST: localhost
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact
         with:
           name: engine-and-interface-coverage
           path: ./coverage.xml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact
         with:
           name: engine-and-interface-count
           path: ./test-count
@@ -387,7 +387,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Coverage
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
@@ -396,13 +396,13 @@ jobs:
           verbose: true
 
       # - name: Download Coverage
-      #   uses: actions/download-artifact@v3
+      #   uses: actions/download-artifact
       #   with:
       #     name: video-processor-coverage
       #     path: ./video-processor-coverage
 
       # - name: Download Coverage
-      #   uses: actions/download-artifact@v3
+      #   uses: actions/download-artifact
       #   with:
       #     name: engine-and-interface-coverage
       #     path: ./engine-and-interface-coverage
@@ -418,13 +418,13 @@ jobs:
       #     coverage-badge -o coverage.svg -f
 
       # - name: Upload Coverage
-      #   uses: actions/upload-artifact@v3
+      #   uses: actions/upload-artifact
       #   with:
       #     name: coverage
       #     path: ./coverage.xml
 
       # - name: Upload Coverage
-      #   uses: actions/upload-artifact@v3
+      #   uses: actions/upload-artifact
       #   with:
       #     name: coverage-badge
       #     path: ./coverage.svg
@@ -435,19 +435,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Count
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact
         with:
           name: video-processor-count
           path: ./video-processor-test-count
 
       - name: Download Count
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact
         with:
           name: engine-and-interface-count
           path: ./engine-and-interface-test-count
 
       - name: Download Count
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact
         with:
           name: workflow-count
           path: ./workflow-test-count
