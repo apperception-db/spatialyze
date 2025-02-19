@@ -24,13 +24,13 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT || github.token }}
           submodules: recursive
 
       - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: spatialyze
           create-args: >-
@@ -94,12 +94,12 @@ jobs:
           AP_PORT: 25440
           AP_HOST: localhost
 
-      - uses: actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: workflow-coverage
           path: ./coverage.xml
 
-      - uses: actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: workflow-count
           path: ./test-count
@@ -125,13 +125,13 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT || github.token }}
           submodules: recursive
 
       - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: spatialyze
           create-args: >-
@@ -196,12 +196,12 @@ jobs:
           AP_PORT: 25440
           AP_HOST: localhost
 
-      - uses: actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: video-processor-coverage
           path: ./coverage.xml
 
-      - uses: actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: video-processor-count
           path: ./test-count
@@ -282,12 +282,12 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT || github.token }}
 
       - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: spatialyze
           create-args: >-
@@ -371,12 +371,12 @@ jobs:
           AP_PORT_SQL: 25445
           AP_HOST: localhost
 
-      - uses: actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: engine-and-interface-coverage
           path: ./coverage.xml
 
-      - uses: actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: engine-and-interface-count
           path: ./test-count
@@ -387,10 +387,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Coverage
-        uses: actions/download-artifact
+        uses: actions/download-artifact@v4
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
@@ -435,19 +435,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Count
-        uses: actions/download-artifact
+        uses: actions/download-artifact@v4
         with:
           name: video-processor-count
           path: ./video-processor-test-count
 
       - name: Download Count
-        uses: actions/download-artifact
+        uses: actions/download-artifact@v4
         with:
           name: engine-and-interface-count
           path: ./engine-and-interface-test-count
 
       - name: Download Count
-        uses: actions/download-artifact
+        uses: actions/download-artifact@v4
         with:
           name: workflow-count
           path: ./workflow-test-count
