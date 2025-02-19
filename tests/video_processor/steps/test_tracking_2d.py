@@ -28,7 +28,7 @@ def compare_trackings(track_result: list, track_groundtruth: list):
         for oid, detr in tr.items():
             detg = tg[str(oid)]
 
-            assert detr.frame_idx == detg['frame_idx']
+            assert    detr.frame_idx == detg['frame_idx']
             assert detr.object_id == detg['object_id']
             assert tuple(detr.detection_id) == tuple(detg['detection_id'])
             assert abs(detr.bbox_left - detg['bbox_left']) <= 1
