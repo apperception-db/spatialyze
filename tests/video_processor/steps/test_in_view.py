@@ -51,7 +51,7 @@ RT = '__ROADTYPES__'
     (~(F.contains('intersection', o) & F.contains('lane', o2)), ['(NOT (is_roadtype(intersection) AND is_roadtype(lane)))', '(is_other_roadtype(intersection) OR is_other_roadtype(lane))', '(is_roadtype(intersection) OR is_roadtype(lane) OR is_roadtype(lanegroup) OR is_roadtype(lanesection) OR is_roadtype(road) OR is_roadtype(roadsection))']),
     (~(F.contains('intersection', o) | F.contains('lane', o2)), ['(NOT (is_roadtype(intersection) OR is_roadtype(lane)))', '(is_other_roadtype(intersection) AND is_other_roadtype(lane))', '((is_roadtype(lanegroup) OR is_roadtype(lane) OR is_roadtype(lanesection)) AND (is_roadtype(lanegroup) OR is_roadtype(road) OR is_roadtype(roadsection) OR is_roadtype(intersection)))']),
     (~(~F.contains('intersection', o) | F.contains('lane', o2)), ['(NOT ((NOT is_roadtype(intersection)) OR is_roadtype(lane)))', '(is_roadtype(intersection) AND is_other_roadtype(lane))', 'is_roadtype(intersection)']),
-    (F.contains(F.road_segment('intersection'), o), ['Is_roadtype(intersection)', None, 'is_roadtype(intersection)', f"('intersection' in {RT})", {'intersection'}]),
+    (F.contains(F.road_segment('intersection'), o), ['is_roadtype(intersection)', None, 'is_roadtype(intersection)', f"('intersection' in {RT})", {'intersection'}]),
 
     # Real Queries
     ((((o1.type == 'car') | (o1.type == 'truck')) &
