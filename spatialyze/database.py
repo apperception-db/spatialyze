@@ -1,6 +1,5 @@
 import datetime
 from collections.abc import Mapping, Sequence
-from os import environ
 from typing import TYPE_CHECKING, Callable, NamedTuple
 
 import duckdb
@@ -248,7 +247,13 @@ class Database:
         cursor.close()
         return results
 
-    def update(self, query: str, commit: bool = True, vars: tuple | list | Sequence | Mapping | map | None = None, many: bool = False) -> None:
+    def update(
+        self,
+        query: str,
+        commit: bool = True,
+        vars: tuple | list | Sequence | Mapping | map | None = None,
+        many: bool = False,
+    ) -> None:
         cursor = self.connection.cursor()
         try:
             if many:
@@ -348,7 +353,7 @@ class _Config(NamedTuple):
     cameraTranslation: bytes  # WKB: 'POINT(x y z)'
     cameraRotation: list[float]  # [w, x, y, z]
     cameraIntrinsic: Float33
-    egoTranslation: bytes # WKB: 'POINT(x y z)'
+    egoTranslation: bytes  # WKB: 'POINT(x y z)'
     egoRotation: list[float]  # [w, x, y, z]
     timestamp: datetime.datetime
     cameraHeading: float

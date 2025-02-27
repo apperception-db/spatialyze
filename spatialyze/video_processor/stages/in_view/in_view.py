@@ -2,9 +2,9 @@ from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
+import shapely.geometry
 from bitarray import bitarray
 from pyquaternion import Quaternion
-import shapely.geometry
 
 from ....database import database
 from ....predicate import (
@@ -84,21 +84,21 @@ class InView(Stage):
             keep.setall(0)
         elif self.predicate is not True:
             exists = (
-            "EXISTS ("
-            "    SELECT *"
-            "    FROM SegmentPolygon"
-            "    WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
-            "    AND {}"
-            ")"
+                "EXISTS ("
+                "    SELECT *"
+                "    FROM SegmentPolygon"
+                "    WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
+                "    AND {}"
+                ")"
             )
             results = database.execute(
                 (
-            "SELECT index, {exists}"
-            "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
+                    "SELECT index, {exists}"
+                    "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
                 ).format(
                     exists=",".join(exists.format(roadtype(st)) for st in self.roadtypes),
                 ),
-                (view_areas, indices)
+                (view_areas, indices),
             )
 
             keep.setall(0)

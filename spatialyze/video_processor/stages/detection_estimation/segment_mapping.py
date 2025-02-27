@@ -152,7 +152,7 @@ def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "C
             "points": points,
             "convex": sg.MultiPoint(points=convex_points),
             "location": location,
-        }
+        },
     )
     return result
 

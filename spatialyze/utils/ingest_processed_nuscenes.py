@@ -24,6 +24,7 @@ class _MovableObject(NamedTuple):
     itemHeading: "list[float]"
     translations: "list[list[float]]"
 
+
 class _Camera(NamedTuple):
     camera_id: "str"
     frame_id: "str"

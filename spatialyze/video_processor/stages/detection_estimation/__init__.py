@@ -185,7 +185,7 @@ def get_ego_views(video: "Video") -> "list[postgis.Polygon]":
     views_raw = database.execute(
         "SELECT index, ST_ConvexHull(points) "
         "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) ",
-        (view_areas, indices)
+        (view_areas, indices),
     )
 
     idxs_set = set(idx for idx, _ in views_raw)
