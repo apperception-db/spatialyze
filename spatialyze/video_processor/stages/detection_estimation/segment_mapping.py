@@ -17,9 +17,6 @@ import math
 import time
 from typing import NamedTuple, Tuple
 
-import numpy as np
-import postgis
-import psycopg2.sql as sql
 import shapely.geometry as sg
 import shapely.wkb as swkb
 
@@ -56,7 +53,7 @@ class RoadPolygonInfo(NamedTuple):
 
 class RoadSegmentWithHeading(NamedTuple):
     id: "str"
-    polygon: "postgis.Polygon"
+    polygon: "bytes"
     road_types: "list[str]"
     segmentline: "list[sg.LineString]"
     heading: "list[float]"
@@ -64,7 +61,7 @@ class RoadSegmentWithHeading(NamedTuple):
 
 class Segment(NamedTuple):
     id: "str"
-    polygon: "postgis.Polygon"
+    polygon: "bytes"
     road_type: "str"
     segmentline: "list[sg.LineString]"
     heading: "list[float]"
@@ -91,27 +88,24 @@ def reformat_return_polygon(segments: "list[RoadSegmentWithHeading]") -> "list[S
 
 def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "CameraConfig"):
     tokens = [*map(lambda x: x.detection_id.obj_order, detections)]
-    points = [postgis.Point(d.car_loc3d[0], d.car_loc3d[1]) for d in detections]
+    points = [sg.Point(d.car_loc3d[0], d.car_loc3d[1]).wkb for d in detections]
 
     location = ego_config.location
 
-    convex_points = np.array([[d.car_loc3d[0], d.car_loc3d[1]] for d in detections])
+    convex_points = [(d.car_loc3d[0], d.car_loc3d[1]) for d in detections]
 
-    out = sql.SQL(
-        f"""
+    out = f"""
     WITH
     Point AS (
-        SELECT *
-        FROM UNNEST(
-            {{tokens}},
-            {{points}}::geometry(Point)[]
-        ) AS _point (token, point)
+        SELECT
+            UNNEST($tokens) AS token,
+            ST_GeomFromWKB(UNNEST($points)) AS point
     ),
     AvailablePolygon AS (
         SELECT *
         FROM SegmentPolygon
-        WHERE location = {{location}}
-        AND ST_Intersects(SegmentPolygon.elementPolygon, ST_ConvexHull({{convex}}::geometry(MultiPoint)))
+        WHERE location = $location
+        AND ST_Intersects(SegmentPolygon.elementPolygon, ST_ConvexHull(ST_GeomFromWKB($convex)))
         AND (SegmentPolygon.__RoadType__intersection__
         OR SegmentPolygon.__RoadType__lane__
         OR SegmentPolygon.__RoadType__lanegroup__
@@ -151,13 +145,15 @@ def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "C
         AvailablePolygon.elementpolygon,
         {SQL_ROAD_TYPES};
     """
-    ).format(
-        tokens=sql.Literal(tokens),
-        points=sql.Literal(points),
-        convex=sql.Literal(postgis.MultiPoint(map(tuple, convex_points))),
-        location=sql.Literal(location),
+    result = database.execute(
+        out,
+        {
+            "tokens": tokens,
+            "points": points,
+            "convex": sg.MultiPoint(points=convex_points),
+            "location": location,
+        }
     )
-    result = database.execute(out)
     return result
 
 
@@ -211,7 +207,7 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
     fov_lines = get_fov_lines(ego_config)
     times.append(time.time())
 
-    for order_id, road_polygon in list(zip(order_ids, mapped_polygons)):
+    for order_id, road_polygon in zip(order_ids, mapped_polygons):
         frame_idx = detections[0].detection_id.frame_idx
         det_id = DetectionId(frame_idx=frame_idx, obj_order=order_id)
         if det_id in mapped_road_polygon_info:
@@ -223,7 +219,7 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
 
         # assert all(isinstance(line, sg.LineString) for line in segmentlines)
 
-        p = swkb.loads(roadpolygon.to_ewkb(), hex=True)
+        p = swkb.loads(roadpolygon, hex=True)
         assert isinstance(p, sg.Polygon)
         exterior = p.exterior
         assert hasattr(exterior, "xy")
@@ -264,7 +260,7 @@ def get_detection_polygon_mapping(detections: "list[obj_detection]", ego_config:
 
 
 def hex_str_to_linestring(hex: "str"):
-    return sg.LineString(swkb.loads(bytes.fromhex(hex)))
+    return sg.LineString(swkb.loads(bytes.fromhex(hex)))  # type: ignore
 
 
 def make_road_polygon_with_heading(row: "tuple"):

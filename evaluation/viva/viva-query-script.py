@@ -7,7 +7,6 @@ from os import environ
 import pickle
 import json
 import os
-import psycopg2
 import numpy as np
 
 from spatialyze.database import database
@@ -32,17 +31,6 @@ files = os.listdir(VIDEO_DIR)
 # First run = 8015.9125235sec. Deepsort run = 8616.58
 # We want 240 * 20sec =  4800sec worth of video. So we will use 4800s/5s = 960 videos
 files = [x for x in files if int(x.split(".")[0]) <= 960]
-
-# %%
-# database = Database(
-#     psycopg2.connect(
-#         dbname=environ.get("AP_DB", "mobilitydb"),
-#         user=environ.get("AP_USER", "docker"),
-#         host=environ.get("AP_HOST", "localhost"),
-#         port=environ.get("AP_PORT", "25432"),
-#         password=environ.get("AP_PASSWORD", "docker"),
-#     )
-# )
 
 # %%
 world = World(database)

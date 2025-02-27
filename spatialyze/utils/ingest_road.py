@@ -2,8 +2,6 @@ import json
 import os
 from typing import TYPE_CHECKING, Callable
 
-import psycopg2.sql as psql
-
 if TYPE_CHECKING:
     from spatialyze.database import Database
 
@@ -190,10 +188,8 @@ def drop_tables(database: "Database"):
         "intersection",
         "segmentpolygon",
     ]
-    drop_table = psql.SQL("DROP TABLE IF EXISTS {} CASCADE;")
-
-    for tablename in map(psql.Identifier, tablenames):
-        database.update(drop_table.format(tablename), commit=True)
+    for tablename in tablenames:
+        database.update(f'DROP TABLE IF EXISTS "{tablename}" CASCADE;', commit=True)
 
 
 def index_factory(database: "Database"):

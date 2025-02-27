@@ -6,7 +6,7 @@ import datetime
 import torch
 
 from bitarray import bitarray
-import psycopg2
+import duckdb
 import numpy as np
 
 from spatialyze.video_processor.stream.strongsort import TrackingResult
@@ -26,15 +26,7 @@ VIDEO_DIR =  './data/pipeline/videos'
 ROAD_DIR = './data/scenic/road-network/boston-seaport'
 
 def build_filter_world(pkl: bool = False, alt_tracker: bool = False, track: bool = True):
-    database = Database(
-        psycopg2.connect(
-            dbname=environ.get("AP_DB", "postgres"),
-            user=environ.get("AP_USER", "postgres"),
-            host=environ.get("AP_HOST", "localhost"),
-            port=environ.get("AP_PORT", "25432"),
-            password=environ.get("AP_PASSWORD", "postgres"),
-        )
-    )
+    database = Database(duckdb.connect(':memory:'))
     files = os.listdir(VIDEO_DIR)
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)
@@ -122,9 +114,9 @@ def compare_objects2(
 
 
 class ResultsEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return str(obj)
-        if isinstance(obj, torch.Tensor):
-            return obj.detach().tolist()
-        return json.JSONEncoder.default(self, obj)
+    def default(self, o):
+        if isinstance(o, datetime.datetime):
+            return str(o)
+        if isinstance(o, torch.Tensor):
+            return o.detach().tolist()
+        return json.JSONEncoder.default(self, o)

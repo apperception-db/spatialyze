@@ -5,7 +5,6 @@ from typing import Callable, List
 import postgis
 import torch
 from bitarray import bitarray
-from psycopg2 import sql
 
 from ....database import database
 from ...camera_config import CameraConfig
@@ -184,18 +183,9 @@ def objects_count_change(dets: "list[D3DMetadatum]", cur: "int", nxt: "int"):
 def get_ego_views(video: "Video") -> "list[postgis.Polygon]":
     indices, view_areas = get_views(video, distance=100)
     views_raw = database.execute(
-        sql.SQL(
-            """
-    SELECT index, ST_ConvexHull(points)
-    FROM UNNEST (
-        {view_areas},
-        {indices}::int[]
-    ) AS ViewArea(points, index)
-    """
-        ).format(
-            view_areas=sql.Literal(view_areas),
-            indices=sql.Literal(indices),
-        )
+        "SELECT index, ST_ConvexHull(points) "
+        "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) ",
+        (view_areas, indices)
     )
 
     idxs_set = set(idx for idx, _ in views_raw)

@@ -1,6 +1,6 @@
 from spatialyze.database import Database
 from spatialyze.utils import ingest_road
-import psycopg2
+import duckdb
 import os
 import pytest
 
@@ -22,28 +22,18 @@ import pytest
     ("intersection", 332),
 ])
 def test_simple_ops(table: str, count: int):
-    d1 = Database(psycopg2.connect(
-        dbname="postgres",
-        user="postgres",
-        host="localhost",
-        port=os.environ["AP_PORT_ROAD_1"],
-        password="postgres",
-    ))
-    d1.reset()
-    ingest_road(d1, "./data/scenic/road-network/boston-seaport")
-    assert d1.execute(f"select count(*) from {table}") == [(count,)]
+    with duckdb.connect('/tmp/road_1.duckdb') as conn:
+        d1 = Database(conn)
+        d1.reset()
+        ingest_road(d1, "./data/scenic/road-network/boston-seaport")
+        assert d1.execute(f"select count(*) from {table}") == [(count,)]
 
 
 def test_incomplete_road_network():
-    d2 = Database(psycopg2.connect(
-        dbname="postgres",
-        user="postgres",
-        host="localhost",
-        port=os.environ["AP_PORT_ROAD_2"],
-        password="postgres",
-    ))
-    ingest_road(d2, "./data/viva/road-network")
+    with duckdb.connect('/tmp/road_2.duckdb') as conn:
+        d2 = Database(conn)
+        ingest_road(d2, "./data/viva/road-network")
 
-    assert d2.execute("select count(*) from lane") == [(8,)]
-    assert d2.execute("select count(*) from intersection") == [(1,)]
-    assert d2.execute("select count(*) from segmentpolygon") == [(9,)]
+        assert d2.execute("select count(*) from lane") == [(8,)]
+        assert d2.execute("select count(*) from intersection") == [(1,)]
+        assert d2.execute("select count(*) from segmentpolygon") == [(9,)]

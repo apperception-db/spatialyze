@@ -7,7 +7,6 @@ from os import environ
 import pickle
 import json
 import os
-import psycopg2
 import numpy as np
 import time
 
@@ -53,18 +52,6 @@ with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
     videos = pickle.load(f)
 
 savert(starttime, 'setup')
-
-
-# %%
-# database = Database(
-#     psycopg2.connect(
-#         dbname=environ.get("AP_DB", "mobilitydb"),
-#         user=environ.get("AP_USER", "docker"),
-#         host=environ.get("AP_HOST", "localhost"),
-#         port=environ.get("AP_PORT", "25432"),
-#         password=environ.get("AP_PASSWORD", "docker"),
-#     )
-# )
 
 # %%
 starttime = time.time()

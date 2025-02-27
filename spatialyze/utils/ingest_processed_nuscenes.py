@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
-import psycopg2.sql as psql
-from postgis import Point
+import shapely.geometry
 from tqdm import tqdm
 
 from ..data_types.camera_key import CameraKey
@@ -25,8 +24,19 @@ class _MovableObject(NamedTuple):
     itemHeading: "list[float]"
     translations: "list[list[float]]"
 
-
-L = psql.Literal
+class _Camera(NamedTuple):
+    camera_id: "str"
+    frame_id: "str"
+    frame_num: "int"
+    filename: "str"
+    camera_translation: "bytes"
+    camera_rotation: "list[float]"
+    camera_intrinsic: "list[list[float]]"
+    ego_translation: "bytes"
+    ego_rotation: "list[float]"
+    timestamp: "datetime"
+    cameraHeading: "float"
+    egoHeading: "float"
 
 
 def ingest_processed_nuscenes(
@@ -50,28 +60,27 @@ def ingest_processed_nuscenes(
 
         objects: "dict[str, _MovableObject]" = {}
         cc_map: "dict[str, tuple[int, NuscenesCamera]]" = {}
-        camera_sqls: "list[psql.Composable]" = []
+        camera_sqls: "list[_Camera]" = []
         for idx, cc in enumerate(camera):
             assert cc.token not in cc_map
             cc_map[cc.token] = (idx, cc)
-            fields: "list[tuple[str, psql.Composable]]" = [
-                ("camera_id", L(str(k))),
-                ("frame_id", L(cc.token)),
-                ("frame_num", L(idx)),
-                ("filename", L(cc.filename)),
-                ("camera_translation", L(Point(*cc.camera_translation))),
-                ("camera_rotation", L(list(cc.camera_rotation))),
-                ("camera_intrinsic", L(list(cc.camera_intrinsic))),
-                ("ego_translation", L(Point(*cc.ego_translation))),
-                ("ego_rotation", L(list(cc.ego_rotation))),
-                ("timestamp", L(datetime.fromtimestamp(cc.timestamp / 1000000.0))),
-                ("cameraHeading", L(cc.camera_heading)),
-                ("egoHeading", L(cc.ego_heading)),
-            ]
-            brackets = ",".join(["{}"] * len(fields))
-            camera_sqls.append(psql.SQL(f"({brackets})").format(*(v for _, v in fields)))
+            fields = _Camera(
+                camera_id=str(k),
+                frame_id=cc.token,
+                frame_num=idx,
+                filename=cc.filename,
+                camera_translation=shapely.geometry.Point(*cc.camera_translation).wkb,
+                camera_rotation=list(cc.camera_rotation),
+                camera_intrinsic=list(cc.camera_intrinsic),
+                ego_translation=shapely.geometry.Point(*cc.ego_translation).wkb,
+                ego_rotation=list(cc.ego_rotation),
+                timestamp=datetime.fromtimestamp(cc.timestamp / 1000000.0),
+                cameraHeading=cc.camera_heading,
+                egoHeading=cc.ego_heading,
+            )
+            camera_sqls.append(fields)
 
-        query = psql.SQL(
+        query = (
             "INSERT INTO Camera ("
             "cameraId, frameId, "
             "frameNum, fileName, "
@@ -79,9 +88,9 @@ def ingest_processed_nuscenes(
             "cameraIntrinsic, egoTranslation, "
             "egoRotation, timestamp, "
             "cameraHeading, egoHeading"
-            ") VALUES {}"
-        ).format(psql.SQL(",").join(camera_sqls))
-        database.update(query)
+            ") VALUES (?, ?, ?, ?, ST_GeomFromWKB(?), ?, ?, ST_GeomFromWKB(?), ?, ?, ?, ?)"
+        )
+        database.update(query, vars=camera_sqls, many=True)
 
         for a in annotations:
             cc_idx, cc = cc_map[a.sample_data_token]

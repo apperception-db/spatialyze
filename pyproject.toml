@@ -17,6 +17,7 @@ shapely = "^1.8.5.post1"
 # MobilityDB
 psycopg2-binary = "^2.9.3"
 postgis = "^1.0.4"
+duckdb = "^1.2.0"
 
 [tool.poetry.group.cv.dependencies]
 torch = "^1.13.0"
