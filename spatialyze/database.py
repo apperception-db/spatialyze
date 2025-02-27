@@ -193,7 +193,7 @@ class Database:
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
             "ON Item_Detection "
-            "USING GiST(translation);"
+            "USING RTREE (translation);"
         )
         cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId);")
         cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (frameNum);")
@@ -201,11 +201,11 @@ class Database:
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS Item_Trajectory_translation_idx "
             f"ON {TRAJECTORY_TABLE} "
-            "USING GiST(translation);"
+            "USING RTREE (translation);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
         # cursor.execute(
-        #     "CREATE INDEX IF NOT EXISTS traj_bbox_idx ON General_Bbox USING GiST(trajBbox);"
+        #     "CREATE INDEX IF NOT EXISTS traj_bbox_idx ON General_Bbox USING RTREE (trajBbox);"
         # )
         # cursor.execute(
         #     "CREATE INDEX IF NOT EXISTS item_id_timestampx ON General_Bbox(itemId, timestamp);"
