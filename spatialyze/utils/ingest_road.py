@@ -176,7 +176,7 @@ def _remove_suffix(uid: str) -> "str | None":
 def drop_tables(database: "Database"):
     tablenames = [
         "segment",
-        # "lanesection",
+        "lanesection",
         "lane",
         # "lane_lanesection",
         "lanegroup",
@@ -231,8 +231,8 @@ def create_tables(database: "Database"):
     database.update(CREATE_INTERSECTION_SQL, commit=False)
     index("Intersection", "id")
 
-    # database.update(CREATE_LANESECTION_SQL, commit=False)
-    # index("LaneSection", "id")
+    database.update(CREATE_LANESECTION_SQL, commit=False)
+    index("LaneSection", "id")
 
     database.update(CREATE_ROADSECTION_SQL, commit=False)
     index("RoadSection", "id")
@@ -609,7 +609,7 @@ def insert_intersection(database: "Database", intersections: "list[dict]"):
         )
 
 
-ROAD_TYPES = {"road", "lane", "roadsection", "intersection", "lanegroup"}  # , "lanesection"}
+ROAD_TYPES = {"road", "lane", "roadsection", "intersection", "lanegroup" , "lanesection"}
 
 
 def add_segment_type(database: "Database", road_types: "set[str]"):
@@ -649,7 +649,7 @@ INSERT: "dict[str, Callable[[Database, list[dict]], None]]" = {
     "road": insert_road,
     "laneGroup": insert_lanegroup,
     # sections -----------------------------------------------
-    # "laneSection": insert_lanesection,
+    "laneSection": insert_lanesection,
     "roadSection": insert_roadsection,
     "intersection": insert_intersection,
     # relations ----------------------------------------------
