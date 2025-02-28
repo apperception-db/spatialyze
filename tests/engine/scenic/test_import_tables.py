@@ -34,4 +34,4 @@ def test_tables_contents(table, index, columns):
     
     with open(filename, "r") as f:
         expected = [json.loads(line) for line in f.readlines()]
-        assert res == expected
+        assert json.loads(json.dumps(res)) == expected
