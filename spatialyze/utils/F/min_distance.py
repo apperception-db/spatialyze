@@ -1,9 +1,9 @@
-from .custom_fn import custom_fn
 from ...predicate import GenSqlVisitor, PredicateNode, call_node
-from .common import default_heading, default_location, is_location_type
+from .common import default_location, is_location_type
 from .contains import ROAD_TYPES, _region_to_str
 
 # min_distance = custom_fn("minDistance", 2)
+
 
 @call_node
 def min_distance(
