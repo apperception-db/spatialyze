@@ -176,17 +176,17 @@ def _remove_suffix(uid: str) -> "str | None":
 def drop_tables(database: "Database"):
     tablenames = [
         "segment",
-        "lanesection",
+        # "lanesection",
         "lane",
-        "lane_lanesection",
-        "lanegroup",
-        "lanegroup_lane",
-        "opposite_lanegroup",
+        # "lane_lanesection",
+        # "lanegroup",
+        # "lanegroup_lane",
+        # "opposite_lanegroup",
         "road",
-        "road_lanegroup",
-        "road_roadsection",
+        # "road_lanegroup",
+        # "road_roadsection",
         "roadsection",
-        "roadsection_lanesection",
+        # "roadsection_lanesection",
         "intersection",
         "segmentpolygon",
     ]
@@ -231,38 +231,38 @@ def create_tables(database: "Database"):
     database.update(CREATE_INTERSECTION_SQL, commit=False)
     index("Intersection", "id")
 
-    database.update(CREATE_LANESECTION_SQL, commit=False)
-    index("LaneSection", "id")
+    # database.update(CREATE_LANESECTION_SQL, commit=False)
+    # index("LaneSection", "id")
 
     database.update(CREATE_ROADSECTION_SQL, commit=False)
     index("RoadSection", "id")
 
-    database.update(CREATE_LANEGROUP_SQL, commit=False)
-    index("LaneGroup", "id")
+    # database.update(CREATE_LANEGROUP_SQL, commit=False)
+    # index("LaneGroup", "id")
 
-    database.update(CREATE_LANE_LANESEC_SQL, commit=False)
-    index("Lane_LaneSection", "laneId")
-    index("Lane_LaneSection", "laneSectionId")
+    # database.update(CREATE_LANE_LANESEC_SQL, commit=False)
+    # index("Lane_LaneSection", "laneId")
+    # index("Lane_LaneSection", "laneSectionId")
 
-    database.update(CREATE_LANEGROUP_LANE_SQL, commit=False)
-    index("LaneGroup_Lane", "laneId")
-    index("LaneGroup_Lane", "laneGroupId")
+    # database.update(CREATE_LANEGROUP_LANE_SQL, commit=False)
+    # index("LaneGroup_Lane", "laneId")
+    # index("LaneGroup_Lane", "laneGroupId")
 
-    database.update(CREATE_OPPOSITE_LANEGROUP_SQL, commit=False)
-    index("Opposite_LaneGroup", "oppositeId")
-    index("Opposite_LaneGroup", "laneGroupId")
+    # database.update(CREATE_OPPOSITE_LANEGROUP_SQL, commit=False)
+    # index("Opposite_LaneGroup", "oppositeId")
+    # index("Opposite_LaneGroup", "laneGroupId")
 
-    database.update(CREATE_ROAD_LANEGROUP_SQL, commit=False)
-    index("Road_LaneGroup", "roadId")
-    index("Road_LaneGroup", "laneGroupId")
+    # database.update(CREATE_ROAD_LANEGROUP_SQL, commit=False)
+    # index("Road_LaneGroup", "roadId")
+    # index("Road_LaneGroup", "laneGroupId")
 
-    database.update(CREATE_ROAD_ROADSECTION_SQL, commit=False)
-    index("Road_RoadSection", "roadId")
-    index("Road_RoadSection", "roadSectionId")
+    # database.update(CREATE_ROAD_ROADSECTION_SQL, commit=False)
+    # index("Road_RoadSection", "roadId")
+    # index("Road_RoadSection", "roadSectionId")
 
-    database.update(CREATE_ROADSEC_LANESEC_SQL, commit=False)
-    index("RoadSection_LaneSection", "laneSectionId")
-    index("RoadSection_LaneSection", "roadSectionId")
+    # database.update(CREATE_ROADSEC_LANESEC_SQL, commit=False)
+    # index("RoadSection_LaneSection", "laneSectionId")
+    # index("RoadSection_LaneSection", "roadSectionId")
 
     database._commit()
 
@@ -609,7 +609,7 @@ def insert_intersection(database: "Database", intersections: "list[dict]"):
         )
 
 
-ROAD_TYPES = {"road", "lane", "lanesection", "roadsection", "intersection", "lanegroup"}
+ROAD_TYPES = {"road", "lane", "roadsection", "intersection"}  # , "lanegroup", "lanesection"}
 
 
 def add_segment_type(database: "Database", road_types: "set[str]"):
@@ -641,24 +641,24 @@ def add_segment_type(database: "Database", road_types: "set[str]"):
 
 
 INSERT: "dict[str, Callable[[Database, list[dict]], None]]" = {
-    # primitives
+    # primitives ---------------------------------------------
     "polygon": insert_polygon,
     "segment": insert_segment,
-    # basics
+    # basics -------------------------------------------------
     "lane": insert_lane,
     "road": insert_road,
     "laneGroup": insert_lanegroup,
-    # sections
-    "laneSection": insert_lanesection,
-    "roadSection": insert_roadsection,
+    # sections -----------------------------------------------
+    # "laneSection": insert_lanesection,
+    # "roadSection": insert_roadsection,
     "intersection": insert_intersection,
-    # relations
-    "lane_LaneSec": insert_lane_lanesec,
-    "laneGroup_Lane": insert_lanegroup_lane,
-    "laneGroup_opposite": insert_opposite_lanegroup,
-    "road_laneGroup": insert_road_lanegroup,
-    "road_roadSec": insert_road_roadsec,
-    "roadSec_laneSec": insert_roadsec_lanesec,
+    # relations ----------------------------------------------
+    # "lane_LaneSec": insert_lane_lanesec,
+    # "laneGroup_Lane": insert_lanegroup_lane,
+    # "laneGroup_opposite": insert_opposite_lanegroup,
+    # "road_laneGroup": insert_road_lanegroup,
+    # "road_roadSec": insert_road_roadsec,
+    # "roadSec_laneSec": insert_roadsec_lanesec,
 }
 
 
