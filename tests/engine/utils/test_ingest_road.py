@@ -71,9 +71,13 @@ def test_full_road_network():
         ("intersection", "id", "id, road"),
     ]
 
+    DIR = "./data/scenic/road-network-test-output"
+    if not os.path.exists(DIR):
+        os.makedirs(DIR)
+
     for name, idx, columns in name_idx_columns:
         res = d1.execute(f"select {columns} from {name} order by {idx}")
-        filename = f"./data/scenic/road-network-export/{name}.jsonl"
+        filename = os.path.join(DIR, f"{name}.jsonl")
         if os.environ.get('GENERATE_ENGINE_TEST_RESULTS', False):
             with open(filename, "w") as f:
                 for r in res:
