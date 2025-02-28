@@ -87,6 +87,7 @@ def test_fig_12():
     ])
 
 
+@pytest.mark.dependency(depends=["tests/engine/scenic/test_import_tables.py::test_import_tables"], scope='session')
 def test_fig_12_new():
     o = objects[0]
     c = camera
