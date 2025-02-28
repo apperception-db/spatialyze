@@ -336,7 +336,7 @@ jobs:
         shell: micromamba-shell {0}
         run: |
           python ./scripts/ingest_road.py
-          python ./scripts/import_tables.py
+          # python ./scripts/import_tables.py
         env:
           AP_PORT: 25440
           AP_HOST: localhost
