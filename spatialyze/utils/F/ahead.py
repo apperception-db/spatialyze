@@ -21,7 +21,4 @@ def ahead(
     o1 = visitor(_obj1)
     o2 = visitor(_obj2)
     h = visitor(cast(heading, "real"))
-    return f"""
-    ((ST_X({o1}) - ST_X({o2})) * COS(PI() * ({h} + 90) / 180) + (ST_Y({o1}) - ST_Y({o2})) * SIN(PI() * ({h} + 90) / 180) > 0
-        AND ABS(ST_X(convertCamera({o1}, {o2}, {h}))) < 3)
-    """
+    return f"((ST_X({o1}) - ST_X({o2})) * COS(PI() * ({h} + 90) / 180) + (ST_Y({o1}) - ST_Y({o2})) * SIN(PI() * ({h} + 90) / 180) > 0 AND ABS(ST_X(convertCamera({o1}, {o2}, {h}))) < 3)"

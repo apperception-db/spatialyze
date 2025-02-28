@@ -22,10 +22,4 @@ def min_distance(
         raise Exception("polygon should be either " + " or ".join(sorted(ROAD_TYPES)))
 
     object = default_location(object)
-    return f"""
-    (
-        SELECT MIN(ST_Distance({visitor(object)}, elementPolygon))
-        FROM SegmentPolygon
-        WHERE list_contains(segmentTypes, '{region_str.lower()}')
-    )
-    """
+    return f"(SELECT MIN(ST_Distance({visitor(object)}, elementPolygon)) FROM SegmentPolygon WHERE list_contains(segmentTypes, '{region_str.lower()}'))"
