@@ -10,18 +10,6 @@ jobs:
   test-workflow:
     name: Test Workflow
     runs-on: ubuntu-latest
-    services:
-      db:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25440:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,23 +47,9 @@ jobs:
         shell: micromamba-shell {0}
         run: pip list
 
-      - name: Extend MobilityDB with User-Defined functions
-        shell: micromamba-shell {0}
-        run: |
-          pushd scripts/pg-extender
-          python ../generate_pg_extender.py
-          cat install.sql
-          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          popd
-        env:
-          PGPASSWORD: postgres
-      
       - name: Ingest data
         shell: micromamba-shell {0}
-        run: python ./scripts/ingest_road.py
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
+        run: python ./scripts/ingest_road.py /tmp/__spatialyze__test.duckdb
       
       - name: Count Tests
         shell: micromamba-shell {0}
@@ -83,16 +57,10 @@ jobs:
           pytest --collect-only -qq tests/workflow
           pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l
           pytest --collect-only -q -W ignore::Warning tests/workflow | head -n -2 | wc -l &> test-count
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/workflow
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v4
         with:
@@ -111,18 +79,6 @@ jobs:
   test-video-processor:
     name: Test Video Processor
     runs-on: ubuntu-latest
-    services:
-      db:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25440:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -159,25 +115,11 @@ jobs:
       - name: Check Installed Packages
         shell: micromamba-shell {0}
         run: pip list
-
-      - name: Extend MobilityDB with User-Defined functions
-        shell: micromamba-shell {0}
-        run: |
-          pushd scripts/pg-extender
-          python ../generate_pg_extender.py
-          cat install.sql
-          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          popd
-        env:
-          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
         run: |
-          python ./scripts/ingest_road.py
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
+          python ./scripts/ingest_road.py  /tmp/__spatialyze__test.duckdb
       
       - name: Count Tests
         shell: micromamba-shell {0}
@@ -185,16 +127,10 @@ jobs:
           pytest --collect-only -qq tests/video_processor
           pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l
           pytest --collect-only -q -W ignore::Warning tests/video_processor | head -n -2 | wc -l &> test-count
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/video_processor
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v4
         with:
@@ -213,73 +149,6 @@ jobs:
   test-engine-and-interface:
     name: Test Engine and Interface
     runs-on: ubuntu-latest
-    services:
-      db:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25440:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      db-road-1:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25441:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      db-road-2:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25442:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      db-reset:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25443:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      db-import:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25444:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      db-sql:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25445:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -315,30 +184,12 @@ jobs:
       - name: Check Installed Packages
         shell: micromamba-shell {0}
         run: pip list
-
-      - name: Extend MobilityDB with User-Defined functions
-        shell: micromamba-shell {0}
-        run: |
-          pushd scripts/pg-extender
-          python ../generate_pg_extender.py
-          cat install.sql
-          psql -h localhost -p 25440 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25441 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25442 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25443 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          psql -h localhost -p 25444 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          popd
-        env:
-          PGPASSWORD: postgres
       
       - name: Ingest data
         shell: micromamba-shell {0}
         run: |
-          python ./scripts/ingest_road.py
-          python ./scripts/import_tables.py
-        env:
-          AP_PORT: 25440
-          AP_HOST: localhost
+          python ./scripts/ingest_road.py /tmp/__spatialyze__test.duckdb
+          python ./scripts/import_tables.py /tmp/__spatialyze__test.duckdb
       
       - name: Generate Image data
         shell: micromamba-shell {0}
@@ -350,26 +201,10 @@ jobs:
           pytest --collect-only -qq tests/engine tests/interface
           pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l
           pytest --collect-only -q -W ignore::Warning tests/engine tests/interface | head -n -2 | wc -l &> test-count
-        env:
-          AP_PORT: 25440
-          AP_PORT_ROAD_1: 25441
-          AP_PORT_ROAD_2: 25442
-          AP_PORT_RESET: 25443
-          AP_PORT_IMPORT: 25444
-          AP_PORT_SQL: 25445
-          AP_HOST: localhost
       
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/engine tests/interface
-        env:
-          AP_PORT: 25440
-          AP_PORT_ROAD_1: 25441
-          AP_PORT_ROAD_2: 25442
-          AP_PORT_RESET: 25443
-          AP_PORT_IMPORT: 25444
-          AP_PORT_SQL: 25445
-          AP_HOST: localhost
 
       - uses: actions/upload-artifact@v4
         with:
