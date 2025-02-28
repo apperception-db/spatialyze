@@ -2,9 +2,13 @@ from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
 from scenic_common import get_results
+import pytest
 
 
-
+@pytest.mark.dependency(
+    depends=["tests/test_mod_01.py::test_a", "tests/test_mod_01.py::test_c"],
+    scope='session'
+)
 def test_fig_15():
     cam = camera
     car1 = objects[0]

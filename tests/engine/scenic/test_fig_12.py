@@ -3,8 +3,10 @@ from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
 import datetime as datetime
 from scenic_common import get_results
+import pytest
 
 
+@pytest.mark.dependency(depends=["tests/engine/scenic/test_import_tables.py::test_import_tables"], scope='session')
 def test_fig_12():
     o = objects[0]
     c = camera

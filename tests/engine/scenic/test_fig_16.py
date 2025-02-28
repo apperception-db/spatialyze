@@ -1,7 +1,13 @@
 from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
+import pytest
 
+
+@pytest.mark.dependency(
+    depends=["tests/test_mod_01.py::test_a", "tests/test_mod_01.py::test_c"],
+    scope='session'
+)
 def test_fig_16():
     o = objects[0]
     c = camera

@@ -55,7 +55,7 @@ def import_tables(database: "Database", data_path: str):
     # Import CSV
     data_Cameras = pd.read_csv(os.path.join(data_path, "cameras.csv"))
     df_Cameras = pd.DataFrame(data_Cameras)
-    df_Cameras = df_Cameras[df_Cameras.apply(lambda x: (x['cameraid'] in frame_range and frame_range[x['cameraid']][0] - 10 < x['framenum'] and x['framenum'] < frame_range[x['cameraid']][1] + 10) or random.random() < 0.1, axis=1)]
+    # df_Cameras = df_Cameras[df_Cameras.apply(lambda x: (x['cameraid'] in frame_range and frame_range[x['cameraid']][0] - 10 < x['framenum'] and x['framenum'] < frame_range[x['cameraid']][1] + 10) or random.random() < 0.1, axis=1)]
 
     # data_Item_Trajectory = pd.read_csv(
     #     os.path.join(data_path, "item_trajectory.csv")
