@@ -77,6 +77,7 @@ def test_full_road_network():
 
     for name, idx, columns in name_idx_columns:
         res = d1.execute(f"select {columns} from {name} order by {idx}")
+        print("types", [type(elm) for elm in res[0]])
         res = [
             [elm.hex() if isinstance(elm, bytes) else elm for elm in row]
             for row in res
@@ -88,5 +89,5 @@ def test_full_road_network():
                     f.write(json.dumps(r) + "\n")
         
         with open(filename, "r") as f:
-            expected = f.readlines()
-            assert len(res) == len(expected)
+            expected = [json.loads(line) for line in f.readlines()]
+            assert res == expected
