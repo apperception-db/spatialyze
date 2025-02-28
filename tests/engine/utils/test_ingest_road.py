@@ -1,5 +1,5 @@
 from spatialyze.database import Database
-from spatialyze.utils import ingest_road, ROAD_TYPES
+from spatialyze.utils.ingest_road import ingest_road, ROAD_TYPES
 import psycopg2
 import os
 import pytest
