@@ -177,8 +177,8 @@ def drop_tables(database: "Database"):
     ]
     for tablename in tablenames:
         database.update(f'DROP TABLE IF EXISTS "{tablename}" CASCADE;', commit=True)
-    
-    database.update('DROP SEQUENCE IF EXISTS seq_segmentId CASCADE;', commit=True)
+
+    database.update("DROP SEQUENCE IF EXISTS seq_segmentId CASCADE;", commit=True)
 
 
 def index_factory(database: "Database"):

@@ -19,7 +19,6 @@ from typing import NamedTuple, Tuple
 
 import shapely.geometry as sg
 import shapely.wkb as swkb
-import shapely.wkt as swkt
 
 from ....database import database
 from ...camera_config import CameraConfig

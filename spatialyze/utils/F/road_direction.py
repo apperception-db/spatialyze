@@ -1,4 +1,4 @@
-from ...predicate import GenSqlVisitor, PredicateNode, call_node, cast
+from ...predicate import GenSqlVisitor, PredicateNode, call_node
 from .common import default_heading, default_location, is_location_type
 
 

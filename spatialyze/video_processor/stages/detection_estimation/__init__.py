@@ -2,8 +2,8 @@ import logging
 import time
 from typing import Callable, List
 
-import shapely.wkb as swkb
 import shapely.geometry
+import shapely.wkb as swkb
 import torch
 from bitarray import bitarray
 
