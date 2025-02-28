@@ -2,6 +2,7 @@ from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
 from scenic_common import database, get_results
 
+
 def test_fig_16():
     o = objects[0]
     c = camera

@@ -3,7 +3,6 @@ from spatialyze.utils import F
 from scenic_common import get_results, database
 
 
-
 def test_fig_15():
     cam = camera
     car1 = objects[0]
