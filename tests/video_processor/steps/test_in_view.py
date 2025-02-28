@@ -1,6 +1,7 @@
 import os
 import pickle
 import pytest
+import json
 
 from spatialyze.predicate import *
 from spatialyze.utils import F
@@ -208,3 +209,12 @@ def test_detection_2d():
             output2 = pipeline2.run(Payload(frames))
 
             assert output1.keep == output2.keep, (name, output1.keep, output2.keep)
+
+            keeparray = [1 if keep else 0 for keep in output1.keep]
+            # with open(os.path.join(OUTPUT_DIR, f'{name}_{distance}.json'), 'w') as f:
+            #     json.dump(keeparray, f)
+
+            with open(os.path.join(OUTPUT_DIR, f'{name}_{distance}.json'), 'r') as f:
+                keeparraygt = json.load(f)
+            
+            assert keeparray == keeparraygt, (name, keeparray, keeparraygt)
