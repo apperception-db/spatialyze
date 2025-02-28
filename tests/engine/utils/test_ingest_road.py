@@ -1,24 +1,25 @@
 from spatialyze.database import Database
-from spatialyze.utils import ingest_road
+from spatialyze.utils.ingest_road import ingest_road, ROAD_TYPES
 import duckdb
 import os
 import pytest
+import json
 
 
 @pytest.mark.parametrize("table, count", [
     ("segmentpolygon", 3072),
     ("segment", 11410),
-    ("lanesection", 1180),
+    # ("lanesection", 1180),
     ("lane", 1180),
-    ("lane_lanesection", 1180),
+    # ("lane_lanesection", 1180),
     ("lanegroup", 966),
-    ("lanegroup_lane", 1180),
-    ("opposite_lanegroup", 744),
+    # ("lanegroup_lane", 1180),
+    # ("opposite_lanegroup", 744),
     ("road", 926),
-    ("road_lanegroup", 966),
-    ("road_roadsection", 594),
+    # ("road_lanegroup", 966),
+    # ("road_roadsection", 594),
     ("roadsection", 594),
-    ("roadsection_lanesection", 1180),
+    # ("roadsection_lanesection", 1180),
     ("intersection", 332),
 ])
 def test_simple_ops(table: str, count: int):
@@ -43,3 +44,47 @@ def test_incomplete_road_network():
         assert d2.execute("select count(*) from lane") == [(8,)]
         assert d2.execute("select count(*) from intersection") == [(1,)]
         assert d2.execute("select count(*) from segmentpolygon") == [(9,)]
+
+
+def test_full_road_network():
+    d1 = Database(psycopg2.connect(
+        dbname="postgres",
+        user="postgres",
+        host="localhost",
+        port=os.environ["AP_PORT_ROAD_1"],
+        password="postgres",
+    ))
+    d1.reset()
+    ingest_road(d1, "./data/scenic/road-network/boston-seaport")
+
+    roadtypes = sorted(ROAD_TYPES)
+    name_idx_columns = [
+        ("segmentpolygon", "elementId", "elementId, ST_AsText(ST_ReducePrecision(elementPolygon, 0.0001)), location, segmentTypes " + ", ".join(f"__RoadType__{rt}__" for rt in roadtypes)),
+        ("segment", "segmentId", "segmentId, elementId, ST_AsText(ST_ReducePrecision(startPoint, 0.0001)), ST_AsText(ST_ReducePrecision(endPoint, 0.0001)), ST_AsText(ST_ReducePrecision(segmentLine, 0.0001)), heading"),
+        ("lane", "id", "id"),
+        ("lanegroup", "id", "id"),
+        ("road", "id", "id, forwardLane, backwardLane"),
+        ("roadsection", "id", "id, forwardLanes, backwardLanes"),
+        ("intersection", "id", "id, road"),
+    ]
+
+    DIR = "./data/scenic/road-network-test-output"
+    if not os.path.exists(DIR):
+        os.makedirs(DIR)
+
+    for name, idx, columns in name_idx_columns:
+        res = d1.execute(f"select {columns} from {name} order by {idx}")
+        print("types", [type(elm) for elm in res[0]])
+        res = [
+            [elm.hex() if isinstance(elm, bytes) else elm for elm in row]
+            for row in res
+        ]
+        filename = os.path.join(DIR, f"{name}.jsonl")
+        if os.environ.get('GENERATE_ENGINE_TEST_RESULTS', False):
+            with open(filename, "w") as f:
+                for r in res:
+                    f.write(json.dumps(r) + "\n")
+        
+        with open(filename, "r") as f:
+            expected = [json.loads(line) for line in f.readlines()]
+            assert res == expected

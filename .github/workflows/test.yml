@@ -5,6 +5,7 @@ on:
 env:
   GENERATE_WORKFLOW_TEST_RESULTS: false
   GENERATE_PROCESSOR_TEST_RESULTS: false
+  GENERATE_ENGINE_TEST_RESULTS: false
 
 jobs:
   test-workflow:
@@ -205,6 +206,10 @@ jobs:
       - name: Unit Test
         shell: micromamba-shell {0}
         run: pytest --cov=spatialyze --cov-report=xml -vv tests/engine tests/interface
+      
+      - name: Commit test changes
+        if: ${{ env.GENERATE_ENGINE_TEST_RESULTS == 'true' }}
+        run: ./scripts/commit-and-push.sh "[CI] update engine and interface tests"
 
       - uses: actions/upload-artifact@v4
         with:
