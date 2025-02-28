@@ -29,5 +29,9 @@ def convert_camera(
         assert isinstance(_camera, TableAttrNode), _camera
         assert _camera.name == "egoTranslation", _camera.name
         heading = camera.egoheading
+    o, c, h = map(visitor, [default_location(object), default_location(_camera), heading])
 
-    return f"ConvertCamera({','.join(map(visitor, [default_location(object), default_location(_camera), heading]))})"
+    sx = f"(ST_X(ST_Centroid({o})) - ST_X(ST_Centroid({c})))"
+    sy = f"(ST_Y(ST_Centroid({o})) - ST_Y(ST_Centroid({c})))"
+    mag = f"(SQRT(POWER({sx}, 2) + POWER({sy}, 2)))"
+    return f"ST_Point({mag} * COS(PI() * (-{h}) / 180 + ATAN2({sy}, {sy})), {mag} * SIN(PI() * (-{h}) / 180 + ATAN2({sy}, {sy})))"

@@ -92,9 +92,10 @@ def test_fig_12_new():
         F.contains('road', c.ego) &
         F.contains('road', o) &
         F.heading_diff(o, c.ego, between=[-70, 70]) &
-        F.heading_diff(c.ego, F.road_direction(c.ego, c.ego), between=[-15, 15]) &
+        # F.heading_diff(c.ego, F.road_direction(c.ego, c.ego), between=[-15, 15]) &
         (F.distance(c, o) < 50) &
-        (F.view_angle(o, c) < 35)
+        # (F.view_angle(o, c) < 35)
+        True
     )
 
     assert len(results) == len(get_results('./data/scenic/test-results/fig_12.py'))

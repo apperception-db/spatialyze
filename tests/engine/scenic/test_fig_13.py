@@ -23,5 +23,5 @@ def test_fig_13():
         (F.min_distance(cam.ego, F.road_segment('intersection')) < 10) &
         F.heading_diff(obj1, obj2, between=[100, -100])
     )
-    # assert len(results) == len(get_results('./data/scenic/test-results/fig_13.py'))
+    assert len(results) == len(get_results('./data/scenic/test-results/fig_13.py'))
     assert set(results) == set(get_results('./data/scenic/test-results/fig_13.py'))

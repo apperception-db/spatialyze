@@ -17,4 +17,5 @@ def test_fig_14():
         (F.distance(cam.ego, obj1) < 10)
     )
 
+    assert len(results) == len(get_results('./data/scenic/test-results/fig_14.py'))
     assert set(results) == set(get_results('./data/scenic/test-results/fig_14.py'))
