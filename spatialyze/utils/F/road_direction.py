@@ -18,7 +18,8 @@ def road_direction(
 
     # return f"roadDirection({','.join(map(visitor, [_location, cast(heading, 'real')]))})"
     print(_location)
-    return ' '.join(f"""(
+    return " ".join(
+        f"""(
     SELECT heading * 180 / PI()
     FROM Segment
     WHERE elementId IN (
@@ -29,4 +30,7 @@ def road_direction(
     )
     AND ROUND(CAST(heading * 180 / PI() AS numeric), 3) != 45
     ORDER BY ST_Distance(SegmentLine, {visitor(_location)}) ASC LIMIT 1
-    )""".split('\n'))
+    )""".split(
+            "\n"
+        )
+    )
