@@ -1,3 +1,4 @@
+from scripts.import_tables import import_tables
 from spatialyze.database import database
 import datetime
 import pytest
@@ -11,6 +12,8 @@ import json
     ("Item_Trajectory", "itemId, cameraId, frameNum, itemHeading", "itemId, cameraId, objectType, frameNum, ST_AsText(ST_ReducePrecision(translation, 0.0001)), itemHeading")
 ])
 def test_tables_contents(table, index, columns):
+    import_tables(database, './data/scenic/database')
+
     DIR = "./data/scenic/import-tables-test-output"
     if not os.path.exists(DIR):
         os.makedirs(DIR)
