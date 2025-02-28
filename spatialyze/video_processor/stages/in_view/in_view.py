@@ -43,7 +43,7 @@ def overlap_or(indices: list[int], view_areas: list[bytes], roadtypes: list[str]
     return database.execute(
         "SELECT index "
         "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
-        "WHERE EXISTS (SELECT 1 FROM SegmentPolygon WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
+        "WHERE EXISTS (SELECT 1 FROM SegmentPolygon WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon) "
         f"AND ({' OR '.join(map(roadtype, roadtypes))}))",
         (view_areas, indices),
     )
@@ -60,7 +60,7 @@ def overlap_each(indices: list[int], view_areas: list[bytes], roadtypes: list[st
     )
     return database.execute(
         (
-            "SELECT index, {exists}"
+            "SELECT index, {exists} "
             "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
         ).format(
             exists=",".join(exists.format(roadtype(st)) for st in roadtypes),

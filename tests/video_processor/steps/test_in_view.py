@@ -5,7 +5,6 @@ import json
 
 from spatialyze.predicate import *
 from spatialyze.utils import F, ingest_road
-import psycopg2.sql as sql
 
 from spatialyze.predicate import *
 from spatialyze.utils import F, ingest_road
@@ -17,7 +16,7 @@ from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.database import database
 
-import shapely.wkt
+import shapely.wkb
 
 
 # Test Strategies
@@ -246,13 +245,11 @@ def test_get_views():
                 [camera_config(*f) for f in video["frames"]],
             )
             indices, view_areas = get_views(frames, distance)
-            res = database.execute(sql.SQL(
-                "SELECT index, ST_AsText(ST_ReducePrecision(points, 0.0001))"
-                "FROM UNNEST ({view_areas}, {indices}::int[]) AS ViewArea(points, index)"
-            ).format(
-                view_areas=sql.Literal(view_areas),
-                indices=sql.Literal(indices),
-            ))
+            res = database.execute(
+                "SELECT index, ST_AsText(ST_ReducePrecision(points, 0.0001)) "
+                "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) ",
+                (view_areas, indices)
+            )
             # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'w') as f:
             #     json.dump(res, f, indent=2)
             with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'r') as f:
@@ -277,7 +274,7 @@ def test_get_views():
                     assert set(tuple(t) for t in results) == set(gt_res), (name, results, gt_res)
 
 
-            view_areas_ = [[[*map(lambda x: round(x, 4), p)] for p in va] for va in view_areas]
+            view_areas_ = [[[*map(lambda x: round(x, 4), p)] for p in shapely.wkb.loads(va)] for va in view_areas]
             # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_{name}_{distance}.json'), 'w') as f:
             #     json.dump([indices, view_areas_], f, indent=2)
             with open(os.path.join(OUTPUT_DIR, f'InView_get_views_{name}_{distance}.json'), 'r') as f:
