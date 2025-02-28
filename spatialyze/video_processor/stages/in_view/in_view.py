@@ -39,6 +39,36 @@ OTHER_ROAD_TYPES = {
 }
 
 
+def overlap_or(indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
+    return database.execute(
+        "SELECT index "
+        "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
+        "WHERE EXISTS (SELECT 1 FROM SegmentPolygon WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
+        f"AND ({' OR '.join(map(roadtype, roadtypes))}))",
+        (view_areas, indices),
+    )
+
+
+def overlap_each(indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
+    exists = (
+        "EXISTS ("
+        "    SELECT *"
+        "    FROM SegmentPolygon"
+        "    WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
+        "    AND {}"
+        ")"
+    )
+    return database.execute(
+        (
+            "SELECT index, {exists}"
+            "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
+        ).format(
+            exists=",".join(exists.format(roadtype(st)) for st in roadtypes),
+        ),
+        (view_areas, indices),
+    )
+
+
 class InView(Stage):
     def __init__(
         self,
@@ -69,38 +99,14 @@ class InView(Stage):
         keep = bitarray(len(payload.keep))
         keep.setall(1)
         if self.predicate is None:
-            results = database.execute(
-                "SELECT index "
-                "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
-                "JOIN SegmentPolygon ON ST_Intersects(ST_ConvexHull(points), elementPolygon) "
-                f"WHERE {' OR '.join(map(roadtype, self.roadtypes))}",
-                (view_areas, indices),
-            )
-
+            results = overlap_or(indices, view_areas, self.roadtypes)
             keep.setall(0)
             for (index,) in results:
                 keep[index] = 1
         elif self.predicate is False:
             keep.setall(0)
         elif self.predicate is not True:
-            exists = (
-                "EXISTS ("
-                "    SELECT *"
-                "    FROM SegmentPolygon"
-                "    WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
-                "    AND {}"
-                ")"
-            )
-            results = database.execute(
-                (
-                    "SELECT index, {exists}"
-                    "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
-                ).format(
-                    exists=",".join(exists.format(roadtype(st)) for st in self.roadtypes),
-                ),
-                (view_areas, indices),
-            )
-
+            results = overlap_each(indices, view_areas, self.roadtypes)
             keep.setall(0)
             for index, *encoded_segment_types in results:
                 segment_types = {
