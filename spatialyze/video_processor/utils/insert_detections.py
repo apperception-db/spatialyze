@@ -33,6 +33,6 @@ def insert_detections(
         # rows.append(row)
         rows.append(obj)
 
-    insert = "INSERT INTO Item_Detection VALUES (?, ?, ?, ?, ST_GeomFromWKB(?), ?)"
+    insert = "INSERT INTO Item_Detection VALUES (?, ?, ?, ?, ST_GeomFromWKB(?), ?, null)"
     database.execute(insert, rows, many=True)
     database._commit()
