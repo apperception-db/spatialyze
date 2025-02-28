@@ -6,7 +6,7 @@ import shapely.geometry
 from bitarray import bitarray
 from pyquaternion import Quaternion
 
-from ....database import database
+from ....database import Database, database
 from ....predicate import (
     ArrayNode,
     BaseTransformer,
@@ -39,8 +39,8 @@ OTHER_ROAD_TYPES = {
 }
 
 
-def overlap_or(indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
-    return database.execute(
+def overlap_or(db: "Database", indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
+    return db.execute(
         "SELECT index "
         "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
         "WHERE EXISTS (SELECT 1 FROM SegmentPolygon WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon) "
@@ -49,7 +49,7 @@ def overlap_or(indices: list[int], view_areas: list[bytes], roadtypes: list[str]
     )
 
 
-def overlap_each(indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
+def overlap_each(db: "Database", indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
     exists = (
         "EXISTS ("
         "    SELECT *"
@@ -58,7 +58,7 @@ def overlap_each(indices: list[int], view_areas: list[bytes], roadtypes: list[st
         "    AND {}"
         ")"
     )
-    return database.execute(
+    return db.execute(
         (
             "SELECT index, {exists} "
             "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
@@ -99,14 +99,14 @@ class InView(Stage):
         keep = bitarray(len(payload.keep))
         keep.setall(1)
         if self.predicate is None:
-            results = overlap_or(indices, view_areas, self.roadtypes)
+            results = overlap_or(database, indices, view_areas, self.roadtypes)
             keep.setall(0)
             for (index,) in results:
                 keep[index] = 1
         elif self.predicate is False:
             keep.setall(0)
         elif self.predicate is not True:
-            results = overlap_each(indices, view_areas, self.roadtypes)
+            results = overlap_each(database, indices, view_areas, self.roadtypes)
             keep.setall(0)
             for index, *encoded_segment_types in results:
                 segment_types = {

@@ -2,6 +2,7 @@ import os
 import pickle
 import pytest
 import json
+import duckdb
 
 from spatialyze.predicate import *
 from spatialyze.utils import F, ingest_road
@@ -14,7 +15,7 @@ from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
-from spatialyze.database import database
+from spatialyze.database import Database, database
 
 import shapely.wkb
 
@@ -230,7 +231,11 @@ def test_detection_2d():
 
 def test_get_views():
     files = os.listdir(VIDEO_DIR)
-    ingest_road(database, './data/scenic/road-network/boston-seaport')
+    dbfile = '/tmp/__spatialyze__test_get_views.duckdb'
+    if os.path.exists(dbfile):
+        os.remove(dbfile)
+    db = Database(duckdb.connect(dbfile))
+    ingest_road(db, './data/scenic/road-network/boston-seaport')
 
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)
@@ -245,7 +250,7 @@ def test_get_views():
                 [camera_config(*f) for f in video["frames"]],
             )
             indices, view_areas = get_views(frames, distance)
-            res = database.execute(
+            res = db.execute(
                 "SELECT index, ST_AsText(ST_ReducePrecision(points, 0.0001)) "
                 "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) ",
                 (view_areas, indices)
@@ -254,10 +259,14 @@ def test_get_views():
             #     json.dump(res, f, indent=2)
             with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'r') as f:
                 gt_res = json.load(f)
-                assert json.loads(json.dumps(res)) == gt_res, (name, res, gt_res)
+                assert (
+                    [(i, shapely.from_wkt(m)) for i, m in res]
+                    ==
+                    [(i, shapely.from_wkt(m)) for i, m in gt_res]
+                ), (name, res, gt_res)
 
             for rt in [['intersection'], ['lane'], ['intersection', 'lane']]:
-                results = overlap_or(indices, view_areas, rt)
+                results = overlap_or(db, indices, view_areas, rt)
                 results = [r[0] for r in results]
                 # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_{"_".join(rt)}.json'), 'w') as f:
                 #     json.dump(results, f, indent=2)
@@ -266,7 +275,7 @@ def test_get_views():
                     assert set(json.loads(json.dumps(results))) == set(gt_res), (name, results, gt_res)
 
 
-                results = overlap_each(indices, view_areas, rt)
+                results = overlap_each(db, indices, view_areas, rt)
                 # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'w') as f:
                 #     json.dump(results, f, indent=2)
                 with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'r') as f:
