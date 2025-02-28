@@ -1,26 +1,16 @@
 from spatialyze.database import database
-from spatialyze.predicate import objects, camera
-from spatialyze.utils import F
 import datetime
-from scenic_common import get_results
-from scripts.import_tables import import_tables
 import pytest
 import os
 import json
 
 
-@pytest.mark.dependency()
-def test_import_tables():
-    import_tables(database, './data/scenic/database')
-
-
-@pytest.mark.dependency(depends=["test_import_tables"], scope='module')
 @pytest.mark.parametrize("table, index, columns", [
     ("Camera", "cameraId, frameId, frameNum, fileName", "cameraId, frameId, frameNum, filename, ST_AsText(ST_ReducePrecision(cameraTranslation, 0.0001)), cameraRotation, cameraIntrinsic, ST_AsText(ST_ReducePrecision(egoTranslation, 0.0001)), egoRotation, timestamp, cameraHeading, egoHeading"),
     # ("Item_Detection", "itemId, cameraId, objectType, frameNum, timestamp, itemHeading", "itemId, cameraId, objectType, frameNum, ST_AsText(ST_ReducePrecision(translation, 0.0001)), timestamp, itemHeading"),
     ("Item_Trajectory", "itemId, cameraId, frameNum, itemHeading", "itemId, cameraId, objectType, frameNum, ST_AsText(ST_ReducePrecision(translation, 0.0001)), itemHeading")
 ])
-def test_camera(table, index, columns):
+def test_tables_contents(table, index, columns):
     DIR = "./data/scenic/import-tables-test-output"
     if not os.path.exists(DIR):
         os.makedirs(DIR)

@@ -2,10 +2,8 @@ from spatialyze.database import database
 from spatialyze.predicate import camera, objects
 from spatialyze.utils import F
 from scenic_common import get_results
-import pytest
 
 
-@pytest.mark.dependency(depends=["tests/engine/scenic/test_import_tables.py::test_import_tables"], scope='session')
 def test_fig_13():
     obj1 = objects[0]
     obj2 = objects[1]

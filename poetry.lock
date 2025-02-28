@@ -3086,20 +3086,6 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtualenv"]
 
 [[package]]
-name = "pytest-dependency"
-version = "0.6.0"
-description = "Manage dependencies of tests"
-optional = false
-python-versions = ">=3.4"
-files = [
-    {file = "pytest-dependency-0.6.0.tar.gz", hash = "sha256:934b0e6a39d95995062c193f7eaeed8a8ffa06ff1bcef4b62b0dc74a708bacc1"},
-]
-
-[package.dependencies]
-pytest = ">=3.7.0"
-setuptools = "*"
-
-[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -4491,4 +4477,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "1763fc1c58df0ea5d81b9e20dcf51804af75b3fd64ea370ca96a62c7714f5547"
+content-hash = "a47ca92963207570487ff84405117822264784862817b588970d8b86775a73e6"

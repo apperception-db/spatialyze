@@ -36,7 +36,6 @@ cython = "^3.0.7"
 pytest = "^7.4.0"
 coverage = "^7.2.7"
 pytest-cov = "^4.1.0"
-pytest-dependency = "^0.6.0"
 
 [tool.poetry.group.dev.dependencies]
 types-psycopg2 = "^2.9.16"
