@@ -179,7 +179,7 @@ def drop_tables(database: "Database"):
         # "lanesection",
         "lane",
         # "lane_lanesection",
-        # "lanegroup",
+        "lanegroup",
         # "lanegroup_lane",
         # "opposite_lanegroup",
         "road",
@@ -237,8 +237,8 @@ def create_tables(database: "Database"):
     database.update(CREATE_ROADSECTION_SQL, commit=False)
     index("RoadSection", "id")
 
-    # database.update(CREATE_LANEGROUP_SQL, commit=False)
-    # index("LaneGroup", "id")
+    database.update(CREATE_LANEGROUP_SQL, commit=False)
+    index("LaneGroup", "id")
 
     # database.update(CREATE_LANE_LANESEC_SQL, commit=False)
     # index("Lane_LaneSection", "laneId")
@@ -647,7 +647,7 @@ INSERT: "dict[str, Callable[[Database, list[dict]], None]]" = {
     # basics -------------------------------------------------
     "lane": insert_lane,
     "road": insert_road,
-    # "laneGroup": insert_lanegroup,
+    "laneGroup": insert_lanegroup,
     # sections -----------------------------------------------
     # "laneSection": insert_lanesection,
     "roadSection": insert_roadsection,

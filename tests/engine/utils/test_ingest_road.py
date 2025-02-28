@@ -12,7 +12,7 @@ import json
     # ("lanesection", 1180),
     ("lane", 1180),
     # ("lane_lanesection", 1180),
-    # ("lanegroup", 966),
+    ("lanegroup", 966),
     # ("lanegroup_lane", 1180),
     # ("opposite_lanegroup", 744),
     ("road", 926),
@@ -63,9 +63,10 @@ def test_full_road_network():
 
     roadtypes = sorted(ROAD_TYPES)
     name_idx_columns = [
-        ("segmentpolygon", "elementId", "elementId, ST_AsBinary(elementPolygon), location, segmentTypes " + ", ".join(f"__RoadType__{rt}__" for rt in roadtypes)),
-        ("segment", "segmentId", "segmentId, elementId, ST_AsBinary(startPoint), ST_AsBinary(endPoint), ST_AsBinary(segmentLine), heading"),
+        ("segmentpolygon", "elementId", "elementId, ST_AsText(ST_ReducePrecision(elementPolygon, 0.0001)), location, segmentTypes " + ", ".join(f"__RoadType__{rt}__" for rt in roadtypes)),
+        ("segment", "segmentId", "segmentId, elementId, ST_AsText(ST_ReducePrecision(startPoint, 0.0001)), ST_AsText(ST_ReducePrecision(endPoint, 0.0001)), ST_AsText(ST_ReducePrecision(segmentLine, 0.0001)), heading"),
         ("lane", "id", "id"),
+        ("lanegroup", "id", "id"),
         ("road", "id", "id, forwardLane, backwardLane"),
         ("roadsection", "id", "id, forwardLanes, backwardLanes"),
         ("intersection", "id", "id, road"),
