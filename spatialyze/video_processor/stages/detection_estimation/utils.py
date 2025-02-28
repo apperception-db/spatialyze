@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
-import postgis
 import shapely
 import shapely.geometry
 import shapely.wkb
@@ -308,7 +307,7 @@ def time_to_exit_current_segment(
 
 def get_car_exits_view_frame_num(
     detection_info: "DetectionInfo",
-    ego_views: "list[postgis.Polygon]",
+    ego_views: "list[shapely.geometry.Polygon]",
     max_frame_num: int,
     fps: int | float = 20,
 ):
@@ -327,7 +326,7 @@ def get_car_exits_view_frame_num(
     while frame_idx + 1 < max_frame_num:
         next_frame_num = frame_idx + 1
         next_ego_view = ego_views[next_frame_num]
-        next_ego_view = shapely.wkb.loads(next_ego_view.to_ewkb(), hex=True)
+        next_ego_view = next_ego_view
         duration = (next_frame_num - start_frame_num) / fps
         next_car_loc = car_move(car_loc, car_heading, car_speed, duration)
         if not next_ego_view.contains(shapely.geometry.Point(next_car_loc[:2])):

@@ -3,13 +3,14 @@ import pickle
 import pytest
 
 from spatialyze.predicate import *
-from spatialyze.utils import F
+from spatialyze.utils import F, ingest_road
 
 from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView
 from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.database import database
 
 
 # Test Strategies
@@ -182,6 +183,8 @@ VIDEO_DIR =  './data/pipeline/videos'
 
 def test_detection_2d():
     files = os.listdir(VIDEO_DIR)
+
+    ingest_road(database, './data/scenic/road-network/boston-seaport')
 
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)

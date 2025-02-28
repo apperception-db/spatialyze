@@ -19,6 +19,7 @@ from typing import NamedTuple, Tuple
 
 import shapely.geometry as sg
 import shapely.wkb as swkb
+import shapely.wkt as swkt
 
 from ....database import database
 from ...camera_config import CameraConfig
@@ -53,7 +54,7 @@ class RoadPolygonInfo(NamedTuple):
 
 class RoadSegmentWithHeading(NamedTuple):
     id: "str"
-    polygon: "bytes"
+    polygon: "str"
     road_types: "list[str]"
     segmentline: "list[sg.LineString]"
     heading: "list[float]"
@@ -61,7 +62,7 @@ class RoadSegmentWithHeading(NamedTuple):
 
 class Segment(NamedTuple):
     id: "str"
-    polygon: "bytes"
+    polygon: "str"
     road_type: "str"
     segmentline: "list[sg.LineString]"
     heading: "list[float]"
@@ -131,8 +132,8 @@ def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "C
     SELECT
         p.token,
         AvailablePolygon.elementid,
-        AvailablePolygon.elementpolygon,
-        ARRAY_AGG(Segment.segmentline)::geometry[],
+        ST_AsHEXWKB(AvailablePolygon.elementpolygon),
+        ARRAY_AGG(ST_AsHEXWKB(Segment.segmentline)),
         ARRAY_AGG(Segment.heading)::real[],
         {SQL_ROAD_TYPES}
     FROM Point AS p
@@ -150,7 +151,7 @@ def map_detections_to_segments(detections: "list[obj_detection]", ego_config: "C
         {
             "tokens": tokens,
             "points": points,
-            "convex": sg.MultiPoint(points=convex_points),
+            "convex": sg.MultiPoint(points=convex_points).wkb,
             "location": location,
         },
     )
@@ -265,11 +266,13 @@ def hex_str_to_linestring(hex: "str"):
 
 def make_road_polygon_with_heading(row: "tuple"):
     eid, polygon, lines, headings, *types = row
+    print(lines)
+    print(headings)
     assert len(types) == len(ROAD_TYPES), (types, ROAD_TYPES)
     return RoadSegmentWithHeading(
         eid,
         polygon,
         [t for t, v in zip(ROAD_TYPES, types) if v],
-        [*map(hex_str_to_linestring, lines[1:-1].split(":"))],
+        [*map(hex_str_to_linestring, lines)],
         headings,
     )

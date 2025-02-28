@@ -36,10 +36,10 @@ DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
 METADATA_TABLE = "Spatialyze_Metadata"
 TABLES = (
-    CAMERA_TABLE,
     DETECTION_TABLE,
     TRAJECTORY_TABLE,
     BBOX_TABLE,
+    CAMERA_TABLE,
     METADATA_TABLE,
 )
 
@@ -183,21 +183,21 @@ class Database:
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
         # cursor.execute("CREATE INDEX ON Camera (cameraId);")
-        cursor.execute("CREATE INDEX ON Camera (cameraId, frameNum);")
-        cursor.execute("CREATE INDEX ON Camera (timestamp);")
+        cursor.execute("CREATE INDEX Camera_CameraId_frameNum_idx ON Camera (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX Camera_timestamp_idx ON Camera (timestamp);")
 
-        cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
-        cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
-        cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
-        cursor.execute("CREATE INDEX ON Item_Detection (timestamp);")
+        cursor.execute("CREATE INDEX Item_Detection_cameraId_idx ON Item_Detection (cameraId);")
+        cursor.execute("CREATE INDEX Item_Detection_frameNum_idx ON Item_Detection (frameNum);")
+        cursor.execute("CREATE INDEX Item_Detection_cameraId_frameNum_idx ON Item_Detection (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX Item_Detection_timestamp_idx ON Item_Detection (timestamp);")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
             "ON Item_Detection "
             "USING RTREE (translation);"
         )
-        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId);")
-        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (frameNum);")
-        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId, frameNum);")
+        cursor.execute(f"CREATE INDEX {TRAJECTORY_TABLE}_cameraId_idx ON {TRAJECTORY_TABLE} (cameraId);")
+        cursor.execute(f"CREATE INDEX {TRAJECTORY_TABLE}_frameNum_idx ON {TRAJECTORY_TABLE} (frameNum);")
+        cursor.execute(f"CREATE INDEX {TRAJECTORY_TABLE}_cameraId_frameNum_idx ON {TRAJECTORY_TABLE} (cameraId, frameNum);")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS Item_Trajectory_translation_idx "
             f"ON {TRAJECTORY_TABLE} "
@@ -233,7 +233,10 @@ class Database:
         except duckdb.Error as error:
             # for notice in cursor.connection.notices:
             #     print(notice)
-            self.connection.rollback()
+            try:
+                self.connection.rollback()
+            except duckdb.TransactionException:
+                pass
             cursor.close()
             raise error
 
@@ -264,7 +267,10 @@ class Database:
         except duckdb.Error as error:
             # for notice in cursor.connection.notices:
             #     print(notice)
-            self.connection.rollback()
+            try:
+                self.connection.rollback()
+            except duckdb.TransactionException as e:
+                pass
             raise error
         finally:
             cursor.close()

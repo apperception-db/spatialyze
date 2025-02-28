@@ -1,6 +1,6 @@
-from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
+from scenic_common import database
 
 def test_fig_16():
     o = objects[0]

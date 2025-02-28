@@ -10,6 +10,8 @@ from spatialyze.video_processor.stages.detection_3d.from_detection_2d_and_road i
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.video_processor.stages.detection_estimation import DetectionEstimation
+from spatialyze.database import database
+from spatialyze.utils import ingest_road
 
 from common import yolo_output
 
@@ -19,6 +21,8 @@ VIDEO_DIR =  './data/pipeline/videos'
 
 def test_detection_estimation():
     files = os.listdir(VIDEO_DIR)
+
+    ingest_road(database, './data/scenic/road-network/boston-seaport')
 
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)

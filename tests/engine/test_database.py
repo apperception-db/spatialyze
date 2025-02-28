@@ -13,7 +13,10 @@ TABLES = [
 
 
 def test_reset():
-    with duckdb.connect('/tmp/reset.duckdb') as conn:
+    dbfile = '/tmp/__spatialyze__reset.duckdb'
+    if os.path.exists(dbfile):
+        os.remove(dbfile)
+    with duckdb.connect(dbfile) as conn:
         d = Database(conn)
 
         with open('./data/nuscenes/processed/cameras.pkl', 'rb') as f:
@@ -32,11 +35,15 @@ def test_reset():
 
         d.reset()
         for t, _ in TABLES:
-            assert d.sql("select * from " + t).empty
+            res = d.execute(f"select * from {t}")
+            assert len(res) == 0, len(res)
 
 
 def test_execute_update_and_query():
-    with duckdb.connect('/tmp/sql.duckdb') as conn:
+    dbfile = '/tmp/__spatialyze__sql.duckdb'
+    if os.path.exists(dbfile):
+        os.remove(dbfile)
+    with duckdb.connect(dbfile) as conn:
         d = Database(conn)
 
         d.update("create table if not exists t1 (c1 text, c2 int)")
@@ -45,13 +52,13 @@ def test_execute_update_and_query():
         results = d.execute("select * from t1")
         assert results == [("test1", 3), ("test2", 4)], "should return correct tuples"
 
-        with pytest.raises(duckdb.DataError):
+        with pytest.raises(duckdb.ParserException):
             d.update("zxcvasdfqwer")
 
         results = d.execute("select * from t1")
         assert results == [("test1", 3), ("test2", 4)], "should execute another query after failed executions"
 
-        with pytest.raises(duckdb.DataError):
+        with pytest.raises(duckdb.ParserException):
             d.execute("zxcvasdfqwer")
 
         results = d.execute("select * from t1")

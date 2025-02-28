@@ -49,7 +49,7 @@ def drop_tables(database: "Database"):
 def index_factory(database: "Database"):
     def index(table: "str", field: "str", gist: "bool" = False, commit: "bool" = False):
         name = f"{table}__{field}__idx"
-        use_gist = " USING GiST" if gist else ""
+        use_gist = " USING RTREE" if gist else ""
         database.update(
             f"CREATE INDEX IF NOT EXISTS {name} ON {table}{use_gist}({field});", commit=commit
         )

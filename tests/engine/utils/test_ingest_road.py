@@ -22,7 +22,10 @@ import pytest
     ("intersection", 332),
 ])
 def test_simple_ops(table: str, count: int):
-    with duckdb.connect('/tmp/road_1.duckdb') as conn:
+    dbfile = '/tmp/__spatialyze__road_1.duckdb'
+    if os.path.exists(dbfile):
+        os.remove(dbfile)
+    with duckdb.connect(dbfile) as conn:
         d1 = Database(conn)
         d1.reset()
         ingest_road(d1, "./data/scenic/road-network/boston-seaport")
@@ -30,7 +33,10 @@ def test_simple_ops(table: str, count: int):
 
 
 def test_incomplete_road_network():
-    with duckdb.connect('/tmp/road_2.duckdb') as conn:
+    dbfile = '/tmp/__spatialyze__road_2.duckdb'
+    if os.path.exists(dbfile):
+        os.remove(dbfile)
+    with duckdb.connect(dbfile) as conn:
         d2 = Database(conn)
         ingest_road(d2, "./data/viva/road-network")
 

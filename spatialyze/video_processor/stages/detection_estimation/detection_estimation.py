@@ -22,7 +22,6 @@ import datetime
 import time
 from dataclasses import dataclass, field
 
-import postgis
 import shapely
 import shapely.geometry
 
@@ -154,7 +153,7 @@ class SamplePlan:
     video: "Video"
     next_frame_num: int
     all_detection_info: "list[DetectionInfo]"
-    ego_views: "list[postgis.Polygon]"
+    ego_views: "list[shapely.geometry.Polygon]"
     fps: float = 12
     current_priority: "float | None" = None
     action: "Action | None" = None
@@ -298,7 +297,7 @@ def generate_sample_plan(
     video: "Video",
     next_frame_num: int,
     all_detection_info: "list[DetectionInfo]",
-    ego_views: "list[postgis.Polygon]",
+    ego_views: "list[shapely.geometry.Polygon]",
     view_distance: float,
     fps: float = 12,
 ):

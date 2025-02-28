@@ -1,8 +1,7 @@
-from spatialyze.database import database
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
 import datetime as datetime
-from scenic_common import get_results
+from scenic_common import get_results, database
 
 
 def test_fig_12():

@@ -18,16 +18,15 @@ CREATE TABLE IF NOT EXISTS SegmentPolygon(
 """
 
 CREATE_SEGMENT_SQL = """
+CREATE SEQUENCE seq_segmentId START 1;
 CREATE TABLE IF NOT EXISTS Segment(
-    segmentId SERIAL,
+    segmentId INT,
     elementId TEXT,
     startPoint geometry,
     endPoint geometry,
     segmentLine geometry,
     heading real,
-    PRIMARY KEY (segmentId),
-    FOREIGN KEY(elementId)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (segmentId)
 );
 """
 
@@ -39,18 +38,14 @@ CREATE TABLE IF NOT EXISTS LaneSection(
     fasterLane Text,
     slowerLane Text,
     isForward boolean,
-    PRIMARY KEY (id),
-    FOREIGN KEY(id)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (id)
 );
 """
 
 CREATE_LANE_SQL = """
 CREATE TABLE IF NOT EXISTS Lane(
     id Text,
-    PRIMARY KEY (id),
-    FOREIGN KEY(id)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (id)
 );
 """
 
@@ -68,9 +63,7 @@ CREATE TABLE IF NOT EXISTS Lane_LaneSection(
 CREATE_LANEGROUP_SQL = """
 CREATE TABLE IF NOT EXISTS LaneGroup(
     id Text,
-    PRIMARY KEY (id),
-    FOREIGN KEY(id)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (id)
 );
 """
 
@@ -101,9 +94,7 @@ CREATE TABLE IF NOT EXISTS Road(
     id Text,
     forwardLane Text,
     backwardLane Text,
-    PRIMARY KEY (id),
-    FOREIGN KEY(id)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (id)
 );
 """
 
@@ -134,9 +125,7 @@ CREATE TABLE IF NOT EXISTS RoadSection(
     id TEXT,
     forwardLanes text[],
     backwardLanes text[],
-    PRIMARY KEY (id),
-    FOREIGN KEY(id)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (id)
 );
 """
 
@@ -155,9 +144,7 @@ CREATE_INTERSECTION_SQL = """
 CREATE TABLE IF NOT EXISTS Intersection(
     id TEXT,
     road TEXT,
-    PRIMARY KEY (id),
-    FOREIGN KEY(id)
-        REFERENCES SegmentPolygon(elementId)
+    PRIMARY KEY (id)
 );
 """
 
@@ -174,28 +161,30 @@ def _remove_suffix(uid: str) -> "str | None":
 def drop_tables(database: "Database"):
     tablenames = [
         "segment",
-        "lanesection",
-        "lane",
         "lane_lanesection",
-        "lanegroup",
+        "roadsection_lanesection",
         "lanegroup_lane",
         "opposite_lanegroup",
-        "road",
         "road_lanegroup",
         "road_roadsection",
+        "lanesection",
+        "lane",
+        "lanegroup",
+        "road",
         "roadsection",
-        "roadsection_lanesection",
         "intersection",
         "segmentpolygon",
     ]
     for tablename in tablenames:
         database.update(f'DROP TABLE IF EXISTS "{tablename}" CASCADE;', commit=True)
+    
+    database.update('DROP SEQUENCE IF EXISTS seq_segmentId CASCADE;', commit=True)
 
 
 def index_factory(database: "Database"):
     def index(table: "str", field: "str", gist: "bool" = False, commit: "bool" = False):
         name = f"{table}__{field}__idx"
-        use_gist = " USING GiST" if gist else ""
+        use_gist = " USING RTREE" if gist else ""
         database.update(
             f"CREATE INDEX IF NOT EXISTS {name} ON {table}{use_gist}({field});", commit=commit
         )
@@ -306,6 +295,7 @@ def insert_segment(database: "Database", segments: "list[dict]"):
             continue
         values.append(
             f"""(
+                nextval('seq_segmentId'),
                 '{seg['polygonId']}',
                 '{seg['start']}',
                 '{seg['end']}',
@@ -317,6 +307,7 @@ def insert_segment(database: "Database", segments: "list[dict]"):
         database.update(
             f"""
             INSERT INTO Segment (
+                segmentId,
                 elementId,
                 startPoint,
                 endPoint,
@@ -625,8 +616,8 @@ def add_segment_type(database: "Database", road_types: "set[str]"):
         )
         database.update(
             f"""UPDATE SegmentPolygon
-            SET segmentTypes = ARRAY_APPEND(segmentTypes, '{road_type}')
-            WHERE elementId IN (SELECT id FROM {road_type});"""
+            SET segmentTypes = LIST_APPEND(segmentTypes, '{road_type}')
+            WHERE EXISTS (SELECT * FROM {road_type} WHERE id = elementId);"""
         )
         # print("added type:", road_type)
 
