@@ -609,7 +609,7 @@ def insert_intersection(database: "Database", intersections: "list[dict]"):
         )
 
 
-ROAD_TYPES = {"road", "lane", "roadsection", "intersection", "lanegroup" , "lanesection"}
+ROAD_TYPES = {"road", "lane", "roadsection", "intersection", "lanegroup", "lanesection"}
 
 
 def add_segment_type(database: "Database", road_types: "set[str]"):
