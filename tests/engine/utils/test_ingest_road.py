@@ -1,5 +1,5 @@
 from spatialyze.database import Database
-from spatialyze.utils import ingest_road
+from spatialyze.utils import ingest_road, ROAD_TYPES
 import psycopg2
 import os
 import pytest
@@ -61,8 +61,9 @@ def test_full_road_network():
     d1.reset()
     ingest_road(d1, "./data/scenic/road-network/boston-seaport")
 
+    roadtypes = sorted(ROAD_TYPES)
     name_idx_columns = [
-        ("segmentpolygon", "elementId", "elementId, ST_AsHexWKB(elementPolygon), location"),
+        ("segmentpolygon", "elementId", "elementId, ST_AsHexWKB(elementPolygon), location, segmentTypes" + ", ".join(f"__RoadType__{rt}__" for rt in roadtypes)),
         ("segment", "segmentId", "segmentId, elementId, ST_AsHexWKB(startPoint), ST_AsHexWKB(endPoint), ST_AsHexWKB(segmentLine), heading"),
         ("lane", "id", "id"),
         ("road", "id", "id, forwardLane, backwardLane"),
