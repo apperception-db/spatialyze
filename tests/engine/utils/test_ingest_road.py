@@ -63,7 +63,7 @@ def test_full_road_network():
 
     roadtypes = sorted(ROAD_TYPES)
     name_idx_columns = [
-        ("segmentpolygon", "elementId", "elementId, ST_AsBinary(elementPolygon), location, segmentTypes" + ", ".join(f"__RoadType__{rt}__" for rt in roadtypes)),
+        ("segmentpolygon", "elementId", "elementId, ST_AsBinary(elementPolygon), location, segmentTypes " + ", ".join(f"__RoadType__{rt}__" for rt in roadtypes)),
         ("segment", "segmentId", "segmentId, elementId, ST_AsBinary(startPoint), ST_AsBinary(endPoint), ST_AsBinary(segmentLine), heading"),
         ("lane", "id", "id"),
         ("road", "id", "id, forwardLane, backwardLane"),

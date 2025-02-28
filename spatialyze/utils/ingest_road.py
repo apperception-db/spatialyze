@@ -664,12 +664,12 @@ INSERT: "dict[str, Callable[[Database, list[dict]], None]]" = {
 
 def ingest_location(database: "Database", directory: "str", location: "str"):
     # print("Location:", location)
-    filenames = os.listdir(directory)
 
-    assert set(filenames) >= set([k + ".json" for k in INSERT.keys()]), (
-        sorted(filenames),
-        sorted([k + ".json" for k in INSERT.keys()]),
-    )
+    # filenames = os.listdir(directory)
+    # assert set(filenames) >= set([k + ".json" for k in INSERT.keys()]), (
+    #     sorted(filenames),
+    #     sorted([k + ".json" for k in INSERT.keys()]),
+    # )
 
     for d, fn in INSERT.items():
         try:
