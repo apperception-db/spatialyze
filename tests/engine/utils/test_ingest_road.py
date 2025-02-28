@@ -63,6 +63,7 @@ def test_full_road_network():
         ("segment", "segmentId", "segmentId, elementId, ST_AsText(ST_ReducePrecision(startPoint, 0.0001)), ST_AsText(ST_ReducePrecision(endPoint, 0.0001)), ST_AsText(ST_ReducePrecision(segmentLine, 0.0001)), heading"),
         ("lane", "id", "id"),
         ("lanegroup", "id", "id"),
+        ("lanesection", "id", "id, laneToLeft, laneToRight, fasterLane, slowerLane isForward"),
         ("road", "id", "id, forwardLane, backwardLane"),
         ("roadsection", "id", "id, forwardLanes, backwardLanes"),
         ("intersection", "id", "id, road"),
