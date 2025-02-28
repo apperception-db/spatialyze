@@ -77,6 +77,10 @@ def test_full_road_network():
 
     for name, idx, columns in name_idx_columns:
         res = d1.execute(f"select {columns} from {name} order by {idx}")
+        res = [
+            [elm.hex() if isinstance(elm, bytes) else elm for elm in row]
+            for row in res
+        ]
         filename = os.path.join(DIR, f"{name}.jsonl")
         if os.environ.get('GENERATE_ENGINE_TEST_RESULTS', False):
             with open(filename, "w") as f:
