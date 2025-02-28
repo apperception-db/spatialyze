@@ -647,10 +647,10 @@ INSERT: "dict[str, Callable[[Database, list[dict]], None]]" = {
     # basics -------------------------------------------------
     "lane": insert_lane,
     "road": insert_road,
-    "laneGroup": insert_lanegroup,
+    # "laneGroup": insert_lanegroup,
     # sections -----------------------------------------------
     # "laneSection": insert_lanesection,
-    # "roadSection": insert_roadsection,
+    "roadSection": insert_roadsection,
     "intersection": insert_intersection,
     # relations ----------------------------------------------
     # "lane_LaneSec": insert_lane_lanesec,
