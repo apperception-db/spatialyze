@@ -40,6 +40,60 @@ OTHER_ROAD_TYPES = {
 }
 
 
+def overlap_or(indices: list[int], view_areas: list[MultiPoint], roadtypes: list[str]):
+    return database.execute(
+        sql.SQL(
+            """
+    SELECT index
+    FROM UNNEST (
+        {view_areas},
+        {indices}::int[]
+    ) AS ViewArea(points, index)
+    WHERE EXISTS (
+        SELECT 1
+        FROM SegmentPolygon
+        WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)
+        AND ({segment_type})
+    )
+    """
+        ).format(
+            view_areas=sql.Literal(view_areas),
+            indices=sql.Literal(indices),
+            segment_type=sql.SQL(" OR ".join(map(roadtype, roadtypes))),
+        )
+    )
+
+
+def overlap_each(indices: list[int], view_areas: list[MultiPoint], roadtypes: list[str]):
+    exists = sql.SQL(
+        """
+    EXISTS (
+        SELECT 1
+        FROM SegmentPolygon
+        WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)
+        AND {rt}
+    )
+    """
+    )
+    return database.execute(
+        sql.SQL(
+            """
+    SELECT index, {exists}
+    FROM UNNEST (
+        {view_areas},
+        {indices}::int[]
+    ) AS ViewArea(points, index)
+    """
+        ).format(
+            view_areas=sql.Literal(view_areas),
+            indices=sql.Literal(indices),
+            exists=sql.SQL(",").join(
+                exists.format(rt=sql.Identifier(roadtype(st))) for st in roadtypes
+            ),
+        )
+    )
+
+
 class InView(Stage):
     def __init__(
         self,
@@ -70,58 +124,14 @@ class InView(Stage):
         keep = bitarray(len(payload.keep))
         keep.setall(1)
         if self.predicate is None:
-            results = database.execute(
-                sql.SQL(
-                    """
-            SELECT index
-            FROM UNNEST (
-                {view_areas},
-                {indices}::int[]
-            ) AS ViewArea(points, index)
-            JOIN SegmentPolygon ON ST_Intersects(ST_ConvexHull(points), elementPolygon)
-            WHERE {segment_type}
-            """
-                ).format(
-                    view_areas=sql.Literal(view_areas),
-                    indices=sql.Literal(indices),
-                    segment_type=sql.SQL(" OR ".join(map(roadtype, self.roadtypes))),
-                )
-            )
-
+            results = overlap_or(indices, view_areas, self.roadtypes)
             keep.setall(0)
             for (index,) in results:
                 keep[index] = 1
         elif self.predicate is False:
             keep.setall(0)
         elif self.predicate is not True:
-            exists = sql.SQL(
-                """
-            EXISTS (
-                SELECT *
-                FROM SegmentPolygon
-                WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)
-                AND {rt}
-            )
-            """
-            )
-            results = database.execute(
-                sql.SQL(
-                    """
-            SELECT index, {exists}
-            FROM UNNEST (
-                {view_areas},
-                {indices}::int[]
-            ) AS ViewArea(points, index)
-            """
-                ).format(
-                    view_areas=sql.Literal(view_areas),
-                    indices=sql.Literal(indices),
-                    exists=sql.SQL(",").join(
-                        exists.format(rt=sql.Identifier(roadtype(st))) for st in self.roadtypes
-                    ),
-                )
-            )
-
+            results = overlap_each(indices, view_areas, self.roadtypes)
             keep.setall(0)
             for index, *encoded_segment_types in results:
                 segment_types = {

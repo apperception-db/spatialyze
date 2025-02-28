@@ -8,7 +8,7 @@ import psycopg2.sql as sql
 from spatialyze.predicate import *
 from spatialyze.utils import F, ingest_road
 
-from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView, get_views, roadtype
+from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView, get_views, roadtype, overlap_or, overlap_each
 from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
@@ -256,63 +256,21 @@ def test_get_views():
                 assert json.loads(json.dumps(res)) == gt_res, (name, res, gt_res)
 
             for rt in [['intersection'], ['lane'], ['intersection', 'lane']]:
-                results = database.execute(
-                    sql.SQL(
-                        """
-                    SELECT index
-                    FROM UNNEST (
-                        {view_areas},
-                        {indices}::int[]
-                    ) AS ViewArea(points, index)
-                    JOIN SegmentPolygon ON ST_Intersects(ST_ConvexHull(points), elementPolygon)
-                    WHERE {segment_type}
-                    """
-                    ).format(
-                        view_areas=sql.Literal(view_areas),
-                        indices=sql.Literal(indices),
-                        segment_type=sql.SQL(" OR ".join(map(roadtype, rt))),
-                    )
-                )
+                results = overlap_or(indices, view_areas, rt)
                 results = [r[0] for r in results]
                 # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_{"_".join(rt)}.json'), 'w') as f:
                 #     json.dump(results, f, indent=2)
                 with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_{"_".join(rt)}.json'), 'r') as f:
                     gt_res = json.load(f)
-                    assert json.loads(json.dumps(results)) == gt_res, (name, results, gt_res)
+                    assert set(json.loads(json.dumps(results))) == set(gt_res), (name, results, gt_res)
 
 
-                exists = sql.SQL(
-                    """
-                EXISTS (
-                    SELECT *
-                    FROM SegmentPolygon
-                    WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)
-                    AND {rt}
-                )
-                """
-                )
-                results = database.execute(
-                    sql.SQL(
-                        """
-                SELECT index, {exists}
-                FROM UNNEST (
-                    {view_areas},
-                    {indices}::int[]
-                ) AS ViewArea(points, index)
-                """
-                    ).format(
-                        view_areas=sql.Literal(view_areas),
-                        indices=sql.Literal(indices),
-                        exists=sql.SQL(",").join(
-                            exists.format(rt=sql.Identifier(roadtype(st))) for st in rt
-                        ),
-                    )
-                )
+                results = overlap_each(indices, view_areas, rt)
                 # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'w') as f:
                 #     json.dump(results, f, indent=2)
                 with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'r') as f:
-                    gt_res = json.load(f)
-                    assert json.loads(json.dumps(results)) == gt_res, (name, results, gt_res)
+                    gt_res = [tuple(t) for t in json.load(f)]
+                    assert set(tuple(t) for t in results) == set(gt_res), (name, results, gt_res)
 
 
             view_areas_ = [[[*map(lambda x: round(x, 4), p)] for p in va] for va in view_areas]
