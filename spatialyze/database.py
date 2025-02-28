@@ -277,7 +277,7 @@ class Database:
             #     print(notice)
             try:
                 self.connection.rollback()
-            except duckdb.TransactionException as e:
+            except duckdb.TransactionException:
                 pass
             raise error
         finally:

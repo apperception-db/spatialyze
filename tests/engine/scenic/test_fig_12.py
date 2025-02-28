@@ -97,4 +97,5 @@ def test_fig_12_new():
         (F.view_angle(o, c) < 35)
     )
 
+    assert len(results) == len(get_results('./data/scenic/test-results/fig_12.py'))
     assert set(results) == set(get_results('./data/scenic/test-results/fig_12.py'))
