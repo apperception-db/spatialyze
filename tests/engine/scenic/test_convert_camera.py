@@ -2,7 +2,7 @@ from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
 from spatialyze.database import database
 import datetime as datetime
-from scenic_common import get_results, set_results
+from scenic_common import get_results
 import pytest
 
 
