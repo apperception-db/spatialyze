@@ -3,6 +3,7 @@ import pickle
 import pytest
 import json
 import duckdb
+import time
 
 from spatialyze.predicate import *
 from spatialyze.utils import F, ingest_road
@@ -18,6 +19,7 @@ from spatialyze.video_processor.camera_config import camera_config
 from spatialyze.database import Database, database
 
 import shapely.wkb
+import shapely.wkt
 
 
 # Test Strategies
@@ -235,7 +237,10 @@ def test_get_views():
     if os.path.exists(dbfile):
         os.remove(dbfile)
     db = Database(duckdb.connect(dbfile))
+    start = time.time()
     ingest_road(db, './data/scenic/road-network/boston-seaport')
+    end = time.time()
+    print(f"ingest_road: {end - start}")
 
     with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
         videos = pickle.load(f)
@@ -250,23 +255,29 @@ def test_get_views():
                 [camera_config(*f) for f in video["frames"]],
             )
             indices, view_areas = get_views(frames, distance)
+            start = time.time()
             res = db.execute(
                 "SELECT index, ST_AsText(ST_ReducePrecision(points, 0.0001)) "
                 "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) ",
                 (view_areas, indices)
             )
+            end = time.time()
+            print(f"get_views db {distance}: {end - start}")
             # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'w') as f:
             #     json.dump(res, f, indent=2)
             with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'r') as f:
                 gt_res = json.load(f)
                 assert (
-                    [(i, shapely.from_wkt(m)) for i, m in res]
+                    [(i, shapely.wkt.loads(m)) for i, m in res]
                     ==
-                    [(i, shapely.from_wkt(m)) for i, m in gt_res]
+                    [(i, shapely.wkt.loads(m)) for i, m in gt_res]
                 ), (name, res, gt_res)
 
             for rt in [['intersection'], ['lane'], ['intersection', 'lane']]:
+                start = time.time()
                 results = overlap_or(db, indices, view_areas, rt)
+                end = time.time()
+                print(f"overlap_or {distance} {rt}", end - start)
                 results = [r[0] for r in results]
                 # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_{"_".join(rt)}.json'), 'w') as f:
                 #     json.dump(results, f, indent=2)
@@ -274,16 +285,17 @@ def test_get_views():
                     gt_res = json.load(f)
                     assert set(json.loads(json.dumps(results))) == set(gt_res), (name, results, gt_res)
 
-
+                start = time.time()
                 results = overlap_each(db, indices, view_areas, rt)
+                end = time.time()
+                print(f"overlap_each {distance} {rt}", end - start)
                 # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'w') as f:
                 #     json.dump(results, f, indent=2)
                 with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'r') as f:
                     gt_res = [tuple(t) for t in json.load(f)]
                     assert set(tuple(t) for t in results) == set(gt_res), (name, results, gt_res)
 
-
-            view_areas_ = [[[*map(lambda x: round(x, 4), p)] for p in shapely.wkb.loads(va)] for va in view_areas]
+            view_areas_ = [[[round(p.x, 4), round(p.y, 4)] for p in shapely.wkb.loads(va)] for va in view_areas]
             # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_{name}_{distance}.json'), 'w') as f:
             #     json.dump([indices, view_areas_], f, indent=2)
             with open(os.path.join(OUTPUT_DIR, f'InView_get_views_{name}_{distance}.json'), 'r') as f:
