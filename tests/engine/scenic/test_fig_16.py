@@ -10,8 +10,10 @@ def test_fig_16():
         F.contains('lane', c.ego) &
         F.heading_diff(c.ego, F.road_direction(c.ego), between=[-15, 15]) &
         F.like(o.type, 'vehicle%') &
-        (F.convert_camera(o, c.ego) > [0, 0]) &
-        (F.convert_camera(o, c.ego) < [4, 5]) &
+        # (F.convert_camera(o, c.ego) > [0, 0]) &
+        # (F.convert_camera(o, c.ego) < [4, 5]) &
+        F.plt('Point (0 0)', F.convert_camera(o, c.ego)) &
+        F.plt(F.convert_camera(o, c.ego), 'Point (4 5)') &
         F.heading_diff(o, F.road_direction(o), between=[-30, -15])
     )
 

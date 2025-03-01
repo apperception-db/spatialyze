@@ -11,7 +11,7 @@ with open('./scripts/pg-extender/viewAngle.sql', 'r') as file:
 
 
 @pytest.mark.parametrize("angle", [10, 20, 30] + list(range(45, 181, 45)))
-def test_min_distance(angle):
+def test_view_angle(angle):
     o = objects[0]
     c = camera
     results = database.predicate(F.view_angle(o, c) < angle)
