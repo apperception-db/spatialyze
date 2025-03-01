@@ -10,7 +10,7 @@ import pytest
 
 
 @pytest.mark.parametrize("distance", [ 1, 5, 10, 20, 30, 40, 50 ])
-def test_min_distance(distance):
+def test_min_distance_2(distance):
     o = objects[0]
     c = camera
     results = database.predicate(
