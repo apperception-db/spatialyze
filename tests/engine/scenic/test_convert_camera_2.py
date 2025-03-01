@@ -27,7 +27,7 @@ def generate_case(distance):
     *generate_case(40),
     *generate_case(80),
 ])
-def test_convert_camera(bl, tr):
+def test_convert_camera_2(bl, tr):
     o = objects[0]
     c = camera
     results = database.predicate(
