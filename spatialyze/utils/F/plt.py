@@ -25,4 +25,3 @@ def plt(
     y1, y2 = f"ST_Y({p1})", f"ST_Y({p2})"
 
     return f"(({x1} < {x2}) AND ({y1} < {y2}))"
-

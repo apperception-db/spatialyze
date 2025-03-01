@@ -11,12 +11,12 @@ from .is_roadtype import is_roadtype
 from .left_turn import left_turn
 from .like import like
 from .min_distance import min_distance
+from .plt import plt
 from .road_direction import road_direction
 from .road_segment import road_segment
 from .same_region import same_region
 from .stopped import stopped
 from .view_angle import view_angle
-from .plt import plt
 
 __all__ = [
     "view_angle",
@@ -37,5 +37,5 @@ __all__ = [
     "has_types",
     "convert_camera",
     "stopped",
-    "plt"
+    "plt",
 ]
