@@ -1,13 +1,13 @@
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
-from spatialyze.database import database
+# from spatialyze.database import database
 import datetime as datetime
-from scenic_common import get_results
+from scenic_common import get_results, database
 import pytest
 
 
-with open('./scripts/pg-extender/viewAngle.sql', 'r') as file:
-    database.update(file.read())
+# with open('./scripts/pg-extender/viewAngle.sql', 'r') as file:
+#     database.update(file.read())
 
 
 @pytest.mark.parametrize("angle", [10, 20, 30] + list(range(45, 181, 45)))
@@ -16,4 +16,5 @@ def test_min_distance(angle):
     c = camera
     results = database.predicate(F.view_angle(o, c) < angle)
     
+    assert len(results) == len(get_results(f"./data/scenic/test-results/view_angle_{angle}.py"))
     assert set(results) == set(get_results(f"./data/scenic/test-results/view_angle_{angle}.py"))

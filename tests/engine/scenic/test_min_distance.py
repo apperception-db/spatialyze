@@ -1,13 +1,12 @@
 from spatialyze.predicate import objects, camera, lit
 from spatialyze.utils import F
-from spatialyze.database import database
 import datetime as datetime
-from scenic_common import get_results
+from scenic_common import get_results, database
 import pytest
 
 
-with open('./scripts/pg-extender/minDistance.sql', 'r') as file:
-    database.update(file.read())
+# with open('./scripts/pg-extender/minDistance.sql', 'r') as file:
+#     database.update(file.read())
 
 
 @pytest.mark.parametrize("distance", [ 1, 5, 10, 20, 30, 40, 50 ])
