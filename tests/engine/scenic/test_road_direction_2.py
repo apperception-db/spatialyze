@@ -48,7 +48,7 @@ def test_road_direction_raw(o):
         f"ORDER BY {idx}"
     )
 
-    results = database.execute(sql_str)
+    results = [tuple(round(e, 1) if isinstance(e, float) else e for e in row) for row in database.execute(sql_str)]
     
     o_str = f'{o}'.replace('[', '').replace(']', '')
     # set_results(results, f"./data/scenic/test-results/road_direction_{o_str}.py")
