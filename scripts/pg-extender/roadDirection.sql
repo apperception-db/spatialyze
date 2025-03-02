@@ -15,11 +15,11 @@ BEGIN
           -- result := (SELECT heading * 180 / PI() FROM segment, st_point(x, y) AS point 
           --                   WHERE ROUND(CAST(heading * 180 / PI() AS numeric), 3) != -45 
           --                   ORDER BY segmentLine <-> point ASC LIMIT 1 );
-          RETURN default_dir;
+          RETURN CAST((default_dir + 360) AS numeric) % 360;
         END IF;
      ELSE
         -- result := default_dir;
-        RETURN default_dir;
+        RETURN CAST((default_dir + 360) AS numeric) % 360;
      END IF;
      RETURN CAST((result + 360) AS numeric) % 360;
 END
