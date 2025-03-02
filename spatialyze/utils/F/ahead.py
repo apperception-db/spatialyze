@@ -1,5 +1,6 @@
 from ...predicate import GenSqlVisitor, PredicateNode, call_node, cast
 from .common import default_heading, default_location, is_location_type
+from .convert_camera import convert_camera
 
 
 @call_node
@@ -21,4 +22,9 @@ def ahead(
     o1 = visitor(_obj1)
     o2 = visitor(_obj2)
     h = visitor(cast(heading, "real"))
-    return f"((ST_X({o1}) - ST_X({o2})) * COS(PI() * ({h} + 90) / 180) + (ST_Y({o1}) - ST_Y({o2})) * SIN(PI() * ({h} + 90) / 180) > 0 AND ABS(ST_X(convertCamera({o1}, {o2}, {h}))) < 3)"
+    cc = visitor(convert_camera(_obj1, _obj2, heading))
+    return (
+        f"((ST_X({o1}) - ST_X({o2})) * COS(PI() * ({h} + 90) / 180) + "
+        f"(ST_Y({o1}) - ST_Y({o2})) * SIN(PI() * ({h} + 90) / 180) > 0 "
+        f"AND ABS(ST_X({cc})) < 3)"
+    )
