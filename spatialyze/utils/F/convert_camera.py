@@ -19,12 +19,14 @@ def convert_camera(
     assert kwargs is None or len(kwargs) == 0, kwargs
     object, _camera, *_ = args
     assert isinstance(object, ObjectTableNode), object
-    assert isinstance(_camera, (CameraTableNode, TableAttrNode)), _camera
+    assert isinstance(_camera, (CameraTableNode, TableAttrNode, ObjectTableNode)), _camera
     heading = default_heading(_camera)
     if isinstance(_camera, CameraTableNode) or (
         isinstance(_camera, TableAttrNode) and _camera.name == "cameraTranslation"
     ):
         heading = camera.heading
+    if isinstance(_camera, ObjectTableNode):
+        heading = default_heading(_camera)
     else:
         assert isinstance(_camera, TableAttrNode), _camera
         assert _camera.name == "egoTranslation", _camera.name
