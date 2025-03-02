@@ -16,21 +16,15 @@ def road_direction(
     heading = location if len(args) == 1 else args[1]
     heading = default_heading(heading)
 
-    # return f"roadDirection({','.join(map(visitor, [_location, cast(heading, 'real')]))})"
-    print(_location)
-    return " ".join(
-        f"""(
-    SELECT heading * 180 / PI()
-    FROM Segment
-    WHERE elementId IN (
-        SELECT s.elementId
-        FROM SegmentPolygon AS s
-        WHERE St_Covers(s.elementPolygon, {visitor(_location)})
-        AND (SELECT id FROM Lane WHERE id = elementId) IS NOT NULL
-    )
-    AND ROUND(CAST(heading * 180 / PI() AS numeric), 3) != 45
-    ORDER BY ST_Distance(SegmentLine, {visitor(_location)}) ASC LIMIT 1
-    )""".split(
-            "\n"
-        )
-    )
+    return (
+        "ifnull((SELECT CAST(((s_inner.heading * 180 / PI()) + 360) AS numeric) % 360 "
+        "FROM segment as s_inner "
+        "WHERE elementId IN ("
+        "   SELECT s_inner2.elementId "
+        "   FROM SegmentPolygon AS s_inner2 "
+        "   WHERE ST_Covers(s_inner2.elementPolygon, {point}) "
+        "   AND (SELECT l.id FROM Lane AS l WHERE l.id = s_inner.elementId) IS NOT NULL"
+        ") AND ROUND(CAST(s_inner.heading * 180 / PI() AS numeric), 3) != -45 "
+        "ORDER BY st_distance(s_inner.segmentLine, {point}) ASC "
+        "LIMIT 1), {heading}) "
+    ).format(heading=visitor(heading), point=visitor(_location))
