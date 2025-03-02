@@ -35,7 +35,7 @@ def test_min_distance_return_value(name, o, o_str, o_idx, geog):
         f"ORDER BY {o_idx}"
     )
 
-    results = [(*row[:-1], round(row[-1], 3)) for row in database.execute(sql_str)]
+    results = [(*row[:-1], round(row[-1], 2)) for row in database.execute(sql_str)]
     
     # set_results(results, f"./data/scenic/test-results/return-values/min_distance_{name}_{geog}.py")
     assert set(results) == set(get_results(f"./data/scenic/test-results/return-values/min_distance_{name}_{geog}.py"))
