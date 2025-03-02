@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/workspace
       - /data/apperception-data:/data/apperception-data
+      - ~/.ssh:/root/.ssh
     command: jupyter-lab --allow-root
     deploy:
       resources:
@@ -16,8 +17,7 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    ports:
-      - "8080-8099"
+    network_mode: "host"
     depends_on:
       - store
   store:
@@ -27,5 +27,4 @@ services:
     container_name: spatialyze-gsstore
     environment:
       - POSTGRES_PASSWORD=postgres
-    expose:
-      - 5432
+    network_mode: "host"
