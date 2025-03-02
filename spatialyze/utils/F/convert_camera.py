@@ -25,7 +25,7 @@ def convert_camera(
         isinstance(_camera, TableAttrNode) and _camera.name == "cameraTranslation"
     ):
         heading = camera.heading
-    if isinstance(_camera, ObjectTableNode):
+    elif isinstance(_camera, ObjectTableNode):
         heading = default_heading(_camera)
     else:
         assert isinstance(_camera, TableAttrNode), _camera
