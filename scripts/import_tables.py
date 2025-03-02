@@ -50,7 +50,7 @@ def get_results(path: str = "./data/scenic/test-results"):
 
 
 def import_tables(database: "Database", data_path: str):
-    scenes, frame_range, items = get_results()
+    # scenes, frame_range, items = get_results()
 
     # Import CSV
     data_Cameras = pd.read_csv(os.path.join(data_path, "cameras.csv"))
