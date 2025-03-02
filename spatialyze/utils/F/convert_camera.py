@@ -17,7 +17,7 @@ def convert_camera(
     kwargs: dict[str, PredicateNode],
 ):
     assert kwargs is None or len(kwargs) == 0, kwargs
-    object, _camera = args[:2]
+    object, _camera, *_ = args
     assert isinstance(object, ObjectTableNode), object
     assert isinstance(_camera, (CameraTableNode, TableAttrNode)), _camera
     heading = default_heading(_camera)
@@ -34,4 +34,4 @@ def convert_camera(
     sx = f"(ST_X(ST_Centroid({o})) - ST_X(ST_Centroid({c})))"
     sy = f"(ST_Y(ST_Centroid({o})) - ST_Y(ST_Centroid({c})))"
     mag = f"(SQRT(POWER({sx}, 2) + POWER({sy}, 2)))"
-    return f"ST_Point({mag} * COS(PI() * (-{h}) / 180 + ATAN2({sy}, {sy})), {mag} * SIN(PI() * (-{h}) / 180 + ATAN2({sy}, {sy})))"
+    return f"ST_Point({mag} * COS(PI() * (-{h}) / 180 + ATAN2({sy}, {sx})), {mag} * SIN(PI() * (-{h}) / 180 + ATAN2({sy}, {sx})))"
