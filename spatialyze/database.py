@@ -381,7 +381,7 @@ database = Database(
     psycopg2.connect(
         dbname=environ.get("AP_DB", "postgres"),
         user=environ.get("AP_USER", "postgres"),
-        host=environ.get("AP_HOST", "store"),
+        host=environ.get("AP_HOST", "localhost"),
         port=environ.get("AP_PORT", "5432"),
         password=environ.get("AP_PASSWORD", "postgres"),
     )
