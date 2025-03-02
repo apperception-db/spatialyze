@@ -1,6 +1,6 @@
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
-from scenic_common import database, get_results, set_results
+from scenic_common import database, get_results
 
 
 def test_small_fig_16():
@@ -17,6 +17,6 @@ def test_small_fig_16():
         True
     )
 
-    set_results(results, './data/scenic/test-results/small_fig_16.py')
+    # set_results(results, './data/scenic/test-results/small_fig_16.py')
     assert len(results) == len(get_results('./data/scenic/test-results/small_fig_16.py'))
     assert set(results) == set(get_results('./data/scenic/test-results/small_fig_16.py'))

@@ -1,22 +1,5 @@
 from spatialyze.data_types.query_result import QueryResult
 [
-QueryResult(frame_number=8, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656860662404.jpg', item_ids=('07d2253dd1254ad2bb020ed3cb66f125',)), 
-QueryResult(frame_number=2, camera_id='scene-0250', filename='samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867377912404.jpg', item_ids=('ce5c5706685442a894e937e375a795d0',)), 
-QueryResult(frame_number=4, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656857662404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=2, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656856762404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=7, camera_id='scene-0207', filename='samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621933912404.jpg', item_ids=('fd2437defb374b4a96cbd6cf3d79be26',)), 
-QueryResult(frame_number=8, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656860662404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=5, camera_id='scene-0207', filename='samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621932412404.jpg', item_ids=('fd2437defb374b4a96cbd6cf3d79be26',)), 
-QueryResult(frame_number=6, camera_id='scene-0207', filename='samples/CAM_FRONT/n008-2018-07-26-12-13-50-0400__CAM_FRONT__1532621932912404.jpg', item_ids=('fd2437defb374b4a96cbd6cf3d79be26',)), 
-QueryResult(frame_number=2, camera_id='scene-0573', filename='samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537290854112404.jpg', item_ids=('2dd82540d7404f74a6e4ad908ec7ccf3',)), 
-QueryResult(frame_number=5, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656858162404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=2, camera_id='scene-0573', filename='samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537290854112404.jpg', item_ids=('0d3e732fed934d79ba14d042a64d882e',)), 
-QueryResult(frame_number=3, camera_id='scene-0573', filename='samples/CAM_FRONT/n008-2018-09-18-13-10-39-0400__CAM_FRONT__1537290854662404.jpg', item_ids=('0d3e732fed934d79ba14d042a64d882e',)), 
-QueryResult(frame_number=3, camera_id='scene-0250', filename='samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867379912404.jpg', item_ids=('1255495cc27b4dcaaa17a3893c0f9612',)), 
-QueryResult(frame_number=9, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656861162404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=1, camera_id='scene-0250', filename='samples/CAM_FRONT/n008-2018-08-21-11-53-44-0400__CAM_FRONT__1534867377412404.jpg', item_ids=('dccfa9c12cb54bf7af3fc68c4e32787d',)), 
-QueryResult(frame_number=7, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656859162404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=10, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656861662404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=6, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656858662413.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=1, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656855262404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',)), 
-QueryResult(frame_number=3, camera_id='scene-0749', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535656857262404.jpg', item_ids=('141a93e8d9ef489b8ac5f50250e9685f',))]
+    QueryResult(frame_number=1, camera_id='scene-0769', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657491612404.jpg', item_ids=('9e02e0dcb5f04d01a4b8f0559d0e7d95',)),
+    QueryResult(frame_number=2, camera_id='scene-0769', filename='samples/CAM_FRONT/n008-2018-08-30-15-16-55-0400__CAM_FRONT__1535657492112404.jpg', item_ids=('9e02e0dcb5f04d01a4b8f0559d0e7d95',)),
+]

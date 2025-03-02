@@ -1,6 +1,6 @@
 from spatialyze.predicate import camera, objects
 from spatialyze.utils import F
-from scenic_common import get_results, database, set_results
+from scenic_common import get_results, database
 
 
 def test_small_fig_13():
@@ -23,6 +23,6 @@ def test_small_fig_13():
         (F.min_distance(cam.ego, F.road_segment('intersection')) < 10) &
         F.heading_diff(obj1, obj2, between=[100, -100])
     )
-    set_results(results, './data/scenic/test-results/small_fig_13.py')
+    # set_results(results, './data/scenic/test-results/small_fig_13.py')
     assert len(results) == len(get_results('./data/scenic/test-results/small_fig_13.py'))
     assert set(results) == set(get_results('./data/scenic/test-results/small_fig_13.py'))
