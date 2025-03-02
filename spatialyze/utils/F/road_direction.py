@@ -26,5 +26,5 @@ def road_direction(
         "   AND (SELECT l.id FROM Lane AS l WHERE l.id = s_inner.elementId) IS NOT NULL"
         ") AND ROUND(CAST(s_inner.heading * 180 / PI() AS numeric), 3) != -45 "
         "ORDER BY st_distance(s_inner.segmentLine, {point}), s_inner.elementId ASC "
-        "LIMIT 1), {heading}) "
+        "LIMIT 1), CAST((({heading} * 180 / PI()) + 360) AS numeric) % 360) "
     ).format(heading=visitor(heading), point=visitor(_location))
