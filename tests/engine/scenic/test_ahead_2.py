@@ -11,7 +11,8 @@ import pytest
 
 @pytest.mark.parametrize("o1, o2, idx", [
     (objects[0], camera, 0),
-    (objects[0], objects[1], 1),
+    (objects[0], camera.cam, 2),
+    (objects[0], camera.ego, 3),
 ])
 def test_ahead_2(o1, o2, idx):
     results = database.predicate(
