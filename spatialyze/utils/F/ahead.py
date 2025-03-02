@@ -26,7 +26,7 @@ def ahead(
         _obj1 = _obj1.attr
     if isinstance(_obj2, AtTimeNode):
         _obj2 = _obj2.attr
-    cc = visitor(convert_camera(_obj1.table, _obj2.table, heading))
+    cc = visitor(convert_camera(obj1, obj2, heading))
     return (
         f"((ST_X({o1}) - ST_X({o2})) * COS(PI() * (({h}) + 90) / 180) + "
         f"(ST_Y({o1}) - ST_Y({o2})) * SIN(PI() * (({h}) + 90) / 180) > 0 "
