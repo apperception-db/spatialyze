@@ -19,5 +19,5 @@ def test_ahead_2(o1, o2, idx):
         F.ahead(o1, o2)
     )
     
-    set_results(results, f"./data/scenic/test-results/ahead_{idx}.py")
+    # set_results(results, f"./data/scenic/test-results/ahead_{idx}.py")
     assert set(results) == set(get_results(f"./data/scenic/test-results/ahead_{idx}.py"))
