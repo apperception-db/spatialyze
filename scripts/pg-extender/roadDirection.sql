@@ -10,7 +10,7 @@ BEGIN
         result := (SELECT heading * 180 / PI() FROM segment, st_point(x, y) AS point 
                           WHERE elementId IN (SELECT s.elementId FROM SegmentPolygon AS s WHERE contained(st_point(x, y), s.elementPolygon) AND (SELECT id FROM Lane WHERE id = elementId) IS NOT NULL) 
                                 AND ROUND(CAST(heading * 180 / PI() AS numeric), 3) != -45
-                          ORDER BY segmentLine <-> point ASC LIMIT 1);
+                          ORDER BY st_distance(segmentLine, point), segmentId ASC LIMIT 1);
         IF result IS NULL THEN
           -- result := (SELECT heading * 180 / PI() FROM segment, st_point(x, y) AS point 
           --                   WHERE ROUND(CAST(heading * 180 / PI() AS numeric), 3) != -45 
