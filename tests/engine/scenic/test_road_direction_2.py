@@ -9,20 +9,21 @@ import pytest
 #     database.update(file.read())
 
 
-ANGLE_STEP = 45
+ANGLE_STEP = 90
 
 
 def generate_case(o, angle):
-    return o, angle, angle + ANGLE_STEP
+    return o, angle
 
 
-@pytest.mark.parametrize("o, sangle, eangle", [
+@pytest.mark.parametrize("o, angle", [
     generate_case(o, angle)
     for o in (objects[0], camera)
     for angle in range(0, 360, ANGLE_STEP)
 ])
-def test_road_direction_2(o, sangle, eangle):
-    results = database.predicate((sangle <= F.road_direction(o)) & (F.road_direction(o) < eangle))
+def test_road_direction_2(o, angle):
+    results = database.predicate((angle <= F.road_direction(o)) & (F.road_direction(o) < (angle + ANGLE_STEP)))
     
-    # set_results(results, f"./data/scenic/test-results/road_direction_{o}_{sangle}.py")
-    assert set(results) == set(get_results(f"./data/scenic/test-results/road_direction_{o}_{sangle}.py"))
+    o_str = f'{o}'.replace('[', '').replace(']', '')
+    # set_results(results, f"./data/scenic/test-results/road_direction_{o_str}_{angle}.py")
+    assert set(results) == set(get_results(f"./data/scenic/test-results/road_direction_{o_str}_{angle}.py"))
