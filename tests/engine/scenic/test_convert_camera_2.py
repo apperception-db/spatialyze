@@ -36,3 +36,6 @@ def test_convert_camera_2(bl, tr):
     
     # set_results(results, f"./data/scenic/test-results/convert_camera_{'_'.join(map(str, bl))}_{'_'.join(map(str, tr))}.py")
     assert set(results) == set(get_results(f"./data/scenic/test-results/convert_camera_{'_'.join(map(str, bl))}_{'_'.join(map(str, tr))}.py"))
+
+
+# TODO: Add return value test
