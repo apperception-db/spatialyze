@@ -7,9 +7,6 @@ services:
       - TERM=xterm-256color
     volumes:
       - .:/workspace
-      - /data/apperception-data:/data/apperception-data
-      - ~/.ssh:/root/.ssh
-    command: jupyter-lab --allow-root
     deploy:
       resources:
         reservations:
@@ -17,14 +14,4 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    network_mode: "host"
-    depends_on:
-      - store
-  store:
-    build:
-      context: .
-      dockerfile: store.Dockerfile
-    container_name: spatialyze-gsstore
-    environment:
-      - POSTGRES_PASSWORD=postgres
     network_mode: "host"
