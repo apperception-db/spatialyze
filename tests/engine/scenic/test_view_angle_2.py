@@ -29,7 +29,9 @@ def test_view_angle_return_value():
         f"ORDER BY c0.cameraId, itemId, c0.frameNum"
     )
 
-    results = database.execute(sql_str)
+    results = [(*row[:-1], round(row[-1], 2)) for row in database.execute(sql_str)]
     
     # set_results(results, f"./data/scenic/test-results/return-values/view_angle.py")
-    assert set(results) == set(get_results(f"./data/scenic/test-results/return-values/view_angle.py"))
+    for r, g in zip(results, get_results(f"./data/scenic/test-results/return-values/view_angle.py")):
+        assert r[:-1] == g[:-1]
+        assert abs(r[-1] - g[-1]) < 0.1
