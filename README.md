@@ -19,14 +19,26 @@
     alt="Codecov Coverage Status"
     src="https://img.shields.io/codecov/c/github/apperception-db/spatialyze/main?label=Coverage&style=for-the-badge"
   ></a>
-  <br/>
   <a href="https://github.com/psf/black"><img
     alt="Black Badge"
     src="https://img.shields.io/badge/black-000000.svg?label=Code%20style&style=for-the-badge"
   ></a>
+  <br/>
   <a href="https://arxiv.org/abs/2308.03276"><img
     alt="ArXiv Paper"
     src="https://img.shields.io/badge/2308.03276-b31b1b.svg?label=arXiv&style=for-the-badge"
+  ></a>
+  <a href="https://doi.org/10.14778/3665844.3665846"><img
+    alt="DOI"
+    src="https://img.shields.io/badge/10.14778/3665844.3665846-000.svg?label=dl.acm&style=for-the-badge"
+  ></a>
+  <a href="https://vldb.org/pvldb/volumes/17/paper/Spatialyze%3A%20A%20Geospatial%20Video%20Analytics%20System%20with%20Spatial-Aware%20Optimizations"><img
+    alt="VLDB"
+    src="https://img.shields.io/badge/2024-a3302a.svg?label=vldb&style=for-the-badge"
+  ></a>
+  <a href="https://spatialyze.github.io"><img
+    alt="spatialyze.github.io"
+    src="https://img.shields.io/badge/github.io-f8d68c.svg?label=spatialyze&style=for-the-badge"
   ></a>
 <!--   <img
     alt="Test Count"
