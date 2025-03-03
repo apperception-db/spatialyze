@@ -1,15 +1,21 @@
 import os
 import pickle
 import pytest
+import json
+
+import psycopg2.sql as sql
 
 from spatialyze.predicate import *
-from spatialyze.utils import F
+from spatialyze.utils import F, ingest_road
 
-from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView
+from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView, get_views, roadtype, overlap_or, overlap_each
 from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
 from spatialyze.video_processor.video import Video
 from spatialyze.video_processor.camera_config import camera_config
+from spatialyze.database import database
+
+import shapely.wkt
 
 
 # Test Strategies
@@ -208,3 +214,70 @@ def test_detection_2d():
             output2 = pipeline2.run(Payload(frames))
 
             assert output1.keep == output2.keep, (name, output1.keep, output2.keep)
+
+            keeparray = [1 if keep else 0 for keep in output1.keep]
+            # with open(os.path.join(OUTPUT_DIR, f'InView_keep_{name}_{distance}.json'), 'w') as f:
+            #     json.dump(keeparray, f)
+
+            with open(os.path.join(OUTPUT_DIR, f'InView_keep_{name}_{distance}.json'), 'r') as f:
+                keeparraygt = json.load(f)
+            
+            assert keeparray == keeparraygt, (name, keeparray, keeparraygt)
+
+
+def test_get_views():
+    files = os.listdir(VIDEO_DIR)
+    ingest_road(database, './data/scenic/road-network/boston-seaport')
+
+    with open(os.path.join(VIDEO_DIR, 'frames.pkl'), 'rb') as f:
+        videos = pickle.load(f)
+    
+    for distance in [10, 20, 30, 40, 50]:
+        for name, video in videos.items():
+            if video['filename'] not in files:
+                continue
+
+            frames = Video(
+                os.path.join(VIDEO_DIR, video["filename"]),
+                [camera_config(*f) for f in video["frames"]],
+            )
+            indices, view_areas = get_views(frames, distance)
+            res = database.execute(sql.SQL(
+                "SELECT index, ST_AsText(ST_ReducePrecision(points, 0.0001))"
+                "FROM UNNEST ({view_areas}, {indices}::int[]) AS ViewArea(points, index)"
+            ).format(
+                view_areas=sql.Literal(view_areas),
+                indices=sql.Literal(indices),
+            ))
+            # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'w') as f:
+            #     json.dump(res, f, indent=2)
+            with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}.json'), 'r') as f:
+                gt_res = json.load(f)
+                assert json.loads(json.dumps(res)) == gt_res, (name, res, gt_res)
+
+            for rt in [['intersection'], ['lane'], ['intersection', 'lane']]:
+                results = overlap_or(indices, view_areas, rt)
+                results = [r[0] for r in results]
+                # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_{"_".join(rt)}.json'), 'w') as f:
+                #     json.dump(results, f, indent=2)
+                with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_{"_".join(rt)}.json'), 'r') as f:
+                    gt_res = json.load(f)
+                    assert set(json.loads(json.dumps(results))) == set(gt_res), (name, results, gt_res)
+
+
+                results = overlap_each(indices, view_areas, rt)
+                # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'w') as f:
+                #     json.dump(results, f, indent=2)
+                with open(os.path.join(OUTPUT_DIR, f'InView_get_views_db_{name}_{distance}_2_{"_".join(rt)}.json'), 'r') as f:
+                    gt_res = [tuple(t) for t in json.load(f)]
+                    assert set(tuple(t) for t in results) == set(gt_res), (name, results, gt_res)
+
+
+            view_areas_ = [[[*map(lambda x: round(x, 4), p)] for p in va] for va in view_areas]
+            # with open(os.path.join(OUTPUT_DIR, f'InView_get_views_{name}_{distance}.json'), 'w') as f:
+            #     json.dump([indices, view_areas_], f, indent=2)
+            with open(os.path.join(OUTPUT_DIR, f'InView_get_views_{name}_{distance}.json'), 'r') as f:
+                gt_indices, gt_view_areas = json.load(f)
+                assert indices == gt_indices, (name, indices, gt_indices)
+                assert view_areas_ == gt_view_areas, (name, view_areas_, gt_view_areas)
+            

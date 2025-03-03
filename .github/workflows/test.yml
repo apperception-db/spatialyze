@@ -5,6 +5,7 @@ on:
 env:
   GENERATE_WORKFLOW_TEST_RESULTS: false
   GENERATE_PROCESSOR_TEST_RESULTS: false
+  GENERATE_ENGINE_TEST_RESULTS: false
 
 jobs:
   test-workflow:
@@ -370,6 +371,10 @@ jobs:
           AP_PORT_IMPORT: 25444
           AP_PORT_SQL: 25445
           AP_HOST: localhost
+      
+      - name: Commit test changes
+        if: ${{ env.GENERATE_ENGINE_TEST_RESULTS == 'true' }}
+        run: ./scripts/commit-and-push.sh "[CI] update engine and interface tests"
 
       - uses: actions/upload-artifact@v4
         with:
