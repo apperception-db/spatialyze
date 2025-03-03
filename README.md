@@ -38,7 +38,7 @@
   ></a>
   <a href="https://spatialyze.github.io"><img
     alt="spatialyze.github.io"
-    src="https://img.shields.io/badge/github.io-f8d68c.svg?label=spatialyze&style=for-the-badge"
+    src="https://img.shields.io/badge/github.io-f8d68c.svg?labelColor=7bb6f9&label=spatialyze&style=for-the-badge"
   ></a>
 <!--   <img
     alt="Test Count"
