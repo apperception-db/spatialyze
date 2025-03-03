@@ -73,7 +73,7 @@ def test_full_road_network():
 
         for name, idx, columns in name_idx_columns:
             res = d3.execute(f"select {columns} from {name} order by {idx}")
-            print("types", [type(elm) for elm in res[0]])
+            # print("types", [type(elm) for elm in res[0]])
             res = [
                 [elm.hex() if isinstance(elm, bytes) else elm for elm in row]
                 for row in res
@@ -90,13 +90,31 @@ def test_full_road_network():
                 assert res == expected
 
 
+def left_most_point(points: list[list[str]]) -> int:
+    left_most = min(points, key=lambda x: (float(x[0]), float(x[1])))
+    for i, point in enumerate(points):
+        if point == left_most:
+            return i
+    assert False
+
+
 def _format(elm):
     # if isinstance(elm, bytes):
     #     return elm.hex()
     if isinstance(elm, str) and elm.startswith('POLYGON'):
-        return ','.join(elm.replace('POLYGON ', 'POLYGON').split(', '))
+        points_str = elm.replace('POLYGON', '').strip().replace('(', '').replace(')', '').split(',')
+        points_str = points_str[:-1]
+        points = [point.strip().split(' ') for point in points_str]
+        assert all(len(point) == 2 for point in points)
+        left_most_idx = left_most_point(points)
+        l, r = points[:left_most_idx], points[left_most_idx:]
+        return r + l
+    if isinstance(elm, str) and (elm.startswith('POINT') or elm.startswith('LINESTRING')):
+        return elm.replace('POINT', '').replace('LINESTRING', '').strip().replace(', ', ',')
     if isinstance(elm, list):
         return set(elm)
+    if isinstance(elm, float):
+        return round(elm, 2)
     return elm
 
 
