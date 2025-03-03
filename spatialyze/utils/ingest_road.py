@@ -49,16 +49,16 @@ CREATE TABLE IF NOT EXISTS Lane(
 );
 """
 
-CREATE_LANE_LANESEC_SQL = """
-CREATE TABLE IF NOT EXISTS Lane_LaneSection(
-    laneId TEXT,
-    laneSectionId TEXT,
-    FOREIGN KEY (laneId)
-        REFERENCES Lane (id),
-    FOREIGN KEY (laneSectionId)
-        REFERENCES LaneSection (id)
-);
-"""
+# CREATE_LANE_LANESEC_SQL = """
+# CREATE TABLE IF NOT EXISTS Lane_LaneSection(
+#     laneId TEXT,
+#     laneSectionId TEXT,
+#     FOREIGN KEY (laneId)
+#         REFERENCES Lane (id),
+#     FOREIGN KEY (laneSectionId)
+#         REFERENCES LaneSection (id)
+# );
+# """
 
 CREATE_LANEGROUP_SQL = """
 CREATE TABLE IF NOT EXISTS LaneGroup(
@@ -67,27 +67,27 @@ CREATE TABLE IF NOT EXISTS LaneGroup(
 );
 """
 
-CREATE_LANEGROUP_LANE_SQL = """
-CREATE TABLE IF NOT EXISTS LaneGroup_Lane(
-    laneGroupId TEXT,
-    laneId TEXT,
-    FOREIGN KEY (laneGroupId)
-        REFERENCES LaneGroup (id),
-    FOREIGN KEY (laneId)
-        REFERENCES Lane (id)
-);
-"""
+# CREATE_LANEGROUP_LANE_SQL = """
+# CREATE TABLE IF NOT EXISTS LaneGroup_Lane(
+#     laneGroupId TEXT,
+#     laneId TEXT,
+#     FOREIGN KEY (laneGroupId)
+#         REFERENCES LaneGroup (id),
+#     FOREIGN KEY (laneId)
+#         REFERENCES Lane (id)
+# );
+# """
 
-CREATE_OPPOSITE_LANEGROUP_SQL = """
-CREATE TABLE IF NOT EXISTS Opposite_LaneGroup(
-    laneGroupId TEXT,
-    oppositeId TEXT,
-    FOREIGN KEY (laneGroupId)
-        REFERENCES LaneGroup (id),
-    FOREIGN KEY (oppositeId)
-        REFERENCES LaneGroup (id)
-);
-"""
+# CREATE_OPPOSITE_LANEGROUP_SQL = """
+# CREATE TABLE IF NOT EXISTS Opposite_LaneGroup(
+#     laneGroupId TEXT,
+#     oppositeId TEXT,
+#     FOREIGN KEY (laneGroupId)
+#         REFERENCES LaneGroup (id),
+#     FOREIGN KEY (oppositeId)
+#         REFERENCES LaneGroup (id)
+# );
+# """
 
 CREATE_ROAD_SQL = """
 CREATE TABLE IF NOT EXISTS Road(
@@ -98,27 +98,27 @@ CREATE TABLE IF NOT EXISTS Road(
 );
 """
 
-CREATE_ROAD_LANEGROUP_SQL = """
-CREATE TABLE IF NOT EXISTS Road_LaneGroup(
-    roadId TEXT,
-    laneGroupId TEXT,
-    FOREIGN KEY (roadId)
-        REFERENCES Road (id),
-    FOREIGN KEY (laneGroupId)
-        REFERENCES LaneGroup (id)
-);
-"""
+# CREATE_ROAD_LANEGROUP_SQL = """
+# CREATE TABLE IF NOT EXISTS Road_LaneGroup(
+#     roadId TEXT,
+#     laneGroupId TEXT,
+#     FOREIGN KEY (roadId)
+#         REFERENCES Road (id),
+#     FOREIGN KEY (laneGroupId)
+#         REFERENCES LaneGroup (id)
+# );
+# """
 
-CREATE_ROAD_ROADSECTION_SQL = """
-CREATE TABLE IF NOT EXISTS Road_RoadSection(
-    roadId TEXT,
-    roadSectionId TEXT,
-    FOREIGN KEY (roadId)
-        REFERENCES Road (id),
-    FOREIGN KEY (roadSectionId)
-        REFERENCES RoadSection (id)
-);
-"""
+# CREATE_ROAD_ROADSECTION_SQL = """
+# CREATE TABLE IF NOT EXISTS Road_RoadSection(
+#     roadId TEXT,
+#     roadSectionId TEXT,
+#     FOREIGN KEY (roadId)
+#         REFERENCES Road (id),
+#     FOREIGN KEY (roadSectionId)
+#         REFERENCES RoadSection (id)
+# );
+# """
 
 CREATE_ROADSECTION_SQL = """
 CREATE TABLE IF NOT EXISTS RoadSection(
@@ -129,16 +129,16 @@ CREATE TABLE IF NOT EXISTS RoadSection(
 );
 """
 
-CREATE_ROADSEC_LANESEC_SQL = """
-CREATE TABLE IF NOT EXISTS RoadSection_LaneSection(
-    roadSectionId TEXT,
-    laneSectionId TEXT,
-    FOREIGN KEY (roadSectionId)
-        REFERENCES RoadSection (id),
-    FOREIGN KEY (laneSectionId)
-        REFERENCES LaneSection (id)
-);
-"""
+# CREATE_ROADSEC_LANESEC_SQL = """
+# CREATE TABLE IF NOT EXISTS RoadSection_LaneSection(
+#     roadSectionId TEXT,
+#     laneSectionId TEXT,
+#     FOREIGN KEY (roadSectionId)
+#         REFERENCES RoadSection (id),
+#     FOREIGN KEY (laneSectionId)
+#         REFERENCES LaneSection (id)
+# );
+# """
 
 CREATE_INTERSECTION_SQL = """
 CREATE TABLE IF NOT EXISTS Intersection(
@@ -377,26 +377,26 @@ def insert_lane(database: "Database", lanes: "list[dict]"):
         )
 
 
-def insert_lane_lanesec(database: "Database", lane_lanesec: "list[dict]"):
-    values = []
-    for ll in lane_lanesec:
-        values.append(
-            f"""(
-                '{ll['lane']}',
-                '{_remove_suffix(ll['laneSec'])}'
-            )"""
-        )
+# def insert_lane_lanesec(database: "Database", lane_lanesec: "list[dict]"):
+#     values = []
+#     for ll in lane_lanesec:
+#         values.append(
+#             f"""(
+#                 '{ll['lane']}',
+#                 '{_remove_suffix(ll['laneSec'])}'
+#             )"""
+#         )
 
-    if len(values):
-        database.update(
-            f"""
-            INSERT INTO Lane_LaneSection (
-                laneId,
-                laneSectionId
-            )
-            VALUES {','.join(values)};
-            """
-        )
+#     if len(values):
+#         database.update(
+#             f"""
+#             INSERT INTO Lane_LaneSection (
+#                 laneId,
+#                 laneSectionId
+#             )
+#             VALUES {','.join(values)};
+#             """
+#         )
 
 
 def insert_lanegroup(database: "Database", laneGroups: "list[dict]"):
@@ -413,48 +413,48 @@ def insert_lanegroup(database: "Database", laneGroups: "list[dict]"):
         )
 
 
-def insert_lanegroup_lane(database: "Database", lanegroup_lane: "list[dict]"):
-    values = []
-    for ll in lanegroup_lane:
-        values.append(
-            f"""(
-                '{ll['laneGroup']}',
-                '{ll['lane']}'
-            )"""
-        )
+# def insert_lanegroup_lane(database: "Database", lanegroup_lane: "list[dict]"):
+#     values = []
+#     for ll in lanegroup_lane:
+#         values.append(
+#             f"""(
+#                 '{ll['laneGroup']}',
+#                 '{ll['lane']}'
+#             )"""
+#         )
 
-    if len(values):
-        database.update(
-            f"""
-            INSERT INTO LaneGroup_Lane (
-                laneGroupId,
-                laneId
-            )
-            VALUES {','.join(values)};
-            """
-        )
+#     if len(values):
+#         database.update(
+#             f"""
+#             INSERT INTO LaneGroup_Lane (
+#                 laneGroupId,
+#                 laneId
+#             )
+#             VALUES {','.join(values)};
+#             """
+#         )
 
 
-def insert_opposite_lanegroup(database: "Database", opposite_lanegroup: "list[dict]"):
-    values = []
-    for oppo in opposite_lanegroup:
-        values.append(
-            f"""(
-                '{oppo['lane']}',
-                '{oppo['opposite']}'
-            )"""
-        )
+# def insert_opposite_lanegroup(database: "Database", opposite_lanegroup: "list[dict]"):
+#     values = []
+#     for oppo in opposite_lanegroup:
+#         values.append(
+#             f"""(
+#                 '{oppo['lane']}',
+#                 '{oppo['opposite']}'
+#             )"""
+#         )
 
-    if len(values):
-        database.update(
-            f"""
-            INSERT INTO Opposite_LaneGroup (
-                laneGroupId,
-                oppositeId
-            )
-            VALUES {','.join(values)};
-            """
-        )
+#     if len(values):
+#         database.update(
+#             f"""
+#             INSERT INTO Opposite_LaneGroup (
+#                 laneGroupId,
+#                 oppositeId
+#             )
+#             VALUES {','.join(values)};
+#             """
+#         )
 
 
 def insert_road(database: "Database", roads: "list[dict]"):
@@ -481,48 +481,48 @@ def insert_road(database: "Database", roads: "list[dict]"):
         )
 
 
-def insert_road_lanegroup(database: "Database", road_lanegroup: "list[dict]"):
-    values = []
-    for rl in road_lanegroup:
-        values.append(
-            f"""(
-                '{rl['road']}',
-                '{rl['laneGroup']}'
-            )"""
-        )
+# def insert_road_lanegroup(database: "Database", road_lanegroup: "list[dict]"):
+#     values = []
+#     for rl in road_lanegroup:
+#         values.append(
+#             f"""(
+#                 '{rl['road']}',
+#                 '{rl['laneGroup']}'
+#             )"""
+#         )
 
-    if len(values):
-        database.update(
-            f"""
-            INSERT INTO Road_LaneGroup (
-                roadId,
-                laneGroupId
-            )
-            VALUES {','.join(values)};
-            """
-        )
+#     if len(values):
+#         database.update(
+#             f"""
+#             INSERT INTO Road_LaneGroup (
+#                 roadId,
+#                 laneGroupId
+#             )
+#             VALUES {','.join(values)};
+#             """
+#         )
 
 
-def insert_road_roadsec(database: "Database", road_roadsec: "list[dict]"):
-    values = []
-    for rr in road_roadsec:
-        values.append(
-            f"""(
-                '{rr['road']}',
-                '{_remove_suffix(rr['roadSec'])}'
-            )"""
-        )
+# def insert_road_roadsec(database: "Database", road_roadsec: "list[dict]"):
+#     values = []
+#     for rr in road_roadsec:
+#         values.append(
+#             f"""(
+#                 '{rr['road']}',
+#                 '{_remove_suffix(rr['roadSec'])}'
+#             )"""
+#         )
 
-    if len(values):
-        database.update(
-            f"""
-            INSERT INTO Road_RoadSection (
-                roadId,
-                roadSectionId
-            )
-            VALUES {','.join(values)};
-            """
-        )
+#     if len(values):
+#         database.update(
+#             f"""
+#             INSERT INTO Road_RoadSection (
+#                 roadId,
+#                 roadSectionId
+#             )
+#             VALUES {','.join(values)};
+#             """
+#         )
 
 
 def insert_roadsection(database: "Database", roadSections: "list[dict]"):
@@ -552,26 +552,26 @@ def insert_roadsection(database: "Database", roadSections: "list[dict]"):
         )
 
 
-def insert_roadsec_lanesec(database: "Database", roadsec_lanesec: "list[dict]"):
-    values = []
-    for rl in roadsec_lanesec:
-        values.append(
-            f"""(
-                '{_remove_suffix(rl['roadSec'])}',
-                '{_remove_suffix(rl['laneSec'])}'
-            )"""
-        )
+# def insert_roadsec_lanesec(database: "Database", roadsec_lanesec: "list[dict]"):
+#     values = []
+#     for rl in roadsec_lanesec:
+#         values.append(
+#             f"""(
+#                 '{_remove_suffix(rl['roadSec'])}',
+#                 '{_remove_suffix(rl['laneSec'])}'
+#             )"""
+#         )
 
-    if len(values):
-        database.update(
-            f"""
-            INSERT INTO RoadSection_LaneSection (
-                roadSectionId,
-                laneSectionId
-            )
-            VALUES {','.join(values)};
-            """
-        )
+#     if len(values):
+#         database.update(
+#             f"""
+#             INSERT INTO RoadSection_LaneSection (
+#                 roadSectionId,
+#                 laneSectionId
+#             )
+#             VALUES {','.join(values)};
+#             """
+#         )
 
 
 def insert_intersection(database: "Database", intersections: "list[dict]"):
