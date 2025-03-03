@@ -9,18 +9,6 @@ jobs:
   generate-videos:
     name: Generate Videos
     runs-on: ubuntu-latest
-    services:
-      db:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 25432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -57,17 +45,6 @@ jobs:
       - name: Check Installed Packages
         shell: micromamba-shell {0}
         run: pip list
-
-      - name: Extend MobilityDB with User-Defined functions
-        shell: micromamba-shell {0}
-        run: |
-          pushd scripts/pg-extender
-          python ../generate_pg_extender.py
-          cat install.sql
-          psql -h localhost -p 25432 -d postgres -U postgres -c "SET client_min_messages TO WARNING;" -c "\i install.sql;"
-          popd
-        env:
-          PGPASSWORD: postgres
       
       - name: Ingest Road
         shell: micromamba-shell {0}

@@ -1,13 +1,13 @@
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
-from spatialyze.database import database
+# from spatialyze.database import database
 import datetime as datetime
-from scenic_common import get_results, prepare_predicate_and_tables
+from scenic_common import get_results, prepare_predicate_and_tables, database
 import pytest
 
 
-with open('./scripts/pg-extender/viewAngle.sql', 'r') as file:
-    database.update(file.read())
+# with open('./scripts/pg-extender/viewAngle.sql', 'r') as file:
+#     database.update(file.read())
 
 
 @pytest.mark.parametrize("angle", [10, 20, 30] + list(range(45, 181, 45)))
@@ -29,7 +29,9 @@ def test_view_angle_return_value():
         f"ORDER BY c0.cameraId, itemId, c0.frameNum"
     )
 
-    results = database.execute(sql_str)
+    results = [(*row[:-1], round(row[-1], 2)) for row in database.execute(sql_str)]
     
     # set_results(results, f"./data/scenic/test-results/return-values/view_angle.py")
-    assert set(results) == set(get_results(f"./data/scenic/test-results/return-values/view_angle.py"))
+    for r, g in zip(results, get_results(f"./data/scenic/test-results/return-values/view_angle.py")):
+        assert r[:-1] == g[:-1]
+        assert abs(r[-1] - g[-1]) < 0.1

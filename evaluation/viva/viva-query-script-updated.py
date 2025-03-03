@@ -8,7 +8,6 @@ import pickle
 import json
 import os
 import time
-import psycopg2
 import numpy as np
 import cv2
 import datetime
@@ -113,17 +112,6 @@ writer.release()
 cv2.destroyAllWindows()
 print(f"{_size / 1000 / 1000 / 1000} GB")
 savert(starttime, 'resize-videos')
-
-# %%
-# database = Database(
-#     psycopg2.connect(
-#         dbname=environ.get("AP_DB", "mobilitydb"),
-#         user=environ.get("AP_USER", "docker"),
-#         host=environ.get("AP_HOST", "localhost"),
-#         port=environ.get("AP_PORT", "25432"),
-#         password=environ.get("AP_PASSWORD", "docker"),
-#     )
-# )
 
 # %%
 starttime = time.time()

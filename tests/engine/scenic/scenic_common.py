@@ -1,6 +1,17 @@
+import duckdb
+
+from scripts.import_tables import import_tables
+from spatialyze.utils import ingest_road
+from spatialyze.database import Database
 from spatialyze.data_types.query_result import QueryResult
 from spatialyze.database import _join_table
 from spatialyze.predicate import FindAllTablesVisitor, GenSqlVisitor, MapTablesTransformer, normalize
+
+
+database = Database(duckdb.connect("/tmp/__spatialyze__test.duckdb"))
+import_tables(database, './data/scenic/database')
+ingest_road(database, './data/scenic/road-network/boston-seaport')
+
 
 
 def get_results(path: str) -> list[QueryResult]:

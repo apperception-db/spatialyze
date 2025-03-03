@@ -1,14 +1,10 @@
 import datetime
 from collections.abc import Mapping, Sequence
-from os import environ
 from typing import TYPE_CHECKING, Callable, NamedTuple
 
+import duckdb
 import pandas as pd
-import psycopg2
-import psycopg2.errors
-from postgis import Point
-from postgis.psycopg import register as postgis_register
-from psycopg2.sql import SQL, Composable, Literal
+import shapely.geometry
 
 from .data_types.camera_key import CameraKey
 from .data_types.nuscenes_annotation import NuscenesAnnotation
@@ -32,9 +28,6 @@ from .video_processor.camera_config import CameraConfig
 from .video_processor.types import Float33
 
 if TYPE_CHECKING:
-    from psycopg2._psycopg import connection as Connection
-    from psycopg2._psycopg import cursor as Cursor
-
     from .predicate import PredicateNode
 
 CAMERA_TABLE = "Camera"
@@ -43,10 +36,10 @@ DETECTION_TABLE = "Item_Detection"
 BBOX_TABLE = "General_Bbox"
 METADATA_TABLE = "Spatialyze_Metadata"
 TABLES = (
-    CAMERA_TABLE,
     DETECTION_TABLE,
     TRAJECTORY_TABLE,
     BBOX_TABLE,
+    CAMERA_TABLE,
     METADATA_TABLE,
 )
 
@@ -105,13 +98,17 @@ def _schema(column: "tuple[str, str]") -> str:
 
 
 class Database:
-    connection: "Connection"
-    cursor: "Cursor"
+    connection: "duckdb.DuckDBPyConnection"
+    cursor: "duckdb.DuckDBPyConnection"
 
-    def __init__(self, connection: "Connection"):
+    def __init__(self, connection: "duckdb.DuckDBPyConnection"):
         self.connection = connection
-        postgis_register(self.connection)
         self.cursor = self.connection.cursor()
+
+        self.cursor.execute("INSTALL spatial;")
+        self.cursor.execute("LOAD spatial;")
+        self.cursor.commit()
+        self.connection.commit()
 
     def reset(self, commit=True):
         self.reset_cursor()
@@ -125,7 +122,6 @@ class Database:
 
     def reset_cursor(self):
         self.cursor.close()
-        assert self.cursor.closed
         self.cursor = self.connection.cursor()
 
     def _drop_table(self, commit=True):
@@ -187,29 +183,37 @@ class Database:
     def _create_index(self, commit=True):
         cursor = self.connection.cursor()
         # cursor.execute("CREATE INDEX ON Camera (cameraId);")
-        cursor.execute("CREATE INDEX ON Camera (cameraId, frameNum);")
-        cursor.execute("CREATE INDEX ON Camera (timestamp);")
+        cursor.execute("CREATE INDEX Camera_CameraId_frameNum_idx ON Camera (cameraId, frameNum);")
+        cursor.execute("CREATE INDEX Camera_timestamp_idx ON Camera (timestamp);")
 
-        cursor.execute("CREATE INDEX ON Item_Detection (cameraId);")
-        cursor.execute("CREATE INDEX ON Item_Detection (frameNum);")
-        cursor.execute("CREATE INDEX ON Item_Detection (cameraId, frameNum);")
-        cursor.execute("CREATE INDEX ON Item_Detection (timestamp);")
+        cursor.execute("CREATE INDEX Item_Detection_cameraId_idx ON Item_Detection (cameraId);")
+        cursor.execute("CREATE INDEX Item_Detection_frameNum_idx ON Item_Detection (frameNum);")
+        cursor.execute(
+            "CREATE INDEX Item_Detection_cameraId_frameNum_idx ON Item_Detection (cameraId, frameNum);"
+        )
+        cursor.execute("CREATE INDEX Item_Detection_timestamp_idx ON Item_Detection (timestamp);")
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS item_detection_translation_idx "
             "ON Item_Detection "
-            "USING GiST(translation);"
+            "USING RTREE (translation);"
         )
-        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId);")
-        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (frameNum);")
-        cursor.execute(f"CREATE INDEX ON {TRAJECTORY_TABLE} (cameraId, frameNum);")
+        cursor.execute(
+            f"CREATE INDEX {TRAJECTORY_TABLE}_cameraId_idx ON {TRAJECTORY_TABLE} (cameraId);"
+        )
+        cursor.execute(
+            f"CREATE INDEX {TRAJECTORY_TABLE}_frameNum_idx ON {TRAJECTORY_TABLE} (frameNum);"
+        )
+        cursor.execute(
+            f"CREATE INDEX {TRAJECTORY_TABLE}_cameraId_frameNum_idx ON {TRAJECTORY_TABLE} (cameraId, frameNum);"
+        )
         cursor.execute(
             "CREATE INDEX IF NOT EXISTS Item_Trajectory_translation_idx "
             f"ON {TRAJECTORY_TABLE} "
-            "USING GiST(translation);"
+            "USING RTREE (translation);"
         )
         # cursor.execute("CREATE INDEX IF NOT EXISTS item_idx ON General_Bbox(itemId);")
         # cursor.execute(
-        #     "CREATE INDEX IF NOT EXISTS traj_bbox_idx ON General_Bbox USING GiST(trajBbox);"
+        #     "CREATE INDEX IF NOT EXISTS traj_bbox_idx ON General_Bbox USING RTREE (trajBbox);"
         # )
         # cursor.execute(
         #     "CREATE INDEX IF NOT EXISTS item_id_timestampx ON General_Bbox(itemId, timestamp);"
@@ -223,50 +227,69 @@ class Database:
 
     def execute_and_cursor(
         self,
-        query: str | Composable,
-        vars: tuple | list | Sequence | Mapping | None = None,
-    ) -> "tuple[list[tuple], Cursor]":
+        query: str,
+        vars: tuple | list | Sequence | Mapping | map | None = None,
+        many: bool = False,
+    ) -> "tuple[list[tuple], duckdb.DuckDBPyConnection]":
         cursor = self.connection.cursor()
         try:
-            cursor.execute(query, vars)
-            if cursor.pgresult_ptr is not None:
-                return cursor.fetchall(), cursor
+            if many:
+                cursor.executemany(query, vars)
             else:
-                return [], cursor
-        except psycopg2.errors.DatabaseError as error:
-            for notice in cursor.connection.notices:
-                print(notice)
-            self.connection.rollback()
+                cursor.execute(query, vars)
+            return cursor.fetchall(), cursor
+        except duckdb.Error as error:
+            # for notice in cursor.connection.notices:
+            #     print(notice)
+            try:
+                self.connection.rollback()
+            except duckdb.TransactionException:
+                pass
             cursor.close()
             raise error
 
     def execute(
         self,
-        query: str | Composable,
-        vars: tuple | list | Sequence | Mapping | None = None,
+        query: str,
+        vars: tuple | list | Sequence | Mapping | map | None = None,
+        many: bool = False,
     ) -> "list[tuple]":
-        results, cursor = self.execute_and_cursor(query, vars)
+        results, cursor = self.execute_and_cursor(query, vars, many)
         cursor.close()
         return results
 
-    def update(self, query: str | Composable, commit: bool = True) -> None:
+    def update(
+        self,
+        query: str,
+        commit: bool = True,
+        vars: tuple | list | Sequence | Mapping | map | None = None,
+        many: bool = False,
+    ) -> None:
         cursor = self.connection.cursor()
         try:
-            cursor.execute(query)
+            if many:
+                cursor.executemany(query, vars)
+            else:
+                cursor.execute(query, vars)
             self._commit(commit)
-        except psycopg2.errors.DatabaseError as error:
-            for notice in cursor.connection.notices:
-                print(notice)
-            self.connection.rollback()
+        except duckdb.Error as error:
+            # for notice in cursor.connection.notices:
+            #     print(notice)
+            try:
+                self.connection.rollback()
+            except duckdb.TransactionException:
+                pass
             raise error
         finally:
             cursor.close()
 
     def insert_camera(self, camera: list[CameraConfig]):
         cursor = self.connection.cursor()
-        insert = SQL("INSERT INTO Camera VALUES ")
-        values = SQL(",").join(map(_config, camera))
-        cursor.execute(insert + values)
+        cursor.executemany(
+            "INSERT INTO Camera VALUES "
+            "(?, ?, ?, ?, ST_GeomFromWKB(?), ?, ?, ST_GeomFromWKB(?), ?, ?, ?, ?)",
+            map(_config, camera),
+        )
 
         # print("New camera inserted successfully.........")
         self.connection.commit()
@@ -341,48 +364,38 @@ class _Config(NamedTuple):
     frameId: str
     frameNum: int
     fileName: str
-    cameraTranslation: Point
+    cameraTranslation: bytes  # WKB: 'POINT(x y z)'
     cameraRotation: list[float]  # [w, x, y, z]
     cameraIntrinsic: Float33
-    egoTranslation: Point
+    egoTranslation: bytes  # WKB: 'POINT(x y z)'
     egoRotation: list[float]  # [w, x, y, z]
     timestamp: datetime.datetime
     cameraHeading: float
     egoHeading: float
 
 
-def _config(config: CameraConfig) -> Composable:
+def _config(config: CameraConfig) -> _Config:
     cc = _Config(
-        config.camera_id,
-        config.frame_id,
-        config.frame_num,
-        config.filename,
-        Point(*config.camera_translation),
-        [*map(float, config.camera_rotation.q)],
-        config.camera_intrinsic,
-        Point(*config.ego_translation),
-        [*map(float, config.ego_rotation.q)],
-        config.timestamp,
-        config.camera_heading,
-        config.ego_heading,
+        cameraId=config.camera_id,
+        frameId=config.frame_id,
+        frameNum=config.frame_num,
+        fileName=config.filename,
+        cameraTranslation=shapely.geometry.Point(*config.camera_translation).wkb,
+        cameraRotation=[*map(float, config.camera_rotation.q)],
+        cameraIntrinsic=config.camera_intrinsic,
+        egoTranslation=shapely.geometry.Point(*config.ego_translation).wkb,
+        egoRotation=[*map(float, config.ego_rotation.q)],
+        timestamp=config.timestamp,
+        cameraHeading=config.camera_heading,
+        egoHeading=config.ego_heading,
     )
 
     assert isinstance(cc.cameraRotation, list), cc.cameraRotation
     assert len(cc.cameraRotation) == 4, cc.cameraRotation
     assert isinstance(cc.egoRotation, list), cc.egoRotation
     assert len(cc.egoRotation) == 4, cc.egoRotation
-    row = map(Literal, cc)
-    return SQL("({})").format(SQL(",").join(row))
+
+    return cc
 
 
-### Do we still want to keep this??? Causes problems since if user uses a different port
-# will need to come in here to change
-database = Database(
-    psycopg2.connect(
-        dbname=environ.get("AP_DB", "postgres"),
-        user=environ.get("AP_USER", "postgres"),
-        host=environ.get("AP_HOST", "store"),
-        port=environ.get("AP_PORT", "5432"),
-        password=environ.get("AP_PASSWORD", "postgres"),
-    )
-)
+database = Database(duckdb.connect(":memory:"))

@@ -2,10 +2,10 @@ import logging
 import time
 from typing import Callable, List
 
-import postgis
+import shapely.geometry
+import shapely.wkb as swkb
 import torch
 from bitarray import bitarray
-from psycopg2 import sql
 
 from ....database import database
 from ...camera_config import CameraConfig
@@ -181,27 +181,18 @@ def objects_count_change(dets: "list[D3DMetadatum]", cur: "int", nxt: "int"):
     return nxt
 
 
-def get_ego_views(video: "Video") -> "list[postgis.Polygon]":
+def get_ego_views(video: "Video") -> "list[shapely.geometry.Polygon]":
     indices, view_areas = get_views(video, distance=100)
     views_raw = database.execute(
-        sql.SQL(
-            """
-    SELECT index, ST_ConvexHull(points)
-    FROM UNNEST (
-        {view_areas},
-        {indices}::int[]
-    ) AS ViewArea(points, index)
-    """
-        ).format(
-            view_areas=sql.Literal(view_areas),
-            indices=sql.Literal(indices),
-        )
+        "SELECT index, ST_AsHEXWKB(ST_ConvexHull(points)) "
+        "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) ",
+        (view_areas, indices),
     )
 
     idxs_set = set(idx for idx, _ in views_raw)
     idxs_all = set(range(len(video)))
     assert idxs_set == idxs_all, (idxs_set.difference(idxs_all), idxs_all.difference(idxs_set))
-    return [v for _, v in sorted(views_raw)]
+    return [swkb.loads(bytes.fromhex(v)) for _, v in sorted(views_raw)]  # type: ignore
 
 
 def prune_detection(
@@ -227,7 +218,7 @@ def prune_detection(
 def generate_sample_plan_once(
     video: "Video",
     next_frame_num: "int",
-    ego_views: "list[postgis.Polygon]",
+    ego_views: "list[shapely.geometry.Polygon]",
     all_detection_info: "list[DetectionInfo] | None" = None,
     fps: "float" = 13,
 ) -> "tuple[SamplePlan, None]":

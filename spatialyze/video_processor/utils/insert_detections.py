@@ -1,7 +1,6 @@
 import datetime
 
-from postgis import Point
-from psycopg2.sql import SQL, Composed, Literal
+import shapely.geometry
 
 from ...database import Database
 from ...video_processor.stream.data_types import Detection3D
@@ -16,7 +15,7 @@ def insert_detections(
 ):
     dets, clss, dids = detections
     assert len(dets) > 0, dets
-    rows: list[Composed] = []
+    rows: list[tuple[str, str, str, int, bytes, datetime.datetime]] = []
     for did, det in zip(dids, dets):
         fid, oid = did
         det = det.detach().cpu().numpy()
@@ -27,12 +26,13 @@ def insert_detections(
             camera_id,
             clss[cls],
             frame_num,
-            Point(x, y, z),
+            shapely.geometry.Point(x, y, z).wkb,
             timestamp,
         )
-        row = SQL("({})").format(SQL(",").join(map(Literal, obj)))
-        rows.append(row)
+        # row = SQL("({})").format(SQL(",").join(map(Literal, obj)))
+        # rows.append(row)
+        rows.append(obj)
 
-    insert = SQL("INSERT INTO Item_Detection VALUES ")
-    database.execute(insert + SQL(",").join(rows))
+    insert = "INSERT INTO Item_Detection VALUES (?, ?, ?, ?, ST_GeomFromWKB(?), ?, null)"
+    database.execute(insert, rows, many=True)
     database._commit()

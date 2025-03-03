@@ -1,6 +1,8 @@
 import os
 import random
+import sys
 
+import duckdb
 import pandas as pd
 from spatialyze.data_types.query_result import QueryResult
 
@@ -80,8 +82,13 @@ def import_tables(database: "Database", data_path: str):
     # for _, row in df_General_Bbox.iterrows():
     #     database._insert_into_general_bbox(row, False)
 
-    with open('./data/scenic/database/item_trajectory.csv', 'r') as f:
-        database.cursor.copy_expert("copy item_trajectory from stdin DELIMITER ',' CSV header", f)
+    # with open('./data/scenic/database/item_trajectory.csv', 'r') as f:
+        # database.cursor.copy_expert("copy item_trajectory from stdin DELIMITER ',' CSV header", f)
+    database.cursor.execute(
+        "INSERT INTO item_trajectory "
+        "SELECT itemid, cameraid, objecttype, framenum, ST_GeomFromHEXWKB(translation) as translation, itemheading "
+        "FROM read_csv('./data/scenic/database/item_trajectory.csv');"
+    )
 
     database._commit()
 
@@ -91,14 +98,19 @@ def _name(column: "tuple[str, str]") -> str:
 
 
 def place_holder(num: int):
-    return ",".join(["%s"] * num)
+    return ",".join(["?"] * num)
 
 
 def _insert_into_camera(database: "Database", value: tuple, commit=True):
     cursor = database.connection.cursor()
+    values = [
+        eval(v.replace('{', '[').replace('}', ']')) if (isinstance(v, str) and '{' in v) else v
+        for v in value
+    ]
     cursor.execute(
-        f"INSERT INTO Camera ({columns(_name, CAMERA_COLUMNS)}) VALUES ({place_holder(len(CAMERA_COLUMNS))})",
-        tuple(value),
+        f"INSERT INTO Camera ({columns(_name, CAMERA_COLUMNS)}) "
+        f"VALUES (?, ?, ?, ?, ST_GeomFromHEXWKB(?), ?, ?, ST_GeomFromHEXWKB(?), ?, ?, ?, ?)",
+        tuple(values),
     )
     database._commit(commit)
     cursor.close()
@@ -123,4 +135,7 @@ def _insert_into_general_bbox(database: "Database", value: tuple, commit=True):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        print('import table at ', sys.argv[1])
+        database = Database(duckdb.connect(sys.argv[1]))
     import_tables(database, './data/scenic/database')

@@ -2,12 +2,11 @@ from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
+import shapely.geometry
 from bitarray import bitarray
-from postgis import MultiPoint
-from psycopg2 import sql
 from pyquaternion import Quaternion
 
-from ....database import database
+from ....database import Database, database
 from ....predicate import (
     ArrayNode,
     BaseTransformer,
@@ -40,57 +39,33 @@ OTHER_ROAD_TYPES = {
 }
 
 
-def overlap_or(indices: list[int], view_areas: list[MultiPoint], roadtypes: list[str]):
-    return database.execute(
-        sql.SQL(
-            """
-    SELECT index
-    FROM UNNEST (
-        {view_areas},
-        {indices}::int[]
-    ) AS ViewArea(points, index)
-    WHERE EXISTS (
-        SELECT 1
-        FROM SegmentPolygon
-        WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)
-        AND ({segment_type})
-    )
-    """
-        ).format(
-            view_areas=sql.Literal(view_areas),
-            indices=sql.Literal(indices),
-            segment_type=sql.SQL(" OR ".join(map(roadtype, roadtypes))),
-        )
+def overlap_or(db: "Database", indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
+    return db.execute(
+        "SELECT index "
+        "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
+        "WHERE EXISTS (SELECT 1 FROM SegmentPolygon WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon) "
+        f"AND ({' OR '.join(map(roadtype, roadtypes))}))",
+        (view_areas, indices),
     )
 
 
-def overlap_each(indices: list[int], view_areas: list[MultiPoint], roadtypes: list[str]):
-    exists = sql.SQL(
-        """
-    EXISTS (
-        SELECT 1
-        FROM SegmentPolygon
-        WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)
-        AND {rt}
+def overlap_each(db: "Database", indices: list[int], view_areas: list[bytes], roadtypes: list[str]):
+    exists = (
+        "EXISTS ("
+        "    SELECT *"
+        "    FROM SegmentPolygon"
+        "    WHERE ST_Intersects(ST_ConvexHull(points), elementPolygon)"
+        "    AND {}"
+        ")"
     )
-    """
-    )
-    return database.execute(
-        sql.SQL(
-            """
-    SELECT index, {exists}
-    FROM UNNEST (
-        {view_areas},
-        {indices}::int[]
-    ) AS ViewArea(points, index)
-    """
+    return db.execute(
+        (
+            "SELECT index, {exists} "
+            "FROM (SELECT ST_GeomFromWKB(UNNEST(?)), UNNEST(?)) AS ViewArea(points, index) "
         ).format(
-            view_areas=sql.Literal(view_areas),
-            indices=sql.Literal(indices),
-            exists=sql.SQL(",").join(
-                exists.format(rt=sql.Identifier(roadtype(st))) for st in roadtypes
-            ),
-        )
+            exists=",".join(exists.format(roadtype(st)) for st in roadtypes),
+        ),
+        (view_areas, indices),
     )
 
 
@@ -124,14 +99,14 @@ class InView(Stage):
         keep = bitarray(len(payload.keep))
         keep.setall(1)
         if self.predicate is None:
-            results = overlap_or(indices, view_areas, self.roadtypes)
+            results = overlap_or(database, indices, view_areas, self.roadtypes)
             keep.setall(0)
             for (index,) in results:
                 keep[index] = 1
         elif self.predicate is False:
             keep.setall(0)
         elif self.predicate is not True:
-            results = overlap_each(indices, view_areas, self.roadtypes)
+            results = overlap_each(database, indices, view_areas, self.roadtypes)
             keep.setall(0)
             for index, *encoded_segment_types in results:
                 segment_types = {
@@ -219,9 +194,9 @@ def get_views(video: "Video", distance: "float" = 100):
         for i in range(5)
     ), (view_area_3ds, view_area_2ds)
 
-    view_areas: "list[MultiPoint]" = []
+    view_areas: "list[bytes]" = []
     for i, view_area_2d in zip(indices, view_area_2ds):
-        view_area = MultiPoint(view_area_2d.tolist())
+        view_area = shapely.geometry.MultiPoint(view_area_2d.tolist()).wkb
         view_areas.append(view_area)
 
     return indices, view_areas

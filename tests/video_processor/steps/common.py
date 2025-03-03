@@ -1,6 +1,7 @@
 import os
 import pickle
 
+from spatialyze.database import Database
 from spatialyze.video_processor.stages.detection_2d.yolo_detection import YoloDetection, Metadatum as D2DMetadatum
 
 OUTPUT_DIR = './data/pipeline/test-results'

@@ -2,8 +2,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
 import numpy.typing as npt
-from postgis import Point
-from psycopg2.sql import SQL, Literal
+import shapely.geometry
 
 from ..types import Float3
 from .infer_heading import infer_heading
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
     from ...database import Database
     from .types import Trajectory
 
-P1 = TypeVar("P1", Float3, Point)
+P1 = TypeVar("P1", Float3, shapely.geometry.Point)
 PointTuple = tuple[int | str, str, str, int, P1, float | None]
 
 
@@ -33,7 +32,7 @@ def insert_trajectory(
     st, en = ids[0], ids[-1]
     tuples: list[PointTuple[Float3] | None] = [None for _ in range(st, en + 1)]
 
-    P = TypeVar("P", Float3, Point)
+    P = TypeVar("P", Float3, shapely.geometry.Point)
 
     def point(idx: int, p: P, h: float | None):
         return (item_id, camera_id, object_type, idx, p, h)
@@ -45,7 +44,7 @@ def insert_trajectory(
 
     prevHeading: float | None = None
     prevPoint = None
-    tuplesWithPoints: list[PointTuple[Point]] = []
+    tuplesWithPoints: list[PointTuple[shapely.geometry.Point]] = []
     for idx in range(st, en + 1):
         i = idx - st
         t = tuples[i]
@@ -69,9 +68,9 @@ def insert_trajectory(
             prevPoint = float(x), float(y), float(z)
         else:
             prevPoint = t[4]
-        tuplesWithPoints.append(point(idx, Point(prevPoint), t[5]))
+        tuplesWithPoints.append(point(idx, shapely.geometry.Point(prevPoint), t[5]))
 
-    tuplesWithPointsHeadings: list[PointTuple[Point]] = []
+    tuplesWithPointsHeadings: list[PointTuple[shapely.geometry.Point]] = []
     for i, t in enumerate(tuplesWithPoints):
         h = t[5]
         if h is None and prevHeading is not None:
@@ -85,11 +84,12 @@ def insert_trajectory(
         tuplesWithPointsHeadings.append((*t[:5], h))
         prevHeading = h
 
-    obj = SQL(",").join(map(value, tuplesWithPointsHeadings))
-    insert = SQL("INSERT INTO Item_Trajectory VALUES {}")
-    database.execute(insert.format(obj))
+    insert = "INSERT INTO Item_Trajectory VALUES (?, ?, ?, ?, ST_GeomFromWKB(?), ?)"
+    values = map(value, tuplesWithPointsHeadings)
+    assert values is not None
+    database.execute(insert, values, many=True)
     database._commit()
 
 
-def value(t: PointTuple[Point]):
-    return SQL("(") + SQL(",").join(map(Literal, t)) + SQL(")")
+def value(t: PointTuple[shapely.geometry.Point]):
+    return (*t[:4], t[4].wkb, t[5])

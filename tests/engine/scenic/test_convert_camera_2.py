@@ -1,13 +1,12 @@
 from spatialyze.predicate import objects, camera
 from spatialyze.utils import F
-from spatialyze.database import database
 import datetime as datetime
-from scenic_common import get_results
+from scenic_common import get_results, database
 import pytest
 
 
-with open('./scripts/pg-extender/convertCamera.sql', 'r') as file:
-    database.update(file.read())
+# with open('./scripts/pg-extender/convertCamera.sql', 'r') as file:
+#     database.update(file.read())
 
 
 def generate_case(distance):
@@ -37,3 +36,6 @@ def test_convert_camera_2(bl, tr):
     
     # set_results(results, f"./data/scenic/test-results/convert_camera_{'_'.join(map(str, bl))}_{'_'.join(map(str, tr))}.py")
     assert set(results) == set(get_results(f"./data/scenic/test-results/convert_camera_{'_'.join(map(str, bl))}_{'_'.join(map(str, tr))}.py"))
+
+
+# TODO: Add return value test

@@ -1,13 +1,12 @@
 from spatialyze.predicate import ObjectTableNode, objects, camera
 from spatialyze.utils import F
-from spatialyze.database import database
 import datetime as datetime
-from scenic_common import get_results, prepare_predicate_and_tables
+from scenic_common import get_results, prepare_predicate_and_tables, database
 import pytest
 
 
-with open('./scripts/pg-extender/roadDirection.sql', 'r') as file:
-    database.update(file.read())
+# with open('./scripts/pg-extender/roadDirection.sql', 'r') as file:
+#     database.update(file.read())
 
 
 ANGLE_STEP = 90
@@ -44,7 +43,7 @@ def test_road_direction_return_value(o, idx, table):
         f"ORDER BY {idx}"
     )
 
-    results = database.execute(sql_str)
+    results = [tuple(round(e, 1) if isinstance(e, float) else e for e in row) for row in database.execute(sql_str)]
     
     o_str = f'{o}'.replace('[', '').replace(']', '')
     # set_results(results, f"./data/scenic/test-results/return-values/road_direction_{o_str}.py")

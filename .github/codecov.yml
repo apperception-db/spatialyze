@@ -1,0 +1,5 @@
+ignore:
+  - "video_processor/modules/**/*"
+  - "video_processor/stages/detection_estimation/**/*"
+  - "video_processor/stream/exit_frame_sampler.py"
+  - "**/__init__.py"
