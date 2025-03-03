@@ -103,10 +103,10 @@ class Database:
 
     def __init__(self, connection: "duckdb.DuckDBPyConnection"):
         self.connection = connection
+        self.connection.install_extension("spatial")
+        self.connection.load_extension("spatial")
         self.cursor = self.connection.cursor()
 
-        self.cursor.execute("INSTALL spatial;")
-        self.cursor.execute("LOAD spatial;")
         self.cursor.commit()
         self.connection.commit()
 
@@ -287,7 +287,8 @@ class Database:
         cursor = self.connection.cursor()
         cursor.executemany(
             "INSERT INTO Camera VALUES "
-            "(?, ?, ?, ?, ST_GeomFromWKB(?), ?, ?, ST_GeomFromWKB(?), ?, ?, ?, ?)",
+            "(?, ?, ?, ?, ST_GeomFromWKB(?), ?,"
+            " ?, ST_GeomFromWKB(?), ?, ?, ?, ?)",
             map(_config, camera),
         )
 
@@ -333,12 +334,9 @@ class Database:
             for frame_number, camera_id, filename, *item_ids in self.execute(sql_str)
         ]
 
-    def sql(self, query: str) -> pd.DataFrame:
-        results, cursor = self.execute_and_cursor(query)
-        description = cursor.description
-        assert description is not None
-        cursor.close()
-        return pd.DataFrame(results, columns=[d.name for d in description])
+    def sql(self, query: str) -> duckdb.DuckDBPyRelation:
+        with self.connection.cursor() as cursor:
+            return cursor.sql(query)
 
 
 def _join_table(temporal: bool):
