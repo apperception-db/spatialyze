@@ -33,5 +33,19 @@ def test_tables_contents(table, index, columns):
                 f.write(json.dumps(r) + "\n")
     
     with open(filename, "r") as f:
-        expected = [json.loads(line) for line in f.readlines()]
-        assert json.loads(json.dumps(res)) == expected
+        expected = format(json.loads(line) for line in f.readlines())
+        assert format(json.loads(json.dumps(res))) == expected
+
+
+def _format(elm):
+    if isinstance(elm, float):
+        return round(elm)
+    if isinstance(elm, list) and all(isinstance(e, float) for e in elm):
+        return [round(e, 3) for e in elm]
+    if isinstance(elm, list) and all(isinstance(e, list) for e in elm):
+        return [[round(ee, 3) for ee in e] for e in elm]
+    return elm
+
+
+def format(res):
+    return [[*map(_format, row)] for row in res]

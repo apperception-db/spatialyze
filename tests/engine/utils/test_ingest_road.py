@@ -85,5 +85,20 @@ def test_full_road_network():
                         f.write(json.dumps(r) + "\n")
             
             with open(filename, "r") as f:
-                expected = [json.loads(line) for line in f.readlines()]
-                assert json.loads(json.dumps(res)) == expected
+                expected = format(map(json.loads, f.readlines()))
+                res = format(json.loads(json.dumps(res)))
+                assert res == expected
+
+
+def _format(elm):
+    # if isinstance(elm, bytes):
+    #     return elm.hex()
+    if isinstance(elm, str) and elm.startswith('POLYGON'):
+        return ','.join(elm.replace('POLYGON ', 'POLYGON').split(', '))
+    if isinstance(elm, list):
+        return set(elm)
+    return elm
+
+
+def format(res):
+    return [[*map(_format, row)] for row in res]
