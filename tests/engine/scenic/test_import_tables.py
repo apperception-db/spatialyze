@@ -27,7 +27,7 @@ def test_tables_contents(table, index, columns):
         for row in res
     ]
     filename = os.path.join(DIR, f"{table}.jsonl")
-    if os.environ.get('GENERATE_ENGINE_TEST_RESULTS', False):
+    if os.environ.get('GENERATE_ENGINE_TEST_RESULTS', 'false') == 'true':
         with open(filename, "w") as f:
             for r in res:
                 f.write(json.dumps(r) + "\n")
