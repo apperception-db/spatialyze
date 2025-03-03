@@ -169,7 +169,6 @@ def drop_tables(database: "Database"):
         # "opposite_lanegroup",
         # "road_lanegroup",
         # "road_roadsection",
-        "lane",
         "lanegroup",
         "road",
         "roadsection",

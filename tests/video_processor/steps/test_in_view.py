@@ -8,9 +8,6 @@ import time
 from spatialyze.predicate import *
 from spatialyze.utils import F, ingest_road
 
-from spatialyze.predicate import *
-from spatialyze.utils import F, ingest_road
-
 from spatialyze.video_processor.stages.in_view.in_view import FindRoadTypes, InViewPredicate, KeepOnlyRoadTypePredicates, NormalizeInversionAndFlattenRoadTypePredicates, PushInversionInForRoadTypePredicates, InView, get_views, roadtype, overlap_or, overlap_each
 from spatialyze.video_processor.pipeline import Pipeline
 from spatialyze.video_processor.payload import Payload
