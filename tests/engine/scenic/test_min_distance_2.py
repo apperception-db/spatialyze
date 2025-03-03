@@ -30,7 +30,7 @@ def test_min_distance_return_value(name, o, o_str, o_idx, geog):
     pred_str, _, _ = prepare_predicate_and_tables(predicate, True)
 
     sql_str = (
-        f"SELECT {o_idx}, ROUND({pred_str}::numeric, 3)::real\n"
+        f"SELECT {o_idx}, {pred_str}\n"
         f"FROM {o_str} \n"
         f"ORDER BY {o_idx}"
     )
