@@ -3,7 +3,6 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Callable, NamedTuple
 
 import duckdb
-import pandas as pd
 import shapely.geometry
 
 from .data_types.camera_key import CameraKey
